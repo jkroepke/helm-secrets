@@ -28,6 +28,7 @@ $ helm secrets help
   view          Print chart secrets decrypted
   edit          Edit chart secrets and ecrypt at the end
 ```
+Any of this command have it's own help
 
 #### SOPS as alternative usage in shell
 As alternative you can use sops for example for edit just type
@@ -39,29 +40,29 @@ Mozilla sops official [usage page](https://github.com/mozilla/sops#id2)
 ### Install
 
 #### SOPS install
-    Before helm-secrets plugin install [Mozilla SOPS](https://github.com/mozilla/sops)
+Before helm-secrets plugin install [Mozilla SOPS](https://github.com/mozilla/sops)
 
-    For MacOS
-    ```
-    brew install sops
-    ```
-    For Linux RPM or DEB, sops is available here: [Dist Packages](https://go.mozilla.org/sops/dist/)
+For MacOS
+```
+brew install sops
+```
+For Linux RPM or DEB, sops is available here: [Dist Packages](https://go.mozilla.org/sops/dist/)
 
 #### Using Helm plugin manager (> 2.3.x)
 
-    ```
-    helm plugin install https://github.com/futuresimple/helm-secrets
-    ```
+```
+helm plugin install https://github.com/futuresimple/helm-secrets
+```
 
 #### Pre Helm 2.3.0 Installation
-    Get a release tarball from the [releases](https://github.com/futuresimple/helm-secrets/releases) page.
+Get a release tarball from the [releases](https://github.com/futuresimple/helm-secrets/releases) page.
 
-    Unpack the tarball in your helm plugins directory (```${HELM_HOME}/plugins```).
+Unpack the tarball in your helm plugins directory (```${HELM_HOME}/plugins```).
 
-    For example:
-    ```
-    curl -L $TARBALL_URL | tar -C ${HELM_HOME}/plugins -xzv
-    ```
+For example:
+```
+curl -L $TARBALL_URL | tar -C ${HELM_HOME}/plugins -xzv
+```
 
 ### Real life use cases/examples
 
