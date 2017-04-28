@@ -84,7 +84,7 @@ function helm_cmd {
     else
         echo ""
         cleanup "$@"
-        exit 1
+        exit 0
     fi
 }
 
