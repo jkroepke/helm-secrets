@@ -12,9 +12,6 @@ COUNT_FILES_FAILED=0
 COUNT_CHART=0
 COUNT_FILES=0
 
-# on any exit remove decrypted files
-#trap "find . -type f -name secrets.yaml -delete" EXIT
-
 if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
 then
     echo "No AWS_PROFILE env variable set"
@@ -61,6 +58,36 @@ decrypt_helm_vars() {
   fi
 }
 
+function cleanup {
+#if [ "$1" == "install" ] || [ "$1" == "upgrade" ];
+#then
+echo ">>>>>> Cleanup"
+for file in "${@}"
+  do
+    file_temp "$file"
+    if [[ "$file" =~ $MATCH_FILES_ARGS ]];
+    then
+      "$HELM_CMD" secrets clean "$file" 2>/dev/null
+    fi
+  done
+#fi
+}
+
+function helm_cmd {
+    echo ""
+    ${HELM_CMD} "$@"
+    local status=$?
+    if [ "$status" -ne 0 ]; then
+        echo ""
+        cleanup "$@"
+        exit 1
+    else
+        echo ""
+        cleanup "$@"
+        exit 1
+    fi
+}
+
 if [ "$1" == "install" ] || [ "$1" == "upgrade" ];
   then
     for file in "${@}"
@@ -77,17 +104,4 @@ then
 fi
 
 # Run helm
-"$HELM_CMD" "$@"
-
-if [ "$1" == "install" ] || [ "$1" == "upgrade" ];
-  then
-      echo ">>>>>> Cleanup"
-      for file in "${@}"
-        do
-          file_temp "$file"
-          if [[ "$file" =~ $MATCH_FILES_ARGS ]];
-          then
-            "$HELM_CMD" secrets clean "$file" 2>/dev/null
-          fi
-        done
-fi
+helm_cmd "$@"

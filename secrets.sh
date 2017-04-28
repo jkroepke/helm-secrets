@@ -251,8 +251,7 @@ clean() {
   while read dec_file;
   do
   if [ -f "${dec_file}" ]; then
-     rm  "${dec_file}" && \
-     echo "$templates_dir/${dec_file} Cleaned"
+     rm -v  "${dec_file}"
   else
      echo "Nothing to Clean"
   fi
