@@ -41,7 +41,7 @@ Mozilla sops official [usage page](https://github.com/mozilla/sops#id2)
 ### Install
 
 #### SOPS install
-Just install plugin and sops will be installed using hook when help > 2.3.x
+Just install plugin and sops will be installed using hook when helm > 2.3.x
 
 You can always install manually for MacOS:
 ```
@@ -71,6 +71,30 @@ For example:
 ```
 curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
 ```
+
+### Tips
+
+#### Prevent commiting decrypted files to git
+If you like to secure situation when decrypted file is committed by mistake to git you can add your secrets.yaml.dec files to you charts project .gitignore
+
+As the second level of securing this situation is to add for example ```.sopscommithook``` file inside your charts repo local commit hook.
+This will prevent commiting decrypted files without sops metadata.
+
+```.sopscommithook``` content example:
+```
+#!/bin/sh
+
+for FILE in $(git diff-index HEAD | grep <your vars dir> | grep "secrets.y" | cut -f2 -d$'\t'); do
+    if file "$FILE" | grep -q -C10000 "sops:" | grep -q "version:"
+    then
+        echo "!!!!! $FILE" 'File is not encrypted !!!!!'
+        echo "Run: helm secrets enc <file path>"
+        exit 1
+    fi
+done
+exit
+```
+
 
 ### Real life use cases/examples
 
