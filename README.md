@@ -1,7 +1,8 @@
 ## Plugin for secrets management using Mozilla SOPS as backend
 
 First internal version of plugin used pure pgp and whole secret file was encrypted as one.
-This plugin using Golang sops as backend which could be integrated in future to Helm itself, but currently it is only shell wrapper.
+
+Current version of plugin using Golang sops as backend which could be integrated in future into Helm itself, but currently it is only shell wrapper.
 
 What kind of problems this plugins solves:
 * Simple replacable layer integrated with helm command for encrypt, decrypt, view secrets files stored in any place. Currently using SOPS as backend.

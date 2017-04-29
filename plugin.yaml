@@ -4,3 +4,5 @@ usage: "Secrets encryption in Helm for Git storing"
 description: |-
   This plugin provides secrets values encryption for Helm charts secure storing
 command: "$HELM_PLUGIN_DIR/secrets.sh"
+hooks:
+  install: "$HELM_PLUGIN_DIR/install-binary.sh"
