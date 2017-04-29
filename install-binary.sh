@@ -12,6 +12,7 @@ then
    LINUX_DISTRO="$(lsb_release -is)"
 fi
 
+### Mozilla SOPS binary install
 if [ "$(uname)" == "Darwin" ];
 then
         brew install sops
@@ -32,6 +33,10 @@ else
     exit 1
 fi
 
+### git diff config
+git config diff.sopsdiffer.textconv "sops -d"
+
+### Helm-secrets wrapper for helm command with auto decryption and cleanup on the fly
 echo ""
 echo -n "Helm-secrets wrapper for helm binary: "
 if [ -f "${HOME}/.helm/plugins/helm-secrets.git/wrapper.sh" ];

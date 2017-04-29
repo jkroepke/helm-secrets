@@ -41,13 +41,20 @@ Mozilla sops official [usage page](https://github.com/mozilla/sops#id2)
 ### Install
 
 #### SOPS install
-Before helm-secrets plugin install [Mozilla SOPS](https://github.com/mozilla/sops)
+Just install plugin and sops will be installed using hook when help > 2.3.x
 
-For MacOS
+You can always install manually for MacOS:
 ```
 brew install sops
 ```
 For Linux RPM or DEB, sops is available here: [Dist Packages](https://go.mozilla.org/sops/dist/)
+
+#### SOPS git diff
+Git config part is installed with plugin but for fully functional work need ```.gitattributes``` file inside root directory of charts repo with content
+```
+*.yaml diff=sopsdiffer
+```
+More info on [sops page](https://github.com/mozilla/sops#showing-diffs-in-cleartext-in-git)
 
 #### Using Helm plugin manager (> 2.3.x)
 
@@ -58,11 +65,11 @@ helm plugin install https://github.com/futuresimple/helm-secrets
 #### Pre Helm 2.3.0 Installation
 Get a release tarball from the [releases](https://github.com/futuresimple/helm-secrets/releases) page.
 
-Unpack the tarball in your helm plugins directory (```${HELM_HOME}/plugins```).
+Unpack the tarball in your helm plugins directory (```$(helm home)/plugins```).
 
 For example:
 ```
-curl -L $TARBALL_URL | tar -C ${HELM_HOME}/plugins -xzv
+curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
 ```
 
 ### Real life use cases/examples
