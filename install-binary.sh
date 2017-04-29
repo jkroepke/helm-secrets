@@ -24,7 +24,7 @@ then
         then
             sudo dpkg -i /tmp/sops.deb;
         else
-            echo "Wrong MD5"
+            echo "Wrong SHA256"
         fi
     fi
 else
@@ -32,13 +32,19 @@ else
     exit 1
 fi
 
-echo "Install helm-secrets wrapper for helm binary"
-if [ -f "~/.helm/plugins/helm-secrets.git/wrapper.sh" ];
+echo ""
+echo -n "Helm-secrets wrapper for helm binary: "
+if [ -f "${HOME}/.helm/plugins/helm-secrets.git/wrapper.sh" ];
 then
-    ln -s ~/.helm/plugins/helm-secrets.git/wrapper.sh ${HELM_WRAPPER}
+    ln -s "${HOME}"/.helm/plugins/helm-secrets.git/wrapper.sh ${HELM_WRAPPER} 2>/dev/null
+elif [ -f "${HOME}/.helm/plugins/helm-secrets/wrapper.sh" ];
+then
+    ln -s "${HOME}"/.helm/plugins/helm-secrets/wrapper.sh ${HELM_WRAPPER} 2>/dev/null
 fi
 
-if [ -f "~/.helm/plugins/helm-secrets/wrapper.sh" ];
+if [ -f ${HELM_WRAPPER} ];
 then
-    ln -s ~/.helm/plugins/helm-secrets/wrapper.sh ${HELM_WRAPPER}
+    echo ${HELM_WRAPPER}
+else
+    echo "No ${HELM_WRAPPER} installed"
 fi
