@@ -1,4 +1,4 @@
-## Plugin for secrets management using Mozilla SOPS as backend
+# Plugin for secrets management using Mozilla SOPS as backend
 
 First internal version of plugin used pure pgp and whole secret file was encrypted as one.
 
@@ -17,31 +17,10 @@ What kind of problems this plugins solves:
 * [Extracting sub elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
 * [Encrypt only part of file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
-### Usage
-```
-$ helm secrets help
-```
-#### Available commands:
-```
-  enc           Encrypt chart secrets file
-  dec           Decrypt chart secrets file
-  dec-deps      Decrypt chart's dependecies' secrets files
-  view          Print chart secrets decrypted
-  edit          Edit chart secrets and ecrypt at the end
-```
-Any of this command have it's own help
-
-#### SOPS as alternative usage in shell
-As alternative you can use sops for example for edit just type
-```
-sops <SECRET_FILE_PATH>
-```
-Mozilla sops official [usage page](https://github.com/mozilla/sops#id2)
-
-### Install
+## Install
 
 #### SOPS install
-Just install plugin and sops will be installed using hook when helm > 2.3.x
+Just install plugin using ``helm plugin install https://github.com/futuresimple/helm-secrets```` and sops will be installed using hook when helm > 2.3.x
 
 You can always install manually for MacOS:
 ```
@@ -50,7 +29,7 @@ brew install sops
 For Linux RPM or DEB, sops is available here: [Dist Packages](https://go.mozilla.org/sops/dist/)
 
 #### SOPS git diff
-Git config part is installed with plugin but for fully functional work need ```.gitattributes``` file inside root directory of charts repo with content
+Git config part is installed with plugin but to be fully functional need ```.gitattributes``` file inside root directory of charts repo with content
 ```
 *.yaml diff=sopsdiffer
 ```
@@ -72,7 +51,75 @@ For example:
 curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
 ```
 
-### Tips
+## Usage and examples
+
+```
+$ helm secrets help
+```
+#### Available commands:
+```
+  enc           Encrypt chart secrets file
+  dec           Decrypt chart secrets file
+  dec-deps      Decrypt chart's dependecies' secrets files
+  view          Print chart secrets decrypted
+  edit          Edit chart secrets and ecrypt at the end
+```
+Any of this command have it's own help
+
+#### SOPS as alternative usage in shell
+As alternative you can use sops for example for edit just type
+```
+sops <SECRET_FILE_PATH>
+```
+Mozilla sops official [usage page](https://github.com/mozilla/sops#id2)
+
+## Use case
+
+We use vars for Helm Charts from separate directory tree with structure like this:
+```
+helm_vars/
+├── .sops.yaml
+├── projectX
+|   ├── .sops.yaml
+│   ├── production
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
+│   ├── sandbox
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
+|   ├── secrets.yam
+│   └── values.yaml
+├── projectY
+|   ├── .sops.yaml
+│   ├── production
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
+│   ├── sandbox
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
+|   ├── secrets.yam
+│   └── values.yaml
+├── secrets.yaml
+└── values.yaml
+```
+As you can see we can run different PGP or KMS keys per project, globaly or per any tree level. Thanks to this we can isolate same tree on different jenkins instances using same GIT repository.
+As we use simple -f option when running helm we can just use secrets.yaml.dec files with helm-wrapper and all secrets will be decrypted and cleaned on the fly with helm run.
+
+Everything is described in SOPS docs - links in this project description.
+
+## Tips
 
 #### Prevent commiting decrypted files to git
 If you like to secure situation when decrypted file is committed by mistake to git you can add your secrets.yaml.dec files to you charts project .gitignore
@@ -94,8 +141,3 @@ for FILE in $(git diff-index HEAD | grep <your vars dir> | grep "secrets.y" | cu
 done
 exit
 ```
-
-
-### Real life use cases/examples
-
-
