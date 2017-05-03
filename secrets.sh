@@ -15,9 +15,10 @@ To decrypt/encrypt/edit you need to initialize/first encrypt secrets with sops -
 Available Commands:
   enc    	Encrypt chart secrets file
   dec    	Decrypt chart secrets file
-  dec-deps    	Decrypt chart's dependecies' secrets files
+  dec-deps    	Decrypt chart's dependencies' secrets files
+  clean         Clean all Decrypted files in specified directory
   view   	Print chart secrets decrypted
-  edit   	Edit chart secrets and ecrypt at the end
+  edit   	Edit chart secrets and encrypt at the end
 
 EOF
 }

@@ -1,21 +1,21 @@
 # Plugin for secrets management using Mozilla SOPS as backend
 
-First internal version of plugin used pure pgp and whole secret file was encrypted as one.
+First internal version of the plugin used pure PGP and the whole secret file was encrypted as one.
 
-Current version of plugin using Golang sops as backend which could be integrated in future into Helm itself, but currently it is only shell wrapper.
+A current version of the plugin using Golang sops as backend which could be integrated in future into Helm itself, but currently, it is only shell wrapper.
 
-What kind of problems this plugins solves:
-* Simple replacable layer integrated with helm command for encrypt, decrypt, view secrets files stored in any place. Currently using SOPS as backend.
+What kind of problems this plugin solves:
+* Simple replaceable layer integrated with helm command for encrypting, decrypting, view secrets files stored in any place. Currently using SOPS as backend.
 * [Support for YAML/JSON structures encryption - Helm YAML secrets files](https://github.com/mozilla/sops#important-information-on-types)
 * [Encryption per value where visual Diff should work even on encrypted files](https://github.com/mozilla/sops/blob/master/example.yaml)
 * [On the fly decryption for git diff](https://github.com/mozilla/sops#showing-diffs-in-cleartext-in-git)
 * On the fly decryption and cleanup for helm install/upgrade with this plugin helm bash command wrapper
-* [Multiple key managment solutions like pgp and AWS KMS at same time](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
-* [Simple addind/removing keys](https://github.com/mozilla/sops#adding-and-removing-keys)
+* [Multiple key management solutions like PGP and AWS KMS at same time](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
+* [Simple adding/removing keys](https://github.com/mozilla/sops#adding-and-removing-keys)
 * [With AWS KMS permissions managment for keys](https://aws.amazon.com/kms/)
 * [Secrets files directory tree seperation with recursive .sops.yaml files search](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
 * [Extracting sub elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
-* [Encrypt only part of file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
+* [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
 ## Install
 
@@ -29,7 +29,7 @@ brew install sops
 For Linux RPM or DEB, sops is available here: [Dist Packages](https://go.mozilla.org/sops/dist/)
 
 #### SOPS git diff
-Git config part is installed with plugin but to be fully functional need ```.gitattributes``` file inside root directory of charts repo with content
+Git config part is installed with a plugin but to be fully functional need ```.gitattributes``` file inside the root directory of charts repo with content
 ```
 *.yaml diff=sopsdiffer
 ```
@@ -60,14 +60,14 @@ $ helm secrets help
 ```
   enc           Encrypt chart secrets file
   dec           Decrypt chart secrets file
-  dec-deps      Decrypt chart's dependecies' secrets files
+  dec-deps      Decrypt chart's dependencies' secrets files
   view          Print chart secrets decrypted
-  edit          Edit chart secrets and ecrypt at the end
+  edit          Edit chart secrets and encrypt at the end
 ```
-Any of this command have it's own help
+Any of this command have its own help
 
 #### SOPS as alternative usage in shell
-As alternative you can use sops for example for edit just type
+As alternative, you can use sops for example for edit just type
 ```
 sops <SECRET_FILE_PATH>
 ```
@@ -81,40 +81,40 @@ helm_vars/
 ├── .sops.yaml
 ├── projectX
 |   ├── .sops.yaml
-│   ├── production
-│   │   └── us-east-1
-│   │       └── java-app
-│   │           └── hello-world
-│   │               ├── secrets.yaml
-│   │               └── values.yaml
-│   ├── sandbox
-│   │   └── us-east-1
-│   │       └── java-app
-│   │           └── hello-world
-│   │               ├── secrets.yaml
-│   │               └── values.yaml
+│   ├── production
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
+│   ├── sandbox
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
 |   ├── secrets.yam
-│   └── values.yaml
+│   └── values.yaml
 ├── projectY
 |   ├── .sops.yaml
-│   ├── production
-│   │   └── us-east-1
-│   │       └── java-app
-│   │           └── hello-world
-│   │               ├── secrets.yaml
-│   │               └── values.yaml
-│   ├── sandbox
-│   │   └── us-east-1
-│   │       └── java-app
-│   │           └── hello-world
-│   │               ├── secrets.yaml
-│   │               └── values.yaml
+│   ├── production
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
+│   ├── sandbox
+│   │   └── us-east-1
+│   │       └── java-app
+│   │           └── hello-world
+│   │               ├── secrets.yaml
+│   │               └── values.yaml
 |   ├── secrets.yam
-│   └── values.yaml
+│   └── values.yaml
 ├── secrets.yaml
 └── values.yaml
 ```
-As you can see we can run different PGP or KMS keys per project, globaly or per any tree level. Thanks to this we can isolate same tree on different jenkins instances using same GIT repository.
+As you can see we can run different PGP or KMS keys per project, globally or per any tree level. Thanks to this we can isolate same tree on different Jenkins instances using same GIT repository.
 As we use simple -f option when running helm we can just use secrets.yaml.dec files with helm-wrapper and all secrets will be decrypted and cleaned on the fly with helm run.
 
 .sops.yaml file example
@@ -124,7 +124,7 @@ creation_rules:
         # Encrypt with AWS KMS
         - kms: 'arn:aws:kms:us-east-1:222222222222:key/111b1c11-1c11-1fd1-aa11-a1c1a1sa1dsl1+arn:aws:iam::222222222222:role/helm_secrets'
 
-        # As failover encrypt with pgp
+        # As failover encrypt with PGP
           pgp: '000111122223333444AAAADDDDFFFFGGGG000999'
 
         # For more help look at https://github.com/mozilla/sops
@@ -135,11 +135,11 @@ Everything is described in SOPS docs - links in this project description.
 
 ## Tips
 
-#### Prevent commiting decrypted files to git
+#### Prevent committing decrypted files to git
 If you like to secure situation when decrypted file is committed by mistake to git you can add your secrets.yaml.dec files to you charts project .gitignore
 
-As the second level of securing this situation is to add for example ```.sopscommithook``` file inside your charts repo local commit hook.
-This will prevent commiting decrypted files without sops metadata.
+As the second level of securing this situation is to add for example ```.sopscommithook``` file inside your charts repository local commit hook.
+This will prevent committing decrypted files without sops metadata.
 
 ```.sopscommithook``` content example:
 ```
