@@ -117,6 +117,20 @@ helm_vars/
 As you can see we can run different PGP or KMS keys per project, globaly or per any tree level. Thanks to this we can isolate same tree on different jenkins instances using same GIT repository.
 As we use simple -f option when running helm we can just use secrets.yaml.dec files with helm-wrapper and all secrets will be decrypted and cleaned on the fly with helm run.
 
+.sops.yaml file example
+```
+---
+creation_rules:
+        # Encrypt with AWS KMS
+        - kms: 'arn:aws:kms:us-east-1:222222222222:key/111b1c11-1c11-1fd1-aa11-a1c1a1sa1dsl1+arn:aws:iam::222222222222:role/helm_secrets'
+
+        # As failover encrypt with pgp
+          pgp: '000111122223333444AAAADDDDFFFFGGGG000999'
+
+        # For more help look at https://github.com/mozilla/sops
+```
+Multiple KMS and PGP are allowed.
+
 Everything is described in SOPS docs - links in this project description.
 
 ## Tips
