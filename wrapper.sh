@@ -12,12 +12,6 @@ COUNT_FILES_FAILED=0
 COUNT_CHART=0
 COUNT_FILES=0
 
-if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
-then
-    echo "No AWS_PROFILE env variable set"
-    exit 1
-fi
-
 file_temp() {
   file_tmp=$(echo "$file" | sed -e 's/\.dec//')
 }
@@ -59,18 +53,22 @@ decrypt_helm_vars() {
 }
 
 function cleanup {
-#if [ "$1" == "install" ] || [ "$1" == "upgrade" ];
-#then
-echo ">>>>>> Cleanup"
-for file in "${@}"
-  do
-    file_temp "$file"
-    if [[ "$file" =~ $MATCH_FILES_ARGS ]];
+if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
+then
+    if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
     then
-      "$HELM_CMD" secrets clean "$file" 2>/dev/null
+          echo "!!! If KMS used need AWS_PROFILE env variable set !!!"
     fi
-  done
-#fi
+    echo ">>>>>> Cleanup"
+    for file in "${@}"
+      do
+        file_temp "$file"
+        if [[ "$file" =~ $MATCH_FILES_ARGS ]];
+        then
+          "$HELM_CMD" secrets clean "$file" 2>/dev/null
+        fi
+      done
+fi
 }
 
 function helm_cmd {
@@ -88,7 +86,7 @@ function helm_cmd {
     fi
 }
 
-if [ "$1" == "install" ] || [ "$1" == "upgrade" ];
+if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
   then
     for file in "${@}"
       do
