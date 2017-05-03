@@ -1,8 +1,8 @@
 #!/bin/bash
 
-SOPS_VERSION="2.0.8"
+SOPS_VERSION="2.0.9"
 
-HELM_WRAPPER="/usr/local/bin/helm-secrets"
+HELM_WRAPPER="/usr/local/bin/helm-wrapper"
 
 SOPS_DEB_URL="https://go.mozilla.org/sops/dist/sops_${SOPS_VERSION}_amd64.deb"
 SOPS_DEB_SHA="fdc3559d6f16a54ec1d54d4a0aa1d7a3d273207ec78a37f9869dd2a1b32f5292"
