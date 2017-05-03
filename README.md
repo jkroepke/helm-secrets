@@ -1,4 +1,4 @@
-# Plugin for secrets management using Mozilla SOPS as backend
+# Plugin for secrets management in Helm
 
 First internal version of the plugin used pure PGP and the whole secret file was encrypted as one.
 
