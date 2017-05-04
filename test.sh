@@ -47,17 +47,35 @@ else
 fi
 }
 
+test_clean() {
+if [ -f "${secret}.dec" ];
+then
+    echo -e "${RED}[FAIL]${NOC} ${secret}.dec exist after cleanup"
+    exit 1
+else
+    echo -e "${GREEN}[OK]${NOC} Cleanup ${mode}"
+fi
+}
+
 test_helm_secrets() {
 echo -e "${YELLOW}+++${NOC} ${BLUE}Testing ${secret}${NOC}"
 echo -e "${YELLOW}+++${NOC} Encrypt and Test"
 helm-wrapper secrets enc "${secret}" 2>&1 >/dev/null && \
 test_encryption "${secret}"
-echo -e "${YELLOW}+++${NOC} View encrypted test"
+echo -e "${YELLOW}+++${NOC} View encrypted Test"
 test_view "${secret}"
 echo -e "${YELLOW}+++${NOC} Decrypt"
 helm-wrapper secrets dec "${secret}" 2>&1 >/dev/null && \
 test_decrypt "${secret}" && \
-mv "${secret}.dec" "${secret}"
+cp "${secret}.dec" "${secret}"
+echo -e "${YELLOW}+++${NOC} Cleanup Test"
+helm-wrapper secrets clean "$(dirname ${secret})" 2>&1 >/dev/null && \
+mode="directory"
+test_clean "${secret}" "${mode}" && \
+cp "${secret}" "${secret}.dec" && \
+helm-wrapper secrets clean "${secret}.dec" 2>&1 >/dev/null && \
+mode="specified .dec file"
+test_clean "${secret}" "${mode}"
 echo -e "${YELLOW}+++${NOC} Once again Encrypt and Test"
 helm-wrapper secrets enc "${secret}" 2>&1 >/dev/null && \
 test_encryption "${secret}"
