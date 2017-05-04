@@ -20,7 +20,7 @@ What kind of problems this plugin solves:
 ## Install
 
 #### SOPS install
-Just install plugin using ``helm plugin install https://github.com/futuresimple/helm-secrets```` and sops will be installed using hook when helm > 2.3.x
+Just install plugin using ```helm plugin install https://github.com/futuresimple/helm-secrets``` and sops will be installed using hook when helm > 2.3.x
 
 You can always install manually for MacOS:
 ```
@@ -123,10 +123,10 @@ helm_vars/
 ├── secrets.yaml
 └── values.yaml
 ```
-As you can see we can run different PGP or KMS keys per project, globally or per any tree level. Thanks to this we can isolate same tree on different Jenkins instances using same GIT repository.
-As we use simple -f option when running helm we can just use secrets.yaml.dec files with helm-wrapper and all secrets will be decrypted and cleaned on the fly with helm run.
+As you can see we can run different PGP or KMS keys per project, globally or per any tree level. Thanks to this we can isolate tree on different CI/CD instances using same GIT repository.
+As we use simple -f option when running helm we can just use secrets.yaml.dec (encrypted file is just secrets.yaml and we point .dec as result of on-the-fly decryption) files with helm-wrapper and all secrets will be decrypted and cleaned on the fly with helm run.
 
-.sops.yaml file example
+```.sops.yaml``` file example
 ```
 ---
 creation_rules:
