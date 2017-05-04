@@ -102,7 +102,7 @@ helm_vars/
 │   │           └── hello-world
 │   │               ├── secrets.yaml
 │   │               └── values.yaml
-|   ├── secrets.yam
+|   ├── secrets.yaml
 │   └── values.yaml
 ├── projectY
 |   ├── .sops.yaml
@@ -118,7 +118,7 @@ helm_vars/
 │   │           └── hello-world
 │   │               ├── secrets.yaml
 │   │               └── values.yaml
-|   ├── secrets.yam
+|   ├── secrets.yaml
 │   └── values.yaml
 ├── secrets.yaml
 └── values.yaml
