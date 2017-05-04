@@ -15,7 +15,7 @@ To decrypt/encrypt/edit you need to initialize/first encrypt secrets with sops -
 Available Commands:
   enc    	Encrypt chart secrets file
   dec    	Decrypt chart secrets file
-  dec-deps    	Decrypt chart's dependencies' secrets files
+  dec-deps    	Decrypt chart's dependencies' secrets files (optional)
   clean         Clean all Decrypted files in specified directory
   view   	Print chart secrets decrypted
   edit   	Edit chart secrets and encrypt at the end
@@ -94,7 +94,7 @@ EOF
 
 dec_deps_usage() {
 cat << EOF
-Decrypt secrets.yaml files in Chart's dependencies.
+Decrypt secrets.yaml files in Chart's dependencies. (optional and not suggested)
 
 Example:
   $ helm secrets dec-deps <CHART>

@@ -1,5 +1,7 @@
 # Plugin for secrets management in Helm
 
+Developed and used in [BaseCRM](https://getbase.com/).
+
 First internal version of the plugin used pure PGP and the whole secret file was encrypted as one.
 
 A current version of the plugin using Golang sops as backend which could be integrated in future into Helm itself, but currently, it is only shell wrapper.
