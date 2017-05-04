@@ -27,7 +27,7 @@ if [ "${result_view}" -gt 0 ];
 then
     echo -e "${RED}[FAIL]${NOC} Decryption failed"
 else
-    echo -e "${GREEN}[OK]${NOC} File decrypted"
+    echo -e "${GREEN}[OK]${NOC} File decrypted and viewable"
 fi
 }
 
