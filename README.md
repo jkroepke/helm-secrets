@@ -56,9 +56,10 @@ curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
 #### Helm-wrapper configuration
 By default helm-wrapper is configured to use KMS profiles and do not encrypt/decrypt secrets.yaml in charts templates.
 ```
-# set you own options
-DECRYPT_CHARTS=false
-KMS_USE=true
+# set you own options as ENV variables if you like overwrite default kms enabled and decrypt charts disabled.
+DECRYPT_CHARTS=false helm-wrapper ....
+# or/and
+KMS_USE=true helm-wrapper ....
 ```
 If you like to use it in different way just change this lines.
 
