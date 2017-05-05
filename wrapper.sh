@@ -1,8 +1,21 @@
 #!/bin/bash
 
+# colors
+RED='\033[0;31m'
+#GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NOC='\033[0m'
+
 # set you own options
-DECRYPT_CHARTS=false
-KMS_USE=true
+if [ ! "${DECRYPT_CHARTS}" ];
+then
+    DECRYPT_CHARTS=false
+fi
+if [ ! "${KMS_USE}" ];
+then
+    KMS_USE=true
+fi
 
 HELM_CMD="/usr/local/bin/helm"
 MATCH_ARGS="[-.*]"
@@ -26,7 +39,7 @@ decrypt_chart() {
           then
             "$HELM_CMD" secrets dec-deps "$chart"
           fi
-          echo ">>>>>> Dependencies build and package"
+          echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Dependencies build and package${NOC}"
           "$HELM_CMD" dep build "$chart" && "$HELM_CMD" package "$chart"
           (( COUNT_CHART++ ))
       else
@@ -42,7 +55,7 @@ decrypt_helm_vars() {
       file_temp "$file"
       if [ -f "$file_tmp" ];
       then
-          echo ">>>>>> Decrypt"
+          echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
           "$HELM_CMD" secrets dec "$file_tmp" 2>/dev/null
           (( COUNT_FILES++ ))
       else
@@ -57,9 +70,10 @@ if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
 then
     if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
     then
-          echo "!!! If KMS used need AWS_PROFILE env variable set !!!"
+          echo -e "${RED}!!! If KMS used need AWS_PROFILE env variable set !!!${NOC}"
+          echo ""
     fi
-    echo ">>>>>> Cleanup"
+    echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
     for file in "${@}"
       do
         file_temp "$file"
@@ -97,7 +111,7 @@ if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
 
 if [ "$COUNT_CHART" -eq 0 ] && [ "$COUNT_FILES" -eq 0 ] && [ "$COUNT_CHART_FAILED" -gt 0 ] && [ "$COUNT_FILES_FAILED" -gt 0 ];
 then
-    echo "Error no secrets found. No secret files in chart or secrets files defined"
+    echo -e "${RED}Error no secrets found. No secret files in chart or secrets files defined${NOC}"
     exit 1
 fi
 
