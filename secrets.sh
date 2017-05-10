@@ -248,15 +248,17 @@ clean() {
   sops_config
   chart="$1"
   vars_load "$chart"
-  echo "Decrypted secrets files clean"
+  basedir="$(dirname ${templates_dir})"
+  echo "find ${templates_dir} -type f -name *.yaml${DEC_SUFFIX}"
   while read dec_file;
   do
-  if [ -f "${dec_file}" ]; then
+  if [ -f "${dec_file}" ];
+  then
      rm -v  "${dec_file}"
   else
      echo "Nothing to Clean"
   fi
-  done < <(find "$templates_dir" -type f -name "*.yaml${DEC_SUFFIX}" )
+  done < <(find "${basedir}" -type f -name "*.yaml${DEC_SUFFIX}" )
 }
 
 view_helper() {
