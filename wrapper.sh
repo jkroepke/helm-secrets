@@ -52,16 +52,22 @@ decrypt_chart() {
 decrypt_helm_vars() {
   if [[ "$file" =~ $MATCH_FILES_ARGS ]];
   then
-      file_temp "$file"
-      if [ -f "$file_tmp" ];
-      then
-          echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
-          "$HELM_CMD" secrets dec "$file_tmp" 2>/dev/null
-          (( COUNT_FILES++ ))
-      else
-          (( COUNT_FILES_FAILED++ ))
-          return
-      fi
+ #     if [[ ${file} =~ ^*secrets.y*.dec ]];
+ #     then
+          file_temp "$file"
+          if [ -f "$file_tmp" ];
+          then
+              echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
+              "$HELM_CMD" secrets dec "$file_tmp" 2>/dev/null
+              (( COUNT_FILES++ ))
+          else
+              (( COUNT_FILES_FAILED++ ))
+              return
+          fi
+  #    else
+  #        echo -e "${RED}Wrong secrets file name used should be file afte decrypt with .dec -> secrets.yaml.dec${NOC}"
+  #        exit 1
+  #    fi
   fi
 }
 
@@ -79,7 +85,7 @@ then
         file_temp "$file"
         if [[ "$file" =~ $MATCH_FILES_ARGS ]];
         then
-          "$HELM_CMD" secrets clean "$file" 2>/dev/null
+          "$HELM_CMD" secrets clean "$file".dec 2>/dev/null
         fi
       done
 fi
@@ -87,7 +93,9 @@ fi
 
 function helm_cmd {
     echo ""
-    ${HELM_CMD} "$@"
+    OUTPUT="$(echo "$@" | sed -e 's/secrets.yaml /secrets.yaml.dec /g')"
+    echo "${HELM_CMD} ${OUTPUT}"
+    $(${HELM_CMD} "${OUTPUT}")
     local status=$?
     if [ "$status" -ne 0 ]; then
         echo ""
@@ -102,12 +110,12 @@ function helm_cmd {
 
 if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
   then
-    for file in "${@}"
+    for file in "$@"
       do
-       decrypt_helm_vars "$file"
-       decrypt_chart "$file"
+         decrypt_helm_vars "$file"
+         decrypt_chart "$file"
     done
-    fi
+fi
 
 if [ "$COUNT_CHART" -eq 0 ] && [ "$COUNT_FILES" -eq 0 ] && [ "$COUNT_CHART_FAILED" -gt 0 ] && [ "$COUNT_FILES_FAILED" -gt 0 ];
 then
