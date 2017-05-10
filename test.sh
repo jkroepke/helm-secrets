@@ -8,6 +8,19 @@ NOC='\033[0m'
 SECRETS_REPO="https://github.com/futuresimple/helm-secrets"
 HELM_CMD="helm"
 
+trap_error() {
+    local status=$?
+    if [ "$status" -ne 0 ]; then
+        echo -e "${RED}General error${NOC}"
+        exit 1
+    else
+        exit 0
+    fi
+    echo -e "${RED}General error${NOC}"
+}
+
+trap "trap_error" EXIT
+
 test_encryption() {
 result=$(cat < "${secret}" | grep -Ec "(40B6FAEC80FD467E3FE9421019F6A67BB1B8DDBE|4434EA5D05F10F59D0DF7399AF1D073646ED4927)")
 if [ "${result}" -eq 2 ] && [ "${secret}" == "./example/helm_vars/secrets.yaml" ];
@@ -61,24 +74,24 @@ fi
 test_helm_secrets() {
 echo -e "${YELLOW}+++${NOC} ${BLUE}Testing ${secret}${NOC}"
 echo -e "${YELLOW}+++${NOC} Encrypt and Test"
-"${HELM_CMD}" secrets enc "${secret}" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets enc "${secret}" > /dev/null || exit 1 && \
 test_encryption "${secret}"
 echo -e "${YELLOW}+++${NOC} View encrypted Test"
 test_view "${secret}"
 echo -e "${YELLOW}+++${NOC} Decrypt"
-"${HELM_CMD}" secrets dec "${secret}" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets dec "${secret}" > /dev/null || exit 1 && \
 test_decrypt "${secret}" && \
 cp "${secret}.dec" "${secret}"
 echo -e "${YELLOW}+++${NOC} Cleanup Test"
-"${HELM_CMD}" secrets clean "$(dirname ${secret})" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets clean "$(dirname ${secret})" > /dev/null || exit 1 && \
 mode="directory"
 test_clean "${secret}" "${mode}" && \
 cp "${secret}" "${secret}.dec" && \
-"${HELM_CMD}" secrets clean "${secret}.dec" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets clean "${secret}.dec" > /dev/null || exit 1 && \
 mode="specified .dec file"
 test_clean "${secret}" "${mode}"
 echo -e "${YELLOW}+++${NOC} Once again Encrypt and Test"
-"${HELM_CMD}" secrets enc "${secret}" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets enc "${secret}" > /dev/null || exit 1 && \
 test_encryption "${secret}"
 }
 
