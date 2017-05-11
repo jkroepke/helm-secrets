@@ -49,26 +49,27 @@ decrypt_chart() {
 decrypt_helm_vars() {
   if [[ "$file" =~ $MATCH_FILES_ARGS ]];
   then
-          if [ -f "$file" ];
-          then
-              echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
-              "$HELM_CMD" secrets dec "$file" 2>/dev/null
-              (( COUNT_FILES++ ))
-          else
-              (( COUNT_FILES_FAILED++ ))
-              return
-          fi
+    if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
+    then
+      echo -e "${RED}!!! If KMS used need AWS_PROFILE env variable set !!!${NOC}"
+      exit 1
+      echo ""
+    fi
+    if [ -f "$file" ];
+      then
+          echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
+          "$HELM_CMD" secrets dec "$file" 2>/dev/null
+          (( COUNT_FILES++ ))
+      else
+          (( COUNT_FILES_FAILED++ ))
+          return
+    fi
   fi
 }
 
 function cleanup {
 if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
 then
-    if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
-    then
-          echo -e "${RED}!!! If KMS used need AWS_PROFILE env variable set !!!${NOC}"
-          echo ""
-    fi
     echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
     for file in "${@}"
       do
@@ -82,9 +83,7 @@ fi
 
 function helm_cmd {
     echo ""
-    OUTPUT="$(echo "${HELM_CMD} $@" | sed -e 's/secrets.yaml /secrets.yaml.dec /g')"
-    echo "${HELM_CMD} ${OUTPUT}"
-    ${OUTPUT}
+    $(echo "${HELM_CMD} $*" | sed -e 's/secrets.yaml /secrets.yaml.dec /g')
     local status=$?
     if [ "$status" -ne 0 ]; then
         echo ""
