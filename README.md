@@ -1,4 +1,5 @@
 
+[![License](https://img.shields.io/github/license/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/blob/master/LICENSE)
 [![Current Release](https://img.shields.io/github/release/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/futuresimple/helm-secrets.svg?style=flat-square)](https://github.com/futuresimple/helm-secrets/pulls)
