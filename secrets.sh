@@ -249,7 +249,6 @@ clean() {
   chart="$1"
   vars_load "$chart"
   basedir="$(dirname ${templates_dir})"
-  echo "find ${templates_dir} -type f -name *.yaml${DEC_SUFFIX}"
   while read dec_file;
   do
   if [ -f "${dec_file}" ];

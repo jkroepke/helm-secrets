@@ -20,14 +20,11 @@ fi
 HELM_CMD="/usr/local/bin/helm"
 MATCH_ARGS="[-.*]"
 MATCH_FILES_ARGS=".*secrets.y*"
+DEC_SUFFIX=".dec"
 COUNT_CHART_FAILED=0
 COUNT_FILES_FAILED=0
 COUNT_CHART=0
 COUNT_FILES=0
-
-file_temp() {
-  file_tmp=$(echo "$file" | sed -e 's/\.dec//')
-}
 
 decrypt_chart() {
   local chart="$file"
@@ -52,22 +49,15 @@ decrypt_chart() {
 decrypt_helm_vars() {
   if [[ "$file" =~ $MATCH_FILES_ARGS ]];
   then
- #     if [[ ${file} =~ ^*secrets.y*.dec ]];
- #     then
-          file_temp "$file"
-          if [ -f "$file_tmp" ];
+          if [ -f "$file" ];
           then
               echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
-              "$HELM_CMD" secrets dec "$file_tmp" 2>/dev/null
+              "$HELM_CMD" secrets dec "$file" 2>/dev/null
               (( COUNT_FILES++ ))
           else
               (( COUNT_FILES_FAILED++ ))
               return
           fi
-  #    else
-  #        echo -e "${RED}Wrong secrets file name used should be file afte decrypt with .dec -> secrets.yaml.dec${NOC}"
-  #        exit 1
-  #    fi
   fi
 }
 
@@ -82,10 +72,9 @@ then
     echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
     for file in "${@}"
       do
-        file_temp "$file"
         if [[ "$file" =~ $MATCH_FILES_ARGS ]];
         then
-          "$HELM_CMD" secrets clean "$file".dec 2>/dev/null
+          "$HELM_CMD" secrets clean "${file}${DEC_SUFFIX}" 2>/dev/null
         fi
       done
 fi
@@ -93,9 +82,9 @@ fi
 
 function helm_cmd {
     echo ""
-    OUTPUT="$(echo "$@" | sed -e 's/secrets.yaml /secrets.yaml.dec /g')"
+    OUTPUT="$(echo "${HELM_CMD} $@" | sed -e 's/secrets.yaml /secrets.yaml.dec /g')"
     echo "${HELM_CMD} ${OUTPUT}"
-    $(${HELM_CMD} "${OUTPUT}")
+    ${OUTPUT}
     local status=$?
     if [ "$status" -ne 0 ]; then
         echo ""
