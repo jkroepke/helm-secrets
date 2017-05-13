@@ -73,23 +73,32 @@ fi
 
 test_helm_secrets() {
 echo -e "${YELLOW}+++${NOC} ${BLUE}Testing ${secret}${NOC}"
+
 echo -e "${YELLOW}+++${NOC} Encrypt and Test"
 "${HELM_CMD}" secrets enc "${secret}" > /dev/null || exit 1 && \
 test_encryption "${secret}"
+
 echo -e "${YELLOW}+++${NOC} View encrypted Test"
 test_view "${secret}"
+
 echo -e "${YELLOW}+++${NOC} Decrypt"
 "${HELM_CMD}" secrets dec "${secret}" > /dev/null || exit 1 && \
 test_decrypt "${secret}" && \
 cp "${secret}.dec" "${secret}"
+
 echo -e "${YELLOW}+++${NOC} Cleanup Test"
-"${HELM_CMD}" secrets clean "$(dirname ${secret})" > /dev/null || exit 1 && \
-mode="directory"
+"${HELM_CMD}" secrets clean "$(dirname ${secret})" > /dev/null || exit 1
+mode="specified directory"
 test_clean "${secret}" "${mode}" && \
 cp "${secret}" "${secret}.dec" && \
-"${HELM_CMD}" secrets clean "${secret}.dec" > /dev/null || exit 1 && \
+"${HELM_CMD}" secrets clean "${secret}.dec" > /dev/null || exit 1
 mode="specified .dec file"
+test_clean "${secret}" "${mode}" && \
+cp "${secret}" "${secret}.dec" && \
+"${HELM_CMD}" secrets clean "${secret}" > /dev/null || exit 1
+mode="specified encrypted secret file"
 test_clean "${secret}" "${mode}"
+
 echo -e "${YELLOW}+++${NOC} Once again Encrypt and Test"
 "${HELM_CMD}" secrets enc "${secret}" > /dev/null || exit 1 && \
 test_encryption "${secret}"
