@@ -5,8 +5,9 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NOC='\033[0m'
+ALREADY_ENC="Already Encrypted"
 SECRETS_REPO="https://github.com/futuresimple/helm-secrets"
-HELM_CMD="helm"
+HELM_CMD="helm-wrapper"
 
 trap_error() {
     local status=$?
@@ -71,12 +72,27 @@ else
 fi
 }
 
+test_already_encrypted() {
+if [[ "${enc_res}" == *"${ALREADY_ENC}"* ]];
+then
+    echo -e "${GREEN}[OK]${NOC} Already Encrypted"
+else
+    echo -e "${RED}[FAIL]${NOC} Not Encrypted or re-encrypted. Should be already encrypted with no re-encryption."
+    exit 1
+fi
+}
+
+
 test_helm_secrets() {
 echo -e "${YELLOW}+++${NOC} ${BLUE}Testing ${secret}${NOC}"
 
 echo -e "${YELLOW}+++${NOC} Encrypt and Test"
 "${HELM_CMD}" secrets enc "${secret}" > /dev/null || exit 1 && \
 test_encryption "${secret}"
+
+echo -e "${YELLOW}+++${NOC} Test if 'Already Encrypted' feature works"
+enc_res=$("${HELM_CMD}" secrets enc "${secret}" | grep "${ALREADY_ENC}")
+test_already_encrypted "${enc_res}"
 
 echo -e "${YELLOW}+++${NOC} View encrypted Test"
 test_view "${secret}"
