@@ -1,12 +1,13 @@
 
 [![License](https://img.shields.io/github/license/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/blob/master/LICENSE)
 [![Current Release](https://img.shields.io/github/release/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/releases/latest)
+[![Production Ready](https://img.shields.io/badge/production-ready-green.svg)](https://github.com/futuresimple/helm-secrets/releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/futuresimple/helm-secrets.svg?style=flat-square)](https://github.com/futuresimple/helm-secrets/pulls)
 
 # Plugin for secrets management in Helm
 
-Developed and used in [BaseCRM](https://getbase.com/).
+Developed and used on all environments in [BaseCRM](https://getbase.com/).
 
 First internal version of the plugin used pure PGP and the whole secret file was encrypted as one.
 
