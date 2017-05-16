@@ -20,14 +20,11 @@ fi
 HELM_CMD="/usr/local/bin/helm"
 MATCH_ARGS="[-.*]"
 MATCH_FILES_ARGS=".*secrets.y*"
+DEC_SUFFIX=".dec"
 COUNT_CHART_FAILED=0
 COUNT_FILES_FAILED=0
 COUNT_CHART=0
 COUNT_FILES=0
-
-file_temp() {
-  file_tmp=$(echo "$file" | sed -e 's/\.dec//')
-}
 
 decrypt_chart() {
   local chart="$file"
@@ -52,34 +49,33 @@ decrypt_chart() {
 decrypt_helm_vars() {
   if [[ "$file" =~ $MATCH_FILES_ARGS ]];
   then
-      file_temp "$file"
-      if [ -f "$file_tmp" ];
+    if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
+    then
+      echo -e "${RED}!!! If KMS used need AWS_PROFILE env variable set !!!${NOC}"
+      exit 1
+      echo ""
+    fi
+    if [ -f "$file" ];
       then
           echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
-          "$HELM_CMD" secrets dec "$file_tmp" 2>/dev/null
+          "$HELM_CMD" secrets dec "$file" 2>/dev/null
           (( COUNT_FILES++ ))
       else
           (( COUNT_FILES_FAILED++ ))
           return
-      fi
+    fi
   fi
 }
 
 function cleanup {
 if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
 then
-    if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
-    then
-          echo -e "${RED}!!! If KMS used need AWS_PROFILE env variable set !!!${NOC}"
-          echo ""
-    fi
     echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
     for file in "${@}"
       do
-        file_temp "$file"
         if [[ "$file" =~ $MATCH_FILES_ARGS ]];
         then
-          "$HELM_CMD" secrets clean "$file" 2>/dev/null
+          "$HELM_CMD" secrets clean "${file}${DEC_SUFFIX}" 2>/dev/null
         fi
       done
 fi
@@ -87,7 +83,7 @@ fi
 
 function helm_cmd {
     echo ""
-    ${HELM_CMD} "$@"
+    $(echo "${HELM_CMD} $*" | sed -e 's/secrets.yaml /secrets.yaml.dec /g')
     local status=$?
     if [ "$status" -ne 0 ]; then
         echo ""
@@ -102,12 +98,12 @@ function helm_cmd {
 
 if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
   then
-    for file in "${@}"
+    for file in "$@"
       do
-       decrypt_helm_vars "$file"
-       decrypt_chart "$file"
+         decrypt_helm_vars "$file"
+         decrypt_chart "$file"
     done
-    fi
+fi
 
 if [ "$COUNT_CHART" -eq 0 ] && [ "$COUNT_FILES" -eq 0 ] && [ "$COUNT_CHART_FAILED" -gt 0 ] && [ "$COUNT_FILES_FAILED" -gt 0 ];
 then

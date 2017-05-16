@@ -5,7 +5,22 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NOC='\033[0m'
+ALREADY_ENC="Already Encrypted"
 SECRETS_REPO="https://github.com/futuresimple/helm-secrets"
+HELM_CMD="helm-wrapper"
+
+trap_error() {
+    local status=$?
+    if [ "$status" -ne 0 ]; then
+        echo -e "${RED}General error${NOC}"
+        exit 1
+    else
+        exit 0
+    fi
+    echo -e "${RED}General error${NOC}"
+}
+
+trap "trap_error" EXIT
 
 test_encryption() {
 result=$(cat < "${secret}" | grep -Ec "(40B6FAEC80FD467E3FE9421019F6A67BB1B8DDBE|4434EA5D05F10F59D0DF7399AF1D073646ED4927)")
@@ -22,7 +37,7 @@ fi
 }
 
 test_view() {
-result_view=$(helm-wrapper secrets view "${secret}" | grep -Ec "(40B6FAEC80FD467E3FE9421019F6A67BB1B8DDBE|4434EA5D05F10F59D0DF7399AF1D073646ED4927)")
+result_view=$(${HELM_CMD} secrets view "${secret}" | grep -Ec "(40B6FAEC80FD467E3FE9421019F6A67BB1B8DDBE|4434EA5D05F10F59D0DF7399AF1D073646ED4927)")
 if [ "${result_view}" -gt 0 ];
 then
     echo -e "${RED}[FAIL]${NOC} Decryption failed"
@@ -57,27 +72,51 @@ else
 fi
 }
 
+test_already_encrypted() {
+if [[ "${enc_res}" == *"${ALREADY_ENC}"* ]];
+then
+    echo -e "${GREEN}[OK]${NOC} Already Encrypted"
+else
+    echo -e "${RED}[FAIL]${NOC} Not Encrypted or re-encrypted. Should be already encrypted with no re-encryption."
+    exit 1
+fi
+}
+
+
 test_helm_secrets() {
 echo -e "${YELLOW}+++${NOC} ${BLUE}Testing ${secret}${NOC}"
+
 echo -e "${YELLOW}+++${NOC} Encrypt and Test"
-helm-wrapper secrets enc "${secret}" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets enc "${secret}" > /dev/null || exit 1 && \
 test_encryption "${secret}"
+
+echo -e "${YELLOW}+++${NOC} Test if 'Already Encrypted' feature works"
+enc_res=$("${HELM_CMD}" secrets enc "${secret}" | grep "${ALREADY_ENC}")
+test_already_encrypted "${enc_res}"
+
 echo -e "${YELLOW}+++${NOC} View encrypted Test"
 test_view "${secret}"
+
 echo -e "${YELLOW}+++${NOC} Decrypt"
-helm-wrapper secrets dec "${secret}" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets dec "${secret}" > /dev/null || exit 1 && \
 test_decrypt "${secret}" && \
 cp "${secret}.dec" "${secret}"
+
 echo -e "${YELLOW}+++${NOC} Cleanup Test"
-helm-wrapper secrets clean "$(dirname ${secret})" 2>&1 >/dev/null && \
-mode="directory"
+"${HELM_CMD}" secrets clean "$(dirname ${secret})" > /dev/null || exit 1
+mode="specified directory"
 test_clean "${secret}" "${mode}" && \
 cp "${secret}" "${secret}.dec" && \
-helm-wrapper secrets clean "${secret}.dec" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets clean "${secret}.dec" > /dev/null || exit 1
 mode="specified .dec file"
+test_clean "${secret}" "${mode}" && \
+cp "${secret}" "${secret}.dec" && \
+"${HELM_CMD}" secrets clean "${secret}" > /dev/null || exit 1
+mode="specified encrypted secret file"
 test_clean "${secret}" "${mode}"
+
 echo -e "${YELLOW}+++${NOC} Once again Encrypt and Test"
-helm-wrapper secrets enc "${secret}" 2>&1 >/dev/null && \
+"${HELM_CMD}" secrets enc "${secret}" > /dev/null || exit 1 && \
 test_encryption "${secret}"
 }
 
@@ -86,7 +125,7 @@ if [ "$(helm plugin list | tail -n1 | cut -d ' ' -f 1 | grep -c "secrets")" -eq 
 then
     echo -e "${GREEN}[OK]${NOC} helm-ecrets plugin installed"
 else
-    helm plugin install "${SECRETS_REPO}" 2>/dev/null
+    "${HELM_CMD}" plugin install "${SECRETS_REPO}" 2>/dev/null
     echo -e "${RED}[FAIL]${NOC} No helm-secrets plugin aboting"
     exit 1
 fi

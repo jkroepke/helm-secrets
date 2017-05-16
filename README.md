@@ -136,7 +136,7 @@ helm_vars/
 └── values.yaml
 ```
 As you can see we can run different PGP or KMS keys per project, globally or per any tree level. Thanks to this we can isolate tree on different CI/CD instances using same GIT repository.
-As we use simple -f option when running helm we can just use secrets.yaml.dec (encrypted file is just secrets.yaml and we point .dec as result of on-the-fly decryption) files with helm-wrapper and all secrets will be decrypted and cleaned on the fly with helm run.
+As we use simple -f option when running helm-wrapper we can just use encrypted secrets.yaml and all this secrets will be decrypted and cleaned on the fly before and after helm run.
 
 ```.sops.yaml``` file example
 ```
