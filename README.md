@@ -167,7 +167,7 @@ This will prevent committing decrypted files without sops metadata.
 #!/bin/sh
 
 for FILE in $(git diff-index HEAD --name-only | grep <your vars dir> | grep "secrets.y"); do
-    if [ -f "$FILE" ] && ! grep $FILE -C10000 "sops:" | grep -q "version:"; then
+    if [ -f "$FILE" ] && ! grep -C10000 "sops:" $FILE | grep -q "version:"; then
     then
         echo "!!!!! $FILE" 'File is not encrypted !!!!!'
         echo "Run: helm secrets enc <file path>"
