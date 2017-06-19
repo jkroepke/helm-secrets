@@ -87,13 +87,6 @@ $ helm secrets help
 ```
 Any of this command have its own help
 
-#### SOPS as alternative usage in shell
-As alternative, you can use sops for example for edit just type
-```
-sops <SECRET_FILE_PATH>
-```
-Mozilla sops official [usage page](https://github.com/mozilla/sops#id2)
-
 ## Use case
 
 We use vars for Helm Charts from separate directory tree with structure like this:
