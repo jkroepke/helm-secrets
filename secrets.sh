@@ -240,6 +240,10 @@ dec_deps() {
   done
 }
 
+function exec_edit {
+    exec sops "${yml}" < /dev/tty
+}
+
 clean() {
   if is_help "$1" ; then
     clean_usage
@@ -268,7 +272,7 @@ view_helper() {
 edit_helper() {
   file "$yml" > /dev/null || (echo "File not exist" && exit 1)
   sops_config
-  sops "$(which "$yml")"
+  exec_edit "${yml}${DEC_SUFFIX}"
 }
 
 view() {
