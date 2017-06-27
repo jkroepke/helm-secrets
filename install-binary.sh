@@ -50,7 +50,7 @@ fi
 ### git diff config
 if [ -x "$(command -v git --version)" ];
 then
-    git config diff.sopsdiffer.textconv "sops -d"
+    git config --global diff.sopsdiffer.textconv "sops -d"
 else
     echo -e "${RED}[FAIL]${NOC} Install git command"
     exit 1
