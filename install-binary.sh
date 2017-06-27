@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 SOPS_VERSION="2.0.9"
+SOPS_DEB_URL="https://go.mozilla.org/sops/dist/sops_${SOPS_VERSION}_amd64.deb"
+SOPS_DEB_SHA="fdc3559d6f16a54ec1d54d4a0aa1d7a3d273207ec78a37f9869dd2a1b32f5292"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -10,33 +12,39 @@ NOC='\033[0m'
 
 HELM_WRAPPER="/usr/local/bin/helm-wrapper"
 
-SOPS_DEB_URL="https://go.mozilla.org/sops/dist/sops_${SOPS_VERSION}_amd64.deb"
-SOPS_DEB_SHA="fdc3559d6f16a54ec1d54d4a0aa1d7a3d273207ec78a37f9869dd2a1b32f5292"
 
-if [ "$(uname)" == "Linux" ];
-then
-   LINUX_DISTRO="$(lsb_release -is)"
-fi
-
-### Mozilla SOPS binary install
-if [ "$(uname)" == "Darwin" ];
-then
-        brew install sops
-elif [ "$(uname)" == "Linux" ];
-then
-    if [ "${LINUX_DISTRO}" == "Ubuntu" ];
-    then
-        curl "${SOPS_DEB_URL}" > /tmp/sops.deb
-        if [ "$(/usr/bin/shasum -a 256 /tmp/sops.deb | cut -d ' ' -f 1)" == "${SOPS_DEB_SHA}" ];
-        then
-            sudo dpkg -i /tmp/sops.deb;
-        else
-            echo -e "${RED}Wrong SHA256${NOC}"
-        fi
-    fi
+if hash sops 2>/dev/null; then
+    echo "sops is already installed:"
+    sops --version
 else
-    echo -e "${RED}No SOPS package available${NOC}"
-    exit 1
+
+    # Try to install sops.
+
+    if [ "$(uname)" == "Linux" ];
+    then
+       LINUX_DISTRO="$(lsb_release -is)"
+    fi
+
+    ### Mozilla SOPS binary install
+    if [ "$(uname)" == "Darwin" ];
+    then
+            brew install sops
+    elif [ "$(uname)" == "Linux" ];
+    then
+        if [ "${LINUX_DISTRO}" == "Ubuntu" ];
+        then
+            curl "${SOPS_DEB_URL}" > /tmp/sops.deb
+            if [ "$(/usr/bin/shasum -a 256 /tmp/sops.deb | cut -d ' ' -f 1)" == "${SOPS_DEB_SHA}" ];
+            then
+                sudo dpkg -i /tmp/sops.deb;
+            else
+                echo -e "${RED}Wrong SHA256${NOC}"
+            fi
+        fi
+    else
+        echo -e "${RED}No SOPS package available${NOC}"
+        exit 1
+    fi
 fi
 
 ### git diff config
