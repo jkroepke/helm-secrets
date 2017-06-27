@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -ueo pipefail
+
 # colors
 RED='\033[0;31m'
 #GREEN='\033[0;32m'
@@ -7,15 +9,9 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NOC='\033[0m'
 
-# set you own options
-if [ ! "${DECRYPT_CHARTS}" ];
-then
-    DECRYPT_CHARTS=false
-fi
-if [ ! "${KMS_USE}" ];
-then
-    KMS_USE=true
-fi
+# set your own options
+: ${DECRYPT_CHARTS:=false}
+: ${KMS_USE:=true}
 
 MATCH_ARGS="[-.*]"
 MATCH_FILES_ARGS=".*secrets.y*"
@@ -24,6 +20,8 @@ COUNT_CHART_FAILED=0
 COUNT_FILES_FAILED=0
 COUNT_CHART=0
 COUNT_FILES=0
+
+CURRENT_COMMAND="${1:-}"
 
 case "$0" in
     helm-wrapper)
@@ -48,9 +46,9 @@ decrypt_chart() {
           fi
           echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Dependencies build and package${NOC}"
           "$HELM_CMD" dep build "$chart" && "$HELM_CMD" package "$chart"
-          (( COUNT_CHART++ ))
+          (( ++COUNT_CHART ))
       else
-          (( COUNT_CHART_FAILED++ ))
+          (( ++COUNT_CHART_FAILED ))
           return
       fi
   fi
@@ -69,26 +67,26 @@ decrypt_helm_vars() {
       then
           echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
           "$HELM_CMD" secrets dec "$file"
-          (( COUNT_FILES++ ))
+          (( ++COUNT_FILES ))
       else
-          (( COUNT_FILES_FAILED++ ))
+          (( ++COUNT_FILES_FAILED ))
           return
     fi
   fi
 }
 
 function cleanup {
-if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
-then
-    echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
-    for file in "${@}"
+  case "${CURRENT_COMMAND}" in
+    install|upgrade|rollback)
+      echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
+      for file in "${@}";
       do
         if [[ "$file" =~ $MATCH_FILES_ARGS ]];
         then
           "$HELM_CMD" secrets clean "${file}${DEC_SUFFIX}"
         fi
       done
-fi
+  esac
 }
 
 function helm_cmd {
@@ -106,14 +104,15 @@ function helm_cmd {
     fi
 }
 
-if [ "$1" == "install" ] || [ "$1" == "upgrade" ] || [ "$1" == "rollback" ];
-  then
-    for file in "$@"
-      do
-         decrypt_helm_vars "$file"
-         decrypt_chart "$file"
-    done
-fi
+case "${CURRENT_COMMAND}" in
+    install|upgrade|rollback)
+        for file in "$@"
+          do
+             decrypt_helm_vars "$file"
+             decrypt_chart "$file"
+        done
+        ;;
+esac
 
 if [ "$COUNT_CHART" -eq 0 ] && [ "$COUNT_FILES" -eq 0 ] && [ "$COUNT_CHART_FAILED" -gt 0 ] && [ "$COUNT_FILES_FAILED" -gt 0 ];
 then

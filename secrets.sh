@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -ueo pipefail
 
 usage() {
 cat << EOF
@@ -168,7 +168,7 @@ encrypt_helper() {
     if [ "$(echo "$yml" | grep -F "$sops_config_path")" ];
          then
             matched_dir=$sops_config_path
-            (( count_match++ ))
+            (( ++count_match ))
     fi
   done < <(find . -type f -name ".sops.yaml" -exec dirname {} \; | sed -e 's/\.\///g')
   SOPS_CONF_PATH="$matched_dir/${SOPS_CONF_FILE}"
