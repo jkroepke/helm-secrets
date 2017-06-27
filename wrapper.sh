@@ -68,7 +68,7 @@ decrypt_helm_vars() {
     if [ -f "$file" ];
       then
           echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
-          "$HELM_CMD" secrets dec "$file" 2>/dev/null
+          "$HELM_CMD" secrets dec "$file"
           (( COUNT_FILES++ ))
       else
           (( COUNT_FILES_FAILED++ ))
@@ -85,7 +85,7 @@ then
       do
         if [[ "$file" =~ $MATCH_FILES_ARGS ]];
         then
-          "$HELM_CMD" secrets clean "${file}${DEC_SUFFIX}" 2>/dev/null
+          "$HELM_CMD" secrets clean "${file}${DEC_SUFFIX}"
         fi
       done
 fi
