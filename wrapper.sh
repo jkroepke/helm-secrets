@@ -17,7 +17,6 @@ then
     KMS_USE=true
 fi
 
-HELM_CMD="/usr/local/bin/helm"
 MATCH_ARGS="[-.*]"
 MATCH_FILES_ARGS=".*secrets.y*"
 DEC_SUFFIX=".dec"
@@ -25,6 +24,17 @@ COUNT_CHART_FAILED=0
 COUNT_FILES_FAILED=0
 COUNT_CHART=0
 COUNT_FILES=0
+
+case "$0" in
+    helm-wrapper)
+        WRAPPER_PATH="$(command -v helm-wrapper)"
+        ;;
+    *)
+        WRAPPER_PATH="$0"
+        ;;
+esac
+
+HELM_CMD="$(dirname $WRAPPER_PATH)/helm"
 
 decrypt_chart() {
   local chart="$file"
