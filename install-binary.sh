@@ -10,8 +10,19 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NOC='\033[0m'
 
-HELM_WRAPPER="/usr/local/bin/helm-wrapper"
+# Find some tools
+case "${HELM_BIN}" in
+    helm)
+        HELM_DIR="$(dirname $(command -v helm))"
+        ;;
+    *)
+        HELM_DIR="$(dirname ${HELM_BIN})"
+        ;;
+esac
 
+# Install the helm wrapper in the same dir as helm itself. That's not
+# guaranteed to work, but it's better than hard-coding it.
+HELM_WRAPPER="${HELM_DIR}/helm-wrapper"
 
 if hash sops 2>/dev/null; then
     echo "sops is already installed:"
@@ -59,12 +70,9 @@ fi
 ### Helm-secrets wrapper for helm command with auto decryption and cleanup on the fly
 echo ""
 echo -ne "${YELLOW}*${NOC} Helm-secrets wrapper for helm binary: "
-if [ -f "${HOME}/.helm/plugins/helm-secrets.git/wrapper.sh" ];
+if [ -f "${HELM_PLUGIN_DIR}/wrapper.sh" ];
 then
-    ln -s "${HOME}"/.helm/plugins/helm-secrets.git/wrapper.sh ${HELM_WRAPPER} 2>/dev/null
-elif [ -f "${HOME}/.helm/plugins/helm-secrets/wrapper.sh" ];
-then
-    ln -s "${HOME}"/.helm/plugins/helm-secrets/wrapper.sh ${HELM_WRAPPER} 2>/dev/null
+    ln -sf "${HELM_PLUGIN_DIR}/wrapper.sh" "${HELM_WRAPPER}"
 fi
 
 if [ -f ${HELM_WRAPPER} ];
