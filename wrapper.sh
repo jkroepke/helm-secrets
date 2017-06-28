@@ -83,7 +83,7 @@ fi
 
 function helm_cmd {
     echo ""
-    $(echo "${HELM_CMD} $*" | sed -e 's/secrets.yaml /secrets.yaml.dec /g')
+    $(echo "${HELM_CMD} $*" | sed -e 's/secrets.yaml/secrets.yaml.dec/g')
     local status=$?
     if [ "$status" -ne 0 ]; then
         echo ""
