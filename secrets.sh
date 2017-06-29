@@ -159,7 +159,7 @@ get_md5() {
 }
 
 encrypt_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   count_match=0
   matched_dir=""
@@ -203,7 +203,7 @@ enc() {
 }
 
 decrypt_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   sops -d "$yml" > "${yml}${DEC_SUFFIX}"
 }
@@ -265,13 +265,13 @@ clean() {
 }
 
 view_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   sops -d "$yml"
 }
 
 edit_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   exec_edit "${yml}${DEC_SUFFIX}"
 }
