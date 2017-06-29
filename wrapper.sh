@@ -11,7 +11,6 @@ NOC='\033[0m'
 
 # set your own options
 : ${DECRYPT_CHARTS:=false}
-: ${KMS_USE:=true}
 
 MATCH_ARGS="[-.*]"
 MATCH_FILES_ARGS=".*secrets.y*"
@@ -57,12 +56,6 @@ decrypt_chart() {
 decrypt_helm_vars() {
   if [[ "$file" =~ $MATCH_FILES_ARGS ]];
   then
-    if [ ! "$AWS_PROFILE" ] && [ "$KMS_USE" = true ];
-    then
-      echo -e "${RED}!!! If KMS used need AWS_PROFILE env variable set !!!${NOC}"
-      exit 1
-      echo ""
-    fi
     if [ -f "$file" ];
       then
           echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Decrypt${NOC}"
