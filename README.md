@@ -26,6 +26,16 @@ What kind of problems this plugin solves:
 * [Extracting sub elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
 * [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
+## Moving parts of project
+
+```helm-wrapper``` - It is not a part of Helm project itself. It is just simple wrapper in shell that run helm bellow but wrapping secrets decryption and cleaning on-the-fly, before and after Helm run. Created from install-binary.sh in helm-secrets plugin install process as hook action making symlink to wrapper.sh. This should be used as default command to operate with Helm client with helm-secrets installed.
+
+```test.sh``` - Test script to check if all parts of plugin works. Using example dir with vars structure and pgp keys to make real tests on real data with real encryption/decryption.
+
+```install-binary.sh``` - Script used as hook to install helm-wrapper, download and install sops and install git diff configuration for helm-secret files.
+
+```secrets.sh``` - Main helm-secrets plugin code for all helm-secrets plugin actions available in ```helm secrets help``` after plugin install
+
 ## Install
 
 #### SOPS install
