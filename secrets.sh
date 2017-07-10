@@ -127,12 +127,14 @@ esac
 }
 
 vars_load() {
-  export templates_dir="${chart}"
+  export templates_dir="$(dirname ${chart})"
   if [[ -f "${templates_dir}/templates/secrets.yaml" ]]; then
     export yml="${templates_dir}/templates/secrets.yaml"
   elif [[ -f "${templates_dir}/secrets.yml" ]]; then
     echo "WARNING for ${chart}: secrets.yml should be renamed to secrets.yaml"
     export yml="${templates_dir}/secrets.yml"
+  elif [[ -f "${templates_dir}/secrets.yaml" ]]; then
+    export yml="${templates_dir}/secrets.yaml"
   # load defined file in dir
   elif [[ -f "${templates_dir}" ]]; then
     export yml="${templates_dir}"
