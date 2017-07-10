@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -ueo pipefail
 
 usage() {
 cat << EOF
@@ -161,7 +161,7 @@ get_md5() {
 }
 
 encrypt_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   count_match=0
   matched_dir=""
@@ -170,7 +170,7 @@ encrypt_helper() {
     if [ "$(echo "$yml" | grep -F "$sops_config_path")" ];
          then
             matched_dir=$sops_config_path
-            (( count_match++ ))
+            (( ++count_match ))
     fi
   done < <(find . -type f -name ".sops.yaml" -exec dirname {} \; | sed -e 's/\.\///g')
   SOPS_CONF_PATH="$matched_dir/${SOPS_CONF_FILE}"
@@ -205,7 +205,7 @@ enc() {
 }
 
 decrypt_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   sops -d "$yml" > "${yml}${DEC_SUFFIX}"
 }
@@ -267,13 +267,13 @@ clean() {
 }
 
 view_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   sops -d "$yml"
 }
 
 edit_helper() {
-  file "$yml" > /dev/null || (echo "File not exist" && exit 1)
+  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   exec_edit "${yml}${DEC_SUFFIX}"
 }
