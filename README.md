@@ -71,12 +71,16 @@ curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
 ```
 
 #### Helm-wrapper configuration
-By default helm-wrapper is configured to not encrypt/decrypt secrets.yaml in charts templates.
-Set your own options as ENV variables if you like:
+By default helm-wrapper is configured to use KMS profiles and do not encrypt/decrypt secrets.yaml in charts templates.
+Set you own options as ENV variables if you like overwrite default kms enabled and decrypt charts disabled.
 ```
 DECRYPT_CHARTS=false helm-wrapper ....
 ```
-If you'd like to use it in a different way just change this line.
+or/and
+```
+KMS_USE=true helm-wrapper ....
+```
+If you like to use it in different way just change this lines.
 
 ## Usage and examples
 
@@ -93,7 +97,62 @@ $ helm secrets help
 ```
 Any of this command have its own help
 
-## Use case
+## Use case and workflow
+
+#### Usage examples
+
+##### Decrypt
+```
+$ helm secrets dec example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+Decrypting example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+```
+As the output you will get example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml.dec with decrypted secrets inside
+```
+secret_production_projectx: secret_foo_123
+```
+##### Encrypt
+Decrypt
+```
+$ helm secrets dec example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+Decrypting example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+```
+Now encrypt
+```
+$ helm secrets enc example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+Encrypting example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+Encrypted example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+```
+##### View
+With this option you will get decrypted file on stdout
+```
+$ helm secrets view example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+secret_production_projectx: secret_foo_123
+```
+##### Edit
+Currently will open vim with decrypted data from secret and on save will encrypt file with new edited data. If you quit without any modification no changes will be saved.
+```
+$ helm secrets edit example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml
+```
+There is new feature in SOPS master that allows using $EDITOR to spcify editor used by sops but not released yet.
+
+##### Clean
+
+Now clean dec file after manual decrypt
+```
+$ helm secrets clean example/helm_vars/projectX/production/us-east-1/java-app/
+example/helm_vars/projectX/production/us-east-1/java-app/secrets.yaml.dec
+```
+If you use git there is commit hook that prevents commiting decrypted files and youo can add all *.dec files in you charts project ```.gitignore``` file.
+
+#### Summary
+
+* Values/Secrets data are not a part of chart. You need to manage your values, public charts contains mostly defaults without secrets - data vs code
+* To use helm-secrets plugin you should build your ```.sops.yaml``` rules to make everythink automatic
+* Use helm secrets <enc|dec|view|edit> to everyday work with you secret yaml files
+* Use version control systems like GIT to work in teams and get history of versions
+* Everyday search keys is simple even with encrypted files or decrypt on-the-fly with git diff config included
+* With example helm_vars you can manage multiple world locations with multiple projects that contains multiple environment
+* With helm-wrapper you can easily run helm install/upgrade/rollback with secrets files included as ```-f``` option from you helm_vars values dir tree.
 
 We use vars for Helm Charts from separate directory tree with structure like this:
 ```
@@ -153,6 +212,62 @@ Multiple KMS and PGP are allowed.
 
 Everything is described in SOPS docs - links in this project description.
 
+## Helm Wrapper
+
+Running helm to install/upgrade chart with our secret files is simple with helm-wrapper which will decrypt on-the-fly and use decrypted secret files specified by us.
+Real example of helm-wrapper usage with simple java helloworld application.
+```
+AWS_PROFILE=production helm-secrets upgrade --install --timeout 600 --wait helloworld stable/java-app --kube-context=production --namespace=projectx --set global.app_version=bff8fc4 -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/values.yaml -f helm_vars/secrets.yaml -f helm_vars/values.yaml
+>>>>>> Decrypt
+Decrypting helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml
+>>>>>> Decrypt
+Decrypting helm_vars/secrets.yaml
+
+Release "helloworld" has been upgraded. Happy Helming!
+LAST DEPLOYED: Fri May  5 13:27:01 2017
+NAMESPACE: projectx
+STATUS: DEPLOYED
+
+RESOURCES:
+==> extensions/v1beta1/Deployment
+NAME        DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE
+helloworld  3        3        3           2          1h
+
+==> v1/Secret
+NAME        TYPE    DATA  AGE
+helloworld  Opaque  10    1h
+
+==> v1/ConfigMap
+NAME        DATA  AGE
+helloworld  2     1h
+
+==> v1/Service
+NAME        CLUSTER-IP      EXTERNAL-IP  PORT(S)   AGE
+helloworld  100.65.221.245  <none>       8080/TCP  1h
+
+NOTES:
+Deploy success helloworld-bff8fc4 in namespace projectx
+
+>>>>>> Cleanup
+helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml.dec
+helm_vars/secrets.yaml.dec
+```
+You can see that we use global secret file and specific for this app in this project/env/region secret. We use some plain value files next to secrets. We use values from secrets in some secrets template in helloworld application chart template and some values are used in configmap template in same chart. Some values are added as env variables in deployment manifest templates in chart. As you can see we can use secrets and values in helm in many ways. Everything depends of use case.
+
+Even when helm failed then decrypted files are cleaned
+```
+AWS_PROFILE=production helm-wrapper upgrade --install --timeout 600 --wait helloworld stable/java-app --kube-context=wrongcontext --namespace=projectx --set global.app_version=bff8fc4 -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/values.yaml -f helm_vars/secrets.yaml -f helm_vars/values.yaml
+>>>>>> Decrypt
+Decrypting helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml
+>>>>>> Decrypt
+Decrypting helm_vars/secrets.yaml
+
+Error: could not get kubernetes config for context 'wrongcontext': context "wrongcontext" does not exist
+
+>>>>>> Cleanup
+helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml.dec
+helm_vars/secrets.yaml.dec
+```
 ## Tips
 
 #### Prevent committing decrypted files to git
