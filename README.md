@@ -9,8 +9,17 @@
 
 Developed and used in all environments in [BaseCRM](https://getbase.com/).
 
-A first internal version of the plugin used pure PGP and the whole secret file was encrypted as one.
+# how we use it ?
 
+We store secrets and values in ```helm_vars``` dir structure just like in this repository example dir. All this data versioned in GIT.
+Working in teams on multiple projects/regions/envs and multiple secrets files at once.
+We have Makefile in our Helm charts repo to simplify install helm-secrets plugin with helm and other stuff we use. Same Makefile used to rebuild all helm charts with dependencies and some other everyday helpers.
+Encrypting, Decrypting, Editing secrets on local clones, making #PR's and storing this in our helm charts repo encrypted with PGP and AWS KMS.
+Deploying using helm-wrapper from local or from CI with same charts and secrets/values from GIT repository.
+
+# Main features
+
+A first internal version of the plugin used pure PGP and the whole secret file was encrypted as one.
 A current version of the plugin using Golang sops as backend which could be integrated in future into Helm itself, but currently, it is only shell wrapper.
 
 What kind of problems this plugin solves:
@@ -261,6 +270,42 @@ Error: could not get kubernetes config for context 'wrongcontext': context "wron
 >>>>>> Cleanup
 helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml.dec
 helm_vars/secrets.yaml.dec
+```
+#### Using secret values in Helm chart secrets template
+
+We just need to create Kubenetes secrets template in chart templates dir.
+For example in your charts repo you have ```stable/helloworld/``` inside this chart you should have ```stable/helloworld/templates/``` dir and then creating ```stable/helloworld/templates/secrets.yaml``` file with content as specified bellow.
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: helloworld
+  labels:
+    app: helloworld
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+type: Opaque
+data:
+  my_secret_key: {{ .Values.secret_sandbox_helloworld | b64enc | quote }}
+```
+In this example you will have Kubernetes secret created with name helloworld and data inside this secret will be filled from values defined in ```-f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml```. Then we use plain ```.Values ``` pointing to key ```secret_sandbox_helloworld``` in decrypted secret file and value from this decrypted ```helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml``` will be available as ```my_secret_key``` in Kubernetes.
+
+You can now call it in your deployment (or any other supporting secretKeyRef) manifest in env section like this:
+```
+apiVersion: extensions/v1beta1
+kind: Deployment
+...
+...
+        containers:
+        ...
+        ...
+          env:
+            - name: my_new_secret_key
+              valueFrom:
+                secretKeyRef:
+                  name: helloworld
+                  key: my_secret_key
 ```
 ## Tips
 
