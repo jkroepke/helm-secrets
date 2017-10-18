@@ -44,7 +44,7 @@ else
             brew install sops
     elif [ "$(uname)" == "Linux" ];
     then
-        if [ "${LINUX_DISTRO}" == "Ubuntu" ];
+        if which dpkg;
         then
             curl "${SOPS_DEB_URL}" > /tmp/sops.deb
             if [ "$(/usr/bin/shasum -a 256 /tmp/sops.deb | cut -d ' ' -f 1)" == "${SOPS_DEB_SHA}" ];
@@ -53,6 +53,8 @@ else
             else
                 echo -e "${RED}Wrong SHA256${NOC}"
             fi
+        else
+            echo -e "${RED}Sorry only installation via dpkg (aka Debian distros) is currently supported${NOC}"
         fi
     else
         echo -e "${RED}No SOPS package available${NOC}"
