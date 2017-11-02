@@ -2,9 +2,9 @@
 
 set -ueo pipefail
 
-SOPS_VERSION="2.0.9"
-SOPS_DEB_URL="https://go.mozilla.org/sops/dist/sops_${SOPS_VERSION}_amd64.deb"
-SOPS_DEB_SHA="444c689ebab45150e751465be392bfbacf1e319fdc7e98db979e5dbf675038b4"
+SOPS_VERSION="3.0.0"
+SOPS_DEB_URL="https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb"
+SOPS_DEB_SHA="e36760cbbe800d305818acb1f3c7d63e418d84b7a58d4c9d39d0c3de34868d91"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
