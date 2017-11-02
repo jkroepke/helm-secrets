@@ -4,7 +4,7 @@ set -ueo pipefail
 
 SOPS_VERSION="2.0.9"
 SOPS_DEB_URL="https://go.mozilla.org/sops/dist/sops_${SOPS_VERSION}_amd64.deb"
-SOPS_DEB_SHA="fdc3559d6f16a54ec1d54d4a0aa1d7a3d273207ec78a37f9869dd2a1b32f5292"
+SOPS_DEB_SHA="444c689ebab45150e751465be392bfbacf1e319fdc7e98db979e5dbf675038b4"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -44,7 +44,7 @@ else
             brew install sops
     elif [ "$(uname)" == "Linux" ];
     then
-        if [ "${LINUX_DISTRO}" == "Ubuntu" ];
+        if which dpkg;
         then
             curl "${SOPS_DEB_URL}" > /tmp/sops.deb
             if [ "$(/usr/bin/shasum -a 256 /tmp/sops.deb | cut -d ' ' -f 1)" == "${SOPS_DEB_SHA}" ];
@@ -53,6 +53,8 @@ else
             else
                 echo -e "${RED}Wrong SHA256${NOC}"
             fi
+        else
+            echo -e "${RED}Sorry only installation via dpkg (aka Debian distros) is currently supported${NOC}"
         fi
     else
         echo -e "${RED}No SOPS package available${NOC}"
