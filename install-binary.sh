@@ -46,7 +46,7 @@ else
     then
         if which dpkg;
         then
-            curl "${SOPS_DEB_URL}" > /tmp/sops.deb
+            curl -L "${SOPS_DEB_URL}" > /tmp/sops.deb
             if [ "$(/usr/bin/shasum -a 256 /tmp/sops.deb | cut -d ' ' -f 1)" == "${SOPS_DEB_SHA}" ];
             then
                 sudo dpkg -i /tmp/sops.deb;
