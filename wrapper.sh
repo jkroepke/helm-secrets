@@ -2,6 +2,12 @@
 
 set -ueo pipefail
 
+# Redirect fds so that output to &3 is real stdout, and &1 goes to stderr
+# instead; this prevents accidentially intermixing with what helm sends to
+# stdout.
+exec 3>&1
+exec 1>&2
+
 # colors
 RED='\033[0;31m'
 #GREEN='\033[0;32m'
@@ -70,7 +76,7 @@ decrypt_helm_vars() {
 
 function cleanup {
   case "${CURRENT_COMMAND}" in
-    install|upgrade|rollback)
+    install|upgrade|rollback|template)
       echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
       for file in "${@}";
       do
@@ -84,7 +90,7 @@ function cleanup {
 
 function helm_cmd {
     echo ""
-    $(echo "${HELM_CMD} $*" | sed -e 's/secrets.yaml/secrets.yaml.dec/g')
+    $(echo "${HELM_CMD} $*" | sed -e 's/secrets.yaml/secrets.yaml.dec/g') >&3
     local status=$?
     if [ "$status" -ne 0 ]; then
         echo ""
@@ -98,7 +104,7 @@ function helm_cmd {
 }
 
 case "${CURRENT_COMMAND}" in
-    install|upgrade|rollback)
+    install|upgrade|rollback|template)
         for file in "$@"
           do
              decrypt_helm_vars "$file"
