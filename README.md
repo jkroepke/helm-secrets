@@ -104,6 +104,8 @@ Any of this command have its own help
 
 #### Usage examples
 
+Note: You need to run `gpg --import example/pgp/project{x,y}.asc` in order to successfully decrypt secrets included in the examples
+
 ##### Decrypt
 ```
 $ helm secrets dec example/helm_vars/projectX/sandbox/us-east-1/java-app/secrets.yaml
