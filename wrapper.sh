@@ -92,6 +92,15 @@ function helm_cmd {
     echo ""
     trap 'cleanup $@' INT TERM EXIT
     $(echo "${HELM_CMD} $*" | sed -e 's/secrets.yaml/secrets.yaml.dec/g') >&3
+    if [ "$status" -ne 0 ]; then
+        echo ""
+        cleanup "$@"
+        exit 1
+    else
+        echo ""
+        cleanup "$@"
+        exit 0
+    fi
 }
 
 case "${CURRENT_COMMAND}" in
