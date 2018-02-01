@@ -147,7 +147,7 @@ Now clean dec file after manual decrypt
 $ helm secrets clean example/helm_vars/projectX/sandbox/us-east-1/java-app/
 example/helm_vars/projectX/sandbox/us-east-1/java-app/secrets.yaml.dec
 ```
-If you use git there is commit hook that prevents commiting decrypted files and youo can add all *.dec files in you charts project ```.gitignore``` file.
+If you use git there is commit hook that prevents commiting decrypted files and you can add all *.dec files in you charts project ```.gitignore``` file.
 
 #### Summary
 
