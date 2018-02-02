@@ -147,7 +147,7 @@ Now clean dec file after manual decrypt
 $ helm secrets clean example/helm_vars/projectX/sandbox/us-east-1/java-app/
 example/helm_vars/projectX/sandbox/us-east-1/java-app/secrets.yaml.dec
 ```
-If you use git there is commit hook that prevents commiting decrypted files and youo can add all *.dec files in you charts project ```.gitignore``` file.
+If you use git there is commit hook that prevents commiting decrypted files and you can add all *.dec files in you charts project ```.gitignore``` file.
 
 #### Summary
 
@@ -225,7 +225,20 @@ Everything is described in SOPS docs - links in this project description.
 Running helm to install/upgrade chart with our secret files is simple with helm-wrapper which will decrypt on-the-fly and use decrypted secret files specified by us.
 Real example of helm-wrapper usage with simple java helloworld application.
 ```
-AWS_PROFILE=sandbox helm-secrets upgrade --install --timeout 600 --wait helloworld stable/java-app --kube-context=sandbox --namespace=projectx --set global.app_version=bff8fc4 -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/values.yaml -f helm_vars/secrets.yaml -f helm_vars/values.yaml
+AWS_PROFILE=sandbox helm-wrapper upgrade \
+  helloworld \
+  stable/java-app \
+  --install \
+  --timeout 600 \
+  --wait \
+  --kube-context=sandbox \
+  --namespace=projectx \
+  --set global.app_version=bff8fc4 \
+  -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml \
+  -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/values.yaml \
+  -f helm_vars/secrets.yaml \
+  -f helm_vars/values.yaml
+
 >>>>>> Decrypt
 Decrypting helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml
 >>>>>> Decrypt
@@ -264,7 +277,20 @@ You can see that we use global secret file and specific for this app in this pro
 
 Even when helm failed then decrypted files are cleaned
 ```
-AWS_PROFILE=sandbox helm-wrapper upgrade --install --timeout 600 --wait helloworld stable/java-app --kube-context=wrongcontext --namespace=projectx --set global.app_version=bff8fc4 -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/values.yaml -f helm_vars/secrets.yaml -f helm_vars/values.yaml
+AWS_PROFILE=sandbox helm-wrapper upgrade \
+  helloworld \
+  stable/java-app \
+  --install \
+  --timeout 600 \
+  --wait \
+  --kube-context=wrongcontext \
+  --namespace=projectx \
+  --set global.app_version=bff8fc4 \
+  -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml \
+  -f helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/values.yaml \
+  -f helm_vars/secrets.yaml \
+  -f helm_vars/values.yaml
+
 >>>>>> Decrypt
 Decrypting helm_vars/projectx/sandbox/us-east-1/java-app/helloworld/secrets.yaml
 >>>>>> Decrypt
