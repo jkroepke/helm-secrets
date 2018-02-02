@@ -14,7 +14,7 @@ Developed and used in all environments in [BaseCRM](https://getbase.com/).
 We store secrets and values in ```helm_vars``` dir structure just like in this repository example dir. All this data versioned in GIT.
 Working in teams on multiple projects/regions/envs and multiple secrets files at once.
 We have Makefile in our Helm charts repo to simplify install helm-secrets plugin with helm and other stuff we use. Same Makefile used to rebuild all helm charts with dependencies and some other everyday helpers.
-Encrypting, Decrypting, Editing secrets on local clones, making #PR's and storing this in our helm charts repo encrypted with PGP and AWS KMS.
+Encrypting, Decrypting, Editing secrets on local clones, making #PR's and storing this in our helm charts repo encrypted with PGP, AWS KMS and GCP KMS.
 Deploying using helm-wrapper from local or from CI with same charts and secrets/values from GIT repository.
 
 # Main features
@@ -28,7 +28,7 @@ What kind of problems this plugin solves:
 * [Encryption per value where visual Diff should work even on encrypted files](https://github.com/mozilla/sops/blob/master/example.yaml)
 * [On the fly decryption for git diff](https://github.com/mozilla/sops#showing-diffs-in-cleartext-in-git)
 * On the fly decryption and cleanup for helm install/upgrade with this plugin helm bash command wrapper
-* [Multiple key management solutions like PGP and AWS KMS at same time](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
+* [Multiple key management solutions like PGP, AWS KMS and GCP KMS at same time](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
 * [Simple adding/removing keys](https://github.com/mozilla/sops#adding-and-removing-keys)
 * [With AWS KMS permissions management for keys](https://aws.amazon.com/kms/)
 * [Secrets files directory tree separation with recursive .sops.yaml files search](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
@@ -207,6 +207,9 @@ As we use simple -f option when running helm-wrapper we can just use encrypted s
 creation_rules:
         # Encrypt with AWS KMS
         - kms: 'arn:aws:kms:us-east-1:222222222222:key/111b1c11-1c11-1fd1-aa11-a1c1a1sa1dsl1+arn:aws:iam::222222222222:role/helm_secrets'
+
+        # Encrypt using GCP KMS
+        - gcp_kms: projects/mygcproject/locations/global/keyRings/mykeyring/cryptoKeys/thekey
 
         # As failover encrypt with PGP
           pgp: '000111122223333444AAAADDDDFFFFGGGG000999'
