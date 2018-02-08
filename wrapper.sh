@@ -50,7 +50,7 @@ decrypt_chart() {
           then
             "$HELM_CMD" secrets dec-deps "$chart"
           fi
-          if [ ! "$DECRYPT_CHARTS" = true ];
+          if [ ! "$BUILD_DEPS_AND_PACKAGE" = true ];
           then
             echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Dependencies build and package${NOC}"
             "$HELM_CMD" dep build "$chart" && "$HELM_CMD" package "$chart"
