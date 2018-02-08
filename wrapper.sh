@@ -17,6 +17,7 @@ NOC='\033[0m'
 
 # set your own options
 : ${DECRYPT_CHARTS:=false}
+: ${BUILD_DEPS_AND_PACKAGE:=true}
 
 MATCH_ARGS="[-.*]"
 MATCH_FILES_ARGS=".*secrets.y*"
@@ -49,8 +50,11 @@ decrypt_chart() {
           then
             "$HELM_CMD" secrets dec-deps "$chart"
           fi
-          echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Dependencies build and package${NOC}"
-          "$HELM_CMD" dep build "$chart" && "$HELM_CMD" package "$chart"
+          if [ ! "$DECRYPT_CHARTS" = true ];
+          then
+            echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Dependencies build and package${NOC}"
+            "$HELM_CMD" dep build "$chart" && "$HELM_CMD" package "$chart"
+          fi
           (( ++COUNT_CHART ))
       else
           (( ++COUNT_CHART_FAILED ))
