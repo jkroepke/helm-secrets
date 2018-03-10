@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -ueo pipefail
+shopt -s extglob
 
 # Redirect fds so that output to &3 is real stdout, and &1 goes to stderr
 # instead; this prevents accidentially intermixing with what helm sends to
@@ -14,6 +15,9 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NOC='\033[0m'
+
+# constants
+SUPPORTED_COMMANDS="@(install|upgrade|rollback|template|diff|lint)"
 
 # set your own options
 : ${DECRYPT_CHARTS:=false}
@@ -80,7 +84,7 @@ decrypt_helm_vars() {
 
 function cleanup {
   case "${CURRENT_COMMAND}" in
-    install|upgrade|rollback|template)
+    $SUPPORTED_COMMANDS)
       echo -e "${YELLOW}>>>>>>${NOC} ${BLUE}Cleanup${NOC}"
       for file in "${@}";
       do
@@ -109,7 +113,7 @@ function helm_cmd {
 }
 
 case "${CURRENT_COMMAND}" in
-    install|upgrade|rollback|template)
+    $SUPPORTED_COMMANDS)
         for file in "$@"
           do
              decrypt_helm_vars "$file"
