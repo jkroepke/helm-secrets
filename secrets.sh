@@ -290,10 +290,6 @@ view() {
 }
 
 edit() {
-  if ! type "vim" > /dev/null; then
-    echo "Command like 'vim' must be installed to edit before re-encrypt"
-    exit 1
-  fi
   chart=$1
   vars_load "$chart"
   edit_helper
