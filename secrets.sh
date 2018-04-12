@@ -15,7 +15,6 @@ To decrypt/encrypt/edit you need to initialize/first encrypt secrets with sops -
 Available Commands:
   enc    	Encrypt chart secrets file
   dec    	Decrypt chart secrets file
-  dec-deps    	Decrypt chart's dependencies' secrets files (optional)
   clean         Clean all Decrypted files in specified directory
   view   	Print chart secrets decrypted
   edit   	Edit chart secrets and encrypt at the end
@@ -25,7 +24,7 @@ EOF
 
 edit_usage() {
 cat << EOF
-Edit encrypted Chart secrets.yaml
+Edit encrypted secrets
 
 Decrypt encrypted file, edit and then encrypt
 
@@ -43,10 +42,9 @@ EOF
 
 enc_usage() {
 cat << EOF
-Encrypt Chart secrets.yaml
+Encrypt secrets
 
-It uses your gpg credentials to encrypt secrets.yaml file
-in your chart templates directory.
+It uses your gpg credentials to encrypt .yaml file.
 
 You can use plain sops to encrypt - https://github.com/mozilla/sops
 
@@ -61,11 +59,10 @@ EOF
 
 dec_usage() {
 cat << EOF
-Decrypt Chart secrets.yaml
+Decrypt secrets
 
-It uses your gpg credentials to decrypt previously encrypted secrets.yaml file
-in your chart templates directory. Produce secrets.yaml.dec file which if exist
-is used to encrypt to secrets.yaml.
+It uses your gpg credentials to decrypt previously encrypted .yaml file.
+Produces .yaml.dec file.
 
 You can use plain sops to decrypt specific files - https://github.com/mozilla/sops
 
@@ -83,21 +80,11 @@ clean_usage() {
 cat << EOF
 Clean all decrypted files if any exist
 
-It cleans all decrypted secrets.yaml.dec files in your chart
-templates directory if they exist
+It cleans all decrypted *.yaml.dec files in the specified directory
+(recursively) if they exist
 
 Example:
   $ helm secrets clean <dir with secrets>
-
-EOF
-}
-
-dec_deps_usage() {
-cat << EOF
-Decrypt secrets.yaml files in Chart's dependencies. (optional and not suggested)
-
-Example:
-  $ helm secrets dec-deps <CHART>
 
 EOF
 }
@@ -126,24 +113,9 @@ is_help() {
 esac
 }
 
-vars_load() {
-  export SEC_FILE="secrets.yaml"
-  export templates_dir="$(dirname ${chart})"
-  if [[ -f "${templates_dir}/templates/${SEC_FILE}" ]]; then
-    export yml="${templates_dir}/templates/${SEC_FILE}"
-  elif [[ -f "${templates_dir}/secrets.yml" ]]; then
-    export yml="${templates_dir}/secrets.yml"
-  elif [[ -f "${templates_dir}/${SEC_FILE}" ]]; then
-    export yml="${templates_dir}/${SEC_FILE}"
-  # load defined file in dir
-  #elif [[ -d "${templates_dir}" ]]; then
-  #  export yml="${templates_dir}/${SEC_FILE}"
-  fi
-}
-
 sops_config() {
   #HELM_HOME=$(helm home)
-  DEC_SUFFIX=".dec"
+  DEC_SUFFIX=".dec.yaml"
   SOPS_CONF_FILE=".sops.yaml"
 }
 
@@ -161,35 +133,30 @@ get_md5() {
 }
 
 encrypt_helper() {
-  [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
-  sops_config
-  count_match=0
-  matched_dir=""
-  while read sops_config_path;
-  do
-    if [ "$(echo "$yml" | grep -F "$sops_config_path")" ];
-         then
-            matched_dir=$sops_config_path
-            (( ++count_match ))
+    local dir=$(dirname "$1")
+    local yml=$(basename "$1")
+    cd "$dir"
+    [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
+    sops_config
+    local ymldec=$(sed -e "s/\\.yaml$/${DEC_SUFFIX}/" <<<"$yml")
+    if [[ ! -e $ymldec ]]
+    then
+	ymldec="$yml"
     fi
-  done < <(find . -type f -name ".sops.yaml" -exec dirname {} \; | sed -e 's/\.\///g')
-  SOPS_CONF_PATH="$matched_dir/${SOPS_CONF_FILE}"
-  if [ -f "${SOPS_CONF_PATH}" ];
-   then
-       if [ "$(grep -C10000 'sops:' "$yml" | grep -c 'version:')" -gt 0 ];
-       then
-          echo "Already Encrypted."
-          return
-      fi
-          sops --config "${SOPS_CONF_PATH}" -e -i "$yml"
-          echo "Encrypted $yml"
-          return
-  fi
-  if [ "$count_match" -eq 0 ];
-   then
-       echo "Could not encrypt $yml. No .sops.yaml config file found."
-       exit 1
-  fi
+  
+    if [ "$(grep -C10000 'sops:' "$ymldec" | grep -c 'version:')" -gt 0 ];
+    then
+	echo "Already Encrypted."
+	return
+    fi
+    if [[ $yml == $ymldec ]]
+    then
+	sops -e -i "$yml"
+	echo "Encrypted $yml"
+    else
+	sops -e "$ymldec" > "$yml"
+	echo "Encrypted $ymldec to $yml"
+    fi
 }
 
 enc() {
@@ -197,17 +164,21 @@ enc() {
     enc_usage
     return
   fi
-  chart=$1
-  yml=""
-  vars_load "$chart"
-  echo "Encrypting $chart"
-  encrypt_helper "$yml"
+  yml="$1"
+  if [[ ! -f "$yml" ]]; then
+    echo "$yml doesn't exist."
+  else
+    echo "Encrypting $yml"
+    encrypt_helper "$yml"
+  fi
 }
 
 decrypt_helper() {
+  local yml="$1"
   [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
-  sops -d "$yml" > "${yml}${DEC_SUFFIX}"
+  local ymldec=$(sed -e "s/\\.yaml$/${DEC_SUFFIX}/" <<<"$yml")
+  sops -d "$yml" > "$ymldec"
 }
 
 dec() {
@@ -215,35 +186,19 @@ dec() {
     dec_usage
     return
   fi
-  chart=$1
-  yml=""
-  vars_load "$chart"
-  if [[ -z "$yml" ]]; then
-    echo "$chart doesn't have secrets.yaml file."
+  yml="$1"
+  if [[ ! -f "$yml" ]]; then
+    echo "$yml doesn't exist."
   else
-    echo "Decrypting $chart"
+    echo "Decrypting $yml"
     decrypt_helper "$yml"
   fi
 }
 
-dec_deps() {
-  if is_help "$1" ; then
-    dec_deps_usage
-    return
-  fi
-  chart=$1
-  chart_path="${chart%/*}"
-  echo "Decrypting ${chart}'s dependencies."
-  deps=$(helm dep list "$chart" | awk 'NR>=2 { print $1 }' | xargs)
-  yml=""
-  for dep in $deps
-  do
-    dec "${chart_path}/${dep}"
-  done
-}
-
-function exec_edit {
-    exec sops "${yml}" < /dev/tty
+exec_edit()
+{
+    local file="$1"
+    exec sops "${file}" < /dev/tty
 }
 
 clean() {
@@ -252,30 +207,30 @@ clean() {
     return
   fi
   sops_config
-  chart="$1"
-  vars_load "$chart"
-  basedir="$(dirname ${templates_dir})"
+  local basedir="$1"
   while read dec_file;
   do
   if [ -f "${dec_file}" ];
   then
-     rm -v  "${dec_file}"
+     rm -v "${dec_file}"
   else
      echo "Nothing to Clean"
   fi
-  done < <(find "${basedir}" -type f -name "*.yaml${DEC_SUFFIX}" )
+  done < <(find "${basedir}" -type f -name "*${DEC_SUFFIX}" )
 }
 
 view_helper() {
+  local yml="$1"
   [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
   sops -d "$yml"
 }
 
 edit_helper() {
+  local yml="$1"
   [[ -e "$yml" ]] || (echo "File not exist" && exit 1)
   sops_config
-  exec_edit "${yml}${DEC_SUFFIX}"
+  exec_edit "$yml"
 }
 
 view() {
@@ -283,16 +238,13 @@ view() {
     view_usage
     return
   fi
-  chart=$1
-  yml=""
-  vars_load "$chart"
-  view_helper
+  local yml="$1"
+  view_helper "$yml"
 }
 
 edit() {
-  chart=$1
-  vars_load "$chart"
-  edit_helper
+  local yml="$1"
+  edit_helper "$yml"
 }
 
 if [[ $# -lt 1 ]]; then
@@ -325,14 +277,6 @@ case "${1:-"help"}" in
       exit 1
     fi
     clean "$2"
-    ;;
-  "dec-deps"):
-    if [[ $# -lt 2 ]]; then
-      dec_deps_usage
-      echo "Error: Chart package required."
-      exit 1
-    fi
-    dec_deps "$2"
     ;;
   "view"):
     if [[ $# -lt 2 ]]; then
