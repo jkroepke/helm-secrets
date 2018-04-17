@@ -83,18 +83,3 @@ else
     echo -e "${RED}[FAIL]${NOC} Install git command"
     exit 1
 fi
-
-### Helm-secrets wrapper for helm command with auto decryption and cleanup on the fly
-echo ""
-echo -ne "${YELLOW}*${NOC} Helm-secrets wrapper for helm binary: "
-if [ -f "${HELM_PLUGIN_DIR}/wrapper.sh" ];
-then
-    ln -sf "${HELM_PLUGIN_DIR}/wrapper.sh" "${HELM_WRAPPER}"
-fi
-
-if [ -f ${HELM_WRAPPER} ];
-then
-    echo -e "${GREEN}${HELM_WRAPPER}${NOC}"
-else
-    echo -e "${RED}No ${HELM_WRAPPER} installed${NOC}"
-fi
