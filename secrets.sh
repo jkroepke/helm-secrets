@@ -34,6 +34,8 @@ Available Commands:
   install	wrapper that decrypts secrets[.*].yaml files before running helm install
   upgrade	wrapper that decrypts secrets[.*].yaml files before running helm upgrade
   lint		wrapper that decrypts secrets[.*].yaml files before running helm lint
+  diff		wrapper that decrypts secrets[.*].yaml files before running helm diff
+                  (diff is a helm plugin)
 
 EOF
 }
@@ -167,6 +169,23 @@ Example:
 
 Typical usage:
   $ helm secrets lint ./my-chart -f values.test.yaml -f secrets.test.yaml
+
+EOF
+}
+
+diff_usage() {
+    cat <<EOF
+Run helm diff on a chart
+
+"diff" is a helm plugin. This is a wrapper for the "helm diff" command. It
+will detect -f and --values options, and decrypt any secrets.*.yaml files
+before running "helm diff".
+
+Example:
+  $ helm secrets diff <HELM DIFF OPTIONS>
+
+Typical usage:
+  $ helm secrets diff upgrade i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
 
 EOF
 }
@@ -326,15 +345,22 @@ clean() {
 }
 
 helm_wrapper() {
-    local cmd="$1"
+    local cmd="$1" subcmd='' cmd_version=''
     shift
+    if [[ $cmd == diff ]]
+    then
+	subcmd="$1"
+	shift
+	cmd_version=$(helm diff version)
+    fi
 
     # cache options for the helm command in a file so we don't need to parse the help each time
     local helm_version=$(helm version --client --short)
-    local optfile="$HELM_PLUGIN_DIR/helm.${cmd}.options" options_version='' options='' longoptions=''
+    local cur_options_version="${helm_version}${cmd_version:+ $cmd: }${cmd_version}"
+    local optfile="$HELM_PLUGIN_DIR/helm.${cmd}${subcmd:+.}${subcmd}.options" options_version='' options='' longoptions=''
     [[ -f $optfile ]] && . "$optfile"
 
-    if [[ $helm_version != $options_version ]]
+    if [[ $cur_options_version != $options_version ]]
     then
 	local re='(-([a-zA-Z0-9]), )?--([-_a-zA-Z0-9]+)( ([a-zA-Z0-9]+))?' line
 	options='' longoptions=''
@@ -348,10 +374,10 @@ helm_wrapper() {
 		[[ $opt ]] && options+="${opt}${optarg}"
 		[[ $lopt ]] && longoptions+="${longoptions:+,}${lopt}${optarg}"
 	    fi
-	done <<<"$(helm "$cmd" --help | sed -e '1,/^Flags:/d')"
+	done <<<"$(helm "$cmd" $subcmd --help | sed -e '1,/^Flags:/d')"
 
 	cat >"$optfile" <<EOF
-options_version='$helm_version'
+options_version='$cur_options_version'
 options='$options'
 longoptions='$longoptions'
 EOF
@@ -360,7 +386,7 @@ EOF
     # parse command line
     local parsed # separate line, otherwise the return value of getopt is ignored
     # if parsing fails, getopt returns non-0, and the shell exits due to "set -e"
-    parsed=$(getopt --options="$options" --longoptions="$longoptions" --name="helm $cmd" -- "$@")
+    parsed=$(getopt --options="$options" --longoptions="$longoptions" --name="helm $cmd${subcmd:+ }$subcmd" -- "$@")
 
     # collect cmd options with optional option arguments
     local -a cmdopts=() decfiles=()
@@ -396,7 +422,7 @@ EOF
 
     # run helm command with args and opts in correct order
     set +e # ignore errors
-    helm "$cmd" "$@" "${cmdopts[@]}"
+    helm "$cmd" $subcmd "$@" "${cmdopts[@]}"
 
     # cleanup on-the-fly decrypted files
     [[ ${#decfiles[@]} -gt 0 ]] && rm -v "${decfiles[@]}"
@@ -459,7 +485,7 @@ case "${1:-help}" in
 	fi
 	clean "$2"
 	;;
-    install|upgrade|lint)
+    install|upgrade|lint|diff)
 	helm_command "$@"
 	;;
     --help|-h|help)
