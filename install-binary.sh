@@ -33,11 +33,6 @@ else
 
     # Try to install sops.
 
-    if [ "$(uname)" == "Linux" ];
-    then
-       LINUX_DISTRO="$(lsb_release -is)"
-    fi
-
     ### Mozilla SOPS binary install
     if [ "$(uname)" == "Darwin" ];
     then
