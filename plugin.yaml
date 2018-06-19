@@ -6,3 +6,4 @@ description: |-
 command: "$HELM_PLUGIN_DIR/secrets.sh"
 hooks:
   install: "$HELM_PLUGIN_DIR/install-binary.sh"
+  update: "$HELM_PLUGIN_DIR/install-binary.sh"
