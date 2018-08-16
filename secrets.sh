@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# The suffix to use for decrypted files. The default can be overridden using
+# the HELM_SECRETS_DEC_SUFFIX environment variable.
+DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.yaml.dec}"
+
 getopt --test > /dev/null
 if [[ $? -ne 4 ]]
 then
@@ -30,7 +34,7 @@ Available Commands:
   dec    	Decrypt secrets file
   view   	Print secrets decrypted
   edit   	Edit secrets file and encrypt afterwards
-  clean         Clean all Decrypted files in specified directory
+  clean         Remove all decrypted files in specified directory (recursively)
   install	wrapper that decrypts secrets[.*].yaml files before running helm install
   upgrade	wrapper that decrypts secrets[.*].yaml files before running helm upgrade
   lint		wrapper that decrypts secrets[.*].yaml files before running helm lint
@@ -45,7 +49,7 @@ enc_usage() {
 Encrypt secrets
 
 It uses your gpg credentials to encrypt .yaml file. If the file is already
-encrypted, look for a decrypted .dec.yaml file and encrypt that to .yaml.
+encrypted, look for a decrypted ${DEC_SUFFIX} file and encrypt that to .yaml.
 This allows you to first decrypt the file, edit it, then encrypt it again.
 
 You can use plain sops to encrypt - https://github.com/mozilla/sops
@@ -64,7 +68,7 @@ dec_usage() {
 Decrypt secrets
 
 It uses your gpg credentials to decrypt previously encrypted .yaml file.
-Produces .dec.yaml file.
+Produces ${DEC_SUFFIX} file.
 
 You can use plain sops to decrypt specific files - https://github.com/mozilla/sops
 
@@ -113,7 +117,7 @@ clean_usage() {
     cat <<EOF
 Clean all decrypted files if any exist
 
-It removes all decrypted .dec.yaml files in the specified directory
+It removes all decrypted ${DEC_SUFFIX} files in the specified directory
 (recursively) if they exist.
 
 Example:
@@ -201,18 +205,11 @@ is_help() {
     esac
 }
 
-sops_config() {
-    #HELM_HOME=$(helm home)
-    DEC_SUFFIX=".dec.yaml"
-    SOPS_CONF_FILE=".sops.yaml"
-}
-
 encrypt_helper() {
     local dir=$(dirname "$1")
     local yml=$(basename "$1")
     cd "$dir"
     [[ -e "$yml" ]] || { echo "File does not exist: $dir/$yml"; exit 1; }
-    sops_config
     local ymldec=$(sed -e "s/\\.yaml$/${DEC_SUFFIX}/" <<<"$yml")
     [[ -e $ymldec ]] || ymldec="$yml"
     
@@ -223,10 +220,10 @@ encrypt_helper() {
     fi
     if [[ $yml == $ymldec ]]
     then
-	sops -e -i "$yml"
+	sops --encrypt --input-type yaml --output-type yaml --in-place "$yml"
 	echo "Encrypted $yml"
     else
-	sops -e "$ymldec" > "$yml"
+	sops --encrypt --input-type yaml --output-type yaml "$ymldec" > "$yml"
 	echo "Encrypted $ymldec to $yml"
     fi
 }
@@ -269,13 +266,12 @@ decrypt_helper() {
 	echo "Not encrypted: $yml"
 	__ymldec="$yml"
     else
-	sops_config
 	__ymldec=$(sed -e "s/\\.yaml$/${DEC_SUFFIX}/" <<<"$yml")
 	if [[ -e $__ymldec && $__ymldec -nt $yml ]]
 	then
 	    echo "$__ymldec is newer than $yml"
 	else
-	    sops -d "$yml" > "$__ymldec" || { rm "$__ymldec"; exit 1; }
+	    sops --decrypt --input-type yaml --output-type yaml "$yml" > "$__ymldec" || { rm "$__ymldec"; exit 1; }
 	    __dec=1
 	fi
     fi
@@ -307,8 +303,7 @@ dec() {
 view_helper() {
     local yml="$1"
     [[ -e "$yml" ]] || { echo "File does not exist: $yml"; exit 1; }
-    sops_config
-    sops -d "$yml"
+    sops --decrypt --input-type yaml --output-type yaml "$yml"
 }
 
 view() {
@@ -324,8 +319,7 @@ view() {
 edit_helper() {
     local yml="$1"
     [[ -e "$yml" ]] || { echo "File does not exist: $yml"; exit 1; }
-    sops_config
-    exec sops "$yml" < /dev/tty
+    exec sops --input-type yaml --output-type yaml "$yml" < /dev/tty
 }
 
 edit() {
@@ -340,7 +334,6 @@ clean() {
 	return
     fi
     local basedir="$1"
-    sops_config
     find "$basedir" -type f -name "*${DEC_SUFFIX}" -print0 | xargs -r0 rm -v
 }
 
