@@ -4,6 +4,9 @@
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
 DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.yaml.dec}"
 
+# Make sure HELM_BIN is set (normally by the helm command)
+HELM_BIN="${HELM_BIN:-helm}"
+
 getopt --test > /dev/null
 if [[ $? -ne 4 ]]
 then
@@ -55,7 +58,7 @@ This allows you to first decrypt the file, edit it, then encrypt it again.
 You can use plain sops to encrypt - https://github.com/mozilla/sops
 
 Example:
-  $ helm secrets enc <SECRET_FILE_PATH>
+  $ ${HELM_BIN} secrets enc <SECRET_FILE_PATH>
   $ git add <SECRET_FILE_PATH>
   $ git commit
   $ git push
@@ -73,10 +76,10 @@ Produces ${DEC_SUFFIX} file.
 You can use plain sops to decrypt specific files - https://github.com/mozilla/sops
 
 Example:
-  $ helm secrets dec <SECRET_FILE_PATH>
+  $ ${HELM_BIN} secrets dec <SECRET_FILE_PATH>
 
 Typical usage:
-  $ helm secrets dec secrets/myproject/secrets.yaml
+  $ ${HELM_BIN} secrets dec secrets/myproject/secrets.yaml
   $ vim secrets/myproject/secrets.yaml.dec
 
 EOF
@@ -87,10 +90,10 @@ view_usage() {
 View specified secrets[.*].yaml file
 
 Example:
-  $ helm secrets view <SECRET_FILE_PATH>
+  $ ${HELM_BIN} secrets view <SECRET_FILE_PATH>
 
 Typical usage:
-  $ helm secrets view secrets/myproject/nginx/secrets.yaml | grep basic_auth
+  $ ${HELM_BIN} secrets view secrets/myproject/nginx/secrets.yaml | grep basic_auth
 
 EOF
 }
@@ -104,7 +107,7 @@ Decrypt encrypted file, edit and then encrypt
 You can use plain sops to edit - https://github.com/mozilla/sops
 
 Example:
-  $ helm secrets edit <SECRET_FILE_PATH>
+  $ ${HELM_BIN} secrets edit <SECRET_FILE_PATH>
   or $ sops <SECRET_FILE_PATH>
   $ git add <SECRET_FILE_PATH>
   $ git commit
@@ -121,7 +124,7 @@ It removes all decrypted ${DEC_SUFFIX} files in the specified directory
 (recursively) if they exist.
 
 Example:
-  $ helm secrets clean <dir with secrets>
+  $ ${HELM_BIN} secrets clean <dir with secrets>
 
 EOF
 }
@@ -135,10 +138,10 @@ This is a wrapper for the "helm install" command. It will detect -f and
 install".
 
 Example:
-  $ helm secrets install <HELM INSTALL OPTIONS>
+  $ ${HELM_BIN} secrets install <HELM INSTALL OPTIONS>
 
 Typical usage:
-  $ helm secrets install -n i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
+  $ ${HELM_BIN} secrets install -n i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
 
 EOF
 }
@@ -152,10 +155,10 @@ This is a wrapper for the "helm upgrade" command. It will detect -f and
 upgrade".
 
 Example:
-  $ helm secrets upgrade <HELM UPGRADE OPTIONS>
+  $ ${HELM_BIN} secrets upgrade <HELM UPGRADE OPTIONS>
 
 Typical usage:
-  $ helm secrets upgrade i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
+  $ ${HELM_BIN} secrets upgrade i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
 
 EOF
 }
@@ -169,10 +172,10 @@ This is a wrapper for the "helm lint" command. It will detect -f and
 lint".
 
 Example:
-  $ helm secrets lint <HELM LINT OPTIONS>
+  $ ${HELM_BIN} secrets lint <HELM LINT OPTIONS>
 
 Typical usage:
-  $ helm secrets lint ./my-chart -f values.test.yaml -f secrets.test.yaml
+  $ ${HELM_BIN} secrets lint ./my-chart -f values.test.yaml -f secrets.test.yaml
 
 EOF
 }
@@ -186,10 +189,10 @@ will detect -f and --values options, and decrypt any secrets.*.yaml files
 before running "helm diff".
 
 Example:
-  $ helm secrets diff <HELM DIFF OPTIONS>
+  $ ${HELM_BIN} secrets diff <HELM DIFF OPTIONS>
 
 Typical usage:
-  $ helm secrets diff upgrade i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
+  $ ${HELM_BIN} secrets diff upgrade i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
 
 EOF
 }
@@ -344,11 +347,11 @@ helm_wrapper() {
     then
 	subcmd="$1"
 	shift
-	cmd_version=$(helm diff version)
+	cmd_version=$(${HELM_BIN} diff version)
     fi
 
     # cache options for the helm command in a file so we don't need to parse the help each time
-    local helm_version=$(helm version --client --short)
+    local helm_version=$(${HELM_BIN} version --client --short)
     local cur_options_version="${helm_version}${cmd_version:+ $cmd: }${cmd_version}"
     local optfile="$HELM_PLUGIN_DIR/helm.${cmd}${subcmd:+.}${subcmd}.options" options_version='' options='' longoptions=''
     [[ -f $optfile ]] && . "$optfile"
@@ -367,7 +370,7 @@ helm_wrapper() {
 		[[ $opt ]] && options+="${opt}${optarg}"
 		[[ $lopt ]] && longoptions+="${longoptions:+,}${lopt}${optarg}"
 	    fi
-	done <<<"$(helm "$cmd" $subcmd --help | sed -e '1,/^Flags:/d')"
+	done <<<"$(${HELM_BIN} "$cmd" $subcmd --help | sed -e '1,/^Flags:/d')"
 
 	cat >"$optfile" <<EOF
 options_version='$cur_options_version'
@@ -379,7 +382,7 @@ EOF
     # parse command line
     local parsed # separate line, otherwise the return value of getopt is ignored
     # if parsing fails, getopt returns non-0, and the shell exits due to "set -e"
-    parsed=$(getopt --options="$options" --longoptions="$longoptions" --name="helm $cmd${subcmd:+ }$subcmd" -- "$@")
+    parsed=$(getopt --options="$options" --longoptions="$longoptions" --name="${HELM_BIN} $cmd${subcmd:+ }$subcmd" -- "$@")
 
     # collect cmd options with optional option arguments
     local -a cmdopts=() decfiles=()
@@ -415,7 +418,7 @@ EOF
 
     # run helm command with args and opts in correct order
     set +e # ignore errors
-    helm "$cmd" $subcmd "$@" "${cmdopts[@]}"
+    ${HELM_BIN} "$cmd" $subcmd "$@" "${cmdopts[@]}"
 
     # cleanup on-the-fly decrypted files
     [[ ${#decfiles[@]} -gt 0 ]] && rm -v "${decfiles[@]}"
