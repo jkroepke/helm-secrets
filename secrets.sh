@@ -337,7 +337,7 @@ clean() {
 	return
     fi
     local basedir="$1"
-    find "$basedir" -type f -name "*${DEC_SUFFIX}" -print0 | xargs -r0 rm -v
+    find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -print0 | xargs -r0 rm -v
 }
 
 helm_wrapper() {
@@ -399,7 +399,7 @@ EOF
             -f|--values)
 		cmdopts+=("$1")
 		yml="$2"
-		if [[ $yml =~ ^(.*/)?secrets(\.[^.]+)\.yaml$ ]]
+		if [[ $yml =~ ^(.*/)?secrets(\.[^.]+)*\.yaml$ ]]
 		then
 		    decrypt_helper $yml ymldec decrypted
 		    cmdopts+=("$ymldec")
@@ -427,7 +427,7 @@ EOF
 helm_command() {
     if [[ $# -lt 2 ]] || is_help "$2"
     then
-	eval "${1}_usage"
+	"${1}_usage"
 	return
     fi
     helm_wrapper "$@"
