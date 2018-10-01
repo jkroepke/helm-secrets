@@ -352,8 +352,8 @@ helm_wrapper() {
 
     # cache options for the helm command in a file so we don't need to parse the help each time
     local helm_version=$(${HELM_BIN} version --client --short)
-    local cur_options_version="${helm_version}${cmd_version:+ $cmd: }${cmd_version}"
-    local optfile="$HELM_PLUGIN_DIR/helm.${cmd}${subcmd:+.}${subcmd}.options" options_version='' options='' longoptions=''
+    local cur_options_version="${helm_version}${cmd_version:+ ${cmd}: ${cmd_version}}"
+    local optfile="$HELM_PLUGIN_DIR/helm.${cmd}${subcmd:+.$subcmd}.options" options_version='' options='' longoptions=''
     [[ -f $optfile ]] && . "$optfile"
 
     if [[ $cur_options_version != $options_version ]]
@@ -361,7 +361,7 @@ helm_wrapper() {
 	local re='(-([a-zA-Z0-9]), )?--([-_a-zA-Z0-9]+)( ([a-zA-Z0-9]+))?' line
 	options='' longoptions=''
 
-	# parse the helm options and option args from the help output
+	# parse the helm command options and option args from the help output
 	while read line
 	do
 	    if [[ $line =~ $re ]]
@@ -370,7 +370,7 @@ helm_wrapper() {
 		[[ $opt ]] && options+="${opt}${optarg}"
 		[[ $lopt ]] && longoptions+="${longoptions:+,}${lopt}${optarg}"
 	    fi
-	done <<<"$(${HELM_BIN} "$cmd" $subcmd --help | sed -e '1,/^Flags:/d')"
+	done <<<"$(${HELM_BIN} "$cmd" $subcmd --help | sed -e '1,/^Flags:/d' -e '/^Global Flags:/,$d' )"
 
 	cat >"$optfile" <<EOF
 options_version='$cur_options_version'
@@ -382,7 +382,7 @@ EOF
     # parse command line
     local parsed # separate line, otherwise the return value of getopt is ignored
     # if parsing fails, getopt returns non-0, and the shell exits due to "set -e"
-    parsed=$(getopt --options="$options" --longoptions="$longoptions" --name="${HELM_BIN} $cmd${subcmd:+ }$subcmd" -- "$@")
+    parsed=$(getopt --options="$options" --longoptions="$longoptions" --name="${HELM_BIN} $cmd${subcmd:+ ${subcmd}}" -- "$@")
 
     # collect cmd options with optional option arguments
     local -a cmdopts=() decfiles=()
