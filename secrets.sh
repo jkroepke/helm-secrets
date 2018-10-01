@@ -418,7 +418,7 @@ EOF
 
     # run helm command with args and opts in correct order
     set +e # ignore errors
-    ${HELM_BIN} "$cmd" $subcmd "$@" "${cmdopts[@]}"
+    ${HELM_BIN} ${TILLER_HOST:+--host "$TILLER_HOST" }"$cmd" $subcmd "$@" "${cmdopts[@]}"
 
     # cleanup on-the-fly decrypted files
     [[ ${#decfiles[@]} -gt 0 ]] && rm -v "${decfiles[@]}"
