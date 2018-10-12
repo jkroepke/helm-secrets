@@ -254,8 +254,9 @@ decrypt_helper() {
 
     if [[ ${BASH_VERSINFO[0]} -lt 4 ]]
     then
-	local __ymldec_var=$2
-	local __dec_var=$3
+	local __ymldec_var='' __dec_var=''
+	[[ $# -ge 2 ]] && __ymldec_var=$2
+	[[ $# -ge 3 ]] && __dec_var=$3
 	[[ $__dec_var ]] && eval $__dec_var=0
     else
 	[[ $# -ge 2 ]] && local -n __ymldec=$2
@@ -284,6 +285,7 @@ decrypt_helper() {
 	[[ $__ymldec_var ]] && eval $__ymldec_var="'$__ymldec'"
 	[[ $__dec_var ]] && eval $__dec_var="'$__dec'"
     fi
+    true # just so that decrypt_helper will exit with a true status on no error
 }
 
 
