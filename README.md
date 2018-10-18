@@ -338,7 +338,7 @@ kind: Deployment
                   name: helloworld
                   key: my_secret_key
 ```
-## Tips
+## Important Tips
 
 #### Prevent committing decrypted files to git
 If you like to secure situation when decrypted file is committed by mistake to git you can add your secrets.yaml.dec files to you charts project .gitignore
