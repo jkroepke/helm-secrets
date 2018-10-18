@@ -37,7 +37,7 @@ What kind of problems this plugin solves:
 
 ## Moving parts of project
 
-```helm-wrapper``` - It is not a part of Helm project itself. It is the just simple wrapper in the shell that runs helm bellow but wrapping secrets decryption and cleaning on-the-fly, before and after Helm run. Created from install-binary.sh in helm-secrets plugin install process as hook action making the symlink to wrapper.sh. This should be used as default command to operate with Helm client with helm-secrets installed.
+```helm-wrapper``` - It is not a part of Helm project itself. It is a just simple wrapper in the shell that runs helm within but wrapping secret decryption and cleaning on-the-fly, before and after Helm run. It is created from install-binary.sh in helm-secrets plugin install process as hook action making the symlink to wrapper.sh. This should be used as default command to operate with Helm client with helm-secrets installed.
 
 ```test.sh``` - Test script to check if all parts of the plugin work. Using example dir with vars structure and PGP keys to make real tests on real data with real encryption/decryption.
 
@@ -45,12 +45,12 @@ What kind of problems this plugin solves:
 
 ```secrets.sh``` - Main helm-secrets plugin code for all helm-secrets plugin actions available in ```helm secrets help``` after plugin install
 
-## Install
+## Installation and Dependencies
 
 #### SOPS install
-Just install plugin using ```helm plugin install https://github.com/futuresimple/helm-secrets``` and sops will be installed using hook when helm > 2.3.x
+Just install the plugin using ```helm plugin install https://github.com/futuresimple/helm-secrets``` and sops will be installed as part of it, using hook when helm > 2.3.x
 
-You can always install manually for MacOS:
+You can always install manually in MacOS as below:
 ```
 brew install sops
 ```
@@ -65,11 +65,12 @@ More info on [sops page](https://github.com/mozilla/sops#showing-diffs-in-cleart
 
 #### Using Helm plugin manager (> 2.3.x)
 
+As already described above,
 ```
-helm plugin install https://github.com/futuresimple/helm-secrets
+helm plugin install https://github.com/futuresimple/helm-secrets 
 ```
 
-#### Pre Helm 2.3.0 Installation
+#### For Pre Helm 2.3.0 Installation
 Get a release tarball from the [releases](https://github.com/futuresimple/helm-secrets/releases) page.
 
 Unpack the tarball in your helm plugins directory (```$(helm home)/plugins```).
@@ -78,12 +79,11 @@ For example:
 ```
 curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
 ```
-
 #### Helm-wrapper configuration
-By default helm-wrapper is not configured to encrypt/decrypt secrets.yaml in charts templates. They are templates and values from specific secrets/value files should e used in this templates as reference from helm itself.
-Set you own options as ENV variables if you like overwrite default kms enabled and decrypt charts disabled.
+By default, helm-wrapper is not configured to encrypt/decrypt secrets.yaml in charts templates. They are treated as templates and values from specific secrets/value files should be used in these templates as a reference from helm itself.
+Set you own options as ENV variables if you like to overwrite default kms enabled and decrypt charts disabled.
 ```
-DECRYPT_CHARTS=false helm-wrapper ....
+DECRYPT_CHARTS=false helm-wrapper...
 ```
 ## Usage and examples
 
@@ -98,7 +98,7 @@ $ helm secrets help
   view          Print chart secrets decrypted
   edit          Edit chart secrets and encrypt at the end
 ```
-Any of this command have its own help
+Any of this commands have its own help
 
 ## Use case and workflow
 
@@ -151,13 +151,13 @@ If you use git there is commit hook that prevents commiting decrypted files and 
 
 #### Summary
 
-* Values/Secrets data are not a part of the chart. You need to manage your values, public charts contains mostly defaults without secrets - data vs code
-* To use the helm-secrets plugin you should build your ```.sops.yaml``` rules to make everything automatic
-* Use helm secrets <enc|dec|view|edit> to everyday work with you secret yaml files
-* Use version control systems like GIT to work in teams and get history of versions
-* Everyday search keys is simple even with encrypted files or decrypt on-the-fly with git diff config included
-* With example helm_vars you can manage multiple world locations with multiple projects that contain multiple environments
-* With helm-wrapper you can easily run helm install/upgrade/rollback with secrets files included as ```-f``` option from you helm_vars values dir tree.
+* Values/Secrets data are not a part of the chart. You need to manage your values, public charts contains mostly defaults without secrets - data vs code.
+* To use the helm-secrets plugin you must build your ```.sops.yaml``` rules to make everything automatic.
+* Use helm secrets <enc|dec|view|edit> to everyday work with you secret yaml files.
+* Use version control systems like GIT to work with teams and get history of versions.
+* Everyday search keys is simple even with encrypted files or decrypt on-the-fly with git diff config included.
+* With example helm_vars you can manage multiple world locations with multiple projects that contain multiple environments.
+* With helm-wrapper you can easily run helm install/upgrade/rollback with secrets files included as ```-f``` option from your helm_vars values dir tree.
 
 We use vars for Helm Charts from separate directory tree with the structure like this:
 ```
@@ -198,7 +198,7 @@ helm_vars/
 ├── secrets.yaml
 └── values.yaml
 ```
-As you can see we can run different PGP or KMS keys per project, globally or per any tree level. Thanks to this we can isolate tree on different CI/CD instances using same GIT repository.
+As you can see you can run different PGP or KMS keys per project, globally or per any tree level. Thanks to this we can isolate tree on different CI/CD instances using same GIT repository.
 As we use simple -f option when running helm-wrapper we can just use encrypted secrets.yaml and all these secrets will be decrypted and cleaned on the fly before and after helm run.
 
 ```.sops.yaml``` file example
@@ -343,7 +343,7 @@ kind: Deployment
 #### Prevent committing decrypted files to git
 If you like to secure situation when decrypted file is committed by mistake to git you can add your secrets.yaml.dec files to you charts project .gitignore
 
-As the second level of securing this situation is to add for example ```.sopscommithook``` file inside your charts repository local commit hook.
+As the second level of securing for this situation,it is better to add for example ```.sopscommithook``` file inside your charts repository local commit hook.
 This will prevent committing decrypted files without sops metadata.
 
 ```.sopscommithook``` content example:
