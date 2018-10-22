@@ -123,10 +123,10 @@ test_encryption "${secret}"
 echo -e "${YELLOW}+++${NOC} Installing helm-secrets plugin"
 if [ "$(helm plugin list | tail -n +2 | cut -d ' ' -f 1 | grep -c "secrets")" -eq 1 ];
 then
-    echo -e "${GREEN}[OK]${NOC} helm-ecrets plugin installed"
+    echo -e "${GREEN}[OK]${NOC} helm-secrets plugin installed"
 else
     "${HELM_CMD}" plugin install "${SECRETS_REPO}" 2>/dev/null
-    echo -e "${RED}[FAIL]${NOC} No helm-secrets plugin aboting"
+    echo -e "${RED}[FAIL]${NOC} No helm-secrets plugin aborting"
     exit 1
 fi
 
