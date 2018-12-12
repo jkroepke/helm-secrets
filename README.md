@@ -52,7 +52,7 @@ You can always install manually for MacOS:
 ```
 brew install sops
 ```
-For Linux RPM or DEB, sops is available here: [Dist Packages](https://go.mozilla.org/sops/dist/)
+For Linux RPM or DEB, sops is available here: [Dist Packages](https://github.com/mozilla/sops/releases)
 
 #### SOPS git diff
 Git config part is installed with the plugin, but to be fully functional the following needs to be added to the ```.gitattributes``` file in the root directory of a charts repo:
