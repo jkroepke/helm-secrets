@@ -258,7 +258,7 @@ creation_rules:
         - gcp_kms: projects/mygcproject/locations/global/keyRings/mykeyring/cryptoKeys/thekey
 
         # As failover encrypt with PGP
-          pgp: '000111122223333444AAAADDDDFFFFGGGG000999'
+        - pgp: '000111122223333444AAAADDDDFFFFGGGG000999'
 
         # For more help look at https://github.com/mozilla/sops
 ```
