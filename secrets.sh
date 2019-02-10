@@ -39,6 +39,7 @@ Available Commands:
   edit   	Edit secrets file and encrypt afterwards
   clean         Remove all decrypted files in specified directory (recursively)
   install	wrapper that decrypts secrets[.*].yaml files before running helm install
+  template	wrapper that decrypts secrets[.*].yaml files before running helm template
   upgrade	wrapper that decrypts secrets[.*].yaml files before running helm upgrade
   lint		wrapper that decrypts secrets[.*].yaml files before running helm lint
   diff		wrapper that decrypts secrets[.*].yaml files before running helm diff
@@ -142,6 +143,23 @@ Example:
 
 Typical usage:
   $ ${HELM_BIN} secrets install -n i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
+
+EOF
+}
+
+template_usage() {
+    cat <<EOF
+Install a chart
+
+This is a wrapper for the "helm template" command. It will detect -f and
+--values options, and decrypt any secrets.*.yaml files before running "helm
+template".
+
+Example:
+  $ ${HELM_BIN} secrets template <HELM INSTALL OPTIONS>
+
+Typical usage:
+  $ ${HELM_BIN} secrets template -n i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
 
 EOF
 }
@@ -483,7 +501,7 @@ case "${1:-help}" in
 	fi
 	clean "$2"
 	;;
-    install|upgrade|lint|diff)
+    install|template|upgrade|lint|diff)
 	helm_command "$@"
 	;;
     --help|-h|help)
