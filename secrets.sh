@@ -10,13 +10,30 @@ HELM_BIN="${HELM_BIN:-helm}"
 getopt --test > /dev/null
 if [[ $? -ne 4 ]]
 then
-    cat <<EOF
+    # Check if gnu-getopt is installed
+    if [ -x /usr/local/opt/gnu-getopt/bin/getopt ]
+    then
+        /usr/local/opt/gnu-getopt/bin/getopt --test > /dev/null
+        if [[ $? -ne 4 ]]
+	then
+	    GNU_GETOPT=0
+	else
+	    GNU_GETOPT=1
+	    export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
+	fi
+    else
+    	GNU_GETOPT=0
+    fi
+    
+    if [ "${GNU_GETOPT}" -ne 1 ]; then
+    	cat <<EOF
 I’m sorry, "getopt --test" failed in this environment.
 
 You may need to install enhanced getopt, e.g. on OSX using
 "brew install gnu-getopt".
 EOF
-    exit 1
+    	exit 1
+    fi
 fi
 
 set -ueo pipefail
