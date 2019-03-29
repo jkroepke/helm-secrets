@@ -264,12 +264,12 @@ enc() {
     fi
 }
 
-# Name references ("declare -n" and "local -n") are a Bash 4 feature.
+# Name references ("declare -n" and "local -n") are a Bash 4.3+ feature.
 # For previous versions, work around using eval.
 decrypt_helper() {
     local yml="$1" __ymldec __dec
 
-    if [[ ${BASH_VERSINFO[0]} -lt 4 ]]
+    if [[ ${BASH_VERSINFO[0]} -lt 4 || ${BASH_VERSINFO[0]} -eq 4 && ${BASH_VERSINFO[1]} -lt 3 ]]
     then
 	local __ymldec_var='' __dec_var=''
 	[[ $# -ge 2 ]] && __ymldec_var=$2
@@ -297,7 +297,7 @@ decrypt_helper() {
 	fi
     fi
 
-    if [[ ${BASH_VERSINFO[0]} -lt 4 ]]
+    if [[ ${BASH_VERSINFO[0]} -lt 4 || ${BASH_VERSINFO[0]} -eq 4 && ${BASH_VERSINFO[1]} -lt 3 ]]
     then
 	[[ $__ymldec_var ]] && eval $__ymldec_var="'$__ymldec'"
 	[[ $__dec_var ]] && eval $__dec_var="'$__dec'"
