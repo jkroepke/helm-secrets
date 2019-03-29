@@ -106,6 +106,7 @@ Available Commands:
   edit          Edit secrets file and encrypt afterwards
   clean         Remove all decrypted files in specified directory (recursively)
   install       wrapper that decrypts secrets[.*].yaml files before running helm install
+  template	    wrapper that decrypts secrets[.*].yaml files before running helm template
   upgrade       wrapper that decrypts secrets[.*].yaml files before running helm upgrade
   lint          wrapper that decrypts secrets[.*].yaml files before running helm lint
   diff          wrapper that decrypts secrets[.*].yaml files before running helm diff
