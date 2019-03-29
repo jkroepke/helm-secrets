@@ -438,7 +438,7 @@ EOF
     # run helm command with args and opts in correct order
     set +e # ignore errors
     ${HELM_BIN} ${TILLER_HOST:+--host "$TILLER_HOST" }"$cmd" $subcmd "$@" "${cmdopts[@]}"
-
+    helm_exit_code=$?
     # cleanup on-the-fly decrypted files
     [[ ${#decfiles[@]} -gt 0 ]] && rm -v "${decfiles[@]}"
 }
@@ -511,5 +511,4 @@ case "${1:-help}" in
 	exit 1
 	;;
 esac
-
-exit 0
+exit ${helm_exit_code:-0}
