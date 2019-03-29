@@ -37,18 +37,20 @@ What kind of problems this plugin solves:
 
 ## Moving parts of project
 
+```helm-wrapper``` - It is not a part of Helm project itself. It is a just simple wrapper in the shell that runs helm within but wrapping secret decryption and cleaning on-the-fly, before and after Helm run. It is created from install-binary.sh in helm-secrets plugin install process as hook action making the symlink to wrapper.sh. This should be used as default command to operate with Helm client with helm-secrets installed.
+
 ```test.sh``` - Test script to check if all parts of the plugin work. Using example dir with vars structure and PGP keys to make real tests on real data with real encryption/decryption.
 
 ```install-binary.sh``` - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
 
 ```secrets.sh``` - Main helm-secrets plugin code for all helm-secrets plugin actions available in ```helm secrets help``` after plugin install
 
-## Install
+## Installation and Dependencies
 
 #### SOPS install
-Just install plugin using ```helm plugin install https://github.com/futuresimple/helm-secrets``` and sops will be installed using hook when helm > 2.3.x
+Just install the plugin using ```helm plugin install https://github.com/futuresimple/helm-secrets``` and sops will be installed as part of it, using hook when helm > 2.3.x
 
-You can always install manually for MacOS:
+You can always install manually in MacOS as below:
 ```
 brew install sops
 ```
@@ -64,11 +66,12 @@ More info on [sops page](https://github.com/mozilla/sops#showing-diffs-in-cleart
 
 #### Using Helm plugin manager (> 2.3.x)
 
+As already described above,
 ```
-helm plugin install https://github.com/futuresimple/helm-secrets
+helm plugin install https://github.com/futuresimple/helm-secrets 
 ```
 
-#### Pre Helm 2.3.0 Installation
+#### For Pre Helm 2.3.0 Installation
 Get a release tarball from the [releases](https://github.com/futuresimple/helm-secrets/releases) page.
 
 Unpack the tarball in your helm plugins directory (```$(helm home)/plugins```).
@@ -77,12 +80,11 @@ For example:
 ```
 curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
 ```
-
 #### Helm-wrapper configuration
-By default helm-wrapper is not configured to encrypt/decrypt secrets.yaml in charts templates. They are templates and values from specific secrets/value files should e used in this templates as reference from helm itself.
-Set you own options as ENV variables if you like overwrite default kms enabled and decrypt charts disabled.
+By default, helm-wrapper is not configured to encrypt/decrypt secrets.yaml in charts templates. They are treated as templates and values from specific secrets/value files should be used in these templates as a reference from helm itself.
+Set you own options as ENV variables if you like to overwrite default kms enabled and decrypt charts disabled.
 ```
-DECRYPT_CHARTS=false helm-wrapper ....
+DECRYPT_CHARTS=false helm-wrapper...
 ```
 ## Usage and examples
 
@@ -389,12 +391,13 @@ kind: Deployment
                   name: helloworld
                   key: my_secret_key
 ```
-## Tips
+## Important Tips
 
 #### Prevent committing decrypted files to git
 If you like to secure situation when decrypted file is committed by mistake to git you can add your secrets.yaml.dec files to you charts project repository `.gitignore`.
 
 A second level of security is to add for example a `.sopscommithook` file inside your chart repository local commit hook.
+
 This will prevent committing decrypted files without sops metadata.
 
 `.sopscommithook` content example:
