@@ -374,7 +374,7 @@ clean() {
 	return
     fi
     local basedir="$1"
-    find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -print0 | xargs -r0 rm -v
+    find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -exec rm -v {} \;
 }
 
 helm_wrapper() {
