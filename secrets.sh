@@ -244,10 +244,8 @@ is_help() {
 }
 
 encrypt_helper() {
-    local dir=$(dirname "$1")
-    local yml=$(basename "$1")
-    cd "$dir"
-    [[ -e "$yml" ]] || { echo "File does not exist: $dir/$yml"; exit 1; }
+    local yml=$1
+    [[ -e "$yml" ]] || { echo "File does not exist: $yml"; exit 1; }
     local ymldec=$(sed -e "s/\\.yaml$/${DEC_SUFFIX}/" <<<"$yml")
     [[ -e $ymldec ]] || ymldec="$yml"
 
