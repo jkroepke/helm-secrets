@@ -250,19 +250,19 @@ encrypt_helper() {
     [[ -e "$yml" ]] || { echo "File does not exist: $dir/$yml"; exit 1; }
     local ymldec=$(sed -e "s/\\.yaml$/${DEC_SUFFIX}/" <<<"$yml")
     [[ -e $ymldec ]] || ymldec="$yml"
-    
+
     if [[ $(grep -C10000 'sops:' "$ymldec" | grep -c 'version:') -gt 0 ]]
     then
-	echo "Already encrypted: $ymldec"
-	return
+        echo "Already encrypted: $ymldec"
+        return
     fi
     if [[ $yml == $ymldec ]]
     then
-	sops --encrypt --input-type yaml --output-type yaml --in-place "$yml"
-	echo "Encrypted $yml"
+        sops --encrypt --input-type yaml --output-type yaml --in-place "$yml"
+        echo "Encrypted $yml"
     else
-	sops --encrypt --input-type yaml --output-type yaml "$ymldec" > "$yml"
-	echo "Encrypted $ymldec to $yml"
+        sops --encrypt --input-type yaml --output-type yaml "$ymldec" > "$yml"
+        echo "Encrypted $ymldec to $yml"
     fi
 }
 
