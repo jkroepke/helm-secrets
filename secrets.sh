@@ -436,6 +436,10 @@ EOF
             -f|--values)
 		cmdopts+=("$1")
 		yml="$2"
+		# increase support for -f=myfile.yaml or -f=myfile (helm support both spaces and equal sign)
+		if [[ $yml =~ ^=.*$ ]]; then
+		    yml="${yml/=/}"
+		fi
 		if [[ $yml =~ ^(.*/)?secrets(\.[^.]+)*\.yaml$ ]]
 		then
 		    decrypt_helper $yml ymldec decrypted
