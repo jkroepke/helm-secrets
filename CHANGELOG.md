@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * POSIX compatibility (https://github.com/jkroepke/helm-secrets/pull/1)
+* completion.yaml for helm shell auto completion
 
 ## [3.0.0] - 2020-04-26
 
