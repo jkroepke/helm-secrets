@@ -11,7 +11,7 @@ DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 HELM_BIN="${HELM_BIN:-helm}"
 
 usage() {
-	cat <<EOF
+    cat <<EOF
 GnuPG secrets encryption in Helm Charts
 
 This plugin provides ability to encrypt/decrypt secrets files
@@ -33,7 +33,7 @@ EOF
 }
 
 enc_usage() {
-	cat <<EOF
+    cat <<EOF
 Encrypt secrets
 
 It uses your gpg credentials to encrypt .yaml file. If the file is already
@@ -52,7 +52,7 @@ EOF
 }
 
 dec_usage() {
-	cat <<EOF
+    cat <<EOF
 Decrypt secrets
 
 It uses your gpg credentials to decrypt previously encrypted .yaml file.
@@ -71,7 +71,7 @@ EOF
 }
 
 view_usage() {
-	cat <<EOF
+    cat <<EOF
 View specified secrets[.*].yaml file
 
 Example:
@@ -84,7 +84,7 @@ EOF
 }
 
 edit_usage() {
-	cat <<EOF
+    cat <<EOF
 Edit encrypted secrets
 
 Decrypt encrypted file, edit and then encrypt
@@ -102,7 +102,7 @@ EOF
 }
 
 clean_usage() {
-	cat <<EOF
+    cat <<EOF
 Clean all decrypted files if any exist
 
 It removes all decrypted ${DEC_SUFFIX} files in the specified directory
@@ -115,7 +115,7 @@ EOF
 }
 
 helm_command_usage() {
-	cat <<EOF
+    cat <<EOF
 helm secrets $1 [ --quiet | -q ]
 
 This is a wrapper for "helm [command]". It will detect -f and
@@ -134,310 +134,310 @@ EOF
 }
 
 is_help() {
-	case "$1" in
-	-h | --help | help)
-		return 0
-		;;
-	*)
-		return 1
-		;;
-	esac
+    case "$1" in
+    -h | --help | help)
+        return 0
+        ;;
+    *)
+        return 1
+        ;;
+    esac
 }
 
 is_file_encrypted() {
-	grep -q 'sops:' "${1}" && grep -q 'version:' "${1}"
+    grep -q 'sops:' "${1}" && grep -q 'version:' "${1}"
 }
 
 file_dec_name() {
-	if [ "${DEC_DIR}" != "" ]; then
-		echo "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
-	else
-		echo "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
-	fi
+    if [ "${DEC_DIR}" != "" ]; then
+        echo "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+    else
+        echo "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+    fi
 }
 
 encrypt_helper() {
-	dir=$(dirname "$1")
-	file=$(basename "$1")
+    dir=$(dirname "$1")
+    file=$(basename "$1")
 
-	cd "$dir"
+    cd "$dir"
 
-	if [ ! -f "${file}" ]; then
-		echo "File does not exist: ${dir}/${file}"
-		exit 1
-	fi
+    if [ ! -f "${file}" ]; then
+        echo "File does not exist: ${dir}/${file}"
+        exit 1
+    fi
 
-	file_dec="$(file_dec_name "${file}")"
+    file_dec="$(file_dec_name "${file}")"
 
-	if [ ! -f "${file_dec}" ]; then
-		file_dec="${file}"
-	fi
+    if [ ! -f "${file_dec}" ]; then
+        file_dec="${file}"
+    fi
 
-	if is_file_encrypted "${file_dec}"; then
-		echo "Already encrypted: ${file_dec}"
-		exit 1
-	fi
+    if is_file_encrypted "${file_dec}"; then
+        echo "Already encrypted: ${file_dec}"
+        exit 1
+    fi
 
-	if [ "${file}" = "${file_dec}" ]; then
-		sops --encrypt --input-type yaml --output-type yaml --in-place "${file}"
-		echo "Encrypted ${file}"
-	else
-		sops --encrypt --input-type yaml --output-type yaml "${file_dec}" >"${file}"
-		echo "Encrypted ${file_dec} to ${file}"
-	fi
+    if [ "${file}" = "${file_dec}" ]; then
+        sops --encrypt --input-type yaml --output-type yaml --in-place "${file}"
+        echo "Encrypted ${file}"
+    else
+        sops --encrypt --input-type yaml --output-type yaml "${file_dec}" >"${file}"
+        echo "Encrypted ${file_dec} to ${file}"
+    fi
 }
 
 enc() {
-	if is_help "$1"; then
-		enc_usage
-		return
-	fi
+    if is_help "$1"; then
+        enc_usage
+        return
+    fi
 
-	file="$1"
+    file="$1"
 
-	if [ ! -f "${file}" ]; then
-		echo "File does not exist: ${file}"
-		exit 1
-	else
-		echo "Encrypting ${file}"
-		encrypt_helper "${file}"
-	fi
+    if [ ! -f "${file}" ]; then
+        echo "File does not exist: ${file}"
+        exit 1
+    else
+        echo "Encrypting ${file}"
+        encrypt_helper "${file}"
+    fi
 }
 
 decrypt_helper() {
-	file="${1}"
+    file="${1}"
 
-	if [ ! -f "$file" ]; then
-		echo "File does not exist: ${file}"
-		exit 1
-	fi
+    if [ ! -f "$file" ]; then
+        echo "File does not exist: ${file}"
+        exit 1
+    fi
 
-	if ! is_file_encrypted "${file}"; then
-		return 1
-	fi
+    if ! is_file_encrypted "${file}"; then
+        return 1
+    fi
 
-	file_dec="$(file_dec_name "${file}")"
+    file_dec="$(file_dec_name "${file}")"
 
-	if ! sops --decrypt --input-type yaml --output-type yaml --output "${file_dec}" "${file}"; then
-		echo "Error while decrypting file: ${file}"
-		exit 1
-	fi
+    if ! sops --decrypt --input-type yaml --output-type yaml --output "${file_dec}" "${file}"; then
+        echo "Error while decrypting file: ${file}"
+        exit 1
+    fi
 
-	return 0
+    return 0
 }
 
 dec() {
-	if is_help "$1"; then
-		dec_usage
-		return
-	fi
+    if is_help "$1"; then
+        dec_usage
+        return
+    fi
 
-	file="$1"
+    file="$1"
 
-	if [ ! -f "${file}" ]; then
-		echo "File does not exist: ${file}"
-		exit 1
-	else
-		echo "Decrypting ${file}"
-		decrypt_helper "${file}"
-	fi
+    if [ ! -f "${file}" ]; then
+        echo "File does not exist: ${file}"
+        exit 1
+    else
+        echo "Decrypting ${file}"
+        decrypt_helper "${file}"
+    fi
 }
 
 view_helper() {
-	file="$1"
+    file="$1"
 
-	if [ ! -f "${file}" ]; then
-		echo "File does not exist: ${file}"
-		exit 1
-	fi
+    if [ ! -f "${file}" ]; then
+        echo "File does not exist: ${file}"
+        exit 1
+    fi
 
-	exec sops --decrypt --input-type yaml --output-type yaml "${file}"
+    exec sops --decrypt --input-type yaml --output-type yaml "${file}"
 }
 
 view() {
-	if is_help "$1"; then
-		view_usage
-		return
-	fi
+    if is_help "$1"; then
+        view_usage
+        return
+    fi
 
-	view_helper "$1"
+    view_helper "$1"
 }
 
 edit_helper() {
-	file="$1"
+    file="$1"
 
-	if [ ! -e "${file}" ]; then
-		echo "File does not exist: ${file}"
-		exit 1
-	fi
+    if [ ! -e "${file}" ]; then
+        echo "File does not exist: ${file}"
+        exit 1
+    fi
 
-	exec sops --input-type yaml --output-type yaml "${file}"
+    exec sops --input-type yaml --output-type yaml "${file}"
 }
 
 edit() {
-	file="$1"
-	edit_helper "${file}"
+    file="$1"
+    edit_helper "${file}"
 }
 
 clean() {
-	if is_help "$1"; then
-		clean_usage
-		return
-	fi
+    if is_help "$1"; then
+        clean_usage
+        return
+    fi
 
-	basedir="$1"
+    basedir="$1"
 
-	if [ ! -d "${basedir}" ]; then
-		echo "Directory does not exist: ${basedir}"
-		exit 1
-	fi
+    if [ ! -d "${basedir}" ]; then
+        echo "Directory does not exist: ${basedir}"
+        exit 1
+    fi
 
-	find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -exec rm -v {} \;
+    find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -exec rm -v {} \;
 }
 
 helm_wrapper_cleanup() {
-	if [ "${QUIET}" = "false" ]; then
-		echo >/dev/stderr
-		# shellcheck disable=SC2016
-		xargs -0 -n1 sh -c 'rm -f "$1" && echo "[helm-secrets] Removed: $1"' sh >/dev/stderr <"${decrypted_files}"
-	else
-		xargs -0 rm -f >/dev/stderr <"${decrypted_files}"
-	fi
+    if [ "${QUIET}" = "false" ]; then
+        echo >/dev/stderr
+        # shellcheck disable=SC2016
+        xargs -0 -n1 sh -c 'rm -f "$1" && echo "[helm-secrets] Removed: $1"' sh >/dev/stderr <"${decrypted_files}"
+    else
+        xargs -0 rm -f >/dev/stderr <"${decrypted_files}"
+    fi
 
-	rm -f "${decrypted_files}"
+    rm -f "${decrypted_files}"
 }
 
 helm_wrapper() {
-	decrypted_files=$(mktemp)
-	QUIET=false
-	HELM_CMD_SET=false
+    decrypted_files=$(mktemp)
+    QUIET=false
+    HELM_CMD_SET=false
 
-	argc=$#
-	j=0
+    argc=$#
+    j=0
 
-	#cleanup on-the-fly decrypted files
-	trap helm_wrapper_cleanup EXIT
+    #cleanup on-the-fly decrypted files
+    trap helm_wrapper_cleanup EXIT
 
-	while [ $j -lt $argc ]; do
-		case "$1" in
-		--)
-			# skip --, and what remains are the cmd args
-			set -- "$1"
-			shift
-			break
-			;;
-		-f | --values)
-			set -- "$@" "$1"
+    while [ $j -lt $argc ]; do
+        case "$1" in
+        --)
+            # skip --, and what remains are the cmd args
+            set -- "$1"
+            shift
+            break
+            ;;
+        -f | --values)
+            set -- "$@" "$1"
 
-			file="${2}"
-			if decrypt_helper "${file}"; then
-				file_dec="$(file_dec_name "${file}")"
-				set -- "$@" "$file_dec"
-				printf '%s\0' "${file_dec}" >>"${decrypted_files}"
+            file="${2}"
+            if decrypt_helper "${file}"; then
+                file_dec="$(file_dec_name "${file}")"
+                set -- "$@" "$file_dec"
+                printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
-				if [ "${QUIET}" = "false" ]; then
-					echo "[helm-secrets] Decrypt: ${file}" >/dev/stderr
-				fi
-			else
-				set -- "$@" "$file"
-			fi
+                if [ "${QUIET}" = "false" ]; then
+                    echo "[helm-secrets] Decrypt: ${file}" >/dev/stderr
+                fi
+            else
+                set -- "$@" "$file"
+            fi
 
-			shift
-			j=$((j + 1))
-			;;
-		-*)
-			if [ "${HELM_CMD_SET}" = "false" ]; then
-				case "$1" in
-				-q | --quiet)
-					QUIET=true
-					;;
-				*)
-					set -- "$@" "$1"
-					;;
-				esac
-			else
-				set -- "$@" "$1"
-			fi
-			;;
-		*)
-			HELM_CMD_SET=true
-			set -- "$@" "$1"
-			;;
-		esac
+            shift
+            j=$((j + 1))
+            ;;
+        -*)
+            if [ "${HELM_CMD_SET}" = "false" ]; then
+                case "$1" in
+                -q | --quiet)
+                    QUIET=true
+                    ;;
+                *)
+                    set -- "$@" "$1"
+                    ;;
+                esac
+            else
+                set -- "$@" "$1"
+            fi
+            ;;
+        *)
+            HELM_CMD_SET=true
+            set -- "$@" "$1"
+            ;;
+        esac
 
-		shift
-		j=$((j + 1))
-	done
+        shift
+        j=$((j + 1))
+    done
 
-	if [ "${QUIET}" = "false" ]; then
-		echo >/dev/stderr
-	fi
+    if [ "${QUIET}" = "false" ]; then
+        echo >/dev/stderr
+    fi
 
-	"${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
+    "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
 }
 
 helm_command() {
-	if [ $# -lt 2 ] || is_help "$2"; then
-		helm_command_usage "${1:-"[helm command]"}"
-		return
-	fi
+    if [ $# -lt 2 ] || is_help "$2"; then
+        helm_command_usage "${1:-"[helm command]"}"
+        return
+    fi
 
-	helm_wrapper "$@"
+    helm_wrapper "$@"
 }
 
 case "${1:-}" in
 enc)
-	if [ $# -lt 2 ]; then
-		enc_usage
-		echo "Error: secrets file required."
-		exit 1
-	fi
-	enc "$2"
-	shift
-	;;
+    if [ $# -lt 2 ]; then
+        enc_usage
+        echo "Error: secrets file required."
+        exit 1
+    fi
+    enc "$2"
+    shift
+    ;;
 dec)
-	if [ $# -lt 2 ]; then
-		dec_usage
-		echo "Error: secrets file required."
-		exit 1
-	fi
-	dec "$2"
-	;;
+    if [ $# -lt 2 ]; then
+        dec_usage
+        echo "Error: secrets file required."
+        exit 1
+    fi
+    dec "$2"
+    ;;
 view)
-	if [ $# -lt 2 ]; then
-		view_usage
-		echo "Error: secrets file required."
-		exit 1
-	fi
-	view "$2"
-	;;
+    if [ $# -lt 2 ]; then
+        view_usage
+        echo "Error: secrets file required."
+        exit 1
+    fi
+    view "$2"
+    ;;
 edit)
-	if [ $# -lt 2 ]; then
-		edit_usage
-		echo "Error: secrets file required."
-		exit 1
-	fi
-	edit "$2"
-	shift
-	;;
+    if [ $# -lt 2 ]; then
+        edit_usage
+        echo "Error: secrets file required."
+        exit 1
+    fi
+    edit "$2"
+    shift
+    ;;
 clean)
-	if [ $# -lt 2 ]; then
-		clean_usage
-		echo "Error: Chart package required."
-		exit 1
-	fi
-	clean "$2"
-	;;
+    if [ $# -lt 2 ]; then
+        clean_usage
+        echo "Error: Chart package required."
+        exit 1
+    fi
+    clean "$2"
+    ;;
 --help | -h | help)
-	usage
-	;;
+    usage
+    ;;
 "")
-	usage
-	exit 1
-	;;
+    usage
+    exit 1
+    ;;
 *)
-	helm_command "$@"
-	;;
+    helm_command "$@"
+    ;;
 esac
 
 exit 0
