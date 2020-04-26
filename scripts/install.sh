@@ -39,7 +39,7 @@ if hash sops 2>/dev/null; then
 	sops --version
 else
 	# Try to install sops.
-	if [ "$(uname)" = "Darwin" ]; then
+	if [ "$(uname)" = "Darwin" ] && command -v brew >/dev/null; then
 		brew install sops
 	elif [ "$(uname)" = "Linux" ]; then
 		if ! download "${SOPS_LINUX_URL}" >/tmp/sops; then
@@ -49,9 +49,15 @@ else
 			SOPS_SHA256="$(get_sha_256 /tmp/sops)"
 			if [ "${SOPS_SHA256}" = "${SOPS_LINUX_SHA}" ] || [ "${SOPS_SHA256}" = "" ]; then
 				chmod +x /tmp/sops
-				mv /tmp/sops /usr/local/bin/
+				if [ -w "/usr/local/bin/" ]; then
+					mv /tmp/sops /usr/local/bin/
+				else
+					printf "${RED}%s${NOC}\n" "/usr/local/bin/ is not writable"
+					echo "Ignoring ..."
+				fi
 			else
-				printf "${RED}%s${NOC}\n" "Wrong SHA256"
+				printf "${RED}%s${NOC}\n" "Checksum mismatch"
+				echo "Ignoring ..."
 			fi
 			rm -f /tmp/sops
 		fi

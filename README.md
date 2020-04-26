@@ -37,13 +37,11 @@ What kind of problems this plugin solves:
 
 ## Moving parts of project
 
-```helm-wrapper``` - It is not a part of Helm project itself. It is a just simple wrapper in the shell that runs helm within but wrapping secret decryption and cleaning on-the-fly, before and after Helm run. It is created from install-binary.sh in helm-secrets plugin install process as hook action making the symlink to wrapper.sh. This should be used as default command to operate with Helm client with helm-secrets installed.
+```scripts/install.sh``` - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
 
-```test.sh``` - Test script to check if all parts of the plugin work. Using example dir with vars structure and PGP keys to make real tests on real data with real encryption/decryption.
+```scripts/run.sh``` - Main helm-secrets plugin code for all helm-secrets plugin actions available in ```helm secrets help``` after plugin install
 
-```install-binary.sh``` - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
-
-```secrets.sh``` - Main helm-secrets plugin code for all helm-secrets plugin actions available in ```helm secrets help``` after plugin install
+```tests``` - Test scripts to check if all parts of the plugin work. Using example dir with vars structure and PGP keys to make real tests on real data with real encryption/decryption.
 
 ## Installation and Dependencies
 
