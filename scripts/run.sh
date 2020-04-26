@@ -5,6 +5,7 @@ set -eu
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
 DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.yaml.dec}"
+DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 
 # Make sure HELM_BIN is set (normally by the helm command)
 HELM_BIN="${HELM_BIN:-helm}"
@@ -148,7 +149,11 @@ is_file_encrypted() {
 }
 
 file_dec_name() {
-	echo "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+	if [ "${DEC_DIR}" != "" ]; then
+		echo "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+	else
+		echo "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+	fi
 }
 
 encrypt_helper() {
