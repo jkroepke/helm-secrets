@@ -4,23 +4,23 @@ export GIT_ROOT
 TEST_HOME="${GIT_ROOT}/tests/.home"
 export TEST_HOME
 
-helm () {
+helm() {
 	env HOME="${TEST_HOME}" helm "$@"
 }
 
-gpg () {
+gpg() {
 	env HOME="${TEST_HOME}" gpg "$@"
 }
 
-create_chart () {
-  run helm create "tests/tmp/$1"
-  assert_success
-  assert_output --partial "Creating tests/tmp/$1"
+create_chart() {
+	run helm create "tests/tmp/$1"
+	assert_success
+	assert_output --partial "Creating tests/tmp/$1"
 
-  if [ -f tests/tmp/lint/secrets.yaml ]; then
-	  cp "tests/assets/helm_vars/.sops.yaml" "tests/tmp/$1/" >&2
+	if [ -f tests/tmp/lint/secrets.yaml ]; then
+		cp "tests/assets/helm_vars/.sops.yaml" "tests/tmp/$1/" >&2
 
-	  run helm secrets enc tests/tmp/lint/secrets.yaml
-	  assert_success
-  fi
+		run helm secrets enc tests/tmp/lint/secrets.yaml
+		assert_success
+	fi
 }

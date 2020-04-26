@@ -4,22 +4,34 @@ flags:
 commands:
   - name: dec
     flags:
-    - help
+      - help
   - name: enc
     flags:
-    - help
+      - help
   - name: view
     flags:
-    - help
+      - help
   - name: edit
     flags:
-    - help
+      - help
   - name: clean
     flags:
-    - help
+      - help
   - name: lint
+    flags:
+      - quiet
   - name: template
+    flags:
+      - quiet
   - name: install
+    flags:
+      - quiet
   - name: upgrade
+    flags:
+      - quiet
   - name: diff
+    flags:
+      - quiet
   - name: kubeval
+    flags:
+      - quiet
