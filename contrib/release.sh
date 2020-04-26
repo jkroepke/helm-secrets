@@ -32,7 +32,7 @@ fi
 
 sedi "s/version:.*/version: \"${1}\"/" "$(git rev-parse --show-toplevel)/plugin.yaml"
 git commit -am "Release v${1}"
-git tag --annotate -m "Release v${1}"
+git tag --annotate -m "Release v${1}" "v${1}"
 git push --follow-tags --atomic
 sedi "s/version:.*/version: \"${2}-master\"/" "$(git rev-parse --show-toplevel)/plugin.yaml"
 git commit -am "Set next version"
