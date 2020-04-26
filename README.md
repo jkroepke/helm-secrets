@@ -1,9 +1,9 @@
 
-[![License](https://img.shields.io/github/license/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/blob/master/LICENSE)
-[![Current Release](https://img.shields.io/github/release/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/releases/latest)
-[![Production Ready](https://img.shields.io/badge/production-ready-green.svg)](https://github.com/futuresimple/helm-secrets/releases/latest)
-[![GitHub issues](https://img.shields.io/github/issues/futuresimple/helm-secrets.svg)](https://github.com/futuresimple/helm-secrets/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/futuresimple/helm-secrets.svg?style=flat-square)](https://github.com/futuresimple/helm-secrets/pulls)
+[![License](https://img.shields.io/github/license/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/blob/master/LICENSE)
+[![Current Release](https://img.shields.io/github/release/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/releases/latest)
+[![Production Ready](https://img.shields.io/badge/production-ready-green.svg)](https://github.com/jkroepke/helm-secrets/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/jkroepke/helm-secrets.svg?style=flat-square)](https://github.com/jkroepke/helm-secrets/pulls)
 
 # Plugin for secrets management in Helm
 
@@ -48,7 +48,7 @@ What kind of problems this plugin solves:
 ## Installation and Dependencies
 
 #### SOPS install
-Just install the plugin using ```helm plugin install https://github.com/futuresimple/helm-secrets``` and sops will be installed as part of it, using hook when helm > 2.3.x
+Just install the plugin using ```helm plugin install https://github.com/jkroepke/helm-secrets``` and sops will be installed as part of it, using hook when helm > 2.3.x
 
 You can always install manually in MacOS as below:
 ```
@@ -68,24 +68,9 @@ More info on [sops page](https://github.com/mozilla/sops#showing-diffs-in-cleart
 
 As already described above,
 ```
-helm plugin install https://github.com/futuresimple/helm-secrets 
+helm plugin install https://github.com/jkroepke/helm-secrets 
 ```
 
-#### For Pre Helm 2.3.0 Installation
-Get a release tarball from the [releases](https://github.com/futuresimple/helm-secrets/releases) page.
-
-Unpack the tarball in your helm plugins directory (```$(helm home)/plugins```).
-
-For example:
-```
-curl -L $TARBALL_URL | tar -C $(helm home)/plugins -xzv
-```
-#### Helm-wrapper configuration
-By default, helm-wrapper is not configured to encrypt/decrypt secrets.yaml in charts templates. They are treated as templates and values from specific secrets/value files should be used in these templates as a reference from helm itself.
-Set you own options as ENV variables if you like to overwrite default kms enabled and decrypt charts disabled.
-```
-DECRYPT_CHARTS=false helm-wrapper...
-```
 ## Usage and examples
 
 ```
@@ -100,17 +85,12 @@ To decrypt/encrypt/edit you need to initialize/first encrypt secrets with
 sops - https://github.com/mozilla/sops
 
 Available Commands:
-  enc           Encrypt secrets file
-  dec           Decrypt secrets file
-  view          Print secrets decrypted
-  edit          Edit secrets file and encrypt afterwards
-  clean         Remove all decrypted files in specified directory (recursively)
-  install       wrapper that decrypts secrets[.*].yaml files before running helm install
-  template	    wrapper that decrypts secrets[.*].yaml files before running helm template
-  upgrade       wrapper that decrypts secrets[.*].yaml files before running helm upgrade
-  lint          wrapper that decrypts secrets[.*].yaml files before running helm lint
-  diff          wrapper that decrypts secrets[.*].yaml files before running helm diff
-                  (diff is a helm plugin)
+  enc     Encrypt secrets file
+  dec     Decrypt secrets file
+  view    Print secrets decrypted
+  edit    Edit secrets file and encrypt afterwards
+  clean   Remove all decrypted files in specified directory (recursively)
+  <cmd>   wrapper that decrypts secrets[.*].yaml files before running helm <cmd>
 ```
 
 By convention, files containing secrets are named `secrets.yaml`, or anything beginning with "secrets." and ending with ".yaml". E.g. `secrets.test.yaml` and `secrets.prod.yaml`.
@@ -123,7 +103,7 @@ Decrypted files have the suffix ".yaml.dec" by default. This can be changed usin
   dec           Decrypt secrets file
   view          Print decrypted secrets file
   edit          Edit secrets file (decrypt before and encrypt after)
-  clean         Delete *.yaml-dec files in directory (recursively)
+  clean         Delete *.yaml.dec files in directory (recursively)
 ```
 Each of these commands have their own help.
 

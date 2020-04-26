@@ -1,1 +1,6 @@
-*.options
+*.iml
+/.idea/
+
+tests/.home
+tests/assets/**/*.yaml.dec
+tests/assets/**/*.yaml.test
