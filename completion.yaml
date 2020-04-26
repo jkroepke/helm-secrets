@@ -1,0 +1,25 @@
+name: secrets
+flags:
+  - help
+commands:
+  - name: dec
+    flags:
+    - help
+  - name: enc
+    flags:
+    - help
+  - name: view
+    flags:
+    - help
+  - name: edit
+    flags:
+    - help
+  - name: clean
+    flags:
+    - help
+  - name: lint
+  - name: template
+  - name: install
+  - name: upgrade
+  - name: diff
+  - name: kubeval
