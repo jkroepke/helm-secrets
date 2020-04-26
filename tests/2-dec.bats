@@ -36,7 +36,8 @@ load 'bats/extensions/bats-assert/load'
 }
 
 @test "dec: Decrypt assets/helm_vars/secrets.yaml with HELM_SECRETS_DEC_SUFFIX" {
-  export HELM_SECRETS_DEC_SUFFIX=.yaml.test
+  HELM_SECRETS_DEC_SUFFIX=.yaml.test
+  export HELM_SECRETS_DEC_SUFFIX
 
   FILE=tests/assets/helm_vars/secrets.yaml
 
@@ -46,6 +47,22 @@ load 'bats/extensions/bats-assert/load'
   assert [ -e "${FILE}.test" ]
 
   run cat "${FILE}.test"
+  assert_success
+  assert_output 'global_secret: global_bar'
+}
+
+@test "dec: Decrypt assets/helm_vars/secrets.yaml with HELM_SECRETS_DEC_DIR" {
+  HELM_SECRETS_DEC_DIR="$(mktemp -d)"
+  export HELM_SECRETS_DEC_DIR
+
+  FILE=tests/assets/helm_vars/secrets.yaml
+
+  run helm secrets dec "${FILE}"
+  assert_success
+  assert_output "Decrypting ${FILE}"
+  assert [ -e "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" ]
+
+  run cat "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
   assert_success
   assert_output 'global_secret: global_bar'
 }
