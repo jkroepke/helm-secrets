@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+sedi() {
+	if [ "$(uname)" = "Darwin" ]; then
+		sed -i "" "$@"
+	else
+		sed -i "$@"
+	fi
+}
+
+if [ $# -lt 2 ] || [[ ! "${1}" =~ ^[0-9]\.[0-9]\.[0-9]$ ]] || [[ ! "${2}" =~ ^[0-9]\.[0-9]\.[0-9]$ ]]; then
+	echo "Missing arguments."
+	echo "$0 1.1.0 1.2.0"
+	exit 1
+fi
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" != "master" ]]; then
+	echo "Please checkout master"
+	exit 1
+fi
+
+# https://stackoverflow.com/a/3278427/8087167
+UPSTREAM='@{u}'
+LOCAL=$(git rev-parse @)
+REMOTE=$(git rev-parse "$UPSTREAM")
+
+if [ "$LOCAL" != "$REMOTE" ]; then
+	echo "Current branch is no up to date with origin. Please pull or push"
+	exit 1
+fi
+
+sedi "s/version:.*/version: \"${1}\"/" "$(git rev-parse --show-toplevel)/plugin.yaml"
+git commit -am "Release v${1}"
+git tag --annotate -m "Release v${1}"
+git push --follow-tags --atomic
+sedi "s/version:.*/version: \"${2}-master\"/" "$(git rev-parse --show-toplevel)/plugin.yaml"
+git commit -am "Set next version"
