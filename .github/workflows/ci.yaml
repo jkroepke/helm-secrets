@@ -57,7 +57,7 @@ jobs:
       - name: helm plugin install
         run: helm plugin install .
 
-      - run: bats --tap tests/*.bats
+      - run: bats --tap -r tests/unit
   integration-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest

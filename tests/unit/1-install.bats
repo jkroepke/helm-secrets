@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
-load helper
-load 'bats/extensions/bats-support/load'
-load 'bats/extensions/bats-assert/load'
+load '../helper'
+load '../bats/extensions/bats-support/load'
+load '../bats/extensions/bats-assert/load'
 
 @test "install: helm plugin install" {
   run helm plugin install "$(git rev-parse --show-toplevel)"
