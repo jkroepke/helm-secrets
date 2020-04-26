@@ -150,9 +150,9 @@ is_file_encrypted() {
 
 file_dec_name() {
     if [ "${DEC_DIR}" != "" ]; then
-        echo "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+        printf '%s' "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
     else
-        echo "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+        printf '%s' "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
     fi
 }
 
@@ -163,7 +163,7 @@ encrypt_helper() {
     cd "$dir"
 
     if [ ! -f "${file}" ]; then
-        echo "File does not exist: ${dir}/${file}"
+        printf 'File does not exist: %s\n' "${dir}/${file}"
         exit 1
     fi
 
@@ -174,16 +174,16 @@ encrypt_helper() {
     fi
 
     if is_file_encrypted "${file_dec}"; then
-        echo "Already encrypted: ${file_dec}"
+        printf "Already encrypted: %s\n" "${file_dec}"
         exit 1
     fi
 
     if [ "${file}" = "${file_dec}" ]; then
         sops --encrypt --input-type yaml --output-type yaml --in-place "${file}"
-        echo "Encrypted ${file}"
+        printf 'Encrypted %s\n' "${file}"
     else
         sops --encrypt --input-type yaml --output-type yaml "${file_dec}" >"${file}"
-        echo "Encrypted ${file_dec} to ${file}"
+        printf 'Encrypted %s to %s\n' "${file_dec}" "${file}"
     fi
 }
 
@@ -196,10 +196,10 @@ enc() {
     file="$1"
 
     if [ ! -f "${file}" ]; then
-        echo "File does not exist: ${file}"
+        printf 'File does not exist: %s\n' "${file}"
         exit 1
     else
-        echo "Encrypting ${file}"
+        printf 'Encrypting %s\n' "${file}"
         encrypt_helper "${file}"
     fi
 }
@@ -208,7 +208,7 @@ decrypt_helper() {
     file="${1}"
 
     if [ ! -f "$file" ]; then
-        echo "File does not exist: ${file}"
+        printf 'File does not exist: %s\n' "${file}"
         exit 1
     fi
 
@@ -219,7 +219,7 @@ decrypt_helper() {
     file_dec="$(file_dec_name "${file}")"
 
     if ! sops --decrypt --input-type yaml --output-type yaml --output "${file_dec}" "${file}"; then
-        echo "Error while decrypting file: ${file}"
+        printf 'Error while decrypting file: %s\n' "${file}"
         exit 1
     fi
 
@@ -235,10 +235,10 @@ dec() {
     file="$1"
 
     if [ ! -f "${file}" ]; then
-        echo "File does not exist: ${file}"
+        printf 'File does not exist: %s\n' "${file}"
         exit 1
     else
-        echo "Decrypting ${file}"
+        printf 'Decrypting %s\n' "${file}"
         decrypt_helper "${file}"
     fi
 }
@@ -247,7 +247,7 @@ view_helper() {
     file="$1"
 
     if [ ! -f "${file}" ]; then
-        echo "File does not exist: ${file}"
+        printf 'File does not exist: %s\n' "${file}"
         exit 1
     fi
 
@@ -267,7 +267,7 @@ edit_helper() {
     file="$1"
 
     if [ ! -e "${file}" ]; then
-        echo "File does not exist: ${file}"
+        printf 'File does not exist: %s\n' "${file}"
         exit 1
     fi
 
@@ -288,7 +288,7 @@ clean() {
     basedir="$1"
 
     if [ ! -d "${basedir}" ]; then
-        echo "Directory does not exist: ${basedir}"
+        printf 'Directory does not exist: %s\n' "${basedir}"
         exit 1
     fi
 
@@ -296,15 +296,17 @@ clean() {
 }
 
 helm_wrapper_cleanup() {
-    if [ "${QUIET}" = "false" ]; then
-        echo >/dev/stderr
-        # shellcheck disable=SC2016
-        xargs -0 -n1 sh -c 'rm -f "$1" && echo "[helm-secrets] Removed: $1"' sh >/dev/stderr <"${decrypted_files}"
-    else
-        xargs -0 rm -f >/dev/stderr <"${decrypted_files}"
+    if [ -s "${decrypted_files}" ]; then
+        if [ "${QUIET}" = "false" ]; then
+            echo >/dev/stderr
+            # shellcheck disable=SC2016
+            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >/dev/stderr <"${decrypted_files}"
+        else
+            xargs -0 rm >/dev/stderr <"${decrypted_files}"
+        fi
     fi
 
-    rm -f "${decrypted_files}"
+    rm "${decrypted_files}"
 }
 
 helm_wrapper() {
@@ -336,7 +338,7 @@ helm_wrapper() {
                 printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                 if [ "${QUIET}" = "false" ]; then
-                    echo "[helm-secrets] Decrypt: ${file}" >/dev/stderr
+                    printf '[helm-secrets] Decrypt: %s' "${file}" >/dev/stderr
                 fi
             else
                 set -- "$@" "$file"
