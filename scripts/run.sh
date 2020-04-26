@@ -116,7 +116,7 @@ EOF
 
 helm_command_usage() {
 	cat <<EOF
-helm secrets $1
+helm secrets $1 [ --quiet | -q ]
 
 This is a wrapper for "helm [command]". It will detect -f and
 --values options, and decrypt any secrets*.yaml files before running "helm
@@ -295,14 +295,28 @@ clean() {
 	find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -exec rm -v {} \;
 }
 
+helm_wrapper_cleanup() {
+	if [ "${QUIET}" = "false" ]; then
+		echo >/dev/stderr
+		# shellcheck disable=SC2016
+		xargs -0 -n1 sh -c 'rm -f "$1" && echo "[helm-secrets] Removed: $1"' sh >/dev/stderr <"${decrypted_files}"
+	else
+		xargs -0 rm -f >/dev/stderr <"${decrypted_files}"
+	fi
+
+	rm -f "${decrypted_files}"
+}
+
 helm_wrapper() {
 	decrypted_files=$(mktemp)
+	QUIET=false
+	HELM_CMD_SET=false
 
 	argc=$#
 	j=0
 
 	#cleanup on-the-fly decrypted files
-	trap 'xargs -0 rm -fv > /dev/stderr < "${decrypted_files}"; rm -f "${decrypted_files}"' EXIT
+	trap helm_wrapper_cleanup EXIT
 
 	while [ $j -lt $argc ]; do
 		case "$1" in
@@ -319,8 +333,11 @@ helm_wrapper() {
 			if decrypt_helper "${file}"; then
 				file_dec="$(file_dec_name "${file}")"
 				set -- "$@" "$file_dec"
-				echo "[helm-secrets] Decrypt: ${file}" >/dev/stderr
 				printf '%s\0' "${file_dec}" >>"${decrypted_files}"
+
+				if [ "${QUIET}" = "false" ]; then
+					echo "[helm-secrets] Decrypt: ${file}" >/dev/stderr
+				fi
 			else
 				set -- "$@" "$file"
 			fi
@@ -328,7 +345,22 @@ helm_wrapper() {
 			shift
 			j=$((j + 1))
 			;;
+		-*)
+			if [ "${HELM_CMD_SET}" = "false" ]; then
+				case "$1" in
+				-q | --quiet)
+					QUIET=true
+					;;
+				*)
+					set -- "$@" "$1"
+					;;
+				esac
+			else
+				set -- "$@" "$1"
+			fi
+			;;
 		*)
+			HELM_CMD_SET=true
 			set -- "$@" "$1"
 			;;
 		esac
@@ -337,10 +369,11 @@ helm_wrapper() {
 		j=$((j + 1))
 	done
 
-	echo
+	if [ "${QUIET}" = "false" ]; then
+		echo >/dev/stderr
+	fi
+
 	"${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
-	echo
-	echo "[helm-secrets] Remove decrypted files:" >/dev/stderr
 }
 
 helm_command() {

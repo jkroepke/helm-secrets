@@ -22,8 +22,10 @@ load 'bats/extensions/bats-assert/load'
 
   run helm secrets lint "tests/tmp/${CHART}" 2>&1
   assert_success
+  refute_output --partial "[helm-secrets] Decrypt: tests/tmp/${CHART}/secrets.yaml"
   assert_output --partial '1 chart(s) linted, 0 chart(s) failed'
-  assert_output --partial '[helm-secrets] Remove decrypted files:'
+  refute_output --partial "[helm-secrets] Removed: tests/tmp/${CHART}/secrets.yaml.dec"
+  assert [ ! -f "tests/tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "lint: helm lint w/ chart and secret file" {
@@ -36,9 +38,42 @@ load 'bats/extensions/bats-assert/load'
 
   run helm secrets lint "tests/tmp/${CHART}" -f "tests/tmp/${CHART}/secrets.yaml" 2>&1
   assert_success
-  assert_output --partial '[helm-secrets] Decrypt: tests/tmp/lint/secrets.yaml'
-  assert_output --partial '1 chart(s) linted, 0 chart(s) failed'
-  assert_output --partial '[helm-secrets] Remove decrypted files:'
+  assert_output --partial "[helm-secrets] Decrypt: tests/tmp/${CHART}/secrets.yaml"
+  assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+  assert_output --partial "[helm-secrets] Removed: tests/tmp/${CHART}/secrets.yaml.dec"
+  assert [ ! -f "tests/tmp/${CHART}/secrets.yaml.dec" ]
+}
+
+@test "lint: helm lint w/ chart and secret file and q flag" {
+  CHART=lint
+
+  mkdir -p "tests/tmp/${CHART}" >&2
+  printf 'podAnnotations:\n  secret: value' > "tests/tmp/${CHART}/secrets.yaml"
+
+  create_chart "${CHART}"
+
+  run helm secrets -q lint "tests/tmp/${CHART}" -f "tests/tmp/${CHART}/secrets.yaml" 2>&1
+  assert_success
+  refute_output --partial "[helm-secrets] Decrypt: tests/tmp/${CHART}/secrets.yaml"
+  assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+  refute_output --partial "[helm-secrets] Removed: tests/tmp/${CHART}/secrets.yaml.dec"
+  assert [ ! -f "tests/tmp/${CHART}/secrets.yaml.dec" ]
+}
+
+@test "lint: helm lint w/ chart and secret file and quiet flag" {
+  CHART=lint
+
+  mkdir -p "tests/tmp/${CHART}" >&2
+  printf 'podAnnotations:\n  secret: value' > "tests/tmp/${CHART}/secrets.yaml"
+
+  create_chart "${CHART}"
+
+  run helm secrets --quiet lint "tests/tmp/${CHART}" -f "tests/tmp/${CHART}/secrets.yaml" 2>&1
+  assert_success
+  refute_output --partial "[helm-secrets] Decrypt: tests/tmp/${CHART}/secrets.yaml"
+  assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+  refute_output --partial "[helm-secrets] Removed: tests/tmp/${CHART}/secrets.yaml.dec"
+  assert [ ! -f "tests/tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "lint: helm lint w/ chart and invalid yaml" {
@@ -51,8 +86,8 @@ load 'bats/extensions/bats-assert/load'
 
   run helm secrets lint "tests/tmp/${CHART}" -f "tests/tmp/${CHART}/secrets.yaml" 2>&1
   assert_failure
-  assert_output --partial '[helm-secrets] Decrypt: tests/tmp/lint/secrets.yaml'
-  assert_output --partial 'Error: 1 chart(s) linted, 1 chart(s) failed'
-  # @TOOD: Run cleanup if errors appears
-  # assert_output --partial '[helm-secrets] Remove decrypted files:'
+  assert_output --partial "[helm-secrets] Decrypt: tests/tmp/${CHART}/secrets.yaml"
+  assert_output --partial "Error: 1 chart(s) linted, 1 chart(s) failed"
+  assert_output --partial "[helm-secrets] Removed: tests/tmp/${CHART}/secrets.yaml.dec"
+  assert [ ! -f "tests/tmp/${CHART}/secrets.yaml.dec" ]
 }
