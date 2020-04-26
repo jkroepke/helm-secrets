@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
-load helper
-load 'bats/extensions/bats-support/load'
-load 'bats/extensions/bats-assert/load'
+load '../helper'
+load '../bats/extensions/bats-support/load'
+load '../bats/extensions/bats-assert/load'
 
 @test "Prepare test environment" {
   # Reset test environment
