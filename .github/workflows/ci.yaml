@@ -1,0 +1,69 @@
+---
+name: CI
+
+env:
+  SOPS_VERSION: 3.5.0
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run the sh-checker
+        uses: luizm/action-sh-checker@v0.1.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          sh_checker_comment: true
+          sh_checker_exclude: "tests"
+  unit-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/cache@v1
+        with:
+          path: ${{ env.GITHUB_WORKSPACE }}/bin
+          key: sops-${{ env.SOPS_VERSION }}
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.2.0
+
+      - name: Install dependencies
+        run: |-
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
+          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
+          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
+          sops --version
+
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+          bats -v
+
+      - name: helm plugin install
+        run: helm plugin install .
+
+      - run: bats --tap tests/*.bats
+  integration-tests:
+    needs: [unit-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: engineerd/setup-kind@v0.3.0
+      - name: Testing
+        run: |
+          kubectl cluster-info

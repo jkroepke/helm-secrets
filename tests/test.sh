@@ -113,28 +113,6 @@ test_helm_secrets() {
     test_encryption "${secret}"
 }
 
-printf "${YELLOW}+++${NOC} %s\n" "Installing helm-secrets plugin"
-if [ "$(helm plugin list | tail -n +2 | cut -d ' ' -f 1 | grep -c "secrets")" -eq 1 ]; then
-  printf "${GREEN}%s${NOC} %s\n" "[OK]" "helm-secrets plugin installed"
-else
-  "${HELM_CMD}" plugin install "${SECRETS_REPO}" 2>/dev/null
-  printf "${RED}%s${NOC} %s\n" "[FAIL]" "No helm-secrets plugin aborting"
-  exit 1
-fi
-
-echo " "
-if [ -x "$(command -v gpg --version)" ]; then
-  printf "${YELLOW}+++${NOC} %s\n" "Importing private pgp key for projectx"
-  gpg --import example/pgp/projectx.asc
-  echo " "
-  printf "${YELLOW}+++${NOC} %s\n" "Importing private pgp key for projectx"
-  gpg --import example/pgp/projecty.asc
-  echo " "
-else
-  printf "${RED}%s${NOC} %s\n" "[FAIL]" "Install gpg"
-  exit 1
-fi
-
 echo " "
 for secret in $(find . -type f -name secrets.yaml); do
   test_helm_secrets "${secret}"
