@@ -116,11 +116,11 @@ EOF
 
 helm_command_usage() {
 	cat <<EOF
-helm secrets <args>
+helm secrets $1
 
-This is a wrapper for "helm <args>". It will detect -f and
---values options, and decrypt any secrets.*.yaml files before running "helm
-<args>".
+This is a wrapper for "helm [command]". It will detect -f and
+--values options, and decrypt any secrets*.yaml files before running "helm
+[command]".
 
 Example:
   $ ${HELM_BIN} secrets upgrade <HELM UPGRADE OPTIONS>
@@ -271,7 +271,7 @@ edit_helper() {
 		exit 1
 	fi
 
-	exec sops --input-type yaml --output-type yaml "${file}" </dev/tty
+	exec sops --input-type yaml --output-type yaml "${file}"
 }
 
 edit() {
@@ -286,6 +286,11 @@ clean() {
 	fi
 
 	basedir="$1"
+
+	if [ ! -d "${basedir}" ]; then
+		echo "Directory does not exist: ${basedir}"
+		exit 1
+	fi
 
 	find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -exec rm -v {} \;
 }
@@ -340,7 +345,7 @@ helm_wrapper() {
 
 helm_command() {
 	if [ $# -lt 2 ] || is_help "$2"; then
-		helm_command_usage
+		helm_command_usage "${1:-"[helm command]"}"
 		return
 	fi
 
