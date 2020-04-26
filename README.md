@@ -3,7 +3,7 @@
 [![Current Release](https://img.shields.io/github/release/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/releases/latest)
 [![Production Ready](https://img.shields.io/badge/production-ready-green.svg)](https://github.com/jkroepke/helm-secrets/releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/jkroepke/helm-secrets.svg?style=flat-square)](https://github.com/jkroepke/helm-secrets/pulls)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/pulls)
 
 # Plugin for secrets management in Helm
 
