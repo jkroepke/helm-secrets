@@ -44,6 +44,22 @@ load 'bats/extensions/bats-assert/load'
   assert [ ! -f "tests/tmp/${CHART}/secrets.yaml.dec" ]
 }
 
+@test "lint: helm lint w/ chart + predecrypted secret file" {
+  CHART=lint
+
+  mkdir -p "tests/tmp/${CHART}" >&2
+  printf 'podAnnotations:\n  secret: value' > "tests/tmp/${CHART}/secrets.yaml"
+  printf 'podAnnotations:\n  secret: othervalue' > "tests/tmp/${CHART}/secrets.yaml.dec"
+
+  create_chart "${CHART}"
+
+  run helm secrets lint "tests/tmp/${CHART}" -f "tests/tmp/${CHART}/secrets.yaml" 2>&1
+  assert_success
+  assert_output --partial "[helm-secrets] Decrypt skipped: tests/tmp/${CHART}/secrets.yaml"
+  assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+  assert [ -f "tests/tmp/${CHART}/secrets.yaml.dec" ]
+}
+
 @test "lint: helm lint w/ chart + secret file + q flag" {
   CHART=lint
 
