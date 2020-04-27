@@ -6,4 +6,10 @@ load '../bats/extensions/bats-assert/load'
 
 @test "Prepare test environment" {
     tests_setup
+
+    run mkdir -p "${TEST_HOME}/.kube"
+    assert_success
+
+    run cp "${HOME}/.kube/config" "${TEST_HOME}/.kube/config"
+    assert_success
 }

@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/cache@v1
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/bin
+          path: ${{ github.workspace }}/bin
           key: sops-${{ env.SOPS_VERSION }}
 
       - uses: actions/checkout@v2
@@ -62,8 +62,39 @@ jobs:
     needs: [unit-tests]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
       - uses: engineerd/setup-kind@v0.3.0
-      - name: Testing
-        run: |
-          kubectl cluster-info
+        with:
+          image: kindest/node:v1.17.0
+
+      - run: kubectl cluster-info
+
+      - uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/bin
+          key: sops-${{ env.SOPS_VERSION }}
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.2.0
+
+      - name: Install dependencies
+        run: |-
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
+          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
+          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
+          sops --version
+
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+          bats -v
+
+      - name: helm plugin install
+        run: helm plugin install .
+
+      - run: bats --tap -r tests/it
