@@ -4,7 +4,7 @@ load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
 
-@test "kubeval: helm plugin install kubeval" {
+@test "kubeval: helm plugin install helm-kubeval" {
     run helm plugin install https://github.com/instrumenta/helm-kubeval
     assert_success
 }

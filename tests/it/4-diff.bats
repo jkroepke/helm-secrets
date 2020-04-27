@@ -4,39 +4,38 @@ load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
 
-@test "install: helm install" {
-    run helm secrets install
+@test "kubeval: helm plugin install helm-diff" {
+    run helm plugin install https://github.com/databus23/helm-diff
     assert_success
-    assert_output --partial 'helm secrets install'
 }
 
-@test "install: helm install --help" {
-    run helm secrets install --help
+@test "diff: helm install" {
+    run helm secrets diff
     assert_success
-    assert_output --partial 'helm secrets install'
+    assert_output --partial 'helm secrets diff'
 }
 
-@test "install: helm install w/ chart" {
-    CHART="install"
+@test "diff: helm diff upgrade --help" {
+    run helm secrets diff --help
+    assert_success
+    assert_output --partial 'helm secrets diff'
+}
+
+@test "diff: helm diff upgrade w/ chart" {
+    CHART="diff"
     RELEASE="${CHART}-$(date +%s)-${RANDOM}"
     create_chart "${CHART}"
 
-    run helm secrets install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks 2>&1
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
-    assert_output --partial 'STATUS: deployed'
+    assert_output --partial "Release was not present in Helm."
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
-
-    run kubectl get deploy -o yaml -l "app.kubernetes.io/name=install,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-
-    run helm del "${RELEASE}"
-    assert_success
 }
 
-@test "install: helm install w/ chart + secret file" {
-    CHART="install"
+@test "diff: helm diff upgrade w/ chart + secret file" {
+    CHART="diff"
     RELEASE="${CHART}-$(date +%s)-${RANDOM}"
 
     mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
@@ -44,23 +43,16 @@ load '../bats/extensions/bats-assert/load'
 
     create_chart "${CHART}"
 
-    run helm secrets install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
-    assert_output --partial "STATUS: deployed"
+    assert_output --partial "secret: value"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
-
-    run kubectl get deploy -o yaml -l "app.kubernetes.io/name=install,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-    assert_output --partial "secret: value"
-
-    run helm del "${RELEASE}"
-    assert_success
 }
 
-@test "install: helm install w/ chart + secret file + helm flag" {
-    CHART="install"
+@test "diff: helm diff upgrade w/ chart + secret file + helm flag" {
+    CHART="diff"
     RELEASE="${CHART}-$(date +%s)-${RANDOM}"
 
     mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
@@ -68,23 +60,16 @@ load '../bats/extensions/bats-assert/load'
 
     create_chart "${CHART}"
 
-    run helm secrets install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --set image.pullPolicy=Always 2>&1
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --set image.pullPolicy=Always 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
-    assert_output --partial "STATUS: deployed"
+    assert_output --partial "imagePullPolicy: Always"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
-
-    run kubectl get deploy -o yaml -l "app.kubernetes.io/name=install,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-    assert_output --partial "secret: value"
-
-    run helm del "${RELEASE}"
-    assert_success
 }
 
-@test "install: helm install w/ chart + pre decrypted secret file" {
-    CHART="install"
+@test "diff: helm diff upgrade w/ chart + pre decrypted secret file" {
+    CHART="diff"
     RELEASE="${CHART}-$(date +%s)-${RANDOM}"
 
     mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
@@ -93,25 +78,18 @@ load '../bats/extensions/bats-assert/load'
 
     create_chart "${CHART}"
 
-    run helm secrets install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt skipped: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
-    assert_output --partial "STATUS: deployed"
+    assert_output --partial "secret: othervalue"
     assert [ -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 
     run rm "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert_success
-
-    run kubectl get deploy -o yaml -l "app.kubernetes.io/name=install,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-    assert_output --partial "secret: othervalue"
-
-    run helm del "${RELEASE}"
-    assert_success
 }
 
-@test "install: helm install w/ chart + secret file + q flag" {
-    CHART="install"
+@test "diff: helm diff upgrade w/ chart + secret file + q flag" {
+    CHART="diff"
     RELEASE="${CHART}-$(date +%s)-${RANDOM}"
 
     mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
@@ -119,23 +97,16 @@ load '../bats/extensions/bats-assert/load'
 
     create_chart "${CHART}"
 
-    run helm secrets -q install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
+    run helm secrets -q diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
-    assert_output --partial "STATUS: deployed"
+    assert_output --partial "secret: value"
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
-
-    run kubectl get deploy -o yaml -l "app.kubernetes.io/name=install,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-    assert_output --partial "secret: value"
-
-    run helm del "${RELEASE}"
-    assert_success
 }
 
-@test "install: helm install w/ chart + secret file + quiet flag" {
-    CHART="install"
+@test "diff: helm diff upgrade w/ chart + secret file + quiet flag" {
+    CHART="diff"
     RELEASE="${CHART}-$(date +%s)-${RANDOM}"
 
     mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
@@ -143,24 +114,17 @@ load '../bats/extensions/bats-assert/load'
 
     create_chart "${CHART}"
 
-    run helm secrets --quiet install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
+    run helm secrets --quiet diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
-    assert_output --partial "STATUS: deployed"
+    assert_output --partial "secret: value"
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
-
-    run kubectl get deploy -o yaml -l "app.kubernetes.io/name=install,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-    assert_output --partial "secret: value"
-
-    run helm del "${RELEASE}"
-    assert_success
 }
 
-@test "install: helm install w/ chart + secret file + special path" {
+@test "diff: helm diff upgrade w/ chart + secret file + special path" {
     # shellcheck disable=SC2016
-    CHART=$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')/install
+    CHART=$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')/diff
     RELEASE="${CHART#*/}-$(date +%s)-${RANDOM}"
 
     mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
@@ -168,23 +132,16 @@ load '../bats/extensions/bats-assert/load'
 
     create_chart "${CHART}"
 
-    run helm secrets install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
-    assert_output --partial "STATUS: deployed"
+    assert_output --partial "secret: value"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
-
-    run kubectl get deploy -o yaml -l "app.kubernetes.io/name=install,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-    assert_output --partial "secret: value"
-
-    run helm del "${RELEASE}"
-    assert_success
 }
 
-@test "install: helm install w/ chart + invalid yaml" {
-    CHART="install"
+@test "diff: helm diff upgrade w/ chart + invalid yaml" {
+    CHART="diff"
     RELEASE="${CHART}-$(date +%s)-${RANDOM}"
 
     mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
@@ -192,7 +149,7 @@ load '../bats/extensions/bats-assert/load'
 
     create_chart "${CHART}"
 
-    run helm secrets install "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" --no-hooks -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "Error: YAML parse error on"
