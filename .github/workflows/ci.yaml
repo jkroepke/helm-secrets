@@ -13,6 +13,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - uses: actions/checkout@v2
       - name: Run the sh-checker
@@ -24,6 +25,7 @@ jobs:
           sh_checker_exclude: "tests"
   unit-tests:
     runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
@@ -61,6 +63,7 @@ jobs:
   integration-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - uses: engineerd/setup-kind@v0.3.0
         with:

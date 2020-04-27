@@ -25,95 +25,95 @@ load '../bats/extensions/bats-assert/load'
     CHART=kubeval
     create_chart "${CHART}"
 
-    run helm secrets kubeval "${TEST_DIR}/tmp/${CHART}" --strict 2>&1
+    run helm secrets kubeval "${TEST_DIR}/.tmp/${CHART}" --strict 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial 'The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount'
-    refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
+    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file" {
     CHART=kubeval
 
-    mkdir -p "${TEST_DIR}/tmp/${CHART}" >&2
-    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
+    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
 
     create_chart "${CHART}"
 
-    run helm secrets kubeval "${TEST_DIR}/tmp/${CHART}" -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml" --strict 2>&1
+    run helm secrets kubeval "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --strict 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
-    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
+    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file + helm flag" {
     CHART=kubeval
 
-    mkdir -p "${TEST_DIR}/tmp/${CHART}" >&2
-    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
+    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
 
     create_chart "${CHART}"
 
-    run helm secrets kubeval "${TEST_DIR}/tmp/${CHART}" -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml" --set image.pullPolicy=Always --strict 2>&1
+    run helm secrets kubeval "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --set image.pullPolicy=Always --strict 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
-    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
+    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "kubeval: helm kubeval w/ chart + pre decrypted secret file" {
     CHART=kubeval
 
-    mkdir -p "${TEST_DIR}/tmp/${CHART}" >&2
-    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml"
-    printf 'podAnnotations:\n  secret: othervalue' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
+    mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
+    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
+    printf 'podAnnotations:\n  secret: othervalue' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 
     create_chart "${CHART}"
 
-    run helm secrets kubeval "${TEST_DIR}/tmp/${CHART}" -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml" --strict 2>&1
+    run helm secrets kubeval "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --strict 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt skipped: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    assert_output --partial "[helm-secrets] Decrypt skipped: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
-    assert [ -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    assert [ -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 
-    run rm "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
+    run rm "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert_success
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file + q flag" {
     CHART=kubeval
 
-    mkdir -p "${TEST_DIR}/tmp/${CHART}" >&2
-    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
+    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
 
     create_chart "${CHART}"
 
-    run helm secrets -q kubeval "${TEST_DIR}/tmp/${CHART}" -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml" --strict 2>&1
+    run helm secrets -q kubeval "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --strict 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
-    refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
+    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file + quiet flag" {
     CHART=kubeval
 
-    mkdir -p "${TEST_DIR}/tmp/${CHART}" >&2
-    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
+    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
 
     create_chart "${CHART}"
 
-    run helm secrets --quiet kubeval "${TEST_DIR}/tmp/${CHART}" -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml" --strict 2>&1
+    run helm secrets --quiet kubeval "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --strict 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
-    refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
+    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file + special path" {
@@ -121,31 +121,31 @@ load '../bats/extensions/bats-assert/load'
     # shellcheck disable=SC2016
     CHART=$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')/kubeval
 
-    mkdir -p "${TEST_DIR}/tmp/${CHART}" >&2
-    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
+    printf 'podAnnotations:\n  secret: value' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
 
     create_chart "${CHART}"
 
-    run helm secrets kubeval "${TEST_DIR}/tmp/${CHART}" -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml" --strict 2>&1
+    run helm secrets kubeval "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --strict 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
-    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
+    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 }
 
 @test "kubeval: helm kubeval w/ chart + invalid yaml" {
     CHART=kubeval
 
-    mkdir -p "${TEST_DIR}/tmp/${CHART}" >&2
-    printf 'replicaCount: |\n  a:' > "${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    mkdir -p "${TEST_DIR}/.tmp/${CHART}" >&2
+    printf 'replicaCount: |\n  a:' > "${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
 
     create_chart "${CHART}"
 
-    run helm secrets kubeval "${TEST_DIR}/tmp/${CHART}" -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml" --strict 2>&1
+    run helm secrets kubeval "${TEST_DIR}/.tmp/${CHART}" -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml" --strict 2>&1
     assert_failure
-    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/tmp/${CHART}/secrets.yaml"
+    assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "Error: YAML parse error"
-    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/tmp/${CHART}/secrets.yaml.dec" ]
+    assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
+    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
 }
