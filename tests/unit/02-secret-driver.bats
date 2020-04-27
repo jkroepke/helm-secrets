@@ -66,7 +66,3 @@ load '../bats/extensions/bats-assert/load'
      assert_success
      assert_output --partial 'sops:'
 }
-
-
-
-# tests/assets/helm_vars/secrets.yaml
