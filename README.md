@@ -14,7 +14,7 @@ Working in teams on multiple projects/regions/envs and multiple secrets files at
 
 ## Main features
 
-The current version of this plugin using [sops](https://github.com/mozilla/sops/) as backend which could be integrated in future into Helm itself, but currently, it is only shell wrapper.
+The current version of this plugin using by default [sops](https://github.com/mozilla/sops/) as backend which could be integrated in future into Helm itself, but currently, it is only shell wrapper.
 
 What kind of problems this plugin solves:
 
@@ -54,6 +54,8 @@ For Linux RPM or DEB, sops is available here: [Dist Packages](https://github.com
 
 For Windows, you cloud install sops separate to mange secrets. This plugin doesn't support Windows yet. See: https://github.com/jkroepke/helm-secrets/issues/7
 
+If you want to skip the automatic sops installation, you have to define `SKIP_SOPS_INSTALL=true` on the `helm plugin install` command.
+
 ### SOPS git diff
 
 Git config part is installed with the plugin, but to be fully functional the following needs to be added to the `.gitattributes` file in the root directory of a charts repo:
@@ -84,6 +86,27 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.0.0.tar.gz | tar 
 # Linux
 curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.0.0.tar.gz | tar -C "$HOME/.local/share/helm" -xzf-
 ```
+
+## Change secret driver (experimental)
+
+It's possible to use an other secret driver then sops, e.g. Hasicorp Vault.
+
+Start by copy the [sops driver](https://github.com/jkroepke/helm-secrets/blob/master/scripts/drivers/sops.sh) and adjust to your own needs.
+
+Custom driver can be load via `SECRET_DRIVER` parameter or `-d` option (higher preference):
+
+```bash
+# Example for in-tree drivers via option
+helm secrets -d sops view ./tests/assets/helm_vars/secrets.yaml
+
+# Example for in-tree drivers via environment variable
+SECRET_DRIVER=noop helm secrets view ./tests/assets/helm_vars/secrets.yaml
+
+# Example for out-of-tree drivers
+helm secrets -d ./path/to/driver.sh view ./tests/assets/helm_vars/secrets.yaml
+```
+
+Pull Requests are much appreciated.
 
 ## Usage and examples
 
