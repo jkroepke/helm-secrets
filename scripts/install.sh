@@ -34,7 +34,7 @@ get_sha_256() {
     echo "$res" | cut -d ' ' -f 1
 }
 
-if hash sops 2>/dev/null; then
+if command -v sops 2>/dev/null; then
     echo "sops is already installed: "
     sops --version
 else
@@ -68,6 +68,6 @@ else
 fi
 
 # If git is no available, fail silent.
-if hash git 2>/dev/null; then
+if command -v git 2>/dev/null; then
     git config --global diff.sopsdiffer.textconv "sops -d"
 fi
