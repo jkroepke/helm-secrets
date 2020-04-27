@@ -2,6 +2,12 @@
 
 set -eu
 
+# Path to current directory
+SCRIPT_DIR="$(dirname "$0")"
+
+# Define the secret driver engine
+SECRET_DRIVER="${SECRET_DRIVER:-sops}"
+
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
 DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.yaml.dec}"
@@ -12,7 +18,7 @@ HELM_BIN="${HELM_BIN:-helm}"
 
 usage() {
     cat <<EOF
-GnuPG secrets encryption in Helm Charts
+Secrets encryption in Helm Charts
 
 This plugin provides ability to encrypt/decrypt secrets files
 to store in less secure places, before they are installed using
@@ -32,107 +38,6 @@ Available Commands:
 EOF
 }
 
-enc_usage() {
-    cat <<EOF
-Encrypt secrets
-
-It uses your gpg credentials to encrypt .yaml file. If the file is already
-encrypted, look for a decrypted ${DEC_SUFFIX} file and encrypt that to .yaml.
-This allows you to first decrypt the file, edit it, then encrypt it again.
-
-You can use plain sops to encrypt - https://github.com/mozilla/sops
-
-Example:
-  $ ${HELM_BIN} secrets enc <SECRET_FILE_PATH>
-  $ git add <SECRET_FILE_PATH>
-  $ git commit
-  $ git push
-
-EOF
-}
-
-dec_usage() {
-    cat <<EOF
-Decrypt secrets
-
-It uses your gpg credentials to decrypt previously encrypted .yaml file.
-Produces ${DEC_SUFFIX} file.
-
-You can use plain sops to decrypt specific files - https://github.com/mozilla/sops
-
-Example:
-  $ ${HELM_BIN} secrets dec <SECRET_FILE_PATH>
-
-Typical usage:
-  $ ${HELM_BIN} secrets dec secrets/myproject/secrets.yaml
-  $ vim secrets/myproject/secrets.yaml.dec
-
-EOF
-}
-
-view_usage() {
-    cat <<EOF
-View specified secrets[.*].yaml file
-
-Example:
-  $ ${HELM_BIN} secrets view <SECRET_FILE_PATH>
-
-Typical usage:
-  $ ${HELM_BIN} secrets view secrets/myproject/nginx/secrets.yaml | grep basic_auth
-
-EOF
-}
-
-edit_usage() {
-    cat <<EOF
-Edit encrypted secrets
-
-Decrypt encrypted file, edit and then encrypt
-
-You can use plain sops to edit - https://github.com/mozilla/sops
-
-Example:
-  $ ${HELM_BIN} secrets edit <SECRET_FILE_PATH>
-  or $ sops <SECRET_FILE_PATH>
-  $ git add <SECRET_FILE_PATH>
-  $ git commit
-  $ git push
-
-EOF
-}
-
-clean_usage() {
-    cat <<EOF
-Clean all decrypted files if any exist
-
-It removes all decrypted ${DEC_SUFFIX} files in the specified directory
-(recursively) if they exist.
-
-Example:
-  $ ${HELM_BIN} secrets clean <dir with secrets>
-
-EOF
-}
-
-helm_command_usage() {
-    cat <<EOF
-helm secrets $1 [ --quiet | -q ]
-
-This is a wrapper for "helm [command]". It will detect -f and
---values options, and decrypt any secrets*.yaml files before running "helm
-[command]".
-
-Example:
-  $ ${HELM_BIN} secrets upgrade <HELM UPGRADE OPTIONS>
-  $ ${HELM_BIN} secrets lint <HELM LINT OPTIONS>
-
-Typical usage:
-  $ ${HELM_BIN} secrets upgrade i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
-  $ ${HELM_BIN} secrets lint ./my-chart -f values.test.yaml -f secrets.test.yaml
-
-EOF
-}
-
 is_help() {
     case "$1" in
     -h | --help | help)
@@ -144,10 +49,6 @@ is_help() {
     esac
 }
 
-is_file_encrypted() {
-    grep -q 'sops:' "${1}" && grep -q 'version:' "${1}"
-}
-
 file_dec_name() {
     if [ "${DEC_DIR}" != "" ]; then
         printf '%s' "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
@@ -156,247 +57,38 @@ file_dec_name() {
     fi
 }
 
-encrypt_helper() {
-    dir=$(dirname "$1")
-    file=$(basename "$1")
+load_secret_driver() {
+    driver="${1}"
+    if [ -f "${driver}" ]; then
+        # Allow to load out of tree drivers.
 
-    cd "$dir"
-
-    if [ ! -f "${file}" ]; then
-        printf 'File does not exist: %s\n' "${dir}/${file}"
-        exit 1
-    fi
-
-    file_dec="$(file_dec_name "${file}")"
-
-    if [ ! -f "${file_dec}" ]; then
-        file_dec="${file}"
-    fi
-
-    if is_file_encrypted "${file_dec}"; then
-        printf "Already encrypted: %s\n" "${file_dec}"
-        exit 1
-    fi
-
-    if [ "${file}" = "${file_dec}" ]; then
-        sops --encrypt --input-type yaml --output-type yaml --in-place "${file}"
-        printf 'Encrypted %s\n' "${file}"
+        # shellcheck disable=SC1090
+        . "${driver}"
     else
-        sops --encrypt --input-type yaml --output-type yaml "${file_dec}" >"${file}"
-        printf 'Encrypted %s to %s\n' "${file_dec}" "${file}"
-    fi
-}
-
-enc() {
-    if is_help "$1"; then
-        enc_usage
-        return
-    fi
-
-    file="$1"
-
-    if [ ! -f "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
-    else
-        printf 'Encrypting %s\n' "${file}"
-        encrypt_helper "${file}"
-    fi
-}
-
-decrypt_helper() {
-    file="${1}"
-
-    if [ ! -f "$file" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
-    fi
-
-    if ! is_file_encrypted "${file}"; then
-        return 1
-    fi
-
-    file_dec="$(file_dec_name "${file}")"
-
-    if ! sops --decrypt --input-type yaml --output-type yaml --output "${file_dec}" "${file}"; then
-        printf 'Error while decrypting file: %s\n' "${file}"
-        exit 1
-    fi
-
-    return 0
-}
-
-dec() {
-    if is_help "$1"; then
-        dec_usage
-        return
-    fi
-
-    file="$1"
-
-    if [ ! -f "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
-    else
-        printf 'Decrypting %s\n' "${file}"
-        decrypt_helper "${file}"
-    fi
-}
-
-view_helper() {
-    file="$1"
-
-    if [ ! -f "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
-    fi
-
-    exec sops --decrypt --input-type yaml --output-type yaml "${file}"
-}
-
-view() {
-    if is_help "$1"; then
-        view_usage
-        return
-    fi
-
-    view_helper "$1"
-}
-
-edit_helper() {
-    file="$1"
-
-    if [ ! -e "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
-    fi
-
-    exec sops --input-type yaml --output-type yaml "${file}"
-}
-
-edit() {
-    file="$1"
-    edit_helper "${file}"
-}
-
-clean() {
-    if is_help "$1"; then
-        clean_usage
-        return
-    fi
-
-    basedir="$1"
-
-    if [ ! -d "${basedir}" ]; then
-        printf 'Directory does not exist: %s\n' "${basedir}"
-        exit 1
-    fi
-
-    find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -exec rm -v {} \;
-}
-
-helm_wrapper_cleanup() {
-    if [ -s "${decrypted_files}" ]; then
-        if [ "${QUIET}" = "false" ]; then
-            echo >/dev/stderr
-            # shellcheck disable=SC2016
-            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >/dev/stderr <"${decrypted_files}"
-        else
-            xargs -0 rm >/dev/stderr <"${decrypted_files}"
+        if [ ! -f "${SCRIPT_DIR}/drivers/${driver}.sh" ]; then
+            echo "Can't find secret driver: ${driver}"
+            exit 1
         fi
-    fi
 
-    rm "${decrypted_files}"
+        # shellcheck disable=SC1090
+        . "${SCRIPT_DIR}/drivers/${driver}.sh"
+    fi
 }
 
-helm_wrapper() {
-    decrypted_files=$(mktemp)
-    QUIET=false
-    HELM_CMD_SET=false
-
-    argc=$#
-    j=0
-
-    #cleanup on-the-fly decrypted files
-    trap helm_wrapper_cleanup EXIT
-
-    while [ $j -lt $argc ]; do
-        case "$1" in
-        --)
-            # skip --, and what remains are the cmd args
-            set -- "$1"
-            shift
-            break
-            ;;
-        -f | --values)
-            set -- "$@" "$1"
-
-            file="${2}"
-            file_dec="$(file_dec_name "${file}")"
-            if [ -f "${file_dec}" ]; then
-                set -- "$@" "$file_dec"
-
-                if [ "${QUIET}" = "false" ]; then
-                    printf '[helm-secrets] Decrypt skipped: %s' "${file}" >/dev/stderr
-                fi
-            else
-                if decrypt_helper "${file}"; then
-                    set -- "$@" "$file_dec"
-                    printf '%s\0' "${file_dec}" >>"${decrypted_files}"
-
-                    if [ "${QUIET}" = "false" ]; then
-                        printf '[helm-secrets] Decrypt: %s' "${file}" >/dev/stderr
-                    fi
-                else
-                    set -- "$@" "$file"
-                fi
-            fi
-
-            shift
-            j=$((j + 1))
-            ;;
-        -*)
-            if [ "${HELM_CMD_SET}" = "false" ]; then
-                case "$1" in
-                -q | --quiet)
-                    QUIET=true
-                    ;;
-                *)
-                    set -- "$@" "$1"
-                    ;;
-                esac
-            else
-                set -- "$@" "$1"
-            fi
-            ;;
-        *)
-            HELM_CMD_SET=true
-            set -- "$@" "$1"
-            ;;
-        esac
-
-        shift
-        j=$((j + 1))
-    done
-
-    if [ "${QUIET}" = "false" ]; then
-        echo >/dev/stderr
-    fi
-
-    "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
-}
-
-helm_command() {
-    if [ $# -lt 2 ] || is_help "$2"; then
-        helm_command_usage "${1:-"[helm command]"}"
-        return
-    fi
-
-    helm_wrapper "$@"
-}
+# TODO more generic arg parser if we have more commands
+if [ "${1:-}" = "-d" ] || [ "${1:-}" = "--driver" ]; then
+    load_secret_driver "$2"
+    shift
+    shift
+else
+    load_secret_driver "$SECRET_DRIVER"
+fi
 
 case "${1:-}" in
 enc)
+    # shellcheck disable=SC1090
+    . "${SCRIPT_DIR}/commands/enc.sh"
+
     if [ $# -lt 2 ]; then
         enc_usage
         echo "Error: secrets file required."
@@ -406,6 +98,9 @@ enc)
     shift
     ;;
 dec)
+    # shellcheck disable=SC1090
+    . "${SCRIPT_DIR}/commands/dec.sh"
+
     if [ $# -lt 2 ]; then
         dec_usage
         echo "Error: secrets file required."
@@ -414,6 +109,9 @@ dec)
     dec "$2"
     ;;
 view)
+    # shellcheck disable=SC1090
+    . "${SCRIPT_DIR}/commands/view.sh"
+
     if [ $# -lt 2 ]; then
         view_usage
         echo "Error: secrets file required."
@@ -422,6 +120,9 @@ view)
     view "$2"
     ;;
 edit)
+    # shellcheck disable=SC1090
+    . "${SCRIPT_DIR}/commands/edit.sh"
+
     if [ $# -lt 2 ]; then
         edit_usage
         echo "Error: secrets file required."
@@ -431,6 +132,9 @@ edit)
     shift
     ;;
 clean)
+    # shellcheck disable=SC1090
+    . "${SCRIPT_DIR}/commands/clean.sh"
+
     if [ $# -lt 2 ]; then
         clean_usage
         echo "Error: Chart package required."
@@ -446,6 +150,8 @@ clean)
     exit 1
     ;;
 *)
+    # shellcheck disable=SC1090
+    . "${SCRIPT_DIR}/commands/helm.sh"
     helm_command "$@"
     ;;
 esac

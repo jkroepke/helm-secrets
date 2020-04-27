@@ -34,8 +34,10 @@ get_sha_256() {
     echo "$res" | cut -d ' ' -f 1
 }
 
-if command -v sops 2>/dev/null; then
-    echo "sops is already installed: "
+if [ -n "${SKIP_SOPS_INSTALL+x}" ] && [ "${SKIP_SOPS_INSTALL}" = "true" ]; then
+    echo "Skipping sops installation."
+elif command -v sops >/dev/null; then
+    printf "sops is already installed: "
     sops --version
 else
     # Try to install sops.
