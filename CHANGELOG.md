@@ -7,8 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-* POSIX compatibility (https://github.com/jkroepke/helm-secrets/pull/1)
+
+### Changed
+
+## [3.1.0] - 2020-04-27
+
+### Added
+
 * completion.yaml for helm shell auto completion
+* Tests for all `helm secrets` commands
+* Added quiet flag for helm secrets (https://github.com/jkroepke/helm-secrets/pull/8)
+
+### Changed
+
+* Escape special chars in paths correctly (https://github.com/jkroepke/helm-secrets/pull/9)
 
 ## [3.0.0] - 2020-04-26
 
