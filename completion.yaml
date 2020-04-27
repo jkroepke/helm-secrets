@@ -1,6 +1,7 @@
 name: secrets
 flags:
   - help
+  - driver
 commands:
   - name: dec
     flags:
