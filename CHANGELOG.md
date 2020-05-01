@@ -38,3 +38,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 * Remove run as root dependency on helm plugin install
 * Verbose output is now on stderr
 * Support all helm sub commands and plugins
+
+
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/jkroepke/helm-secrets/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/jkroepke/helm-secrets/compare/5f91bdf...v3.0.0
