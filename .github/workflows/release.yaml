@@ -23,3 +23,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+          body: |-
+            # CHANGELOG
+
+            * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref }}/CHANGELOG.md
