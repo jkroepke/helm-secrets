@@ -25,10 +25,21 @@ jobs:
           sh_checker_exclude: "tests"
   unit-tests:
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+        container: [~]
+        include:
+        - os: ubuntu-latest
+          container: alpine
+        - os: ubuntu-latest
+          container: debian
+        - os: ubuntu-latest
+          container: centos:7
+        - os: ubuntu-latest
+          container: centos:8
     steps:
       - uses: actions/cache@v1
         with:
