@@ -33,7 +33,7 @@ jobs:
         container: [~]
         include:
         - os: ubuntu-latest
-          container: alpine
+          container: alpine/git
         - os: ubuntu-latest
           container: debian
         - os: ubuntu-latest
