@@ -27,11 +27,13 @@ jobs:
 
       - name: checkbashisms
         run: |-
-          sudo apt update -qq
-          sudo apt-get install -yqq curl
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq curl
           curl -sSLf https://deb.debian.org/debian/pool/main/d/devscripts/devscripts_2.20.3_amd64.deb -o /tmp/devscripts.deb
+          set +e
           sudo dpkg -i /tmp/devscripts.deb
-          sudo apt-get install -yqq -f
+          set -e
+          sudo apt-get install -y -qq -f
           checkbashisms -p scripts/*
   unit-tests:
     runs-on: ${{ matrix.os }}
