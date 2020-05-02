@@ -54,15 +54,19 @@ jobs:
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
-          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
+
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
           chmod +x "$GITHUB_WORKSPACE/bin/sops"
-          sops --version
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+
+      - name: Print Environment
+        run: |-
+          sh --help
           bats -v
-          sh -c 'echo $0; echo $SHELL'
+          sops --version
+          gpg --version
 
       - name: helm plugin install
         run: helm plugin install .
