@@ -26,7 +26,6 @@ jobs:
       # https://github.com/luizm/action-sh-checker/issues/5
 
       - name: checkbashisms
-        uses: docker://alpine
         run: |-
           sudo apt update -qq
           sudo apt-get install -yqq curl
