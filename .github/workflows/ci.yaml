@@ -24,8 +24,12 @@ jobs:
           sh_checker_comment: true
           sh_checker_exclude: "tests"
       # https://github.com/luizm/action-sh-checker/issues/5
+
       - name: checkbashisms
-        run: sudo apt update -qq && sudo apt-get install -yqq devscripts && checkbashisms -p scripts/*
+        uses: docker://alpine
+        run: |-
+          apk add --no-cache checkbashisms
+          checkbashisms -p scripts/*
   unit-tests:
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
