@@ -37,12 +37,24 @@ jobs:
         - os: ubuntu-latest
           container: centos:7 # bash
     steps:
-      - if: "matrix.container == 'alpine'"
-        run: apk add --no-cache bash git curl gnupg
       - uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/bin
           key: sops-${{ env.SOPS_VERSION }}
+
+      - name: Install dependencies
+        run: |-
+          if command -v apk > /dev/null; then
+            apk add --no-cache bash git curl gnupg
+          elif command -v yum > /dev/null; then
+            yum install -y git-core
+          fi
+
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
 
       - uses: actions/checkout@v2
         with:
@@ -53,18 +65,10 @@ jobs:
         with:
           version: v3.2.0
 
-      - name: Install dependencies
-        run: |-
-          mkdir -p "$GITHUB_WORKSPACE/bin"
-          echo "::add-path::$GITHUB_WORKSPACE/bin/"
-
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops"
-
-          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
-
       - name: Print Environment
         run: |-
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+
           echo "Shell: $(readlink /bin/sh)"
           bats -v
           sops --version
