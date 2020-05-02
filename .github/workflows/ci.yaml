@@ -25,15 +25,26 @@ jobs:
           sh_checker_exclude: "tests"
   unit-tests:
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest] # [dash, zsh]
+        container: [~]
+        include:
+        - os: ubuntu-latest
+          container: alpine   # ash
+        - os: ubuntu-latest
+          container: centos:8 # bash
     steps:
-      - uses: actions/cache@v1
-        with:
-          path: ${{ github.workspace }}/bin
-          key: sops-${{ env.SOPS_VERSION }}
+      - name: Install git & curl
+        run: |-
+          if command -v apk > /dev/null; then
+            apk add --no-cache bash git curl gnupg
+          elif command -v yum > /dev/null; then
+            yum install -y git-core unzip
+          fi
 
       - uses: actions/checkout@v2
         with:
@@ -47,14 +58,20 @@ jobs:
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
-          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops"
-          sops --version
+          #export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
 
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
+
+      - name: Print Environment
+        run: |-
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+
+          echo "Shell: $(readlink /bin/sh)"
           bats -v
+          sops --version
+          gpg --version
 
       - name: helm plugin install
         run: helm plugin install .
