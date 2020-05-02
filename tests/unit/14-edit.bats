@@ -3,20 +3,21 @@
 load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
 
-@test "clean: helm edit" {
-    run helm secrets clean
+@test "edit: helm edit" {
+    run helm secrets edit
     assert_failure
-    assert_output --partial 'Clean all decrypted files if any exist'
+    assert_output --partial 'Edit encrypted secrets'
 }
 
-@test "clean: helm edit --help" {
-    run helm secrets clean --help
+@test "edit: helm edit --help" {
+    run helm secrets edit --help
     assert_success
-    assert_output --partial 'Clean all decrypted files if any exist'
+    assert_output --partial 'Edit encrypted secrets'
 }
 
-@test "clean: Directory not exits" {
+@test "edit: Directory not exits" {
     run helm secrets edit nonexists
     assert_failure
     assert_output --partial 'File does not exist: nonexists'

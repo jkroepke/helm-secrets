@@ -3,6 +3,7 @@
 load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
 
 @test "secret-driver: helm secrets -d" {
      run helm secrets -d nonexists view "tests/assets/helm_vars/secrets.yaml"

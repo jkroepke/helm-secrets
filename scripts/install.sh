@@ -70,6 +70,6 @@ else
 fi
 
 # If git is no available, fail silent.
-if command -v git 2>/dev/null; then
+if command -v git >/dev/null; then
     git config --global diff.sopsdiffer.textconv "sops -d"
 fi

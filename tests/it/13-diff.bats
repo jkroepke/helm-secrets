@@ -3,6 +3,7 @@
 load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
 
 @test "kubeval: helm plugin install helm-diff" {
     run helm plugin install https://github.com/databus23/helm-diff

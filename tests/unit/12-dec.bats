@@ -3,6 +3,7 @@
 load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
 
 @test "dec: helm dec" {
     run helm secrets dec
@@ -28,7 +29,7 @@ load '../bats/extensions/bats-assert/load'
     run helm secrets dec "${FILE}"
     assert_success
     assert_output "Decrypting ${FILE}"
-    assert [ -e "${FILE}.dec" ]
+    assert_file_exist "${FILE}.dec"
 
     run cat "${FILE}.dec"
     assert_success
@@ -60,7 +61,7 @@ load '../bats/extensions/bats-assert/load'
     run helm secrets dec "${FILE}"
     assert_success
     assert_output "Decrypting ${FILE}"
-    assert [ -e "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" ]
+    assert_file_exist "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
 
     run cat "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
     assert_success

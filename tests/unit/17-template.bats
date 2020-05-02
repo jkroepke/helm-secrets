@@ -3,6 +3,7 @@
 load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
 
 @test "template: helm template" {
     run helm secrets template
@@ -25,7 +26,7 @@ load '../bats/extensions/bats-assert/load'
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial '# Source: template/templates/serviceaccount.yaml'
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "template: helm template w/ chart + secret file" {
@@ -41,7 +42,7 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "secret: value"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "template: helm template w/ chart + secret file + helm flag" {
@@ -57,7 +58,7 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "imagePullPolicy: Always"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "template: helm template w/ chart + pre decrypted secret file" {
@@ -73,7 +74,7 @@ load '../bats/extensions/bats-assert/load'
     assert_success
     assert_output --partial "[helm-secrets] Decrypt skipped: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "secret: othervalue"
-    assert [ -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 
     run rm "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert_success
@@ -92,7 +93,7 @@ load '../bats/extensions/bats-assert/load'
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "secret: value"
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "template: helm template w/ chart + secret file + quiet flag" {
@@ -108,7 +109,7 @@ load '../bats/extensions/bats-assert/load'
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "secret: value"
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "template: helm template w/ chart + secret file + special path" {
@@ -126,7 +127,7 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "secret: value"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "template: helm template w/ chart + invalid yaml" {
@@ -142,5 +143,5 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "Error: YAML parse error"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }

@@ -3,6 +3,7 @@
 load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
 
 @test "kubeval: helm plugin install helm-kubeval" {
     run helm plugin install https://github.com/instrumenta/helm-kubeval
@@ -30,7 +31,7 @@ load '../bats/extensions/bats-assert/load'
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial 'The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount'
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file" {
@@ -46,7 +47,7 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file + helm flag" {
@@ -62,7 +63,7 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "kubeval: helm kubeval w/ chart + pre decrypted secret file" {
@@ -78,7 +79,7 @@ load '../bats/extensions/bats-assert/load'
     assert_success
     assert_output --partial "[helm-secrets] Decrypt skipped: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
-    assert [ -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 
     run rm "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
     assert_success
@@ -97,7 +98,7 @@ load '../bats/extensions/bats-assert/load'
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file + quiet flag" {
@@ -113,7 +114,7 @@ load '../bats/extensions/bats-assert/load'
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
     refute_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "kubeval: helm kubeval w/ chart + secret file + special path" {
@@ -131,7 +132,7 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "The file kubeval/templates/serviceaccount.yaml contains a valid ServiceAccount"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
 
 @test "kubeval: helm kubeval w/ chart + invalid yaml" {
@@ -147,5 +148,5 @@ load '../bats/extensions/bats-assert/load'
     assert_output --partial "[helm-secrets] Decrypt: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml"
     assert_output --partial "Error: YAML parse error"
     assert_output --partial "[helm-secrets] Removed: ${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
-    assert [ ! -f "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec" ]
+    assert_file_not_exist "${TEST_DIR}/.tmp/${CHART}/secrets.yaml.dec"
 }
