@@ -36,7 +36,7 @@ jobs:
         - os: ubuntu-latest
           container: alpine   # ash
         - os: ubuntu-latest
-          container: centos:7 # bash
+          container: centos:8 # bash
     steps:
       - name: Install git & curl
         run: |-
