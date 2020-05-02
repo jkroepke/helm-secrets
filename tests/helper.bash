@@ -7,6 +7,14 @@ export TEST_DIR
 TEST_HOME="${TEST_DIR}/.home"
 export TEST_HOME
 
+setup() {
+    TEST_TEMP_DIR="$(temp_make --prefix 'helm-secrets-')"
+}
+
+teardown() {
+    temp_del "$TEST_TEMP_DIR"
+}
+
 helm() {
     env HOME="${TEST_HOME}" helm "$@"
 }

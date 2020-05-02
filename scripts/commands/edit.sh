@@ -34,6 +34,12 @@ edit_helper() {
 }
 
 edit() {
+    echo "$1"
+    if is_help "$1"; then
+        edit_usage
+        return
+    fi
+
     file="$1"
     edit_helper "${file}"
 }

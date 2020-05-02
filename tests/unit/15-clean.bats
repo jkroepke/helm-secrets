@@ -3,6 +3,7 @@
 load '../helper'
 load '../bats/extensions/bats-support/load'
 load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
 
 @test "clean: helm clean" {
     run helm secrets clean
@@ -27,10 +28,10 @@ load '../bats/extensions/bats-assert/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert [ -f "${FILE}.dec" ]
+    assert_file_exist "${FILE}.dec"
 
     run helm secrets clean "$(dirname "${FILE}")"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exist "${FILE}.dec"
     assert_output --partial "${FILE}.dec"
 }
 
@@ -43,9 +44,9 @@ load '../bats/extensions/bats-assert/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert [ -f "${FILE}.test" ]
+    assert_file_exist "${FILE}.test"
 
     run helm secrets clean "$(dirname "${FILE}")"
-    assert [ ! -f "${FILE}.test" ]
+    assert_file_not_exist "${FILE}.test"
     assert_output --partial "${FILE}.test"
 }

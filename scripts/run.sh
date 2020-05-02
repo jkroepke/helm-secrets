@@ -95,7 +95,6 @@ enc)
         exit 1
     fi
     enc "$2"
-    shift
     ;;
 dec)
     # shellcheck disable=SC1090
@@ -129,7 +128,6 @@ edit)
         exit 1
     fi
     edit "$2"
-    shift
     ;;
 clean)
     # shellcheck disable=SC1090
