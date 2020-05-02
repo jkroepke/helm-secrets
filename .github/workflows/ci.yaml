@@ -38,11 +38,6 @@ jobs:
         - os: ubuntu-latest
           container: centos:7 # bash
     steps:
-      - uses: actions/cache@v1
-        with:
-          path: ${{ github.workspace }}/bin
-          key: sops-${{ env.SOPS_VERSION }}
-
       - name: Install dependencies
         run: |-
           if command -v apk > /dev/null; then
