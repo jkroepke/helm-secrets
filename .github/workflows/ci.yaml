@@ -29,11 +29,13 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest] # [dash, zsh]
         container: [~]
         include:
         - os: ubuntu-latest
-          container: alpine
+          container: alpine   # ash
+        - os: ubuntu-latest
+          container: centos:7 # bash
     steps:
       - if: "matrix.container == 'alpine'"
         run: apk add --no-cache bash git curl gnupg
@@ -63,7 +65,7 @@ jobs:
 
       - name: Print Environment
         run: |-
-          sh --help
+          echo "Shell: $(readlink /bin/sh)"
           bats -v
           sops --version
           gpg --version
