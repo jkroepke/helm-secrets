@@ -34,7 +34,7 @@ jobs:
         include:
         - os: ubuntu-latest
           container: alpine
-      steps:
+    steps:
       - if: matrix.container == "alpine"
         run: apk add --no-cache bash git
       - uses: actions/cache@v1
