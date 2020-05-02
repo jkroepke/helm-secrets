@@ -62,7 +62,7 @@ jobs:
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
           bats -v
-          sh --version
+          sh -c 'echo $0; echo $SHELL'
 
       - name: helm plugin install
         run: helm plugin install .
