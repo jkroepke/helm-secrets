@@ -38,20 +38,13 @@ jobs:
         - os: ubuntu-latest
           container: centos:7 # bash
     steps:
-      - name: Install dependencies
+      - name: Install git & curl
         run: |-
           if command -v apk > /dev/null; then
             apk add --no-cache bash git curl gnupg
           elif command -v yum > /dev/null; then
-            yum install -y git-core
+            yum install -y git-core gpg
           fi
-
-          mkdir -p "$GITHUB_WORKSPACE/bin"
-          echo "::add-path::$GITHUB_WORKSPACE/bin/"
-          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
-
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops"
 
       - uses: actions/checkout@v2
         with:
@@ -61,6 +54,15 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.2.0
+
+      - name: Install dependencies
+        run: |-
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+          #export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
+
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
 
       - name: Print Environment
         run: |-
