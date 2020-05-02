@@ -28,6 +28,7 @@ jobs:
     container: ${{ matrix.container }}
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest] # [dash, zsh]
         container: [~]
@@ -52,6 +53,7 @@ jobs:
 
           mkdir -p "$GITHUB_WORKSPACE/bin"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
+          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
 
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
           chmod +x "$GITHUB_WORKSPACE/bin/sops"
