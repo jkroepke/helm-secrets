@@ -43,7 +43,7 @@ jobs:
           if command -v apk > /dev/null; then
             apk add --no-cache bash git curl gnupg
           elif command -v yum > /dev/null; then
-            yum install -y git-core gpg
+            yum install -y git-core unzip
           fi
 
       - uses: actions/checkout@v2
