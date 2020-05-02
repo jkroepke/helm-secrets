@@ -36,7 +36,7 @@ jobs:
           container: alpine
     steps:
       - if: "matrix.container == 'alpine'"
-        run: apk add --no-cache bash git curl
+        run: apk add --no-cache bash git curl gpg
       - uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/bin
