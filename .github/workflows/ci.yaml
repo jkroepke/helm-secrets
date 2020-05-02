@@ -33,14 +33,10 @@ jobs:
         container: [~]
         include:
         - os: ubuntu-latest
-          container: alpine/git
-        - os: ubuntu-latest
-          container: debian
-        - os: ubuntu-latest
-          container: centos:7
-        - os: ubuntu-latest
-          container: centos:8
-    steps:
+          container: alpine
+      steps:
+      - if: matrix.container == "alpine"
+        run: apk add --no-cache bash git
       - uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/bin
@@ -66,6 +62,7 @@ jobs:
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
           bats -v
+          sh --version
 
       - name: helm plugin install
         run: helm plugin install .
