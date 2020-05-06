@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 driver_is_file_encrypted() {
-    true
+    false
 }
 
 driver_encrypt_file() {

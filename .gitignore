@@ -1,8 +1,4 @@
 *.iml
 /.idea/
-
-tests/.home/
-tests/.tmp/
-tests/assets/**/*.yaml.dec
-tests/assets/**/*.yaml.test
-tests/assets/**/*.tmp.yaml
+/tests/.tmp/
+/tests/coverage/

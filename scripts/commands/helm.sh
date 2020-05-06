@@ -40,8 +40,6 @@ helm_wrapper_cleanup() {
 
 helm_wrapper() {
     decrypted_files=$(mktemp)
-    QUIET=false
-    HELM_CMD_SET=false
 
     argc=$#
     j=0
@@ -84,22 +82,7 @@ helm_wrapper() {
             shift
             j=$((j + 1))
             ;;
-        -*)
-            if [ "${HELM_CMD_SET}" = "false" ]; then
-                case "$1" in
-                -q | --quiet)
-                    QUIET=true
-                    ;;
-                *)
-                    set -- "$@" "$1"
-                    ;;
-                esac
-            else
-                set -- "$@" "$1"
-            fi
-            ;;
         *)
-            HELM_CMD_SET=true
             set -- "$@" "$1"
             ;;
         esac

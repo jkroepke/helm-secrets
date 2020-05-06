@@ -5,8 +5,11 @@ set -eu
 # Path to current directory
 SCRIPT_DIR="$(dirname "$0")"
 
+# Output debug infos
+QUIET="${HELM_SECRETS_QUIET:-false}"
+
 # Define the secret driver engine
-SECRET_DRIVER="${SECRET_DRIVER:-sops}"
+SECRET_DRIVER="${HELM_SECRETS_DRIVER:-sops}"
 
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
@@ -75,83 +78,95 @@ load_secret_driver() {
     fi
 }
 
-# TODO more generic arg parser if we have more commands
-if [ "${1:-}" = "-d" ] || [ "${1:-}" = "--driver" ]; then
-    load_secret_driver "$2"
+load_secret_driver "$SECRET_DRIVER"
+
+while true; do
+    case "${1:-}" in
+    enc)
+        # shellcheck disable=SC1090
+        . "${SCRIPT_DIR}/commands/enc.sh"
+
+        if [ $# -lt 2 ]; then
+            enc_usage
+            echo "Error: secrets file required."
+            exit 1
+        fi
+        enc "$2"
+        break
+        ;;
+    dec)
+        # shellcheck disable=SC1090
+        . "${SCRIPT_DIR}/commands/dec.sh"
+
+        if [ $# -lt 2 ]; then
+            dec_usage
+            echo "Error: secrets file required."
+            exit 1
+        fi
+        dec "$2"
+        break
+        ;;
+    view)
+        # shellcheck disable=SC1090
+        . "${SCRIPT_DIR}/commands/view.sh"
+
+        if [ $# -lt 2 ]; then
+            view_usage
+            echo "Error: secrets file required."
+            exit 1
+        fi
+        view "$2"
+        break
+        ;;
+    edit)
+        # shellcheck disable=SC1090
+        . "${SCRIPT_DIR}/commands/edit.sh"
+
+        if [ $# -lt 2 ]; then
+            edit_usage
+            echo "Error: secrets file required."
+            exit 1
+        fi
+        edit "$2"
+        break
+        ;;
+    clean)
+        # shellcheck disable=SC1090
+        . "${SCRIPT_DIR}/commands/clean.sh"
+
+        if [ $# -lt 2 ]; then
+            clean_usage
+            echo "Error: Chart package required."
+            exit 1
+        fi
+        clean "$2"
+        break
+        ;;
+    --help | -h | help)
+        usage
+        break
+        ;;
+    --driver | -d)
+        load_secret_driver "$2"
+        shift
+        ;;
+    --quiet | -q)
+        # shellcheck disable=SC2034
+        QUIET=true
+        ;;
+    "")
+        usage
+        exit 1
+        ;;
+    *)
+        # shellcheck disable=SC1090
+        . "${SCRIPT_DIR}/commands/helm.sh"
+        helm_command "$@"
+        break
+        ;;
+    esac
+
     shift
-    shift
-else
-    load_secret_driver "$SECRET_DRIVER"
-fi
-
-case "${1:-}" in
-enc)
-    # shellcheck disable=SC1090
-    . "${SCRIPT_DIR}/commands/enc.sh"
-
-    if [ $# -lt 2 ]; then
-        enc_usage
-        echo "Error: secrets file required."
-        exit 1
-    fi
-    enc "$2"
-    ;;
-dec)
-    # shellcheck disable=SC1090
-    . "${SCRIPT_DIR}/commands/dec.sh"
-
-    if [ $# -lt 2 ]; then
-        dec_usage
-        echo "Error: secrets file required."
-        exit 1
-    fi
-    dec "$2"
-    ;;
-view)
-    # shellcheck disable=SC1090
-    . "${SCRIPT_DIR}/commands/view.sh"
-
-    if [ $# -lt 2 ]; then
-        view_usage
-        echo "Error: secrets file required."
-        exit 1
-    fi
-    view "$2"
-    ;;
-edit)
-    # shellcheck disable=SC1090
-    . "${SCRIPT_DIR}/commands/edit.sh"
-
-    if [ $# -lt 2 ]; then
-        edit_usage
-        echo "Error: secrets file required."
-        exit 1
-    fi
-    edit "$2"
-    ;;
-clean)
-    # shellcheck disable=SC1090
-    . "${SCRIPT_DIR}/commands/clean.sh"
-
-    if [ $# -lt 2 ]; then
-        clean_usage
-        echo "Error: Chart package required."
-        exit 1
-    fi
-    clean "$2"
-    ;;
---help | -h | help)
-    usage
-    ;;
-"")
-    usage
-    exit 1
-    ;;
-*)
-    # shellcheck disable=SC1090
-    . "${SCRIPT_DIR}/commands/helm.sh"
-    helm_command "$@"
-    ;;
-esac
+done
 
 exit 0
