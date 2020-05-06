@@ -109,6 +109,65 @@ jobs:
           HELM_SECRETS_DRIVER: vault
           VAULT_ADDR: 'http://127.0.0.1:8200'
 
+  coverage:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - name: Install git & curl
+        run: |-
+          if command -v apk > /dev/null; then
+            apk add --no-cache bash git curl gnupg
+          elif command -v yum > /dev/null; then
+            yum install -y git-core unzip
+          fi
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.2.0
+
+      - name: Setup vault
+        uses: volcano-coffee-company/setup-vault@v1
+        with:
+          version: '1.4.1'
+
+      - name: Install dependencies
+        run: |-
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
+
+      - name: Print Environment
+        run: |-
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+
+          echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
+          bats -v
+          sops --version
+          gpg --version
+
+      - name: helm plugin install
+        run: helm plugin install .
+
+      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
+        run: |
+          kcov --bash-dont-parse-binary-dir \
+            --include-path=. \
+            /var/tmp/coverage \
+            bats --tap -r tests/unit
+
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: tests/coverage/
+          flags: unittests
+          fail_ci_if_error: true
   integration-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest
