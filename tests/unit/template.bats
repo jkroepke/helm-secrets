@@ -29,7 +29,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "template: helm template w/ chart + secret file" {
+@test "template: helm template w/ chart + secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -42,21 +42,34 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "template: helm template w/ chart + secret file + helm flag" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+@test "template: helm template w/ chart + some-secrets.yaml" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set image.pullPolicy=Always 2>&1
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
-    assert_output --partial "port: 81"
-    assert_output --partial "imagePullPolicy: Always"
+    assert_output --partial "port: 83"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "template: helm template w/ chart + pre decrypted secret file" {
+@test "template: helm template w/ chart + secrets.yaml + helm flag" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "type: NodePort"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + pre decrypted secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     printf 'service:\n  port: 82' > "${FILE}.dec"
@@ -73,7 +86,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "template: helm template w/ chart + secret file + q flag" {
+@test "template: helm template w/ chart + secrets.yaml + q flag" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -86,7 +99,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "template: helm template w/ chart + secret file + quiet flag" {
+@test "template: helm template w/ chart + secrets.yaml + quiet flag" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -99,7 +112,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "template: helm template w/ chart + secret file + special path" {
+@test "template: helm template w/ chart + secrets.yaml + special path" {
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${SPECIAL_CHAR_DIR}"

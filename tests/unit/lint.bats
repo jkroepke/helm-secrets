@@ -25,11 +25,11 @@ load '../bats/extensions/bats-file/load'
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_TEMP_DIR}/chart/secrets.yaml"
     assert_output --partial '1 chart(s) linted, 0 chart(s) failed'
-    refute_output --partial "[helm-secrets] Removed: ${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
-    assert_file_not_exist "${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
 }
 
-@test "lint: helm lint w/ chart + secret file" {
+@test "lint: helm lint w/ chart + secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -39,23 +39,36 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert_file_not_exist "${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
+    assert_file_not_exist "${FILE}.dec"
 }
 
-@test "lint: helm lint w/ chart + secret file + helm flag" {
+@test "lint: helm lint w/ chart + some-secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set image.pullPolicy=Always 2>&1
+    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert_file_not_exist "${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
+    assert_file_not_exist "${FILE}.dec"
 }
 
-@test "lint: helm lint w/ chart + pre decrypted secret file" {
+@test "lint: helm lint w/ chart + secrets.yaml + helm flag" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "lint: helm lint w/ chart + pre decrypted secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     printf 'service:\n  port: 82' > "${FILE}.dec"
@@ -69,7 +82,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_exist "${FILE}.dec"
 }
 
-@test "lint: helm lint w/ chart + secret file + q flag" {
+@test "lint: helm lint w/ chart + secrets.yaml + q flag" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -78,11 +91,11 @@ load '../bats/extensions/bats-file/load'
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_TEMP_DIR}/chart/secrets.yaml"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    refute_output --partial "[helm-secrets] Removed: ${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
-    assert_file_not_exist "${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
 }
 
-@test "lint: helm lint w/ chart + secret file + quiet flag" {
+@test "lint: helm lint w/ chart + secrets.yaml + quiet flag" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -91,11 +104,11 @@ load '../bats/extensions/bats-file/load'
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${TEST_TEMP_DIR}/chart/secrets.yaml"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    refute_output --partial "[helm-secrets] Removed: ${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
-    assert_file_not_exist "${TEST_TEMP_DIR}/chart/secrets.yaml.dec"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
 }
 
-@test "lint: helm lint w/ chart + secret file + special path" {
+@test "lint: helm lint w/ chart + secrets.yaml + special path" {
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${SPECIAL_CHAR_DIR}"

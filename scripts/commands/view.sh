@@ -6,7 +6,7 @@ view_usage() {
     cat <<EOF
 helm secrets view [ --driver <driver> | -d <driver> ] <path to file>
 
-View specified secrets[.*].yaml file
+View specified encrypted yaml file
 
 Typical usage:
   $ helm secrets view secrets/myproject/nginx/secrets.yaml | grep basic_auth

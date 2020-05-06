@@ -14,7 +14,7 @@ load '../bats/extensions/bats-file/load'
 @test "view: helm view --help" {
     run helm secrets view --help
     assert_success
-    assert_output --partial 'View specified secrets[.*].yaml file'
+    assert_output --partial 'View specified encrypted yaml file'
 }
 
 @test "view: File not exits" {
@@ -25,6 +25,15 @@ load '../bats/extensions/bats-file/load'
 
 @test "view: secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets view "${FILE}"
+    assert_success
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "view: some-secrets.yaml" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_success

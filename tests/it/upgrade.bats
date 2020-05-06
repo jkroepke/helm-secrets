@@ -33,7 +33,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "upgrade: helm upgrade w/ chart + secret file" {
+@test "upgrade: helm upgrade w/ chart + secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
@@ -50,7 +50,24 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
 }
 
-@test "upgrade: helm upgrade w/ chart + secret file + helm flag" {
+@test "upgrade: helm upgrade w/ chart + some-secrets.yaml" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "STATUS: deployed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 83"
+}
+
+@test "upgrade: helm upgrade w/ chart + secrets.yaml + helm flag" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
@@ -68,7 +85,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "type: NodePort"
 }
 
-@test "upgrade: helm upgrade w/ chart + pre decrypted secret file" {
+@test "upgrade: helm upgrade w/ chart + pre decrypted secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     printf 'service:\n  port: 82' > "${FILE}.dec"
@@ -88,7 +105,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 82"
 }
 
-@test "upgrade: helm upgrade w/ chart + secret file + q flag" {
+@test "upgrade: helm upgrade w/ chart + secrets.yaml + q flag" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
@@ -105,7 +122,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
 }
 
-@test "upgrade: helm upgrade w/ chart + secret file + quiet flag" {
+@test "upgrade: helm upgrade w/ chart + secrets.yaml + quiet flag" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
@@ -122,7 +139,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
 }
 
-@test "upgrade: helm upgrade w/ chart + secret file + special path" {
+@test "upgrade: helm upgrade w/ chart + secrets.yaml + special path" {
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"

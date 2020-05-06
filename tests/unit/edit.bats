@@ -41,6 +41,24 @@ load '../bats/extensions/bats-file/load'
     assert_output "hello: world"
 }
 
+@test "edit: some-secrets.yaml" {
+    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+        skip
+    fi
+
+    EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
+    export EDITOR
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    run helm secrets edit "${FILE}"
+    assert_success
+
+    run helm secrets view "${FILE}"
+    assert_success
+    assert_output "hello: world"
+}
+
 
 @test "edit: secrets.yaml + special path" {
     if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
