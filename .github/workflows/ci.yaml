@@ -178,9 +178,6 @@ jobs:
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: tests/coverage/
-          flags: unittests
-          fail_ci_if_error: true
   integration-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest
