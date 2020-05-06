@@ -2,37 +2,16 @@ name: secrets
 flags:
   - help
   - driver
+  - quiet
 commands:
   - name: dec
-    flags:
-      - help
   - name: enc
-    flags:
-      - help
   - name: view
-    flags:
-      - help
   - name: edit
-    flags:
-      - help
   - name: clean
-    flags:
-      - help
   - name: lint
-    flags:
-      - quiet
   - name: template
-    flags:
-      - quiet
   - name: install
-    flags:
-      - quiet
   - name: upgrade
-    flags:
-      - quiet
   - name: diff
-    flags:
-      - quiet
   - name: kubeval
-    flags:
-      - quiet

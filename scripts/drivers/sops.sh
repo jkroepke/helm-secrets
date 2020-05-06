@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
 driver_is_file_encrypted() {
-    file="${1}"
+    input="${1}"
 
-    grep -q 'sops:' "${file}" && grep -q 'version:' "${file}"
+    grep -q 'sops:' "${input}" && grep -q 'version:' "${input}"
 }
 
 driver_encrypt_file() {

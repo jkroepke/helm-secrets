@@ -37,6 +37,7 @@ jobs:
 
       - name: Run checkbashisms
         run: checkbashisms -p scripts/*
+
   unit-tests:
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
@@ -47,10 +48,10 @@ jobs:
         os: [ubuntu-latest, macos-latest] # [dash, zsh]
         container: [~]
         include:
-        - os: ubuntu-latest
-          container: alpine   # ash
-        - os: ubuntu-latest
-          container: centos:8 # bash
+          - os: ubuntu-latest
+            container: alpine   # ash
+          - os: ubuntu-latest
+            container: centos:8 # bash
     steps:
       - name: Install git & curl
         run: |-
@@ -69,11 +70,15 @@ jobs:
         with:
           version: v3.2.0
 
+      - name: Setup vault
+        uses: volcano-coffee-company/setup-vault@v1
+        with:
+          version: '1.4.1'
+
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
-          #export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
 
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
           chmod +x "$GITHUB_WORKSPACE/bin/sops"
@@ -82,7 +87,7 @@ jobs:
         run: |-
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
 
-          echo "Shell: $(readlink /bin/sh)"
+          echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
           bats -v
           sops --version
           gpg --version
@@ -90,7 +95,20 @@ jobs:
       - name: helm plugin install
         run: helm plugin install .
 
-      - run: bats --tap -r tests/unit
+      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
+        run: |
+          bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: sops
+
+      - name: HELM_SECRETS_DRIVER=vault bats --tap -r tests/unit
+        run: |
+          vault server -dev -dev-root-token-id=test &>/dev/null &
+          bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: vault
+          VAULT_ADDR: 'http://127.0.0.1:8200'
+
   integration-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest

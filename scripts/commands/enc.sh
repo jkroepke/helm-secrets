@@ -33,14 +33,13 @@ encrypt_helper() {
         printf 'File does not exist: %s\n' "${dir}/${file}"
         exit 1
     fi
-
     file_dec="$(file_dec_name "${file}")"
 
     if [ ! -f "${file_dec}" ]; then
         file_dec="${file}"
     fi
 
-    if is_file_encrypted "${file_dec}"; then
+    if driver_is_file_encrypted "${file_dec}"; then
         printf "Already encrypted: %s\n" "${file_dec}"
         exit 1
     fi
@@ -48,7 +47,7 @@ encrypt_helper() {
     driver_encrypt_file "yaml" "${file_dec}" "${file}"
 
     if [ "${file}" = "${file_dec}" ]; then
-        printf 'Encrypted %s\n' "${file}"
+        printf 'Encrypted %s\n' "${file_dec}"
     else
         printf 'Encrypted %s to %s\n' "${file_dec}" "${file}"
     fi

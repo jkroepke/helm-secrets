@@ -1,0 +1,155 @@
+#!/usr/bin/env bats
+
+load '../lib/helper'
+load '../lib/create_encrypted_file'
+load '../bats/extensions/bats-support/load'
+load '../bats/extensions/bats-assert/load'
+load '../bats/extensions/bats-file/load'
+
+@test "upgrade: helm upgrade" {
+    run helm secrets upgrade
+    assert_success
+    assert_output --partial 'helm secrets upgrade'
+}
+
+@test "upgrade: helm upgrade --help" {
+    run helm secrets upgrade --help
+    assert_success
+    assert_output --partial 'helm secrets upgrade'
+}
+
+@test "upgrade: helm upgrade w/ chart" {
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks 2>&1
+    assert_success
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial 'STATUS: deployed'
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+}
+
+@test "upgrade: helm upgrade w/ chart + secret file" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "STATUS: deployed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "upgrade: helm upgrade w/ chart + secret file + helm flag" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" --set service.type=NodePort 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "STATUS: deployed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+    assert_output --partial "type: NodePort"
+}
+
+@test "upgrade: helm upgrade w/ chart + pre decrypted secret file" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    printf 'service:\n  port: 82' > "${FILE}.dec"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
+    assert_output --partial "STATUS: deployed"
+    assert [ -f "${FILE}.dec" ]
+
+    run rm "${FILE}.dec"
+    assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 82"
+}
+
+@test "upgrade: helm upgrade w/ chart + secret file + q flag" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets -q upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "STATUS: deployed"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "upgrade: helm upgrade w/ chart + secret file + quiet flag" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets --quiet upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "STATUS: deployed"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "upgrade: helm upgrade w/ chart + secret file + special path" {
+    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${SPECIAL_CHAR_DIR}"
+
+    run helm secrets upgrade -i "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "STATUS: deployed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "upgrade: helm upgrade w/ chart + invalid yaml" {
+    FILE="${TEST_TEMP_DIR}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+
+    create_encrypted_file 'replicaCount: |\n  a:'
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "Error: YAML parse error on"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+}
