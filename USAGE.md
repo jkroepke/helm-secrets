@@ -22,6 +22,8 @@ Available Commands:
 
 By convention, files containing secrets are named `secrets.yaml`, or anything beginning with "secrets" and ending with ".yaml". E.g. `secrets.test.yaml`, `secrets.prod.yaml` `secretsCOOL.yaml`.
 
+**But unlike zendesk/helm-secrets, you can name your secret file as you want**
+
 Decrypted files have the suffix ".yaml.dec" by default. This can be changed using the `HELM_SECRETS_DEC_SUFFIX` environment variable.
 
 ## Basic commands:

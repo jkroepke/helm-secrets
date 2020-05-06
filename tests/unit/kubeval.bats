@@ -35,7 +35,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "kubeval: helm kubeval w/ chart + secret file" {
+@test "kubeval: helm kubeval w/ chart + secrets.yaml" {
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -50,14 +50,14 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "kubeval: helm kubeval w/ chart + secret file + helm flag" {
+@test "kubeval: helm kubeval w/ chart + some-secrets.yaml" {
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets kubeval "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set image.pullPolicy=Always --strict 2>&1
+    run helm secrets kubeval "${TEST_TEMP_DIR}/chart" -f "${FILE}" --strict 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "The file chart/templates/serviceaccount.yaml contains a valid ServiceAccount"
@@ -65,7 +65,22 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "kubeval: helm kubeval w/ chart + pre decrypted secret file" {
+@test "kubeval: helm kubeval w/ chart + secrets.yaml + helm flag" {
+    helm_plugin_install "kubeval"
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets kubeval "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort --strict 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "The file chart/templates/serviceaccount.yaml contains a valid ServiceAccount"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "kubeval: helm kubeval w/ chart + pre decrypted secrets.yaml" {
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -84,7 +99,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "kubeval: helm kubeval w/ chart + secret file + q flag" {
+@test "kubeval: helm kubeval w/ chart + secrets.yaml + q flag" {
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -99,7 +114,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "kubeval: helm kubeval w/ chart + secret file + quiet flag" {
+@test "kubeval: helm kubeval w/ chart + secrets.yaml + quiet flag" {
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -114,7 +129,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "kubeval: helm kubeval w/ chart + secret file + special path" {
+@test "kubeval: helm kubeval w/ chart + secrets.yaml + special path" {
     helm_plugin_install "kubeval"
 
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"

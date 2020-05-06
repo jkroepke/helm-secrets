@@ -41,6 +41,24 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_bar'
 }
 
+@test "enc: Encrypt some-secrets.yaml" {
+    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.dec.yaml"
+
+    run helm secrets enc "${FILE}"
+
+    assert_output --partial "Encrypting ${FILE}"
+    assert_output --partial "Encrypted some-secrets.dec.yaml"
+
+    run helm secrets view "${FILE}"
+    assert_success
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
 @test "enc: Encrypt secrets.yaml.dec" {
     if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
         skip

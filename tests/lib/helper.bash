@@ -1,7 +1,7 @@
 GIT_ROOT="$(git rev-parse --show-toplevel)"
 TEST_DIR="${GIT_ROOT}/tests"
 HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-HELM_CACHE="${TEST_DIR}/.tmp/cache/helm"
+HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
 REAL_HOME="${HOME}"
 
 _shasum() {
@@ -79,6 +79,9 @@ setup() {
 
         _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/secrets.yaml' "${TEST_TEMP_DIR}")"
         _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/secrets.yaml' "${SPECIAL_CHAR_DIR}")"
+
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/some-secrets.yaml' "${TEST_TEMP_DIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/some-secrets.yaml' "${SPECIAL_CHAR_DIR}")"
 
         sh "${TEST_TEMP_DIR}/values/vault/seed.sh"
         ;;

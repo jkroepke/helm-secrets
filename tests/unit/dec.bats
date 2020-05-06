@@ -24,51 +24,73 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml" {
-    run helm secrets dec "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
-    assert_success
-    assert_output "Decrypting ${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
-    assert_file_exist "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml.dec"
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run cat "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml.dec"
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_output "Decrypting ${FILE}"
+    assert_file_exist "${FILE}.dec"
+
+    run cat "${FILE}.dec"
+    assert_success
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "dec: Decrypt some-secrets.yaml" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_output "Decrypting ${FILE}"
+    assert_file_exist "${FILE}.dec"
+
+    run cat "${FILE}.dec"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + special char directory name" {
-    run helm secrets dec "${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
-    assert_success
-    assert_output "Decrypting ${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
-    assert_file_exist "${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml.dec"
+    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run cat "${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml.dec"
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_output "Decrypting ${FILE}"
+    assert_file_exist "${FILE}.dec"
+
+    run cat "${FILE}.dec"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_SUFFIX" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
     HELM_SECRETS_DEC_SUFFIX=.yaml.test
     export HELM_SECRETS_DEC_SUFFIX
 
-    run helm secrets dec "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    run helm secrets dec "${FILE}"
     assert_success
-    assert_output "Decrypting ${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
-    assert [ -e "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml.test" ]
+    assert_output "Decrypting ${FILE}"
+    assert [ -e "${FILE}.test" ]
 
-    run cat "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml.test"
+    run cat "${FILE}.test"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_DIR" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
     HELM_SECRETS_DEC_DIR="$(mktemp -d)"
     export HELM_SECRETS_DEC_DIR
 
-    run helm secrets dec "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    run helm secrets dec "${FILE}"
     assert_success
-    assert_output "Decrypting ${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    assert_output "Decrypting ${FILE}"
     assert_file_exist "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
 
     run cat "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"

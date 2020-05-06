@@ -27,5 +27,5 @@ clean() {
         exit 1
     fi
 
-    find "$basedir" -type f -name "secrets*${DEC_SUFFIX}" -exec rm -v {} \;
+    find "$basedir" -type f -name "*${DEC_SUFFIX}" -exec rm -v {} \;
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-vault kv put secret/production global_secret=global_bar port=81
+vault kv put secret/production global_secret=global_bar port=81 port2=83
 
 vault kv put secret/gpg key="-----BEGIN PGP MESSAGE-----
 

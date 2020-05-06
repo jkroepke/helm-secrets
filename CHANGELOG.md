@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+* Add Vault support (https://github.com/jkroepke/helm-secrets/pull/22)
 * Secret driver to gain secrets from other sources then sops. (https://github.com/jkroepke/helm-secrets/pull/16)
+* Remove name restriction (https://github.com/jkroepke/helm-secrets/pull/23)
 
 ### Changed
 

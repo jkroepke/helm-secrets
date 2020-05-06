@@ -35,7 +35,6 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "${FILE}.dec"
 }
 
-
 @test "clean: Cleanup with HELM_SECRETS_DEC_SUFFIX" {
     HELM_SECRETS_DEC_SUFFIX=.yaml.test
     export HELM_SECRETS_DEC_SUFFIX
@@ -49,4 +48,16 @@ load '../bats/extensions/bats-file/load'
     run helm secrets clean "$(dirname "${FILE}")"
     assert_file_not_exist "${FILE}.test"
     assert_output --partial "${FILE}.test"
+}
+
+@test "clean: Cleanup with custom name" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_file_exist "${FILE}.dec"
+
+    run helm secrets clean "$(dirname "${FILE}")"
+    assert_file_not_exist "${FILE}.dec"
+    assert_output --partial "${FILE}.dec"
 }

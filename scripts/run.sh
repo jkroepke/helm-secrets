@@ -36,7 +36,7 @@ Available Commands:
   view    Print secrets decrypted
   edit    Edit secrets file and encrypt afterwards
   clean   Remove all decrypted files in specified directory (recursively)
-  <cmd>   wrapper that decrypts secrets[.*].yaml files before running helm <cmd>
+  <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
 EOF
 }
