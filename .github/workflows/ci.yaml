@@ -110,6 +110,7 @@ jobs:
           VAULT_ADDR: 'http://127.0.0.1:8200'
 
   coverage:
+    container: kcov/kcov
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
@@ -155,25 +156,14 @@ jobs:
       - name: helm plugin install
         run: helm plugin install .
 
-      - name: Setup kcov
-        run: |
-          sudo apt update || true
-          sudo apt install -y pkg-config binutils-dev build-essential libcurl4-openssl-dev libdw-dev libiberty-dev python zlib1g-dev
-
-          git clone https://github.com/SimonKagstrom/kcov kcov_src
-          cd kcov_src
-          cmake .
-          cmake --build . -- -j2
-          sudo cmake --build . --target install
-
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         run: |
           kcov --bash-dont-parse-binary-dir \
+            --bash-handle-sh-invocation  \
             --include-path=. \
+            --exclude-path=tests \
             tests/coverage \
             bats --tap -r tests/unit
-
-      - run: find tests/coverage
 
       - uses: codecov/codecov-action@v1
         with:
