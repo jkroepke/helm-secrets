@@ -125,7 +125,7 @@ The driver option is a global one. A file level switch isn't supported yet.
 
 ## Copyright and license
 
-© 2020 Jan-Otto Kröpke (jkroepke) <mail@jkroepke.de>
+© 2020 [Jan-Otto Kröpke (jkroepke)](https://github.com/jkroepke/helm-secrets)
 
 © 2017-2020 [Zendesk](https://github.com/zendesk/helm-secrets)
 
