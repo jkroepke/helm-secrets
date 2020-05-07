@@ -11,7 +11,7 @@
 
 The current version of this plugin using by default [sops](https://github.com/mozilla/sops/) as backend.
 
-[Vault](http://vaultproject.io/) is support as secret source, too.
+[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v4.0.0, too.
 
 What kind of problems this plugin solves:
 
