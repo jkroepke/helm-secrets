@@ -11,7 +11,7 @@
 
 The current version of this plugin using by default [sops](https://github.com/mozilla/sops/) as backend.
 
-[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v4.0.0, too.
+[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too.
 
 What kind of problems this plugin solves:
 
@@ -84,7 +84,7 @@ By default, helm plugin install does this for you.
 
 ```bash
 # Install a specific version (recommend)
-helm plugin install https://github.com/jkroepke/helm-secrets --version v4.0.0
+helm plugin install https://github.com/jkroepke/helm-secrets --version v3.2.0
 
 # Install latest unstable version from master branch
 helm plugin install https://github.com/jkroepke/helm-secrets
@@ -96,10 +96,10 @@ Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
 
 ```bash
 # MacOS
-curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v4.0.0.tar.gz | tar -C "$HOME/Library/helm" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.2.0.tar.gz | tar -C "$HOME/Library/helm" -xzf-
 
 # Linux
-curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v4.0.0.tar.gz | tar -C "$HOME/.local/share/helm" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.2.0.tar.gz | tar -C "$HOME/.local/share/helm" -xzf-
 ```
 
 ## Change secret driver

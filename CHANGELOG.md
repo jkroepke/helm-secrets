@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.0] - 2020-05-08
+
 ### Added
 - Add Vault support (https://github.com/jkroepke/helm-secrets/pull/22)
 - Secret driver to gain secrets from other sources then sops. (https://github.com/jkroepke/helm-secrets/pull/16)
@@ -43,6 +45,7 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/jkroepke/helm-secrets/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/jkroepke/helm-secrets/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/jkroepke/helm-secrets/compare/5f91bdf...v3.0.0
