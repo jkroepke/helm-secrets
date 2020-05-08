@@ -34,10 +34,10 @@ Additional documentation, resources and examples can be found [here](USAGE.md).
 
 ## Moving parts of project
 
-* `scripts/install.sh` - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
-* `scripts/run.sh` - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
-* `tests` - Test scripts to check if all parts of the plugin work. Using example dir with vars structure and PGP keys to make real tests on real data with real encryption/decryption.
-* `examples` - Some example secrets.yaml 
+* [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
+* [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
+* [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption.
+* [`examples`](examples) - Some example secrets.yaml 
 
 ## Installation and Dependencies
 
