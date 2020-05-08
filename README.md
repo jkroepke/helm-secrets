@@ -89,7 +89,7 @@ As already described above,
 helm plugin install https://github.com/jkroepke/helm-secrets
 
 # Install a specific version
-helm plugin install https://github.com/jkroepke/helm-secrets.git --version v4.0.0
+helm plugin install https://github.com/jkroepke/helm-secrets --version v4.0.0
 ```
 
 ### Manual install
