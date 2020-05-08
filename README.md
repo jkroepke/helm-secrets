@@ -85,7 +85,11 @@ By default, helm plugin install does this for you.
 As already described above,
 
 ```bash
+# Install latest unstable version from master branch
 helm plugin install https://github.com/jkroepke/helm-secrets
+
+# Install a specific version
+helm plugin install https://github.com/jkroepke/helm-secrets.git --version v4.0.0
 ```
 
 ### Manual install
