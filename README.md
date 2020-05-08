@@ -82,22 +82,24 @@ By default, helm plugin install does this for you.
 
 ### Using Helm plugin manager
 
-As already described above,
-
 ```bash
+# Install a specific version (recommend)
+helm plugin install https://github.com/jkroepke/helm-secrets --version v4.0.0
+
+# Install latest unstable version from master branch
 helm plugin install https://github.com/jkroepke/helm-secrets
 ```
 
-### Manual install
+Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
 
-If you need a specific version of helm-secrets,
+### Manual install
 
 ```bash
 # MacOS
-curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.0.0.tar.gz | tar -C "$HOME/Library/helm" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v4.0.0.tar.gz | tar -C "$HOME/Library/helm" -xzf-
 
 # Linux
-curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.0.0.tar.gz | tar -C "$HOME/.local/share/helm" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v4.0.0.tar.gz | tar -C "$HOME/.local/share/helm" -xzf-
 ```
 
 ## Change secret driver
