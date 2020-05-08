@@ -13,6 +13,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
@@ -26,4 +31,4 @@ jobs:
           body: |-
             # CHANGELOG
 
-            * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref }}/CHANGELOG.md
+            * https://github.com/jkroepke/helm-secrets/blob/${{ steps.get_version.outputs.VERSION }}/CHANGELOG.md
