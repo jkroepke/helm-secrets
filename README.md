@@ -18,7 +18,7 @@ What kind of problems this plugin solves:
 - Simple replaceable layer integrated with helm command for encrypting, decrypting, view secrets files stored in any place.
 - On the fly decryption and cleanup for helm install/upgrade with a helm command wrapper
 
-If you are using sops you have some additional features:
+If you are using sops (used by default) you have some additional features:
 
 - [Support for YAML/JSON structures encryption - Helm YAML secrets files](https://github.com/mozilla/sops#important-information-on-types)
 - [Encryption per value where visual Diff should work even on encrypted files](https://github.com/mozilla/sops/blob/master/example.yaml)
@@ -36,7 +36,10 @@ Additional documentation, resources and examples can be found [here](USAGE.md).
 
 * [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
 * [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
-* [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption.
+* [`scripts/drivers`](scripts/drivers) - Location of the in-tree secrets drivers
+* [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
+* [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
+* [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more informations.
 * [`examples`](examples) - Some example secrets.yaml 
 
 ## Installation and Dependencies
@@ -53,11 +56,15 @@ brew install sops
 
 For Linux RPM or DEB, sops is available here: [Dist Packages](https://github.com/mozilla/sops/releases)
 
-For Windows, you cloud install sops separate to mange secrets. This plugin doesn't support Windows yet. See: https://github.com/jkroepke/helm-secrets/issues/7
+For Windows, you cloud install sops separate to mange secrets. This plugin doesn't support Windows yet. See: [#7](https://github.com/jkroepke/helm-secrets/issues/7)
 
-If you want to skip the automatic sops installation, you have to define `SKIP_SOPS_INSTALL=true` on the `helm plugin install` command.
+It's possible to skip the automatic sops installation by define `SKIP_SOPS_INSTALL=true` on the `helm plugin install` command, e.g:
 
-### Vault
+```bash
+SKIP_SOPS_INSTALL=true helm plugin install https://github.com/jkroepke/helm-secrets
+```
+
+### Hasicorp Vault
 
 If you use vault with helm-secret, the vault CLI is needed.
 
@@ -66,6 +73,8 @@ You can always install manually in MacOS as below:
 ```bash
 brew install vault
 ```
+
+Download: https://www.vaultproject.io/downloads
 
 ### SOPS git diff
 
@@ -92,7 +101,7 @@ helm plugin install https://github.com/jkroepke/helm-secrets
 
 Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
 
-### Manual install
+### Manual installation
 
 ```bash
 # MacOS
