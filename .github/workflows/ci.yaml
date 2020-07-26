@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run the sh-checker
-        uses: luizm/action-sh-checker@v0.1.3
+        uses: luizm/action-sh-checker@v0.1.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -70,12 +70,12 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.2.0
+          version: v3.2.4
 
       - name: Setup vault
         uses: volcano-coffee-company/setup-vault@v1
         with:
-          version: '1.4.1'
+          version: '1.5.0'
 
       - name: Install dependencies
         run: |-
@@ -116,9 +116,9 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-      - uses: engineerd/setup-kind@v0.3.0
+      - uses: engineerd/setup-kind@v0.4.0
         with:
-          image: kindest/node:v1.17.0
+          image: kindest/node:v1.18.6
 
       - run: kubectl cluster-info
 
@@ -134,7 +134,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.2.0
+          version: v3.2.4
 
       - name: Install dependencies
         run: |-
