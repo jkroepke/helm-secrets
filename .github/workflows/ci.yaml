@@ -2,7 +2,9 @@
 name: CI
 
 env:
-  SOPS_VERSION: 3.5.0
+  SOPS_VERSION: 3.6.0
+  # https://deb.debian.org/debian/pool/main/d/devscripts/
+  DEVSCRIPTS_VERSION: 2.20.4
 
 on:
   pull_request:
@@ -29,7 +31,7 @@ jobs:
         run: |-
           sudo apt-get update -qq
           sudo apt-get install -y -qq curl
-          curl -sSLf https://deb.debian.org/debian/pool/main/d/devscripts/devscripts_2.20.3_amd64.deb -o /tmp/devscripts.deb
+          curl -sSLf https://deb.debian.org/debian/pool/main/d/devscripts/devscripts_${DEVSCRIPTS_VERSION}_amd64.deb -o /tmp/devscripts.deb
           set +e
           sudo dpkg -i /tmp/devscripts.deb
           set -e

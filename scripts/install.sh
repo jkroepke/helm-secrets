@@ -2,7 +2,7 @@
 
 set -eu
 
-SOPS_VERSION="v3.5.0"
+SOPS_VERSION="v3.6.0"
 SOPS_LINUX_URL="https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux"
 SOPS_LINUX_SHA="610fca9687d1326ef2e1a66699a740f5dbd5ac8130190275959da737ec52f096"
 
