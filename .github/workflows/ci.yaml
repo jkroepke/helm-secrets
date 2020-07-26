@@ -2,7 +2,7 @@
 name: CI
 
 env:
-  SOPS_VERSION: 3.5.0
+  SOPS_VERSION: 3.6.0
 
 on:
   pull_request:
