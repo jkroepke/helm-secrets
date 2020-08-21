@@ -3,12 +3,12 @@ version: "3.3.0-master"
 usage: "Secrets encryption in Helm for Git storing"
 description: |-
   This plugin provides secrets values encryption for Helm charts secure storing
-
-command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-
+useTunnel: false
 hooks:
   install: "$HELM_PLUGIN_DIR/scripts/install.sh"
   update: "$HELM_PLUGIN_DIR/scripts/install.sh"
 
-useTunnel: false
-
+command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+platformCommand:
+  - os: windows
+    command: "sh $HELM_PLUGIN_DIR/scripts/run.sh"
