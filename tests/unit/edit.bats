@@ -17,13 +17,13 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'Edit encrypted secrets'
 }
 
-@test "edit: Directory not exits" {
+@test "edit: File if not exits + no valid encryption config" {
     run helm secrets edit nonexists
     assert_failure
-    assert_output --partial 'File does not exist: nonexists'
+    assert_output --partial 'config file not found and no keys provided through command line options'
 }
 
-@test "edit: File not exits" {
+@test "edit: File if not exits + valid encryption config" {
     if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
         skip
     fi
