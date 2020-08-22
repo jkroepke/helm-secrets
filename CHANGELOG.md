@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Don't check if file exists on edit (https://github.com/jkroepke/helm-secrets/pull/31)
+- Better Windows support (https://github.com/jkroepke/helm-secrets/pull/28)
+
 ## [3.2.0] - 2020-05-08
 
 ### Added

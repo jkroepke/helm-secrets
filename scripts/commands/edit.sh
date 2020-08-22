@@ -23,13 +23,15 @@ EOF
 }
 
 edit_helper() {
-    file="$1"
+    dir=$(dirname "$1")
+    file=$(basename "$1")
 
-    if [ ! -e "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
+    if [ ! -d "${dir}" ]; then
+        printf 'Directory does not exist: %s\n' "${dir}"
         exit 1
     fi
 
+    cd "$dir"
     driver_edit_file "yaml" "${file}"
 }
 
