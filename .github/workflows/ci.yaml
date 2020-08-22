@@ -73,9 +73,9 @@ jobs:
           version: v3.2.4
 
       - name: Setup vault
-        uses: volcano-coffee-company/setup-vault@v1
+        uses: innovationnorway/setup-vault@v1
         with:
-          version: '1.5.0'
+          version: '~1.5'
 
       - name: Install dependencies
         run: |-
