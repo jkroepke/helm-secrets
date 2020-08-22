@@ -23,7 +23,10 @@ EOF
 }
 
 edit_helper() {
-    file="$1"
+    dir=$(dirname "$1")
+    file=$(basename "$1")
+
+    cd "$dir"
     driver_edit_file "yaml" "${file}"
 }
 
