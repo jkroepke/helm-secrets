@@ -24,12 +24,6 @@ EOF
 
 edit_helper() {
     file="$1"
-
-    if [ ! -e "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
-    fi
-
     driver_edit_file "yaml" "${file}"
 }
 
