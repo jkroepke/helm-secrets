@@ -18,6 +18,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: File if not exits + no valid encryption config" {
+    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+        skip
+    fi
+
     run helm secrets edit nonexists
     assert_failure
     assert_output --partial 'config file not found and no keys provided through command line options'
