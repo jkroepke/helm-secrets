@@ -3,6 +3,7 @@ name: CI
 
 env:
   SOPS_VERSION: 3.6.0
+  VAULT_VERSION: 1.5.2
   # https://deb.debian.org/debian/pool/main/d/devscripts/
   DEVSCRIPTS_VERSION: 2.20.4
 
@@ -72,15 +73,13 @@ jobs:
         with:
           version: v3.2.4
 
-      - name: Setup vault
-        uses: innovationnorway/setup-vault@v1
-        with:
-          version: '~1.5'
-
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
+
+          curl -sSfL "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_$(uname | awk '{print tolower($0)}')_amd64.zip" -z "$GITHUB_WORKSPACE/bin/vault" | tar xz -C "$GITHUB_WORKSPACE/bin/"
+          chmod +x "$GITHUB_WORKSPACE/bin/vault"
 
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
           chmod +x "$GITHUB_WORKSPACE/bin/sops"
@@ -93,6 +92,7 @@ jobs:
           bats -v
           sops --version
           gpg --version
+          vault --version
 
       - name: helm plugin install
         run: helm plugin install .
