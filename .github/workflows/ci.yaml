@@ -79,7 +79,7 @@ jobs:
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
 
           curl -sSfL "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_$(uname | awk '{print tolower($0)}')_amd64.zip" -o vault.zip
-          unzip vault.zip -d "$GITHUB_WORKSPACE/bin/"
+          unzip -qq vault.zip -d "$GITHUB_WORKSPACE/bin/"
           rm vault.zip
           chmod +x "$GITHUB_WORKSPACE/bin/vault"
 

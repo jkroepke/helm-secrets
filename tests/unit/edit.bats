@@ -18,6 +18,12 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: Directory not exits" {
+    run helm secrets edit nonexists
+    assert_failure
+    assert_output --partial 'File does not exist: nonexists'
+}
+
+@test "edit: File not exits" {
     if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
         skip
     fi
