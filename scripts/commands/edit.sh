@@ -26,6 +26,11 @@ edit_helper() {
     dir=$(dirname "$1")
     file=$(basename "$1")
 
+    if [ ! -d "${dir}" ]; then
+        printf 'Directory does not exist: %s\n' "${dir}"
+        exit 1
+    fi
+
     cd "$dir"
     driver_edit_file "yaml" "${file}"
 }
