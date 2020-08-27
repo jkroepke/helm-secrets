@@ -9,9 +9,9 @@
 
 ## Main features
 
-The current version of this plugin using by default [sops](https://github.com/mozilla/sops/) as backend.
+The current version of this plugin using by default [mozilla/sops](https://github.com/mozilla/sops/) as backend.
 
-[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too.
+[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too. In addition, [sops support vault since v3.6.0 nativly](https://github.com/mozilla/sops#encrypting-using-hashicorp-vault). 
 
 What kind of problems this plugin solves:
 
@@ -31,6 +31,14 @@ If you are using sops (used by default) you have some additional features:
 - [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
 Additional documentation, resources and examples can be found [here](USAGE.md).
+
+## This is a fork of futuresimple/helm-secrets or zendesk/helm-secrets?
+
+Yes. This repository is a fork of [zendesk/helm-secrets](https://github.com/zendesk/helm-secrets) (base commit [edffea3c94c9ed70891f838b3d881d3578f2599f](https://github.com/jkroepke/helm-secrets/commit/edffea3c94c9ed70891f838b3d881d3578f2599f)).
+
+This original helm-secrets project gets [abandoned](https://github.com/zendesk/helm-secrets/issues/100). I used this projects on my customer project and I also want to learn how unit tests for a shell language works.
+
+In meanwhile, this project is offically listed on the [community projects side](https://helm.sh/docs/community/related/) at the helm documentation.
 
 ## Moving parts of project
 
