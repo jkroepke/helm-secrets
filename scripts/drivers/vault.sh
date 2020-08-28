@@ -43,7 +43,7 @@ driver_decrypt_file() {
     output_tmp="$(mktemp)"
     cp "${input}" "${input_tmp}"
 
-    # Grab all patterns, dedublicate and pass it to loop
+    # Grab all patterns, deduplicate and pass it to loop
     # https://github.com/koalaman/shellcheck/wiki/SC2013
     grep -o -e "${_VAULT_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
         # remove prefix
