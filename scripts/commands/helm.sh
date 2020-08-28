@@ -55,10 +55,22 @@ helm_wrapper() {
             shift
             break
             ;;
-        -f | --values)
-            set -- "$@" "$1"
+        -f | --values | --values=?*)
+            case "$1" in
+            *=*)
+                file="${1#*=}"
 
-            file="${2}"
+                set -- "$@" "${1%%=*}"
+                ;;
+            *)
+                file="${2}"
+
+                set -- "$@" "$1"
+                shift
+                j=$((j + 1))
+                ;;
+            esac
+
             file_dec="$(file_dec_name "${file}")"
             if [ -f "${file_dec}" ]; then
                 set -- "$@" "$file_dec"
@@ -78,9 +90,6 @@ helm_wrapper() {
                     set -- "$@" "$file"
                 fi
             fi
-
-            shift
-            j=$((j + 1))
             ;;
         *)
             set -- "$@" "$1"

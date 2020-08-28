@@ -50,6 +50,36 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
+@test "kubeval: helm kubeval w/ chart + secrets.yaml + --values" {
+    helm_plugin_install "kubeval"
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets kubeval "${TEST_TEMP_DIR}/chart" --values "${FILE}" --strict 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "The file chart/templates/serviceaccount.yaml contains a valid ServiceAccount"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "kubeval: helm kubeval w/ chart + secrets.yaml + --values=" {
+    helm_plugin_install "kubeval"
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets kubeval "${TEST_TEMP_DIR}/chart" --values="${FILE}" --strict 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "The file chart/templates/serviceaccount.yaml contains a valid ServiceAccount"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml" {
     helm_plugin_install "kubeval"
 
@@ -58,6 +88,36 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run helm secrets kubeval "${TEST_TEMP_DIR}/chart" -f "${FILE}" --strict 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "The file chart/templates/serviceaccount.yaml contains a valid ServiceAccount"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "kubeval: helm kubeval w/ chart + some-secrets.yaml + --values" {
+    helm_plugin_install "kubeval"
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets kubeval "${TEST_TEMP_DIR}/chart" --values "${FILE}" --strict 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "The file chart/templates/serviceaccount.yaml contains a valid ServiceAccount"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "kubeval: helm kubeval w/ chart + some-secrets.yaml + --values=" {
+    helm_plugin_install "kubeval"
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets kubeval "${TEST_TEMP_DIR}/chart" --values="${FILE}" --strict 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "The file chart/templates/serviceaccount.yaml contains a valid ServiceAccount"

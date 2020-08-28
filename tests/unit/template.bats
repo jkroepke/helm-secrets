@@ -42,12 +42,64 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
+@test "template: helm template w/ chart + secrets.yaml + --values" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + --values=" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
 @test "template: helm template w/ chart + some-secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
     run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 83"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + some-secrets.yaml + --values" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 83"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + some-secrets.yaml + --values=" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
