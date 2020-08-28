@@ -51,6 +51,36 @@ load '../bats/extensions/bats-file/load'
     assert [ ! -f "${FILE}.dec" ]
 }
 
+@test "diff: helm diff upgrade w/ chart + secrets.yaml + --values" {
+    helm_plugin_install "diff"
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="diff-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+}
+
+@test "diff: helm diff upgrade w/ chart + secrets.yaml + --values=" {
+    helm_plugin_install "diff"
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="diff-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+}
+
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml" {
     helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
@@ -59,6 +89,36 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 83"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+}
+
+@test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values" {
+    helm_plugin_install "diff"
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    RELEASE="diff-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 83"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert [ ! -f "${FILE}.dec" ]
+}
+
+@test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values=" {
+    helm_plugin_install "diff"
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    RELEASE="diff-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
