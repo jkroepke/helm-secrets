@@ -2,6 +2,7 @@
 name: CI
 
 env:
+  HELM_VERSION: 3.3.0
   SOPS_VERSION: 3.6.0
   VAULT_VERSION: 1.5.2
   # https://deb.debian.org/debian/pool/main/d/devscripts/
@@ -64,6 +65,11 @@ jobs:
             yum install -y git-core unzip
           fi
 
+      - uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/bin
+          key: sops-${{ env.SOPS_VERSION }}-${{ env.VAULT_VERSION }}
+
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -71,7 +77,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.2.4
+          version: v${{ env.HELM_VERSION }}
 
       - name: Install dependencies
         run: |-
@@ -127,7 +133,7 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/bin
-          key: sops-${{ env.SOPS_VERSION }}
+          key: sops-${{ env.SOPS_VERSION }}-${{ env.VAULT_VERSION }}
 
       - uses: actions/checkout@v2
         with:
@@ -136,7 +142,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.3.0
+          version: v${{ env.HELM_VERSION }}
 
       - name: Install dependencies
         run: |-
