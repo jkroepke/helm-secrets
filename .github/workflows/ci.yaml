@@ -42,12 +42,17 @@ jobs:
             container: centos:7 # bash
           - os: ubuntu-latest
             container: centos:8 # bash
+          - os: ubuntu-latest
+            container: alpine
+            shell: zsh          # zsh
     steps:
       - name: Install git & curl
         if: "!contains(matrix.os, 'windows-latest')"
         run: |-
           if command -v apk > /dev/null; then
             apk add --no-cache bash git curl gnupg
+          elif command -v install_packages > /dev/null; then
+            install_packages git-core unzip curl gnupg
           elif command -v yum > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
@@ -56,6 +61,10 @@ jobs:
 
             yum install -y git-core unzip
           fi
+
+      - name: Install zsh
+        if: "contains(matrix.shell, 'zsh')"
+        run: apk add zsh && ln -sf "$(command -v zsh)" /bin/sh
 
       - uses: actions/checkout@v2
         with:
