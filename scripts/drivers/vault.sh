@@ -47,9 +47,9 @@ driver_decrypt_file() {
     # https://github.com/koalaman/shellcheck/wiki/SC2013
     grep -o -e "${_VAULT_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
         # remove prefix
-        VAULT_SECRET="$(echo "${EXPRESSION}" | sed 's/!vault //')"
-        VAULT_SECRET_PATH="$(echo "${VAULT_SECRET}" | cut -d '#' -f1)"
-        VAULT_SECRET_FIELD="$(echo "${VAULT_SECRET}" | cut -d '#' -f2)"
+        VAULT_SECRET="${EXPRESSION#* }"
+        VAULT_SECRET_PATH="${VAULT_SECRET%#*}"
+        VAULT_SECRET_FIELD="${VAULT_SECRET#*#}"
 
         if ! SECRET="$(vault kv get -format=yaml -field="${VAULT_SECRET_FIELD}" "${VAULT_SECRET_PATH}")"; then
             echo "Error while get secret from vault!" >&2
