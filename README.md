@@ -66,6 +66,14 @@ For Linux RPM or DEB, sops is available here: [Dist Packages](https://github.com
 
 For Windows, you cloud install sops separate to mange secrets. This plugin doesn't support Windows yet. See: [#7](https://github.com/jkroepke/helm-secrets/issues/7)
 
+#### Override version of sops
+By override `SOPS_VERSION`, you could install a custom sops version of sops.
+
+```bash
+SOPS_VERSION=v3.6.0 SOPS_LINUX_SHA=610fca9687d1326ef2e1a66699a740f5dbd5ac8130190275959da737ec52f096 helm plugin install https://github.com/jkroepke/helm-secrets
+```
+
+#### Skip sops installation
 It's possible to skip the automatic sops installation by define `SKIP_SOPS_INSTALL=true` on the `helm plugin install` command, e.g:
 
 ```bash
