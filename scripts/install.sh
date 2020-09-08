@@ -2,9 +2,10 @@
 
 set -eu
 
-SOPS_VERSION="v3.6.0"
-SOPS_LINUX_URL="https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux"
-SOPS_LINUX_SHA="610fca9687d1326ef2e1a66699a740f5dbd5ac8130190275959da737ec52f096"
+SOPS_DEFAULT_VERSION="v3.6.0"
+SOPS_VERSION="${SOPS_VERSION:-$SOPS_DEFAULT_VERSION}"
+SOPS_LINUX_URL="${SOPS_LINUX_URL:-"https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux"}"
+SOPS_LINUX_SHA="${SOPS_LINUX_SHA:-"610fca9687d1326ef2e1a66699a740f5dbd5ac8130190275959da737ec52f096"}"
 
 RED='\033[0;31m'
 #GREEN='\033[0;32m'
@@ -59,6 +60,9 @@ else
                 fi
             else
                 printf "${RED}%s${NOC}\n" "Checksum mismatch"
+                if [ "${SOPS_VERSION}" != "${SOPS_DEFAULT_VERSION}" ]; then
+                    printf "${RED}%s${NOC}\n" "Forgot to set SOPS_LINUX_SHA?"
+                fi
                 echo "Ignoring ..."
             fi
             rm -f /tmp/sops
