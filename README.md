@@ -121,7 +121,7 @@ Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
 
 ```bash
 # MacOS
-curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.23.0.tar.gz | tar -C "$HOME/Library/helm" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.3.0.tar.gz | tar -C "$HOME/Library/helm" -xzf-
 
 # Linux
 curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.3.0.tar.gz | tar -C "$HOME/.local/share/helm" -xzf-
