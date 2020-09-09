@@ -6,10 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
-## [Unreleased]
+## [3.3.1] - 2020-09-09
 
 ### Added
-- Allow to override SOPS version on installation (https://github.com/jkroepke/helm-secrets/pull/40)
+- Allow overriding SOPS version on installation (https://github.com/jkroepke/helm-secrets/pull/40)
+- Add separat download artefact on github release
 
 ## [3.3.0] - 2020-08-28
 
@@ -58,7 +59,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.3.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.3.1...HEAD
+[3.3.1]: https://github.com/jkroepke/helm-secrets/compare/v3.3.1...v3.3.0
 [3.3.0]: https://github.com/jkroepke/helm-secrets/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/jkroepke/helm-secrets/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/jkroepke/helm-secrets/compare/v3.0.0...v3.1.0
