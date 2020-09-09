@@ -16,7 +16,6 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Package helm-secrets
-        id: get_version
         run: >-
           tar
           --exclude='./contrib'
