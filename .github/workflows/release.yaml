@@ -15,6 +15,18 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
+      - name: Package helm-secrets
+        id: get_version
+        run: >-
+          tar
+          --exclude='./contrib'
+          --exclude='./.git'
+          --exclude='./.github'
+          --exclude='./examples'
+          --exclude='./tests'
+          --exclude='./helm-secrets.tar.gz'
+          -czf helm-secrets.tar.gz .
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
@@ -29,3 +41,14 @@ jobs:
             # CHANGELOG
 
             * https://github.com/jkroepke/helm-secrets/blob/${{ steps.get_version.outputs.VERSION }}/CHANGELOG.md
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./helm-secrets.tar.gz
+          asset_name: helm-secrets.tar.gz
+          asset_content_type: application/tar+gzip
