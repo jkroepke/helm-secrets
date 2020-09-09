@@ -16,15 +16,7 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Package helm-secrets
-        run: >-
-          tar
-          --exclude='./contrib'
-          --exclude='./.git'
-          --exclude='./.github'
-          --exclude='./examples'
-          --exclude='./tests'
-          --exclude='./helm-secrets.tar.gz'
-          -czf helm-secrets.tar.gz .
+        run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
 
       - name: Create Release
         id: create_release
