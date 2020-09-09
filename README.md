@@ -11,7 +11,7 @@
 
 The current version of this plugin using by default [mozilla/sops](https://github.com/mozilla/sops/) as backend.
 
-[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too. In addition, [sops support vault since v3.6.0 nativly](https://github.com/mozilla/sops#encrypting-using-hashicorp-vault). 
+[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too. In addition, [sops support vault since v3.6.0 natively](https://github.com/mozilla/sops#encrypting-using-hashicorp-vault). 
 
 What kind of problems this plugin solves:
 
@@ -30,15 +30,15 @@ If you are using sops (used by default) you have some additional features:
 - [Extracting sub-elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
 - [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
-Additional documentation, resources and examples can be found [here](USAGE.md).
+An additional documentation, resources and examples can be found [here](USAGE.md).
 
 ## This is a fork of futuresimple/helm-secrets or zendesk/helm-secrets?
 
 Yes. This repository is a fork of [zendesk/helm-secrets](https://github.com/zendesk/helm-secrets) (base commit [edffea3c94c9ed70891f838b3d881d3578f2599f](https://github.com/jkroepke/helm-secrets/commit/edffea3c94c9ed70891f838b3d881d3578f2599f)).
 
-This original helm-secrets project gets [abandoned](https://github.com/zendesk/helm-secrets/issues/100). I used this projects on my customer project and I also want to learn how unit tests for a shell language works.
+This original helm-secrets project gets [abandoned](https://github.com/zendesk/helm-secrets/issues/100). I used this projects on my customer projects, and I also want to learn how unit tests for a shell language works.
 
-In meanwhile, this project is offically listed on the [community projects side](https://helm.sh/docs/community/related/) at the helm documentation.
+In meanwhile, this project is officially listed on the [community projects side](https://helm.sh/docs/community/related/) at the helm documentation.
 
 ## Moving parts of project
 
@@ -54,7 +54,7 @@ In meanwhile, this project is offically listed on the [community projects side](
 
 ### SOPS
 
-Just install the plugin using `helm plugin install https://github.com/jkroepke/helm-secrets` and sops will be installed if possible as part of it.
+Just install the plugin using `helm plugin install https://github.com/jkroepke/helm-secrets` and sops will be installed if possible as part of it.
 
 You can always install manually in MacOS as below:
 
@@ -119,21 +119,39 @@ Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
 
 ### Manual installation
 
+#### Latest version
+
 ```bash
+# Windows (inside cmd, needs to be verified)
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
+
 # MacOS
-curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.3.0.tar.gz | tar -C "$HOME/Library/helm" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "$HOME/Library/helm/plugins" -xzf-
 
 # Linux
-curl -LsSf https://github.com/jkroepke/helm-secrets/archive/v3.3.0.tar.gz | tar -C "$HOME/.local/share/helm" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "$HOME/.local/share/helm/plugins" -xzf-
+```
+
+#### Specific version
+
+```bash
+# Windows (inside cmd, needs to be verified)
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
+
+# MacOS
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "$HOME/Library/helm/plugins" -xzf-
+
+# Linux
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "$HOME/.local/share/helm/plugins" -xzf-
 ```
 
 ## Change secret driver
 
-It's possible to use an other secret driver then sops, e.g. Hasicorp Vault.
+It's possible to use another secret driver then sops, e.g. Hasicorp Vault.
 
-Start by copy the [sops driver](https://github.com/jkroepke/helm-secrets/blob/master/scripts/drivers/sops.sh) and adjust to your own needs.
+Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/master/scripts/drivers/sops.sh) and adjust to your own needs.
 
-Custom driver can be load via `SECRET_DRIVER` parameter or `-d` option (higher preference):
+The custom driver can be load via `SECRET_DRIVER` parameter or `-d` option (higher preference):
 
 ```bash
 # Example for in-tree drivers via option
