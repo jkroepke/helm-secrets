@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
+## [Unreleased]
+
+### Added
+- Better lookup for unix shells on Windows (https://github.com/jkroepke/helm-secrets/pull/42)
+
 ## [3.3.4] - 2020-09-09
 
 ### Added
