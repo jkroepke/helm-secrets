@@ -27,6 +27,8 @@ IF %ERRORLEVEL% EQU 0 GOTO :WSL
 GOTO :NOSHELL
 
 :ENVSH
+if "%HELM_SECRETS_WINDOWS_SHELL%"=="wsl" GOTO :WSL
+
 "%HELM_SECRETS_WINDOWS_SHELL%" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
@@ -35,7 +37,7 @@ GOTO :EOF
 GOTO :EOF
 
 :GITBASH
-"%programfiles%\Git\bin\bash.exe" -x "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
+"%programfiles%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
 :GITBASH32
@@ -60,7 +62,7 @@ shift
 goto LOOP
 :ENDLOOP
 
-wsl bash -x -c "%ARGS%"
+wsl bash %ARGS%
 GOTO :EOF
 
 :NOSHELL
