@@ -1,5 +1,5 @@
 name: "secrets"
-version: "3.4.0-master"
+version: "3.3.4"
 usage: "Secrets encryption in Helm for Git storing"
 description: |-
   This plugin provides secrets values encryption for Helm charts secure storing
@@ -8,7 +8,4 @@ hooks:
   install: "$HELM_PLUGIN_DIR/wrapper/run.cmd $HELM_PLUGIN_DIR/scripts/install.sh"
   update: "$HELM_PLUGIN_DIR/wrapper/run.cmd $HELM_PLUGIN_DIR/scripts/install.sh"
 
-command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-platformCommand:
-  - os: windows
-    command: "$HELM_PLUGIN_DIR/wrapper/sh.cmd $HELM_PLUGIN_DIR/scripts/run.sh"
+command: "$HELM_PLUGIN_DIR/wrapper/run.cmd $HELM_PLUGIN_DIR/scripts/run.sh"
