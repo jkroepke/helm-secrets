@@ -9,15 +9,11 @@ if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 IF %ERRORLEVEL% EQU 0 GOTO :SH
 
-:: check for git-bash
-"%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
+:: check git for windows
+where.exe git.exe  >nul 2>&1
 
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH
-
-:: check for git-bash (32-bit)
-"%programfiles(x86)%\Git\bin\bash.exe" -c exit  >nul 2>&1
-
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH32
+IF %ERRORLEVEL% EQU 0 GOTO :CHECK_GITBASH
+:RETURN_GITBASH
 
 :: check for wsl
 wsl sh -c exit  >nul 2>&1
@@ -27,7 +23,7 @@ IF %ERRORLEVEL% EQU 0 GOTO :WSL
 GOTO :NOSHELL
 
 :ENVSH
-if "%HELM_SECRETS_WINDOWS_SHELL%"=="wsl" GOTO :WSL
+IF "%HELM_SECRETS_WINDOWS_SHELL%"=="wsl" GOTO :WSL
 
 "%HELM_SECRETS_WINDOWS_SHELL%" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
@@ -36,12 +32,22 @@ GOTO :EOF
 "sh" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
-:GITBASH
-"%programfiles%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
-GOTO :EOF
+:CHECK_GITBASH
+:: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
+FOR /F "tokens=* USEBACKQ" %%F IN (`where.exe git.exe`) DO (
+  SET GIT_FILEPATH=%%F
+)
 
-:GITBASH32
-"%programfiles(x86)%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
+IF "%GIT_FILEPATH%"=="" GOTO :RETURN_GITBASH
+
+FOR %%F in ("%GIT_FILEPATH%") DO SET GIT_DIRPATH=%%~dpF
+
+:: check for git-bash
+"%GIT_DIRPATH%\..\bin\bash.exe" -c exit  >nul 2>&1
+
+IF %ERRORLEVEL% EQU 0 GOTO :RETURN_GITBASH
+
+"%GIT_DIRPATH%\..\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
 :WSL
