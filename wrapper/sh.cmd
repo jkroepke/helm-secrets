@@ -1,21 +1,21 @@
 @setlocal enableextensions enabledelayedexpansion
-@echo off
+@echo on
 
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
-if "%HELM_SECRETS_WINDOWS_SHELL%"!="" GOTO :ENVSH
+if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 :: check for cygwin installation or git for windows is inside %PATH%
-sh -c exit  >nul 2>&1
+"sh" -c exit  >nul 2>&1
 
 IF %ERRORLEVEL% EQU 0 GOTO :SH
 
 :: check for git-bash
-C:\Program^ Files\Git\bin\bash.exe -c exit  >nul 2>&1
+"%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
 
 IF %ERRORLEVEL% EQU 0 GOTO :GITBASH
 
 :: check for git-bash (32-bit)
-C:\Program^ Files^ (x86)\Git\bin\bash.exe -c exit  >nul 2>&1
+"%programfiles(x86)%\Git\bin\bash.exe" -c exit  >nul 2>&1
 
 IF %ERRORLEVEL% EQU 0 GOTO :GITBASH32
 
@@ -27,19 +27,19 @@ IF %ERRORLEVEL% EQU 0 GOTO :WSL
 GOTO :NOSHELL
 
 :ENVSH
-%HELM_SECRETS_WINDOWS_SHELL% "%*"
+"%HELM_SECRETS_WINDOWS_SHELL%" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
 :SH
-sh "'%HELM_PLUGIN_DIR%\scripts\run.sh' %*"
+"sh" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
 :GITBASH
-C:\Program^ Files\Git\bin\bash.exe "%*"
+"%programfiles%\Git\bin\bash.exe" -x "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
 :GITBASH32
-C:\Program^ Files^ (x86)\Git\bin\bash.exe "%*"
+"%programfiles(x86)%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
 GOTO :EOF
 
 :WSL
