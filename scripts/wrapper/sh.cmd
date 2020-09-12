@@ -1,5 +1,5 @@
 @setlocal enableextensions enabledelayedexpansion
-@echo on
+@echo off
 
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
@@ -22,7 +22,7 @@ IF %ERRORLEVEL% EQU 0 GOTO :GITBASH32
 :: check for wsl
 wsl sh -c exit  >nul 2>&1
 
-IF %ERRORLEVEL% EQU 0 GOTO :WSL 
+IF %ERRORLEVEL% EQU 0 GOTO :WSL
 
 GOTO :NOSHELL
 
@@ -45,7 +45,7 @@ GOTO :EOF
 :WSL
 :: Use WSL, but convert all paths (script + arguments) to wsl paths
 SET ARGS=
-  
+
 :: Loop through all parameters - https://stackoverflow.com/a/34019557/8087167
 :LOOP
 if "%1"=="" goto ENDLOOP
@@ -59,7 +59,7 @@ SET ARGS=%ARGS% %WSLPATH%
 shift
 goto LOOP
 :ENDLOOP
-        
+
 wsl bash -x -c "%ARGS%"
 GOTO :EOF
 
