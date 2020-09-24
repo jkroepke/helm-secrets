@@ -37,21 +37,21 @@ GOTO :NOSHELL
 :ENVSH
 IF "%HELM_SECRETS_WINDOWS_SHELL%"=="wsl" GOTO :WSL
 
-"%HELM_SECRETS_WINDOWS_SHELL%" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
+"%HELM_SECRETS_WINDOWS_SHELL%" %*
 GOTO :EOF
 
 
 
 
 :SH
-"sh" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
+"sh" %*
 GOTO :EOF
 
 
 
 
 :GITBASH
-"%programfiles%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
+"%programfiles%\Git\bin\bash.exe" %*
 GOTO :EOF
 
 
@@ -59,7 +59,7 @@ GOTO :EOF
 
 
 :GITBASH32
-"%programfiles(x86)%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
+"%programfiles(x86)%\Git\bin\bash.exe" %*
 GOTO :EOF
 
 
@@ -80,7 +80,7 @@ FOR %%F in ("%GIT_FILEPATH%") DO SET GIT_DIRPATH=%%~dpF
 
 IF %ERRORLEVEL% NEQ 0 GOTO :RETURN_GITBASH
 
-"%GIT_DIRPATH%..\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
+"%GIT_DIRPATH%..\bin\bash.exe" %*
 GOTO :EOF
 
 
