@@ -144,7 +144,7 @@ jobs:
         run: |-
           mkdir -p "$env:GITHUB_WORKSPACE/bin"
           echo "::add-path::$env:GITHUB_WORKSPACE/bin/"
-          echo "::add-path::C:\Programme\GNU\GnuPG"
+          echo "::add-path::$env:ProgramFiles\GNU\GnuPG"
 
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${env:SOPS_VERSION}/sops-v${env:SOPS_VERSION}.exe" -z "$env:GITHUB_WORKSPACE/bin/sops.exe" -o "$env:GITHUB_WORKSPACE/bin/sops.exe"
           chmod +x "$env:GITHUB_WORKSPACE/bin/sops.exe"
@@ -158,7 +158,7 @@ jobs:
           tests/bats/core/install.sh "$env:GITHUB_WORKSPACE"
 
           Get-Childitem –Path D:\a -Include *bats* -File -Recurse
-          Get-Childitem –Path C:\ -Include *gpg* -File -Recurse
+          Get-Childitem –Path C:\ -Include *gpg.exe -File -Recurse
 
           bats -v
           sops --version
