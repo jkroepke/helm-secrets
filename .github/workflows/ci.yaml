@@ -150,7 +150,7 @@ jobs:
       - name: Install dependencies
         run: |-
           choco install --no-progress sops --version=${SOPS_VERSION}
-          choco install --no-progress gpg4win --version=3.1.13
+          choco install --no-progress gpg4win --version=3.1.13 --params "/Config:contrib\actions\gpg4win.ini"
 
       - name: Print Environment
         run: |-
