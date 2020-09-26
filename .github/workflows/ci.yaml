@@ -131,13 +131,6 @@ jobs:
     runs-on: windows-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-      - uses: actions/cache@v2
-        with:
-          path: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
-          key: ${{ runner.os }}-chocolatey-${{ matrix.os }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-chocolatey-${{ matrix.os }}-
-            ${{ runner.os }}-chocolatey-
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -153,10 +146,11 @@ jobs:
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
 
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.exe" -z "$GITHUB_WORKSPACE/bin/sops.exe" -o "$GITHUB_WORKSPACE/bin/sops.exe"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops.exe
 
           curl -sSfL "https://files.gpg4win.org/gpg4win-3.1.13.exe" -z "$GITHUB_WORKSPACE/bin/gpg4win.exe" -o "$GITHUB_WORKSPACE/bin/sops.exe"
-          gpg4win.exe /S /C=contrib\actions\gpg4win.ini
+          chmod +x "$GITHUB_WORKSPACE/bin/gpg4win.exe"
+          "$GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
 
       - name: Print Environment
         run: |-
