@@ -1,5 +1,5 @@
 @setlocal enableextensions enabledelayedexpansion
-@echo off
+@echo on
 
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
