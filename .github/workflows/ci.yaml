@@ -144,6 +144,7 @@ jobs:
         run: |-
           mkdir -p "$env:GITHUB_WORKSPACE/bin"
           echo "::add-path::$env:GITHUB_WORKSPACE/bin/"
+          echo "::add-path::C:\Programme\GNU\GnuPG"
 
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${env:SOPS_VERSION}/sops-v${env:SOPS_VERSION}.exe" -z "$env:GITHUB_WORKSPACE/bin/sops.exe" -o "$env:GITHUB_WORKSPACE/bin/sops.exe"
           chmod +x "$env:GITHUB_WORKSPACE/bin/sops.exe"
@@ -156,10 +157,13 @@ jobs:
         run: |-
           tests/bats/core/install.sh "$env:GITHUB_WORKSPACE"
 
+          Get-Childitem –Path C:\, D:\ -Include *bats* -File -Recurse
+          Get-Childitem –Path C:\, D:\ -Include *gpg* -File -Recurse
+          Get-Childitem –Path C:\, D:\ -Include *sops* -File -Recurse
+
           bats -v
           sops --version
           gpg --version
-          vault --version
 
       - name: helm plugin install
         run: helm plugin install .
