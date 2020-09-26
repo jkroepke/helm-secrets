@@ -155,8 +155,7 @@ jobs:
 
       - name: Print Environment
         run: |-
-          Get-Childitem –Path D:\a -Include *bats* -File -Recurse
-          Get-Childitem –Path C:\ -Include *gpg.exe -File -Recurse
+          Get-Childitem –Path $env:ProgramFiles -Include *gpg.exe -File -Recurse
 
           bash tests/bats/core/bin/bats -v
           sops --version
