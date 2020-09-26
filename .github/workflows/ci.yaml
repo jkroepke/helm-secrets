@@ -126,6 +126,60 @@ jobs:
           HELM_SECRETS_DRIVER: vault
           VAULT_ADDR: 'http://127.0.0.1:8200'
 
+  unit-tests-on-windows:
+    #    needs: [unit-tests]
+    runs-on: windows-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - uses: actions/checkout@v1
+      #      - name: Run the script
+      #        shell: powershell
+      #        run: |
+      #          bash --version
+      #          Enable-WindowsOptionalFeature -Online -NoRestart -FeatureName Microsoft-Windows-Subsystem-Linux
+      #          Dism /online /Get-FeatureInfo /FeatureName:Microsoft-Windows-Subsystem-Linux
+      #          #wsl
+      #          bash --version
+      #          #ubuntu
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v${{ env.HELM_VERSION }}
+
+      - name: Install dependencies
+        run: |-
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+
+          curl -sSfL "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_$(uname | awk '{print tolower($0)}')_amd64.zip" -o vault.zip
+          unzip -qq vault.zip -d "$GITHUB_WORKSPACE/bin/"
+          rm vault.zip
+          chmod +x "$GITHUB_WORKSPACE/bin/vault"
+
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
+      - name: Print Environment
+        run: |-
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+
+          bats -v
+          sops --version
+          gpg --version
+          vault --version
+
+      - name: helm plugin install
+        run: helm plugin install .
+
+      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
+        run: |
+          bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: sops
+
   integration-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest
