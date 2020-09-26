@@ -157,9 +157,8 @@ jobs:
         run: |-
           tests/bats/core/install.sh "$env:GITHUB_WORKSPACE"
 
-          Get-Childitem –Path C:\, D:\ -Include *bats* -File -Recurse
-          Get-Childitem –Path C:\, D:\ -Include *gpg* -File -Recurse
-          Get-Childitem –Path C:\, D:\ -Include *sops* -File -Recurse
+          Get-Childitem –Path D:\a -Include *bats* -File -Recurse
+          Get-Childitem –Path C:\ -Include *gpg* -File -Recurse
 
           bats -v
           sops --version
