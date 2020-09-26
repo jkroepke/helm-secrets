@@ -149,8 +149,14 @@ jobs:
 
       - name: Install dependencies
         run: |-
-          choco install --no-progress sops --version=${SOPS_VERSION}
-          choco install --no-progress gnupg --version=2.2.23
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.exe" -z "$GITHUB_WORKSPACE/bin/sops.exe" -o "$GITHUB_WORKSPACE/bin/sops.exe"
+          chmod +x "$GITHUB_WORKSPACE/bin/sops"
+
+          curl -sSfL "https://files.gpg4win.org/gpg4win-3.1.13.exe" -z "$GITHUB_WORKSPACE/bin/gpg4win.exe" -o "$GITHUB_WORKSPACE/bin/sops.exe"
+          gpg4win.exe /S /C=contrib\actions\gpg4win.ini
 
       - name: Print Environment
         run: |-
