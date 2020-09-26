@@ -2,9 +2,6 @@
 name: CI
 
 env:
-  HELM_VERSION: 3.3.0
-  SOPS_VERSION: 3.6.0
-  VAULT_VERSION: 1.5.2
   # https://deb.debian.org/debian/pool/main/d/devscripts/
   DEVSCRIPTS_VERSION: 2.20.4
 
@@ -83,25 +80,21 @@ jobs:
 
       - name: Setup Helm
         uses: azure/setup-helm@v1
-        with:
-          version: v${{ env.HELM_VERSION }}
 
       - name: Setup Sops
         uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Setup Vault
+        uses: innovationnorway/setup-vault@v1
 
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
 
-          curl -sSfL "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_$(uname | awk '{print tolower($0)}')_amd64.zip" -o vault.zip
-          unzip -qq vault.zip -d "$GITHUB_WORKSPACE/bin/"
-          rm vault.zip
-          chmod +x "$GITHUB_WORKSPACE/bin/vault"
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
       - name: Print Environment
         run: |-
-          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
-
           echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
           bats -v
           sops --version
@@ -136,11 +129,12 @@ jobs:
 
       - name: Setup Helm
         uses: azure/setup-helm@v1
-        with:
-          version: v${{ env.HELM_VERSION }}
 
       - name: Setup Sops
         uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Setup Vault
+        uses: innovationnorway/setup-vault@v1
 
       - name: Install dependencies
         run: |-
@@ -153,12 +147,6 @@ jobs:
           & "$env:GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
 
           Get-Childitem –Path "$env:GITHUB_WORKSPACE" -Recurse
-      - name: Print Environment
-        run: |-
-          bash tests/bats/core/bin/bats -v
-
-          sops --version
-          gpg --version
 
       - name: helm plugin install
         run: helm plugin install .
@@ -191,20 +179,26 @@ jobs:
 
       - name: Setup Helm
         uses: azure/setup-helm@v1
-        with:
-          version: v${{ env.HELM_VERSION }}
+
+      - name: Setup Sops
+        uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Setup Vault
+        uses: innovationnorway/setup-vault@v1
 
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
-          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops"
-          sops --version
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+      - name: Print Environment
+        run: |-
+          echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
           bats -v
+          sops --version
+          gpg --version
+          vault --version
 
       - name: helm plugin install
         run: helm plugin install .
