@@ -133,6 +133,10 @@ jobs:
       - name: Setup Sops
         uses: mdgreenwald/mozilla-sops-action@v1
 
+      - if: failure()
+        run: |-
+          Get-ChildItem -Path C:\hostedtoolcache\windows\sops -Recurse
+
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1
 
