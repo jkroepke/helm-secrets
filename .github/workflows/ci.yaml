@@ -155,6 +155,7 @@ jobs:
 
       - name: Print Environment
         run: |-
+          bash -c "uname -a"
           bash tests/bats/core/bin/bats -v
           sops --version
           gpg --version
