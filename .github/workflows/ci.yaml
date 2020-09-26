@@ -145,12 +145,12 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/bin"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
 
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.exe" -z "$GITHUB_WORKSPACE/bin/sops.exe" -o "$GITHUB_WORKSPACE/bin/sops.exe"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops.exe"
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${env:SOPS_VERSION}/sops-v${env:SOPS_VERSION}.exe" -z "$env:GITHUB_WORKSPACE/bin/sops.exe" -o "$env:GITHUB_WORKSPACE/bin/sops.exe"
+          chmod +x "$env:GITHUB_WORKSPACE/bin/sops.exe"
 
-          curl -sSfL "https://files.gpg4win.org/gpg4win-3.1.13.exe" -z "$GITHUB_WORKSPACE/bin/gpg4win.exe" -o "$GITHUB_WORKSPACE/bin/sops.exe"
-          chmod +x "$GITHUB_WORKSPACE/bin/gpg4win.exe"
-          & "$GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
+          curl -sSfL "https://files.gpg4win.org/gpg4win-3.1.13.exe" -z "$env:GITHUB_WORKSPACE/bin/gpg4win.exe" -o "$env:GITHUB_WORKSPACE/bin/gpg4win.exe"
+          chmod +x "$env:GITHUB_WORKSPACE/bin/gpg4win.exe"
+          & "$env:GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
 
       - name: Print Environment
         run: |-
