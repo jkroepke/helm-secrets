@@ -154,7 +154,7 @@ jobs:
 
       - name: Print Environment
         run: |-
-          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+          tests/bats/core/install.sh "$env:GITHUB_WORKSPACE"
 
           bats -v
           sops --version
