@@ -41,6 +41,11 @@ setup() {
 
     TEST_TEMP_DIR="$(mktemp -d)"
     HOME="${TEST_TEMP_DIR}/home"
+
+    # Windows
+    # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
+    APPDATA="${HOME}"
+
     # shellcheck disable=SC2016
     SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
 
