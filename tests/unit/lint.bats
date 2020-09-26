@@ -161,6 +161,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + special path" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${SPECIAL_CHAR_DIR}"

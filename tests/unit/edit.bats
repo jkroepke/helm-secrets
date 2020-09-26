@@ -87,6 +87,10 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
     export EDITOR
 

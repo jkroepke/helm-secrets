@@ -148,8 +148,6 @@ jobs:
 
           tests/bats/core/install.sh "$env:GITHUB_WORKSPACE"
 
-          ls -l "$env:GITHUB_WORKSPACE/bin/"
-
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${env:SOPS_VERSION}/sops-v${env:SOPS_VERSION}.exe" -z "$env:GITHUB_WORKSPACE/bin/sops.exe" -o "$env:GITHUB_WORKSPACE/bin/sops.exe"
           chmod +x "$env:GITHUB_WORKSPACE/bin/sops.exe"
 
@@ -157,6 +155,7 @@ jobs:
           chmod +x "$env:GITHUB_WORKSPACE/bin/gpg4win.exe"
           & "$env:GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
 
+          Get-Childitem –Path "$env:GITHUB_WORKSPACE" -Recurse
       - name: Print Environment
         run: |-
           bash -c "uname"

@@ -190,6 +190,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + special path" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
