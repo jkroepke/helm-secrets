@@ -150,7 +150,7 @@ jobs:
 
           curl -sSfL "https://files.gpg4win.org/gpg4win-3.1.13.exe" -z "$GITHUB_WORKSPACE/bin/gpg4win.exe" -o "$GITHUB_WORKSPACE/bin/sops.exe"
           chmod +x "$GITHUB_WORKSPACE/bin/gpg4win.exe"
-          "$GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
+          & "$GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
 
       - name: Print Environment
         run: |-
