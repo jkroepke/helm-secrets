@@ -142,11 +142,9 @@ jobs:
 
       - name: Install dependencies
         run: |-
-          mkdir -p "$env:GITHUB_WORKSPACE/bin/"
+          mkdir -p "$env:GITHUB_WORKSPACE/bin"
           echo "::add-path::$env:GITHUB_WORKSPACE/bin/"
           echo "::add-path::$env:ProgramFiles\GNU\GnuPG"
-
-          tests/bats/core/install.sh "$env:GITHUB_WORKSPACE"
 
           curl -sSfL "https://github.com/mozilla/sops/releases/download/v${env:SOPS_VERSION}/sops-v${env:SOPS_VERSION}.exe" -z "$env:GITHUB_WORKSPACE/bin/sops.exe" -o "$env:GITHUB_WORKSPACE/bin/sops.exe"
           chmod +x "$env:GITHUB_WORKSPACE/bin/sops.exe"
@@ -158,9 +156,8 @@ jobs:
           Get-Childitem –Path "$env:GITHUB_WORKSPACE" -Recurse
       - name: Print Environment
         run: |-
-          bash -c "uname"
-          bash -c "uname -a"
           bash tests/bats/core/bin/bats -v
+
           sops --version
           gpg --version
 
