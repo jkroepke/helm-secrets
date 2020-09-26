@@ -142,7 +142,7 @@ jobs:
 
       - name: Install dependencies
         run: |-
-          mkdir -p "$env:GITHUB_WORKSPACE/bin"
+          mkdir -p "$env:GITHUB_WORKSPACE/bin/"
           echo "::add-path::$env:GITHUB_WORKSPACE/bin/"
           echo "::add-path::$env:ProgramFiles\GNU\GnuPG"
 
@@ -155,12 +155,10 @@ jobs:
 
       - name: Print Environment
         run: |-
-          tests/bats/core/install.sh "$env:GITHUB_WORKSPACE"
-
           Get-Childitem –Path D:\a -Include *bats* -File -Recurse
           Get-Childitem –Path C:\ -Include *gpg.exe -File -Recurse
 
-          bats -v
+          bash tests/bats/core/bin/bats -v
           sops --version
           gpg --version
 
@@ -169,7 +167,7 @@ jobs:
 
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         run: |
-          bats --tap -r tests/unit
+          bash tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: sops
 
