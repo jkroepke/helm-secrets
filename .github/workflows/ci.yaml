@@ -151,8 +151,6 @@ jobs:
           chmod +x "$env:GITHUB_WORKSPACE/bin/gpg4win.exe"
           & "$env:GITHUB_WORKSPACE/bin/gpg4win.exe" /S /C=contrib\actions\gpg4win.ini
 
-          Get-Childitem –Path "$env:GITHUB_WORKSPACE" -Recurse
-
       - name: helm plugin install
         run: helm plugin install .
 

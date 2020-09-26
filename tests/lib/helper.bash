@@ -44,6 +44,7 @@ setup() {
 
     # Windows
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
+    # shellcheck disable=SC2034
     APPDATA="${HOME}"
 
     # shellcheck disable=SC2016
@@ -65,7 +66,10 @@ setup() {
 
     # copy assets
     cp -r "${TEST_DIR}/assets/values" "${TEST_TEMP_DIR}"
-    cp -r "${TEST_DIR}/assets/values" "$(printf '%s' "${SPECIAL_CHAR_DIR}")"
+    if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
+        cp -r "${TEST_DIR}/assets/values" "$(printf '%s' "${SPECIAL_CHAR_DIR}")"
+    fi
+
     cp -r "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     # import default gpg key
