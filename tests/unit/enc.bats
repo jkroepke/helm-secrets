@@ -84,6 +84,10 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
 
     run helm secrets enc "${FILE}"

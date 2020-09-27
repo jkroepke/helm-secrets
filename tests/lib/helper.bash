@@ -39,9 +39,14 @@ setup() {
 
     SEED="${RANDOM}"
 
-    GNUPGHOME="$(mktemp -d)"
-    TEST_TEMP_DIR="$(mktemp -d)"
-    HOME="${TEST_TEMP_DIR}/home"
+    if [ -n "${W_TEMP}" ]; then
+        TEST_TEMP_DIR="$(TMPDIR="${W_TEMP}" mktemp -d)"
+        HOME="$(TMPDIR="/tmp" mktemp -d)/home"
+    else
+        TEST_TEMP_DIR="$(mktemp -d)"
+        HOME="${TEST_TEMP_DIR}/home"
+    fi
+
 
     # Windows
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
