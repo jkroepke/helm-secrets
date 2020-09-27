@@ -70,7 +70,7 @@ jobs:
             yum install -y git-core unzip
           fi
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2.1.1
         with:
           path: ${{ github.workspace }}/bin
           key: sops-${{ env.SOPS_VERSION }}-${{ env.VAULT_VERSION }}
@@ -173,7 +173,7 @@ jobs:
 
       - run: kubectl cluster-info
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2.1.1
         with:
           path: ${{ github.workspace }}/bin
           key: sops-${{ env.SOPS_VERSION }}-${{ env.VAULT_VERSION }}
