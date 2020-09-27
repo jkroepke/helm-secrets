@@ -7,6 +7,10 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "kubeval: helm kubeval" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     run helm secrets kubeval
@@ -15,6 +19,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval --help" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     run helm secrets kubeval --help
@@ -23,6 +31,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -36,6 +48,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -51,6 +67,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + --values" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -66,6 +86,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + --values=" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -81,6 +105,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
@@ -96,6 +124,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml + --values" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
@@ -111,6 +143,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml + --values=" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
@@ -126,6 +162,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + helm flag" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -141,6 +181,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + pre decrypted secrets.yaml" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -160,6 +204,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + q flag" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -175,6 +223,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + quiet flag" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -209,6 +261,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + invalid yaml" {
+    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+        skip "Skip on Windows"
+    fi
+
     helm_plugin_install "kubeval"
 
     FILE="${TEST_TEMP_DIR}/secrets.yaml"
