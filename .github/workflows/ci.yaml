@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest] # [dash, zsh]
+        os: [ubuntu-latest, macos-latest, windows-latest] # [dash, zsh, bash]
         container: [~]
         include:
           - os: ubuntu-latest
@@ -58,6 +58,7 @@ jobs:
             container: centos:8 # bash
     steps:
       - name: Install git & curl
+        if: "!contains(matrix.os, 'windows-latest')"
         run: |-
           if command -v apk > /dev/null; then
             apk add --no-cache bash git curl gnupg
@@ -69,11 +70,6 @@ jobs:
 
             yum install -y git-core unzip
           fi
-
-      - uses: actions/cache@v2.1.1
-        with:
-          path: ${{ github.workspace }}/bin
-          key: sops-${{ env.SOPS_VERSION }}-${{ env.VAULT_VERSION }}
 
       - uses: actions/checkout@v2
         with:
@@ -88,13 +84,16 @@ jobs:
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1
 
-      - name: Install dependencies
+      - name: Install bat
+        if: "!contains(matrix.os, 'windows-latest')"
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
-      - name: Print Environment
+
+      - name: Print Environment (*nix)
+        if: "!contains(matrix.os, 'windows-latest')"
         run: |-
           echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
           bats -v
@@ -102,52 +101,8 @@ jobs:
           gpg --version
           vault --version
 
-      - name: helm plugin install
-        run: helm plugin install .
-
-      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
-        run: |
-          bats --tap -r tests/unit
-        env:
-          HELM_SECRETS_DRIVER: sops
-
-      - name: HELM_SECRETS_DRIVER=vault bats --tap -r tests/unit
-        run: |
-          vault server -dev -dev-root-token-id=test &>/dev/null &
-          bats --tap -r tests/unit
-        env:
-          HELM_SECRETS_DRIVER: vault
-          VAULT_ADDR: 'http://127.0.0.1:8200'
-
-  unit-tests-on-windows:
-    #    needs: [unit-tests]
-    runs-on: windows-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      - name: Setup Helm
-        uses: azure/setup-helm@v1
-
-      # https://github.com/mdgreenwald/mozilla-sops-action/issues/9
-      # - name: Setup Sops
-      #  uses: mdgreenwald/mozilla-sops-action@v1
-
-      - name: Setup Vault
-        uses: innovationnorway/setup-vault@v1
-
-      - name: Install dependencies
-        run: |-
-          echo "::add-path::$env:GITHUB_WORKSPACE/bin/"
-
-          New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE/bin"
-
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${env:SOPS_VERSION}/sops-v${env:SOPS_VERSION}.exe" -z "$env:GITHUB_WORKSPACE/bin/sops.exe" -o "$env:GITHUB_WORKSPACE/bin/sops.exe"
-          chmod +x "$env:GITHUB_WORKSPACE/bin/sops.exe"
-
-      - name: Print Environment
+      - name: Print Environment (windows)
+        if: "contains(matrix.os, 'windows-latest')"
         run: |-
           bash tests/bats/core/bin/bats -v
           sops --version
@@ -157,6 +112,23 @@ jobs:
         run: helm plugin install .
 
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
+        if: "!contains(matrix.os, 'windows-latest')"
+        run: |
+          bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: sops
+
+      - name: HELM_SECRETS_DRIVER=vault bats --tap -r tests/unit
+        if: "!contains(matrix.os, 'windows-latest')"
+        run: |
+          vault server -dev -dev-root-token-id=test &>/dev/null &
+          bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: vault
+          VAULT_ADDR: 'http://127.0.0.1:8200'
+
+      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit (on windows)
+        if: "contains(matrix.os, 'windows-latest')"
         run: |
           $env:W_TEMP=$env:TEMP; bash tests/bats/core/bin/bats --tap -r tests/unit
         env:
