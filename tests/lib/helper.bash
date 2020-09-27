@@ -40,8 +40,8 @@ setup() {
     SEED="${RANDOM}"
 
     if [ -n "${W_TEMP}" ]; then
-        TEST_TEMP_DIR="$(TMPDIR="${W_TEMP}" mktemp -d)"
-        HOME="$(TMPDIR="/tmp" mktemp -d)/home"
+        TEST_TEMP_DIR="$(mktemp -d --tmpdir="${W_TEMP}")"
+        HOME="$(mktemp -d)/home"
     else
         TEST_TEMP_DIR="$(mktemp -d)"
         HOME="${TEST_TEMP_DIR}/home"
