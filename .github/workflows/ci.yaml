@@ -156,7 +156,6 @@ jobs:
 
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         run: |
-          bash -c "realpath /tmp/"
           $env:W_TEMP=$env:TEMP; bash tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: sops

@@ -41,6 +41,7 @@ setup() {
     if [ -n "${W_TEMP}" ]; then
         export TEMP="${W_TEMP}"
         export TMP="${TEMP}"
+        export TMPDIR="${TEMP}"
     fi
 
     TEST_TEMP_DIR="$(mktemp -d)"
