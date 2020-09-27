@@ -101,7 +101,7 @@ helm_wrapper() {
     done
 
     if [ "${QUIET}" = "false" ]; then
-        echo >/dev/stderr
+        echo >&2
     fi
 
     "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
