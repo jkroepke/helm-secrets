@@ -84,6 +84,10 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
+    if is_windows; then
+        skip "Skip on Windows"
+    fi
+
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
 
     run helm secrets enc "${FILE}"

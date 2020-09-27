@@ -42,6 +42,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + special char directory name" {
+    if is_windows; then
+        skip "Skip on Windows"
+    fi
+
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets view "${FILE}"

@@ -165,6 +165,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + special path" {
+    if is_windows; then
+        skip "Skip on Windows"
+    fi
+
     FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${SPECIAL_CHAR_DIR}"

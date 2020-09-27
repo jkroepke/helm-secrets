@@ -4,6 +4,10 @@ HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
 REAL_HOME="${HOME}"
 
+is_windows() {
+    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]
+}
+
 _shasum() {
     # MacOS have shasum, others have sha1sum
     if command -v shasum >/dev/null; then
@@ -39,12 +43,22 @@ setup() {
 
     SEED="${RANDOM}"
 
-    TEST_TEMP_DIR="$(mktemp -d)"
-    HOME="${TEST_TEMP_DIR}/home"
+    TEST_TEMP_DIR="$(TMPDIR="${W_TEMP:-/tmp/}" mktemp -d)"
+    HOME="$(mktemp -d)"
+
+    # Windows
+    # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
+    # shellcheck disable=SC2034
+    APPDATA="${HOME}"
+
     # shellcheck disable=SC2016
     SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
 
-    mkdir "${HOME}" "${TEST_TEMP_DIR}/chart" "${SPECIAL_CHAR_DIR}"
+    mkdir "${TEST_TEMP_DIR}/chart"
+    if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
+        mkdir "${SPECIAL_CHAR_DIR}"
+    fi
+
 
     # install helm plugin
     helm plugin install "${GIT_ROOT}"
@@ -56,7 +70,10 @@ setup() {
 
     # copy assets
     cp -r "${TEST_DIR}/assets/values" "${TEST_TEMP_DIR}"
-    cp -r "${TEST_DIR}/assets/values" "$(printf '%s' "${SPECIAL_CHAR_DIR}")"
+    if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
+        cp -r "${TEST_DIR}/assets/values" "$(printf '%s' "${SPECIAL_CHAR_DIR}")"
+    fi
+
     cp -r "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     # import default gpg key
@@ -113,13 +130,13 @@ create_chart() {
 
 helm_plugin_install() {
     {
-        if ! env HOME="${HELM_CACHE}/home/" helm plugin list | grep -q "${1}"; then
+        if ! env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin list | grep -q "${1}"; then
             case "${1}" in
             kubeval)
-                env HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/instrumenta/helm-kubeval
+                env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/instrumenta/helm-kubeval
                 ;;
             diff)
-                env HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/databus23/helm-diff
+                env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/databus23/helm-diff
                 ;;
             esac
         fi

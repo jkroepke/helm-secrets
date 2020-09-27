@@ -37,32 +37,24 @@ GOTO :NOSHELL
 :ENVSH
 IF "%HELM_SECRETS_WINDOWS_SHELL%"=="wsl" GOTO :WSL
 
-"%HELM_SECRETS_WINDOWS_SHELL%" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
-GOTO :EOF
-
-
+"%HELM_SECRETS_WINDOWS_SHELL%" %*
+exit /b %errorlevel%
 
 
 :SH
-"sh" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
-GOTO :EOF
-
-
+"sh" %*
+exit /b %errorlevel%
 
 
 :GITBASH
-"%programfiles%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
-GOTO :EOF
-
-
+"%programfiles%\Git\bin\bash.exe" %*
+exit /b %errorlevel%
 
 
 
 :GITBASH32
-"%programfiles(x86)%\Git\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
-GOTO :EOF
-
-
+"%programfiles(x86)%\Git\bin\bash.exe" %*
+exit /b %errorlevel%
 
 
 :GITBASH_CUSTOM
@@ -80,10 +72,8 @@ FOR %%F in ("%GIT_FILEPATH%") DO SET GIT_DIRPATH=%%~dpF
 
 IF %ERRORLEVEL% NEQ 0 GOTO :RETURN_GITBASH
 
-"%GIT_DIRPATH%..\bin\bash.exe" "%HELM_PLUGIN_DIR%\scripts\run.sh" %*
-GOTO :EOF
-
-
+"%GIT_DIRPATH%..\bin\bash.exe" %*
+exit /b %errorlevel%
 
 
 :WSL
@@ -105,13 +95,10 @@ goto LOOP
 :ENDLOOP
 
 wsl bash %ARGS%
-GOTO :EOF
-
-
+exit /b %errorlevel%
 
 
 :NOSHELL
 :: If no *nix shell found, raise an error.
 echo helm-secrets needs a unix shell. Please install WSL, cygwin or Git for Windows.
-exit /B 1
-GOTO :EOF
+exit /b %errorlevel% 1

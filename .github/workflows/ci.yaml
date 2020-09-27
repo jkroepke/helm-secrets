@@ -2,9 +2,7 @@
 name: CI
 
 env:
-  HELM_VERSION: 3.3.0
-  SOPS_VERSION: 3.6.0
-  VAULT_VERSION: 1.5.2
+  SOPS_VERSION: 3.6.1
   # https://deb.debian.org/debian/pool/main/d/devscripts/
   DEVSCRIPTS_VERSION: 2.20.4
 
@@ -83,26 +81,21 @@ jobs:
 
       - name: Setup Helm
         uses: azure/setup-helm@v1
-        with:
-          version: v${{ env.HELM_VERSION }}
+
+      - name: Setup Sops
+        uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Setup Vault
+        uses: innovationnorway/setup-vault@v1
 
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
 
-          curl -sSfL "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_$(uname | awk '{print tolower($0)}')_amd64.zip" -o vault.zip
-          unzip -qq vault.zip -d "$GITHUB_WORKSPACE/bin/"
-          rm vault.zip
-          chmod +x "$GITHUB_WORKSPACE/bin/vault"
-
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops"
-
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
       - name: Print Environment
         run: |-
-          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
-
           echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
           bats -v
           sops --version
@@ -126,6 +119,49 @@ jobs:
           HELM_SECRETS_DRIVER: vault
           VAULT_ADDR: 'http://127.0.0.1:8200'
 
+  unit-tests-on-windows:
+    #    needs: [unit-tests]
+    runs-on: windows-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+
+      # https://github.com/mdgreenwald/mozilla-sops-action/issues/9
+      # - name: Setup Sops
+      #  uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Setup Vault
+        uses: innovationnorway/setup-vault@v1
+
+      - name: Install dependencies
+        run: |-
+          echo "::add-path::$env:GITHUB_WORKSPACE/bin/"
+
+          New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE/bin"
+
+          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${env:SOPS_VERSION}/sops-v${env:SOPS_VERSION}.exe" -z "$env:GITHUB_WORKSPACE/bin/sops.exe" -o "$env:GITHUB_WORKSPACE/bin/sops.exe"
+          chmod +x "$env:GITHUB_WORKSPACE/bin/sops.exe"
+
+      - name: Print Environment
+        run: |-
+          bash tests/bats/core/bin/bats -v
+          sops --version
+          gpg --version
+
+      - name: helm plugin install
+        run: helm plugin install .
+
+      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
+        run: |
+          $env:W_TEMP=$env:TEMP; bash tests/bats/core/bin/bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: sops
+
   integration-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest
@@ -148,20 +184,26 @@ jobs:
 
       - name: Setup Helm
         uses: azure/setup-helm@v1
-        with:
-          version: v${{ env.HELM_VERSION }}
+
+      - name: Setup Sops
+        uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Setup Vault
+        uses: innovationnorway/setup-vault@v1
 
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
-          curl -sSfL "https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.$(uname | awk '{print tolower($0)}')" -z "$GITHUB_WORKSPACE/bin/sops" -o "$GITHUB_WORKSPACE/bin/sops"
-          export PATH="$GITHUB_WORKSPACE/bin/:$PATH"
           echo "::add-path::$GITHUB_WORKSPACE/bin/"
-          chmod +x "$GITHUB_WORKSPACE/bin/sops"
-          sops --version
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+      - name: Print Environment
+        run: |-
+          echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
           bats -v
+          sops --version
+          gpg --version
+          vault --version
 
       - name: helm plugin install
         run: helm plugin install .

@@ -5,5 +5,5 @@
 :: https://stackoverflow.com/a/17623721
 
 @echo off
-%HELM_PLUGIN_DIR%\wrapper\sh.cmd %*
-exit /b
+%HELM_PLUGIN_DIR%\scripts\wrapper\sh.cmd %*
+exit /b %errorlevel%

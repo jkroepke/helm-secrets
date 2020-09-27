@@ -80,11 +80,6 @@ load_secret_driver() {
 
 load_secret_driver "$SECRET_DRIVER"
 
-# ./run.sh vs bash run.sh
-if [ "$(basename "$1")" = "run.sh" ]; then
-    shift
-fi
-
 while true; do
     case "${1:-}" in
     enc)

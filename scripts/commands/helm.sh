@@ -27,11 +27,11 @@ EOF
 helm_wrapper_cleanup() {
     if [ -s "${decrypted_files}" ]; then
         if [ "${QUIET}" = "false" ]; then
-            echo >/dev/stderr
+            echo >&2
             # shellcheck disable=SC2016
-            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >/dev/stderr <"${decrypted_files}"
+            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >&2 <"${decrypted_files}"
         else
-            xargs -0 rm >/dev/stderr <"${decrypted_files}"
+            xargs -0 rm >&2 <"${decrypted_files}"
         fi
     fi
 
@@ -76,7 +76,7 @@ helm_wrapper() {
                 set -- "$@" "$file_dec"
 
                 if [ "${QUIET}" = "false" ]; then
-                    printf '[helm-secrets] Decrypt skipped: %s' "${file}" >/dev/stderr
+                    printf '[helm-secrets] Decrypt skipped: %s' "${file}" >&2
                 fi
             else
                 if decrypt_helper "${file}"; then
@@ -84,7 +84,7 @@ helm_wrapper() {
                     printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                     if [ "${QUIET}" = "false" ]; then
-                        printf '[helm-secrets] Decrypt: %s' "${file}" >/dev/stderr
+                        printf '[helm-secrets] Decrypt: %s' "${file}" >&2
                     fi
                 else
                     set -- "$@" "$file"
@@ -101,7 +101,7 @@ helm_wrapper() {
     done
 
     if [ "${QUIET}" = "false" ]; then
-        echo >/dev/stderr
+        echo >&2
     fi
 
     "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
