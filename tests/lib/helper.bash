@@ -134,13 +134,13 @@ create_chart() {
 
 helm_plugin_install() {
     {
-        if ! env HOME="${HELM_CACHE}/home/" helm plugin list | grep -q "${1}"; then
+        if ! env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin list | grep -q "${1}"; then
             case "${1}" in
             kubeval)
-                env HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/instrumenta/helm-kubeval
+                env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/instrumenta/helm-kubeval
                 ;;
             diff)
-                env HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/databus23/helm-diff
+                env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/databus23/helm-diff
                 ;;
             esac
         fi
