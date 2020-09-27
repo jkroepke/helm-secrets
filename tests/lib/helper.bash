@@ -38,6 +38,10 @@ setup() {
     fi
 
     SEED="${RANDOM}"
+    if [ -n "${W_TEMP}" ]; then
+        export TEMP="${W_TEMP}"
+        export TMP="${TEMP}"
+    fi
 
     TEST_TEMP_DIR="$(mktemp -d)"
     HOME="${TEST_TEMP_DIR}/home"
