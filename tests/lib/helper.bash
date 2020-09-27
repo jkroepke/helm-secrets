@@ -39,6 +39,7 @@ setup() {
 
     SEED="${RANDOM}"
 
+    GNUPGHOME="$(mktemp -d)"
     TEST_TEMP_DIR="$(mktemp -d)"
     HOME="${TEST_TEMP_DIR}/home"
 
