@@ -39,14 +39,8 @@ setup() {
 
     SEED="${RANDOM}"
 
-    if [ -n "${W_TEMP}" ]; then
-        TEST_TEMP_DIR="$(mktemp -d --tmpdir="${W_TEMP}")"
-        HOME="$(mktemp -d)/home"
-    else
-        TEST_TEMP_DIR="$(mktemp -d)"
-        HOME="${TEST_TEMP_DIR}/home"
-    fi
-
+    TEST_TEMP_DIR="$(mktemp -d --tmpdir="${W_TEMP:-/tmp/}")"
+    HOME="$(mktemp -d)"
 
     # Windows
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
@@ -56,7 +50,7 @@ setup() {
     # shellcheck disable=SC2016
     SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
 
-    mkdir "${HOME}" "${TEST_TEMP_DIR}/chart"
+    mkdir "${TEST_TEMP_DIR}/chart"
     if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
         mkdir "${SPECIAL_CHAR_DIR}"
     fi
