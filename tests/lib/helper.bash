@@ -4,6 +4,10 @@ HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
 REAL_HOME="${HOME}"
 
+is_windows() {
+    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]
+}
+
 _shasum() {
     # MacOS have shasum, others have sha1sum
     if command -v shasum >/dev/null; then
@@ -39,7 +43,7 @@ setup() {
 
     SEED="${RANDOM}"
 
-    TEST_TEMP_DIR="$(mktemp -d --tmpdir="${W_TEMP:-/tmp/}")"
+    TEST_TEMP_DIR="$(TMPDIR="${W_TEMP:-/tmp/}" mktemp -d)"
     HOME="$(mktemp -d)"
 
     # Windows

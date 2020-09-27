@@ -22,7 +22,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -36,7 +36,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -58,7 +58,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -80,7 +80,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -103,7 +103,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 

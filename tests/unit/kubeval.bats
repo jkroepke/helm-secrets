@@ -7,7 +7,7 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "kubeval: helm kubeval" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -19,7 +19,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval --help" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -31,7 +31,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -48,7 +48,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -67,7 +67,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + --values" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -86,7 +86,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + --values=" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -105,7 +105,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -124,7 +124,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml + --values" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -143,7 +143,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml + --values=" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -162,7 +162,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + helm flag" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -181,7 +181,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + pre decrypted secrets.yaml" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -204,7 +204,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + q flag" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -223,7 +223,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + quiet flag" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -242,7 +242,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + special path" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
@@ -261,7 +261,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "kubeval: helm kubeval w/ chart + invalid yaml" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 

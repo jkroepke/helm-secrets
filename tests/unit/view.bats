@@ -42,7 +42,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + special char directory name" {
-    if ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]; then
+    if is_windows; then
         skip "Skip on Windows"
     fi
 
