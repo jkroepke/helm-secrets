@@ -194,3 +194,6 @@ jobs:
         run: helm plugin install .
         env:
           SOPS_VERSION: ""
+
+      - name: Tests if sops installed
+        run: sops --version
