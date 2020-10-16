@@ -191,7 +191,7 @@ jobs:
         uses: azure/setup-helm@v1
 
       - name: helm plugin install
-        run: helm plugin install .
+        run: sudo helm plugin install .
         env:
           SOPS_VERSION: ""
 
