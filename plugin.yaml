@@ -12,3 +12,9 @@ command: "$HELM_PLUGIN_DIR/scripts/run.sh"
 platformCommand:
   - os: windows
     command: "cmd /c $HELM_PLUGIN_DIR/scripts/wrapper/sh.cmd $HELM_PLUGIN_DIR/scripts/run.sh"
+
+downloaders:
+  - command: "$HELM_PLUGIN_DIR/scripts/downloader.sh"
+    protocols:
+      - "sops"
+      - "secret"
