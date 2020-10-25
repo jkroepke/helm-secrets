@@ -21,21 +21,21 @@ EOF
 }
 
 decrypt_helper() {
-    file="${1}"
+    encrypted_file="${1}"
 
-    if [ ! -f "$file" ]; then
-        printf 'File does not exist: %s\n' "${file}"
+    if ! encrypted_file_path=$(_file_get "${encrypted_file}"); then
+        printf '[helm-secrets] File does not exist: %s\n' "${encrypted_file}"
         exit 1
     fi
 
-    if ! driver_is_file_encrypted "${file}"; then
+    if ! driver_is_file_encrypted "${encrypted_file_path}"; then
         return 1
     fi
 
-    file_dec="$(file_dec_name "${file}")"
+    encrypted_file_dec="$(_file_dec_name "${encrypted_file_path}")"
 
-    if ! driver_decrypt_file "yaml" "${file}" "${file_dec}"; then
-        printf 'Error while decrypting file: %s\n' "${file}"
+    if ! driver_decrypt_file "yaml" "${encrypted_file_path}" "${encrypted_file_dec}"; then
+        printf '[helm-secrets] Error while decrypting file: %s\n' "${file}"
         exit 1
     fi
 
@@ -50,11 +50,6 @@ dec() {
 
     file="$1"
 
-    if [ ! -f "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
-    else
-        printf 'Decrypting %s\n' "${file}"
-        decrypt_helper "${file}"
-    fi
+    printf '[helm-secrets] Decrypting %s\n' "${file}"
+    decrypt_helper "${file}"
 }

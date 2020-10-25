@@ -17,12 +17,14 @@ EOF
 view_helper() {
     file="$1"
 
-    if [ ! -f "${file}" ]; then
+    if ! _file_exists "$file"; then
         printf 'File does not exist: %s\n' "${file}"
         exit 1
     fi
 
-    driver_decrypt_file "yaml" "${file}"
+    real_file=$(_file_get "${file}")
+
+    driver_decrypt_file "yaml" "${real_file}"
 }
 
 view() {

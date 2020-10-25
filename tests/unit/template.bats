@@ -197,7 +197,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + sops://" {
-    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if is_windows || ! is_driver_sops; then
         skip
     fi
 
@@ -211,7 +211,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secret://" {
-    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if is_windows || ! is_driver_sops; then
         skip
     fi
 
@@ -225,7 +225,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://" {
-    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if is_windows || ! is_driver_sops; then
         skip
     fi
 
@@ -236,4 +236,37 @@ load '../bats/extensions/bats-file/load'
     run helm template "${TEST_TEMP_DIR}/chart" -f "secrets://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + http://" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: "
+}
+
+@test "template: helm template w/ chart + secrets.yaml + git://" {
+    if ! is_driver_sops || is_windows; then
+        skip
+    fi
+
+    helm_plugin_install "git"
+    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: "
 }

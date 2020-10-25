@@ -22,6 +22,7 @@ jobs:
         uses: luizm/action-sh-checker@v0.1.8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHELLCHECK_OPTS: -x
         with:
           sh_checker_comment: true
           sh_checker_exclude: "tests"

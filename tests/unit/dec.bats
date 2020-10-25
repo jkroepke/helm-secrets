@@ -28,7 +28,7 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert_output "Decrypting ${FILE}"
+    assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
 
     run cat "${FILE}.dec"
@@ -42,7 +42,7 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert_output "Decrypting ${FILE}"
+    assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
 
     run cat "${FILE}.dec"
@@ -60,7 +60,7 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert_output "Decrypting ${FILE}"
+    assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
 
     run cat "${FILE}.dec"
@@ -77,7 +77,7 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert_output "Decrypting ${FILE}"
+    assert_output "[helm-secrets] Decrypting ${FILE}"
     assert [ -e "${FILE}.test" ]
 
     run cat "${FILE}.test"
@@ -94,11 +94,36 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert_output "Decrypting ${FILE}"
+    assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
 
     run cat "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+}
+
+@test "dec: Decrypt secrets.yaml + http://" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_output "[helm-secrets] Decrypting ${FILE}"
+}
+
+@test "dec: Decrypt secrets.yaml + git://" {
+    if ! is_driver_sops || is_windows; then
+        skip
+    fi
+
+    helm_plugin_install "git"
+    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_output "[helm-secrets] Decrypting ${FILE}"
 }
