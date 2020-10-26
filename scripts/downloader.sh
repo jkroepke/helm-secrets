@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
-SCRIPT_DIR="$(dirname "$0")"
+# https://helm.sh/docs/topics/plugins/#downloader-plugins
+# It's always the 4th parameter
+file=$(printf '%s' "${4}" | sed -e 's!.*://!!')
 
-echo "-----------" >> "${SCRIPT_DIR}/dump.txt"
-echo "$@" >> "${SCRIPT_DIR}/dump.txt"
+exec sops --decrypt --input-type "yaml" --output-type "yaml" "${file}"

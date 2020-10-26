@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
+## [Unreleased]
+
+### Added
+- Implement alternate syntax (https://github.com/jkroepke/helm-secrets/pull/52)
+
 ## [3.3.5] - 2020-10-16
 
 ### Added

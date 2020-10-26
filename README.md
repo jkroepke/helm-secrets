@@ -50,6 +50,24 @@ In meanwhile, this project is officially listed on the [community projects side]
 * [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more informations.
 * [`examples`](examples) - Some example secrets.yaml 
 
+## Update
+
+### Decrypt secrets via plugin command
+
+Wraps the whole helm command. Slow on multiple value files.
+```
+helm secrets upgrade name . -f secrets.yaml
+```
+
+### Decrypt secrets via protocol handler
+
+Run decrypted command on specific value files
+```
+helm upgrade name . -f secrets://secrets.yaml
+```
+
+See: [USAGE.md](USAGE.md) for more information
+
 ## Installation and Dependencies
 
 ### SOPS
