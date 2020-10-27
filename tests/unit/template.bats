@@ -195,3 +195,45 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
+
+@test "template: helm template w/ chart + secrets.yaml + sops://" {
+    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "sops://${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + secret://" {
+    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "secret://${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + secrets://" {
+    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets://${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 81"
+}

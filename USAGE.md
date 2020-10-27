@@ -293,6 +293,14 @@ kind: Deployment
                   key: my_secret_key
 ```
 
+## Alternative: decrypt via downloader plugin
+
+Helm supports [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins) for value files, too.
+
+```
+helm upgrade . -f sops://<path to file>
+```
+
 # Important Tips
 
 ## Prevent committing decrypted files to git

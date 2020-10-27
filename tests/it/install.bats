@@ -239,3 +239,21 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert [ ! -f "${FILE}.dec" ]
 }
+
+@test "install: helm install w/ chart + secrets.yaml + sops://" {
+    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+}
