@@ -7,31 +7,6 @@
 
 # helm-secrets
 
-## Main features
-
-The current version of this plugin using by default [mozilla/sops](https://github.com/mozilla/sops/) as backend.
-
-[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too. In addition, [sops support vault since v3.6.0 natively](https://github.com/mozilla/sops#encrypting-using-hashicorp-vault). 
-
-What kind of problems this plugin solves:
-
-- Simple replaceable layer integrated with helm command for encrypting, decrypting, view secrets files stored in any place.
-- On the fly decryption and cleanup for helm install/upgrade with a helm command wrapper
-
-If you are using sops (used by default) you have some additional features:
-
-- [Support for YAML/JSON structures encryption - Helm YAML secrets files](https://github.com/mozilla/sops#important-information-on-types)
-- [Encryption per value where visual Diff should work even on encrypted files](https://github.com/mozilla/sops/blob/master/example.yaml)
-- [On the fly decryption for git diff](https://github.com/mozilla/sops#showing-diffs-in-cleartext-in-git)
-- [Multiple key management solutions like PGP, AWS KMS and GCP KMS at same time](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
-- [Simple adding/removing keys](https://github.com/mozilla/sops#adding-and-removing-keys)
-- [With AWS KMS permissions management for keys](https://aws.amazon.com/kms/)
-- [Secrets files directory tree separation with recursive .sops.yaml files search](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
-- [Extracting sub-elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
-- [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
-
-An additional documentation, resources and examples can be found [here](USAGE.md).
-
 ## This is a fork of futuresimple/helm-secrets or zendesk/helm-secrets?
 
 Yes. This repository is a fork of [zendesk/helm-secrets](https://github.com/zendesk/helm-secrets) (base commit [edffea3c94c9ed70891f838b3d881d3578f2599f](https://github.com/jkroepke/helm-secrets/commit/edffea3c94c9ed70891f838b3d881d3578f2599f)).
@@ -40,17 +15,7 @@ This original helm-secrets project gets [abandoned](https://github.com/zendesk/h
 
 In meanwhile, this project is officially listed on the [community projects side](https://helm.sh/docs/community/related/) at the helm documentation.
 
-## Moving parts of project
-
-* [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
-* [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
-* [`scripts/drivers`](scripts/drivers) - Location of the in-tree secrets drivers
-* [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
-* [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
-* [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more informations.
-* [`examples`](examples) - Some example secrets.yaml 
-
-## Update
+## Usage
 
 ### Decrypt secrets via plugin command
 
@@ -185,6 +150,41 @@ helm secrets -d ./path/to/driver.sh view ./tests/assets/helm_vars/secrets.yaml
 Pull Requests are much appreciated.
 
 The driver option is a global one. A file level switch isn't supported yet.
+
+## Main features
+
+The current version of this plugin using by default [mozilla/sops](https://github.com/mozilla/sops/) as backend.
+
+[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too. In addition, [sops support vault since v3.6.0 natively](https://github.com/mozilla/sops#encrypting-using-hashicorp-vault). 
+
+What kind of problems this plugin solves:
+
+- Simple replaceable layer integrated with helm command for encrypting, decrypting, view secrets files stored in any place.
+- On the fly decryption and cleanup for helm install/upgrade with a helm command wrapper
+
+If you are using sops (used by default) you have some additional features:
+
+- [Support for YAML/JSON structures encryption - Helm YAML secrets files](https://github.com/mozilla/sops#important-information-on-types)
+- [Encryption per value where visual Diff should work even on encrypted files](https://github.com/mozilla/sops/blob/master/example.yaml)
+- [On the fly decryption for git diff](https://github.com/mozilla/sops#showing-diffs-in-cleartext-in-git)
+- [Multiple key management solutions like PGP, AWS KMS and GCP KMS at same time](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
+- [Simple adding/removing keys](https://github.com/mozilla/sops#adding-and-removing-keys)
+- [With AWS KMS permissions management for keys](https://aws.amazon.com/kms/)
+- [Secrets files directory tree separation with recursive .sops.yaml files search](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
+- [Extracting sub-elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
+- [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
+
+An additional documentation, resources and examples can be found [here](USAGE.md).
+
+## Moving parts of project
+
+* [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
+* [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
+* [`scripts/drivers`](scripts/drivers) - Location of the in-tree secrets drivers
+* [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
+* [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
+* [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more informations.
+* [`examples`](examples) - Some example secrets.yaml 
 
 ## Copyright and license
 
