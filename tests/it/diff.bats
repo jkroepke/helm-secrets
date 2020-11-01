@@ -223,7 +223,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + sops://" {
-    if is_windows || [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if is_windows || ! is_driver_sops; then
         skip
     fi
 
@@ -236,4 +236,38 @@ load '../bats/extensions/bats-file/load'
     run helm diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "sops://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
+}
+
+@test "diff: helm diff upgrade w/ chart + secrets.yaml + http://" {
+    helm_plugin_install "diff"
+    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="diff-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: "
+    assert [ ! -f "${FILE}.dec" ]
+}
+
+@test "diff: helm install w/ chart + secrets.yaml + git://" {
+    if ! is_driver_sops || is_windows; then
+        skip
+    fi
+
+    helm_plugin_install "git"
+    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+    RELEASE="diff-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: "
+    assert [ ! -f "${FILE}.dec" ]
 }

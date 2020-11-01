@@ -18,12 +18,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: File if not exits + no valid encryption config" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops || is_windows; then
         skip
-    fi
-
-    if is_windows; then
-        skip "Skip on Windows"
     fi
 
     run helm secrets edit nonexists
@@ -32,12 +28,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: File if not exits + valid encryption config" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops || is_windows; then
         skip
-    fi
-
-    if is_windows; then
-        skip "Skip on Windows"
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
@@ -54,12 +46,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: secrets.yaml" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops || is_windows; then
         skip
-    fi
-
-    if is_windows; then
-        skip "Skip on Windows"
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
@@ -76,12 +64,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: some-secrets.yaml" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops || is_windows; then
         skip
-    fi
-
-    if is_windows; then
-        skip "Skip on Windows"
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
@@ -99,12 +83,8 @@ load '../bats/extensions/bats-file/load'
 
 
 @test "edit: secrets.yaml + special path" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops || is_windows; then
         skip
-    fi
-
-    if is_windows; then
-        skip "Skip on Windows"
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"

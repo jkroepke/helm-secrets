@@ -2,6 +2,12 @@
 
 set -eu
 
+# Path to current directory
+SCRIPT_DIR="$(dirname "$0")"
+
+# shellcheck source=scripts/lib/http.sh
+. "${SCRIPT_DIR}/lib/http.sh"
+
 SOPS_DEFAULT_VERSION="v3.6.1"
 SOPS_VERSION="${SOPS_VERSION:-$SOPS_DEFAULT_VERSION}"
 SOPS_LINUX_URL="${SOPS_LINUX_URL:-"https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux"}"
@@ -12,16 +18,6 @@ RED='\033[0;31m'
 #BLUE='\033[0;34m'
 #YELLOW='\033[1;33m'
 NOC='\033[0m'
-
-download() {
-    if command -v curl >/dev/null; then
-        curl -sSfL "$1"
-    elif command -v wget >/dev/null; then
-        wget -q -O- "$1"
-    else
-        return 1
-    fi
-}
 
 get_sha_256() {
     if command -v sha256sum >/dev/null; then

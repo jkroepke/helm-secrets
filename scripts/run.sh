@@ -5,6 +5,9 @@ set -eu
 # Path to current directory
 SCRIPT_DIR="$(dirname "$0")"
 
+# Create temporary directory
+TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-$(mktemp -d)}"
+
 # Output debug infos
 QUIET="${HELM_SECRETS_QUIET:-false}"
 
@@ -18,6 +21,24 @@ DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 
 # Make sure HELM_BIN is set (normally by the helm command)
 HELM_BIN="${HELM_BIN:-helm}"
+
+# shellcheck source=scripts/lib/file.sh
+. "${SCRIPT_DIR}/lib/file.sh"
+
+# shellcheck source=scripts/lib/http.sh
+. "${SCRIPT_DIR}/lib/http.sh"
+
+_trap_hook() {
+    true
+}
+
+_trap() {
+    rm -rf "${TMPDIR}"
+
+    _trap_hook
+}
+
+trap _trap EXIT
 
 usage() {
     cat <<EOF
@@ -52,29 +73,21 @@ is_help() {
     esac
 }
 
-file_dec_name() {
-    if [ "${DEC_DIR}" != "" ]; then
-        printf '%s' "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
-    else
-        printf '%s' "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
-    fi
-}
-
 load_secret_driver() {
     driver="${1}"
-    if [ -f "${driver}" ]; then
-        # Allow to load out of tree drivers.
-
-        # shellcheck disable=SC1090
-        . "${driver}"
+    if [ -f "${SCRIPT_DIR}/drivers/${driver}.sh" ]; then
+        # shellcheck source=scripts/drivers/sops.sh
+        . "${SCRIPT_DIR}/drivers/${driver}.sh"
     else
-        if [ ! -f "${SCRIPT_DIR}/drivers/${driver}.sh" ]; then
+        # Allow to load out of tree drivers.
+        if [ ! -f "${driver}" ]; then
+
             echo "Can't find secret driver: ${driver}"
             exit 1
         fi
 
         # shellcheck disable=SC1090
-        . "${SCRIPT_DIR}/drivers/${driver}.sh"
+        . "${driver}"
     fi
 }
 
@@ -83,7 +96,7 @@ load_secret_driver "$SECRET_DRIVER"
 while true; do
     case "${1:-}" in
     enc)
-        # shellcheck disable=SC1090
+        # shellcheck source=scripts/commands/enc.sh
         . "${SCRIPT_DIR}/commands/enc.sh"
 
         if [ $# -lt 2 ]; then
@@ -95,7 +108,7 @@ while true; do
         break
         ;;
     dec)
-        # shellcheck disable=SC1090
+        # shellcheck source=scripts/commands/dec.sh
         . "${SCRIPT_DIR}/commands/dec.sh"
 
         if [ $# -lt 2 ]; then
@@ -107,7 +120,7 @@ while true; do
         break
         ;;
     view)
-        # shellcheck disable=SC1090
+        # shellcheck source=scripts/commands/view.sh
         . "${SCRIPT_DIR}/commands/view.sh"
 
         if [ $# -lt 2 ]; then
@@ -119,7 +132,7 @@ while true; do
         break
         ;;
     edit)
-        # shellcheck disable=SC1090
+        # shellcheck source=scripts/commands/edit.sh
         . "${SCRIPT_DIR}/commands/edit.sh"
 
         if [ $# -lt 2 ]; then
@@ -131,7 +144,7 @@ while true; do
         break
         ;;
     clean)
-        # shellcheck disable=SC1090
+        # shellcheck source=scripts/commands/clean.sh
         . "${SCRIPT_DIR}/commands/clean.sh"
 
         if [ $# -lt 2 ]; then
@@ -159,7 +172,7 @@ while true; do
         exit 1
         ;;
     *)
-        # shellcheck disable=SC1090
+        # shellcheck source=scripts/commands/helm.sh
         . "${SCRIPT_DIR}/commands/helm.sh"
         helm_command "$@"
         break

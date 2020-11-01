@@ -1,4 +1,0 @@
-global_secret: !vault secret/production#global_secret
-key: !vault secret/gpg#key
-service:
-  port: !vault secret/production#port

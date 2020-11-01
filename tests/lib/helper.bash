@@ -5,7 +5,11 @@ HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
 REAL_HOME="${HOME}"
 
 is_windows() {
-    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux"  ]]
+    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]
+}
+
+is_driver_sops() {
+    [ "${HELM_SECRETS_DRIVER}" == "sops" ]
 }
 
 _shasum() {
@@ -46,6 +50,9 @@ setup() {
     TEST_TEMP_DIR="$(TMPDIR="${W_TEMP:-/tmp/}" mktemp -d)"
     HOME="$(mktemp -d)"
 
+    # shellcheck disable=SC2034
+    XDG_DATA_HOME="${HOME}"
+
     # Windows
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
     # shellcheck disable=SC2034
@@ -58,7 +65,6 @@ setup() {
     if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
         mkdir "${SPECIAL_CHAR_DIR}"
     fi
-
 
     # install helm plugin
     helm plugin install "${GIT_ROOT}"
@@ -133,12 +139,20 @@ helm_plugin_install() {
         if ! env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin list | grep -q "${1}"; then
             case "${1}" in
             kubeval)
-                env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/instrumenta/helm-kubeval
+                URL="https://github.com/instrumenta/helm-kubeval"
                 ;;
             diff)
-                env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install https://github.com/databus23/helm-diff
+                URL="https://github.com/databus23/helm-diff"
+                ;;
+            git)
+                # See: https://github.com/aslafy-z/helm-git/pull/120
+                #URL="https://github.com/aslafy-z/helm-git"
+                URL="https://github.com/jkroepke/helm-git"
+                VERSION="patch-1"
                 ;;
             esac
+
+            env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install "${URL}" ${VERSION:+--version ${VERSION}}
         fi
 
         cp -r "${HELM_CACHE}/home/." "${HOME}"

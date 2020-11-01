@@ -8,8 +8,12 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+From this version, the installation on Helm 2 requires additional steps.
+Check [README.md](README.md#installation-on-helm-2) 
+
 ### Added
 - Implement alternate syntax (https://github.com/jkroepke/helm-secrets/pull/52)
+- Remote values support (supporting http:// and helm downloader plugins) (https://github.com/jkroepke/helm-secrets/pull/54)
 
 ## [3.3.5] - 2020-10-16
 

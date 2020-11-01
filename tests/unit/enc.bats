@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops; then
         skip
     fi
 
@@ -42,7 +42,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt some-secrets.yaml" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops; then
         skip
     fi
 
@@ -60,7 +60,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml.dec" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops; then
         skip
     fi
 
@@ -80,7 +80,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml + special char directory name" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops; then
         skip
     fi
 
@@ -102,7 +102,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_SUFFIX" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops; then
         skip
     fi
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
@@ -123,7 +123,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.tmp.yaml" {
-    if [ "${HELM_SECRETS_DRIVER}" != "sops" ]; then
+    if ! is_driver_sops; then
         skip
     fi
 

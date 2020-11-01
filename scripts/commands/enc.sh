@@ -33,7 +33,7 @@ encrypt_helper() {
         printf 'File does not exist: %s\n' "${dir}/${file}"
         exit 1
     fi
-    file_dec="$(file_dec_name "${file}")"
+    file_dec="$(_file_dec_name "${file}")"
 
     if [ ! -f "${file_dec}" ]; then
         file_dec="${file}"

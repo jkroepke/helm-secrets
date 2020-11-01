@@ -128,6 +128,27 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/hel
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "$HOME/.local/share/helm/plugins" -xzf-
 ```
 
+### Installation on Helm 2
+Helm 2 doesn't support downloader plugins. Since unknown keys in `plugin.yaml` are fatal, then plugin installation need special handling.
+
+Error on Helm 2 installation:
+```
+# helm plugin install https://github.com/jkroepke/helm-secrets
+Error: yaml: unmarshal errors:
+  line 12: field platformCommand not found in type plugin.Metadata
+```
+
+Workaround:
+
+1. Install helm-secrets via [manual installation](README.md#manual-installation)
+2. Strip `platformCommand` from `plugin.yaml`:
+   ```
+   sed -i '/platformCommand:/,+2 d' "${HELM_HOME:-"${HOME}/.helm"}/plugins/helm-secrets*/plugin.yaml"
+   ```
+3. Done
+
+Client [here](https://github.com/adorsys-containers/ci-helm/blob/f9a8a5bf8953ab876266ca39ccbdb49228e9f117/images/2.17/Dockerfile#L91) for an example!
+
 ## Change secret driver
 
 It's possible to use another secret driver then sops, e.g. Hasicorp Vault.
