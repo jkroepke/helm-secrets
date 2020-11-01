@@ -30,7 +30,7 @@ driver_decrypt_file() {
         SUFFIX=${EXPRESSION%:*}
         SECRET_PATH=$(echo "${EXPRESSION#*:}" | sed 's/!vault *//' | tr -d '[:space:]')
         if [ -n "$SECRET_PATH" ]; then
-            SECRET=$(gopass show "${SECRET_PATH}")
+            SECRET=$(gopass show -o "${SECRET_PATH}")
             echo "${SUFFIX}"": ""${SECRET}" >>"${output_tmp}"
         elif [ -n "$SUFFIX" ]; then
             echo "${SUFFIX}"": " >>"${output_tmp}"
