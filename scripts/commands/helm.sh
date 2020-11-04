@@ -78,7 +78,7 @@ helm_wrapper() {
                 set -- "$@" "$file_dec"
 
                 if [ "${QUIET}" = "false" ]; then
-                    printf '[helm-secrets] Decrypt skipped: %s' "${file}" >&2
+                    printf '[helm-secrets] Decrypt skipped: %s\n' "${file}" >&2
                 fi
             else
                 if decrypt_helper "${real_file}"; then
@@ -86,7 +86,7 @@ helm_wrapper() {
                     printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                     if [ "${QUIET}" = "false" ]; then
-                        printf '[helm-secrets] Decrypt: %s' "${file}" >&2
+                        printf '[helm-secrets] Decrypt: %s\n' "${file}" >&2
                     fi
                 else
                     set -- "$@" "$file"
