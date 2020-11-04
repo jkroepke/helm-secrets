@@ -240,10 +240,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "upgrade: helm upgrade w/ chart + secrets.yaml + sops://" {
-    if is_windows || ! is_driver_sops; then
-        skip
-    fi
-
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
@@ -275,7 +271,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "upgrade: helm install w/ chart + secrets.yaml + git://" {
-    if ! is_driver_sops || is_windows; then
+    if is_windows; then
         skip
     fi
 
@@ -289,6 +285,41 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: "
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "upgrade: helm upgrade w/ chart + secrets.yaml + secrets://http://" {
+    FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "upgrade: helm install w/ chart + secrets.yaml + secrets://git://" {
+    if is_windows; then
+        skip
+    fi
+
+    helm_plugin_install "git"
+    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+    RELEASE="upgrade-$(date +%s)-${SEED}"
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"

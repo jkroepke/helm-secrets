@@ -14,7 +14,7 @@ platformCommand:
     command: "cmd /c $HELM_PLUGIN_DIR/scripts/wrapper/sh.cmd $HELM_PLUGIN_DIR/scripts/run.sh"
 
 downloaders:
-  - command: "scripts/downloader.sh"
+  - command: "scripts/run.sh downloader"
     protocols:
       - "sops"
       - "secret"

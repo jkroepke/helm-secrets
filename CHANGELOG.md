@@ -14,6 +14,7 @@ Check [README.md](README.md#installation-on-helm-2)
 ### Added
 - Implement alternate syntax (https://github.com/jkroepke/helm-secrets/pull/52)
 - Remote values support (supporting http:// and helm downloader plugins) (https://github.com/jkroepke/helm-secrets/pull/54)
+- Let downloader plugin supports remote files and all secrets drivers (https://github.com/jkroepke/helm-secrets/pull/55)
 
 ## [3.3.5] - 2020-10-16
 

@@ -298,7 +298,15 @@ kind: Deployment
 Helm supports [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins) for value files, too.
 
 ```
-helm upgrade . -f sops://<path to file>
+helm upgrade . -f secrets://<uri to file>
+helm upgrade . -f secret://<uri to file>
+helm upgrade . -f sops://<uri to file>
+```
+
+Example:
+```
+helm upgrade . -f secrets://localfile.yaml
+helm upgrade . -f secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=master
 ```
 
 # Important Tips
