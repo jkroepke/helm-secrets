@@ -155,6 +155,13 @@ while true; do
         clean "$2"
         break
         ;;
+    downloader)
+        # shellcheck source=scripts/commands/downloader.sh
+        . "${SCRIPT_DIR}/commands/downloader.sh"
+
+        downloader "$2" "$3" "$4" "$5"
+        break
+        ;;
     --help | -h | help)
         usage
         break

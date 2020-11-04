@@ -196,8 +196,42 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
-@test "template: helm template w/ chart + secrets.yaml + sops://" {
+@test "template: helm template w/ chart + secrets.yaml + http://" {
+    if ! is_driver_sops; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
+        skip
+    fi
+    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: "
+}
+
+@test "template: helm template w/ chart + secrets.yaml + git://" {
     if is_windows || ! is_driver_sops; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
+        skip
+    fi
+    helm_plugin_install "git"
+    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: "
+}
+
+
+@test "template: helm template w/ chart + secrets.yaml + sops://" {
+    if is_windows ; then
         skip
     fi
 
@@ -211,7 +245,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secret://" {
-    if is_windows || ! is_driver_sops; then
+    if is_windows ; then
         skip
     fi
 
@@ -225,7 +259,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://" {
-    if is_windows || ! is_driver_sops; then
+    if is_windows ; then
         skip
     fi
 
@@ -238,35 +272,32 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
 }
 
-@test "template: helm template w/ chart + secrets.yaml + http://" {
-    if ! is_driver_sops; then
+@test "template: helm template w/ chart + secrets.yaml + secrets://http://" {
+    if is_windows || ! is_driver_sops; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
-
-    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: "
 }
 
-@test "template: helm template w/ chart + secrets.yaml + git://" {
-    if ! is_driver_sops || is_windows; then
+@test "template: helm template w/ chart + secrets.yaml + secrets://git://" {
+    if is_windows || ! is_driver_sops; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
 
     helm_plugin_install "git"
-    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: "
 }
