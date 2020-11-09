@@ -146,7 +146,7 @@ jobs:
 
       - run: kubectl cluster-info
 
-      - uses: actions/cache@v2.1.2
+      - uses: actions/cache@v2.1.3
         with:
           path: ${{ github.workspace }}/bin
           key: sops-${{ env.SOPS_VERSION }}-${{ env.VAULT_VERSION }}
