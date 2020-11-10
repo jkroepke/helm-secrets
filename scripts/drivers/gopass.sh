@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -e
 
 _VAULT_REGEX='!vault [A-Za-z0-9\-\_\/]*'
 
@@ -26,7 +27,7 @@ driver_decrypt_file() {
 
     output_tmp="$(mktemp)"
 
-    while IFS= read -r EXPRESSION; do
+    cat "${input}" | while IFS= read -r EXPRESSION; do
         SUFFIX=${EXPRESSION%:*}
         SECRET_PATH=$(echo "${EXPRESSION#*:}" | sed 's/!vault *//' | tr -d '[:space:]')
         if [ -n "$SECRET_PATH" ]; then
@@ -35,7 +36,7 @@ driver_decrypt_file() {
         elif [ -n "$SUFFIX" ]; then
             echo "${SUFFIX}"": " >>"${output_tmp}"
         fi
-    done <"${input}"
+    done
 
     if [ "${output}" = "" ]; then
         cat "${output_tmp}"
