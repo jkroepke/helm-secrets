@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-set -e
 
 _VAULT_REGEX='!vault [A-Za-z0-9\-\_\/]*'
 
