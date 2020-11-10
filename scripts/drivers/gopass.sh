@@ -27,7 +27,7 @@ driver_decrypt_file() {
 
     output_tmp="$(mktemp)"
 
-    cat "${input}" | while IFS= read -r EXPRESSION; do
+    while IFS= read -r EXPRESSION; do
         SUFFIX=${EXPRESSION%:*}
         SECRET_PATH=$(echo "${EXPRESSION#*:}" | sed 's/!vault *//' | tr -d '[:space:]')
         if [ -n "$SECRET_PATH" ]; then
@@ -36,7 +36,7 @@ driver_decrypt_file() {
         elif [ -n "$SUFFIX" ]; then
             echo "${SUFFIX}"": " >>"${output_tmp}"
         fi
-    done
+    done <"${input}"
 
     if [ "${output}" = "" ]; then
         cat "${output_tmp}"
