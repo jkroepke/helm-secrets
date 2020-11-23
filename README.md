@@ -26,7 +26,7 @@ helm secrets upgrade name . -f secrets.yaml
 
 ### Decrypt secrets via protocol handler
 
-Run decrypted command on specific value files
+Run decrypted command on specific value files.
 ```
 helm upgrade name . -f secrets://secrets.yaml
 ```
@@ -50,6 +50,7 @@ For Linux RPM or DEB, sops is available here: [Dist Packages](https://github.com
 For Windows, you cloud install sops separate to mange secrets. This plugin doesn't support Windows yet. See: [#7](https://github.com/jkroepke/helm-secrets/issues/7)
 
 #### Override version of sops
+
 By override `SOPS_VERSION`, you could install a custom sops version of sops.
 
 ```bash
@@ -57,17 +58,18 @@ SOPS_VERSION=v3.6.0 SOPS_LINUX_SHA=610fca9687d1326ef2e1a66699a740f5dbd5ac8130190
 ```
 
 #### Skip sops installation
-It's possible to skip the automatic sops installation by define `SKIP_SOPS_INSTALL=true` on the `helm plugin install` command, e.g:
+
+It's possible to skip the automatic sops installation by defining `SKIP_SOPS_INSTALL=true` on the `helm plugin install` command, e.g:
 
 ```bash
 SKIP_SOPS_INSTALL=true helm plugin install https://github.com/jkroepke/helm-secrets
 ```
 
-### Hasicorp Vault
+### Hashicorp Vault
 
-If you use vault with helm-secret, the vault CLI is needed.
+If you use Vault with helm-secret, the vault CLI is needed.
 
-You can always install manually in MacOS as below:
+You can always install it manually in MacOS as below:
 
 ```bash
 brew install vault
@@ -129,6 +131,7 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/hel
 ```
 
 ### Installation on Helm 2
+
 Helm 2 doesn't support downloader plugins. Since unknown keys in `plugin.yaml` are fatal, then plugin installation need special handling.
 
 Error on Helm 2 installation:
@@ -174,7 +177,7 @@ The driver option is a global one. A file level switch isn't supported yet.
 
 ## Main features
 
-The current version of this plugin using by default [mozilla/sops](https://github.com/mozilla/sops/) as backend.
+The current version of this plugin using [mozilla/sops](https://github.com/mozilla/sops/) by default as backend.
 
 [Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too. In addition, [sops support vault since v3.6.0 natively](https://github.com/mozilla/sops#encrypting-using-hashicorp-vault). 
 
