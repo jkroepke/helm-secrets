@@ -89,7 +89,7 @@ jobs:
         if: "!contains(matrix.os, 'windows-latest')"
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
-          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
 
@@ -140,9 +140,9 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-      - uses: engineerd/setup-kind@v0.4.0
+      - uses: engineerd/setup-kind@v0.5.0
         with:
-          image: kindest/node:v1.18.6
+          version: "v0.9.0"
 
       - run: kubectl cluster-info
 
@@ -167,7 +167,7 @@ jobs:
       - name: Install dependencies
         run: |-
           mkdir -p "$GITHUB_WORKSPACE/bin"
-          echo "::add-path::$GITHUB_WORKSPACE/bin/"
+          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
 
           tests/bats/core/install.sh "$GITHUB_WORKSPACE"
       - name: Print Environment
