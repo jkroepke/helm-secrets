@@ -30,11 +30,8 @@ load '../bats/extensions/bats-file/load'
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
-
-    run cat "${FILE}.dec"
-    assert_success
-    assert_output --partial 'global_secret: '
-    assert_output --partial 'global_bar'
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_bar'
 }
 
 @test "dec: Decrypt some-secrets.yaml" {
@@ -44,11 +41,8 @@ load '../bats/extensions/bats-file/load'
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
-
-    run cat "${FILE}.dec"
-    assert_success
-    assert_output --partial 'global_secret: '
-    assert_output --partial 'global_bar'
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + special char directory name" {
@@ -62,11 +56,8 @@ load '../bats/extensions/bats-file/load'
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
-
-    run cat "${FILE}.dec"
-    assert_success
-    assert_output --partial 'global_secret: '
-    assert_output --partial 'global_bar'
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_SUFFIX" {
@@ -78,12 +69,9 @@ load '../bats/extensions/bats-file/load'
     run helm secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
-    assert [ -e "${FILE}.test" ]
-
-    run cat "${FILE}.test"
-    assert_success
-    assert_output --partial 'global_secret: '
-    assert_output --partial 'global_bar'
+    assert_file_exist "${FILE}.test"
+    assert_file_contains "${FILE}.test" 'global_secret: '
+    assert_file_contains "${FILE}.test" 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_DIR" {
@@ -96,11 +84,8 @@ load '../bats/extensions/bats-file/load'
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
-
-    run cat "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
-    assert_success
-    assert_output --partial 'global_secret: '
-    assert_output --partial 'global_bar'
+    assert_file_contains "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" 'global_secret: '
+    assert_file_contains "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + http://" {

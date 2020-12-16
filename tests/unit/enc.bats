@@ -138,8 +138,6 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-
-    run cat "${FILE}.dec"
-    assert_success
-    assert_output 'hello: world'
+    assert_file_exist "${FILE}.dec"
+    assert_file_contains "${FILE}.dec" 'hello: world'
 }
