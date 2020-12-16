@@ -45,7 +45,7 @@ driver_decrypt_file() {
 
     # Grab all patterns, deduplicate and pass it to loop
     # https://github.com/koalaman/shellcheck/wiki/SC2013
-    grep -o -e "${_VAULT_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
+    if ! grep -o -e "${_VAULT_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
         # remove prefix
         VAULT_SECRET="${EXPRESSION#* }"
         VAULT_SECRET_PATH="${VAULT_SECRET%#*}"
@@ -75,7 +75,10 @@ driver_decrypt_file() {
                 printf '%s\n\n' "${SECRET}"
             } >>"${output_tmp}"
         fi
-    done
+    done; then
+        # pass exit from pipe/sub shell to main shell
+        exit 1
+    fi
 
     if [ "${output}" = "" ]; then
         cat "${output_tmp}" "${input_tmp}"

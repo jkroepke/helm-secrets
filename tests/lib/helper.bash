@@ -145,10 +145,7 @@ helm_plugin_install() {
                 URL="https://github.com/databus23/helm-diff"
                 ;;
             git)
-                # See: https://github.com/aslafy-z/helm-git/pull/120
-                #URL="https://github.com/aslafy-z/helm-git"
-                URL="https://github.com/jkroepke/helm-git"
-                VERSION="patch-1"
+                URL="https://github.com/aslafy-z/helm-git"
                 ;;
             esac
 
