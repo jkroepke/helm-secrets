@@ -146,9 +146,7 @@ helm_plugin_install() {
                 ;;
             git)
                 # See: https://github.com/aslafy-z/helm-git/pull/120
-                #URL="https://github.com/aslafy-z/helm-git"
-                URL="https://github.com/jkroepke/helm-git"
-                VERSION="patch-1"
+                URL="https://github.com/aslafy-z/helm-git"
                 ;;
             esac
 
