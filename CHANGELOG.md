@@ -16,6 +16,9 @@ Check [README.md](README.md#installation-on-helm-2)
 - Remote values support (supporting http:// and helm downloader plugins) (https://github.com/jkroepke/helm-secrets/pull/54)
 - Let downloader plugin supports remote files and all secrets drivers (https://github.com/jkroepke/helm-secrets/pull/55)
 
+### Fixes
+- Vault driver: If vault command failed, the script execution was not terminated. (https://github.com/jkroepke/helm-secrets/pull/61)
+
 ## [3.3.5] - 2020-10-16
 
 ### Added
