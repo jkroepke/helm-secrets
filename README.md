@@ -110,11 +110,8 @@ Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
 # Windows (inside cmd, needs to be verified)
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
 
-# MacOS
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "$HOME/Library/helm/plugins" -xzf-
-
-# Linux
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "$HOME/.local/share/helm/plugins" -xzf-
+# MacOS / Linux
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
 ```
 
 #### Specific version
@@ -123,11 +120,8 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/hel
 # Windows (inside cmd, needs to be verified)
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
 
-# MacOS
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "$HOME/Library/helm/plugins" -xzf-
-
-# Linux
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "$HOME/.local/share/helm/plugins" -xzf-
+# MacOS / Linux
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
 ```
 
 ### Installation on Helm 2
@@ -143,8 +137,8 @@ Error: yaml: unmarshal errors:
 
 Workaround:
 
-1. Install helm-secrets via [manual installation](README.md#manual-installation)
-2. Strip `platformCommand` from `plugin.yaml`:
+1. Install helm-secrets via [manual installation](README.md#manual-installation), but extract inside helm2 plugin directory e.g.: `$(helm home)/plugins/`
+2. Strip `platformCommand` from `plugin.yaml` like:
    ```
    sed -i '/platformCommand:/,+2 d' "${HELM_HOME:-"${HOME}/.helm"}/plugins/helm-secrets*/plugin.yaml"
    ```
