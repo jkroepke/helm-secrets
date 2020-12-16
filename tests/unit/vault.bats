@@ -20,6 +20,6 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "Error while get secret from vault!"
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    refute_output --partial "Error: plugin \"secrets\" exited with error"
+    assert_output --partial "Error: plugin \"secrets\" exited with error"
     assert_file_not_exist "${FILE}.dec"
 }
