@@ -11,7 +11,7 @@
 
 Yes. This repository is a fork of [zendesk/helm-secrets](https://github.com/zendesk/helm-secrets) (base commit [edffea3c94c9ed70891f838b3d881d3578f2599f](https://github.com/jkroepke/helm-secrets/commit/edffea3c94c9ed70891f838b3d881d3578f2599f)).
 
-This original helm-secrets project gets [abandoned](https://github.com/zendesk/helm-secrets/issues/100). I used this projects on my customer projects, and I also want to learn how unit tests for a shell language works.
+This original helm-secrets project gets [abandoned](https://github.com/zendesk/helm-secrets/issues/100) and officially [deprecated](https://github.com/zendesk/helm-secrets/pull/168). I used this projects on my customer projects, and I also want to learn how unit tests for a shell language works.
 
 In meanwhile, this project is officially listed on the [community projects side](https://helm.sh/docs/community/related/) at the helm documentation.
 
