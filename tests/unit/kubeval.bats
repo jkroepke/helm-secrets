@@ -10,6 +10,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -34,6 +37,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -50,6 +56,9 @@ load '../bats/extensions/bats-file/load'
 @test "kubeval: helm kubeval w/ chart + secrets.yaml" {
     if is_windows; then
         skip "Skip on Windows"
+    fi
+    if is_coverage; then
+        skip
     fi
 
     helm_plugin_install "kubeval"
@@ -70,6 +79,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -88,6 +100,9 @@ load '../bats/extensions/bats-file/load'
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + --values=" {
     if is_windows; then
         skip "Skip on Windows"
+    fi
+    if is_coverage; then
+        skip
     fi
 
     helm_plugin_install "kubeval"
@@ -108,6 +123,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -126,6 +144,9 @@ load '../bats/extensions/bats-file/load'
 @test "kubeval: helm kubeval w/ chart + some-secrets.yaml + --values" {
     if is_windows; then
         skip "Skip on Windows"
+    fi
+    if is_coverage; then
+        skip
     fi
 
     helm_plugin_install "kubeval"
@@ -146,6 +167,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -165,6 +189,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -183,6 +210,9 @@ load '../bats/extensions/bats-file/load'
 @test "kubeval: helm kubeval w/ chart + pre decrypted secrets.yaml" {
     if is_windows; then
         skip "Skip on Windows"
+    fi
+    if is_coverage; then
+        skip
     fi
 
     helm_plugin_install "kubeval"
@@ -207,6 +237,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -225,6 +258,9 @@ load '../bats/extensions/bats-file/load'
 @test "kubeval: helm kubeval w/ chart + secrets.yaml + quiet flag" {
     if is_windows; then
         skip "Skip on Windows"
+    fi
+    if is_coverage; then
+        skip
     fi
 
     helm_plugin_install "kubeval"
@@ -245,6 +281,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if is_coverage; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -263,6 +302,9 @@ load '../bats/extensions/bats-file/load'
 @test "kubeval: helm kubeval w/ chart + invalid yaml" {
     if is_windows; then
         skip "Skip on Windows"
+    fi
+    if is_coverage; then
+        skip
     fi
 
     helm_plugin_install "kubeval"
