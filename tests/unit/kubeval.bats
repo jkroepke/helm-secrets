@@ -10,7 +10,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -25,6 +25,9 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
+    if ! is_curl_installed; then
+        skip
+    fi
 
     helm_plugin_install "kubeval"
 
@@ -37,7 +40,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -57,7 +60,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -79,7 +82,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -101,7 +104,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -123,7 +126,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -145,7 +148,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -167,7 +170,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -189,7 +192,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -211,7 +214,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -237,7 +240,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -259,7 +262,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -281,7 +284,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 
@@ -303,7 +306,7 @@ load '../bats/extensions/bats-file/load'
     if is_windows; then
         skip "Skip on Windows"
     fi
-    if is_coverage; then
+    if is_coverage || ! is_curl_installed; then
         skip
     fi
 

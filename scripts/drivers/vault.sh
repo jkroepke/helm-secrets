@@ -3,7 +3,7 @@
 # shellcheck disable=SC2034
 _DRIVER_REGEX='!vault [A-z0-9][A-z0-9/\-]*\#[A-z0-9][A-z0-9-]*'
 
-# shellcheck source=scripts//drivers/_custom.sh
+# shellcheck source=scripts/drivers/_custom.sh
 . "${SCRIPT_DIR}/drivers/_custom.sh"
 
 _custom_driver_get_secret() {
