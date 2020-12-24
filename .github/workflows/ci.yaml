@@ -1,9 +1,6 @@
 ---
 name: CI
 
-env:
-  SOPS_VERSION: 3.6.1
-
 on:
   pull_request:
   push:
@@ -47,12 +44,13 @@ jobs:
             shell: zsh          # zsh
     steps:
       - name: Install git & curl
-        if: "!contains(matrix.os, 'windows-latest')"
+        if: "matrix.container"
         run: |-
           if command -v apk > /dev/null; then
             apk add --no-cache bash git curl gnupg
-          elif command -v install_packages > /dev/null; then
-            install_packages git-core unzip curl gnupg
+          elif command -v apt-get > /dev/null; then
+            apt-get update -qqy
+            apt-get install -qqy git-core unzip curl gnupg
           elif command -v yum > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
@@ -103,9 +101,6 @@ jobs:
           sops --version
           gpg --version
 
-      - name: helm plugin install
-        run: helm plugin install .
-
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: |
@@ -128,6 +123,73 @@ jobs:
           $env:W_TEMP=$env:TEMP; bash tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: sops
+
+      - name: kcov bats --tap -r tests/unit
+        if: "contains(matrix.container, 'kcov/kcov')"
+        run: |
+          kcov --bash-dont-parse-binary-dir \
+            --include-path="${PWD}" \
+            --exclude-path="${PWD}/tests" \
+            tests/coverage \
+            bats --tap -r tests/unit
+  coverage:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+
+      - name: Setup Sops
+        uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Setup Vault
+        uses: innovationnorway/setup-vault@v1
+
+      - name: Install bat
+        run: |-
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
+
+          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
+
+      - name: Setup Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+
+      - name: Install bashcov
+        run: gem install bashcov simplecov-cobertura
+
+      - name: Print Environment (*nix)
+        run: |-
+          echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
+          bats -v
+          sops --version
+          gpg --version
+          vault --version
+
+      - name: Prepare bashcov
+        run: grep -rl 'env sh' scripts | xargs sed -i 's/env sh/env bash/'
+
+      - name: bashcov bats --tap -r tests/unit
+        run: bashcov -- "$GITHUB_WORKSPACE/bin/bats" --tap -r tests/unit
+        env:
+          BASHCOV_COMMAND_NAME: helm-secrets
+          BATSLIB_TEMP_PRESERVE: "0"
+          BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
+
+      - uses: codecov/codecov-action@v1
+        with:
+          directory: coverage
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage
 
   integration-tests:
     needs: [unit-tests]
@@ -187,8 +249,6 @@ jobs:
 
       - name: helm plugin install
         run: sudo helm plugin install .
-        env:
-          SOPS_VERSION: ""
 
       - name: Tests if sops installed
         run: sops --version

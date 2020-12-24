@@ -12,6 +12,10 @@ is_driver_sops() {
     [ "${HELM_SECRETS_DRIVER}" == "sops" ]
 }
 
+is_coverage() {
+    [ -n "${BASHCOV_COMMAND_NAME+x}" ]
+}
+
 _shasum() {
     # MacOS have shasum, others have sha1sum
     if command -v shasum >/dev/null; then

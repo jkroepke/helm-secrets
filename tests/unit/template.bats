@@ -23,10 +23,7 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial 'RELEASE-NAME-'
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert_file_not_exist "${FILE}.dec"
 }
 
 @test "template: helm template w/ chart + secrets.yaml" {
