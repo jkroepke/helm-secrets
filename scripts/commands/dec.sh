@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -eu
+set -euf
 
 dec_usage() {
     cat <<EOF

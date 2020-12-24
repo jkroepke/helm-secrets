@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -eu
+set -euf
 
 clean_usage() {
     cat <<EOF

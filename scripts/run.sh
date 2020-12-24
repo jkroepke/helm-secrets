@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -eu
+set -euf
 
 # Path to current directory
 SCRIPT_DIR="$(dirname "$0")"
@@ -57,6 +57,7 @@ Available Commands:
   view    Print secrets decrypted
   edit    Edit secrets file and encrypt afterwards
   clean   Remove all decrypted files in specified directory (recursively)
+  dir     Get plugin directory
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
 EOF
@@ -86,7 +87,10 @@ load_secret_driver() {
             exit 1
         fi
 
-        # shellcheck disable=SC1090
+        # shellcheck disable=SC2034
+        HELM_SECRETS_SCRIPT_DIR="${SCRIPT_DIR}"
+
+        # shellcheck source=tests/assets/custom-driver.sh
         . "${driver}"
     fi
 }
@@ -153,6 +157,10 @@ while true; do
             exit 1
         fi
         clean "$2"
+        break
+        ;;
+    dir)
+        dirname "${SCRIPT_DIR}"
         break
         ;;
     downloader)

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -eu
+set -euf
 
 # Path to current directory
 SCRIPT_DIR="$(dirname "$0")"
@@ -67,9 +67,4 @@ else
         printf "${RED}%s${NOC}\n" "No SOPS package available"
         exit 1
     fi
-fi
-
-# If git is no available, fail silent.
-if command -v git >/dev/null; then
-    git config --global diff.sopsdiffer.textconv "sops -d"
 fi

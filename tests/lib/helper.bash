@@ -16,6 +16,10 @@ is_coverage() {
     [ -n "${BASHCOV_COMMAND_NAME+x}" ]
 }
 
+is_curl_installed() {
+    command -v curl >/dev/null
+}
+
 _shasum() {
     # MacOS have shasum, others have sha1sum
     if command -v shasum >/dev/null; then
@@ -79,9 +83,9 @@ setup() {
     fi
 
     # copy assets
-    cp -r "${TEST_DIR}/assets/values" "${TEST_TEMP_DIR}"
+    cp -r "${TEST_DIR}/assets/." "${TEST_TEMP_DIR}"
     if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
-        cp -r "${TEST_DIR}/assets/values" "$(printf '%s' "${SPECIAL_CHAR_DIR}")"
+        cp -r "${TEST_DIR}/assets/." "$(printf '%s' "${SPECIAL_CHAR_DIR}")"
     fi
 
     cp -r "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
