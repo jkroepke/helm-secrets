@@ -94,7 +94,7 @@ By default, helm plugin install does this for you.
 
 ```bash
 # Install a specific version (recommend)
-helm plugin install https://github.com/jkroepke/helm-secrets --version v3.3.0
+helm plugin install https://github.com/jkroepke/helm-secrets --version v3.4.0
 
 # Install latest unstable version from master branch
 helm plugin install https://github.com/jkroepke/helm-secrets
@@ -118,10 +118,10 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/hel
 
 ```bash
 # Windows (inside cmd, needs to be verified)
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.4.0/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
 
 # MacOS / Linux
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.3.4/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.4.0/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
 ```
 
 ### Installation on Helm 2
@@ -200,13 +200,14 @@ An additional documentation, resources and examples can be found [here](USAGE.md
 * [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
 * [`scripts/drivers`](scripts/drivers) - Location of the in-tree secrets drivers
 * [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
-* [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
+* [`scripts/lib`](scripts/lib) - Common functions used by `helm secrets`.
+* [`scripts/wrapper`](scripts/wrapper) - Wrapper scripts for Windows systems.
 * [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more informations.
 * [`examples`](examples) - Some example secrets.yaml 
 
 ## Copyright and license
 
-© 2020 [Jan-Otto Kröpke (jkroepke)](https://github.com/jkroepke/helm-secrets)
+© 2020-2021 [Jan-Otto Kröpke (jkroepke)](https://github.com/jkroepke/helm-secrets)
 
 © 2017-2020 [Zendesk](https://github.com/zendesk/helm-secrets)
 
