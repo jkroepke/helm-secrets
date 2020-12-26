@@ -82,34 +82,18 @@ jobs:
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1
 
-      - name: Install bat
-        if: "!contains(matrix.os, 'windows-latest')"
+      - name: Print Environment
         run: |-
-          mkdir -p "$GITHUB_WORKSPACE/bin"
-          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
-
-          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
-
-      - name: Print Environment (*nix)
-        if: "!contains(matrix.os, 'windows-latest')"
-        run: |-
-          echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
-          bats -v
+          bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh || echo unknown)"'
+          bash tests/bats/core/bin/bats -v
           sops --version
           gpg --version
           vault --version
 
-      - name: Print Environment (windows)
-        if: "contains(matrix.os, 'windows-latest')"
-        run: |-
-          bash tests/bats/core/bin/bats -v
-          sops --version
-          gpg --version
-
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: |
-          bats --tap -r tests/unit
+          tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: sops
 
@@ -117,7 +101,7 @@ jobs:
         if: "!contains(matrix.os, 'windows-latest')"
         run: |
           vault server -dev -dev-root-token-id=test &>/dev/null &
-          bats --tap -r tests/unit
+          tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: vault
           VAULT_ADDR: 'http://127.0.0.1:8200'
@@ -137,8 +121,24 @@ jobs:
         with:
           submodules: true
 
+      - name: Setup Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+
       - name: Setup Helm
         uses: azure/setup-helm@v1
+
+      - name: Install bashcov
+        run: gem install bashcov simplecov-cobertura
+
+      - name: Prepare
+        run: sudo chmod 777 /usr/local/bin/
+
+      - name: helm plugin install
+        run: bashcov -- scripts/install.sh
+        env:
+          BASHCOV_COMMAND_NAME: helm-secrets install
 
       - name: Setup Sops
         uses: mdgreenwald/mozilla-sops-action@v1
@@ -146,25 +146,10 @@ jobs:
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1
 
-      - name: Install bat
+      - name: Print Environment
         run: |-
-          mkdir -p "$GITHUB_WORKSPACE/bin"
-          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
-
-          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
-
-      - name: Setup Ruby 2.6
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-
-      - name: Install bashcov
-        run: gem install bashcov simplecov-cobertura
-
-      - name: Print Environment (*nix)
-        run: |-
-          echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
-          bats -v
+          bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"'
+          bash tests/bats/core/bin/bats -v
           sops --version
           gpg --version
           vault --version
@@ -173,29 +158,26 @@ jobs:
         run: grep -rl 'env sh' scripts | xargs sed -i 's/env sh/env bash/'
 
       - name: bashcov bats --tap -r tests/unit
-        run: bashcov -- "$GITHUB_WORKSPACE/bin/bats" --tap -r tests/unit
+        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
-          BASHCOV_COMMAND_NAME: helm-secrets
+          BASHCOV_COMMAND_NAME: helm-secrets sops
           BATSLIB_TEMP_PRESERVE: "0"
           BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
-
-      - uses: codecov/codecov-action@v1
-        with:
-          directory: coverage
 
       - name: bashcov bats --tap -r tests/unit
         run: |
           vault server -dev -dev-root-token-id=test &>/dev/null &
-          bashcov -- "$GITHUB_WORKSPACE/bin/bats" --tap -r tests/unit
+          bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: vault
-          BASHCOV_COMMAND_NAME: helm-secrets
+          BASHCOV_COMMAND_NAME: helm-secrets vault
           BATSLIB_TEMP_PRESERVE: "0"
           BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
 
       - uses: codecov/codecov-action@v1
         with:
           directory: coverage
+          fail_ci_if_error: true
 
   integration-tests:
     needs: [unit-tests]
@@ -226,16 +208,10 @@ jobs:
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1
 
-      - name: Install dependencies
-        run: |-
-          mkdir -p "$GITHUB_WORKSPACE/bin"
-          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
-
-          tests/bats/core/install.sh "$GITHUB_WORKSPACE"
       - name: Print Environment
         run: |-
           echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"
-          bats -v
+          tests/bats/core/bin/bats -v
           sops --version
           gpg --version
           vault --version
@@ -243,7 +219,8 @@ jobs:
       - name: helm plugin install
         run: helm plugin install .
 
-      - run: bats --tap -r tests/it
+      - run: tests/bats/core/bin/bats --tap -r tests/it
+
   plugin-install:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
