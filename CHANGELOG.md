@@ -8,6 +8,8 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+## [3.4.0] - 2020-12-26
+
 From this version, the installation on Helm 2 requires additional steps.
 Check [README.md](README.md#installation-on-helm-2) 
 
@@ -80,7 +82,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.3.5...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.4.0...HEAD
+[3.4.0]: https://github.com/jkroepke/helm-secrets/compare/v3.3.5...v3.4.0
 [3.3.5]: https://github.com/jkroepke/helm-secrets/compare/v3.3.4...v3.3.5
 [3.3.4]: https://github.com/jkroepke/helm-secrets/compare/v3.3.0...v3.3.4
 [3.3.0]: https://github.com/jkroepke/helm-secrets/compare/v3.2.0...v3.3.0
