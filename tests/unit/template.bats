@@ -78,6 +78,19 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 }
 
+@test "template: helm template w/ chart + values.yaml" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/values.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 85"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
 @test "template: helm template w/ chart + some-secrets.yaml + --values" {
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
@@ -110,6 +123,20 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "type: NodePort"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + helm flag + --" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template -f "${FILE}" --set service.type=NodePort -- "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -209,6 +236,20 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Removed: "
 }
 
+@test "template: helm template w/ chart + secrets.yaml + http://example.com/404.yaml" {
+    if ! is_driver_sops; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
+        skip
+    fi
+    FILE="http://example.com/404.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secrets] File does not exist: ${FILE}"
+}
+
 @test "template: helm template w/ chart + secrets.yaml + git://" {
     if is_windows || ! is_driver_sops; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
@@ -281,6 +322,19 @@ load '../bats/extensions/bats-file/load'
     run helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + secrets://http://example.com/404.yaml" {
+    if is_windows || ! is_driver_sops; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
+        skip
+    fi
+    FILE="secrets://http://example.com/404.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_failure
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://git://" {

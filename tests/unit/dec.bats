@@ -45,6 +45,15 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${FILE}.dec" 'global_bar'
 }
 
+@test "dec: Decrypt values.yaml" {
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/values.yaml"
+
+    run helm secrets dec "${FILE}"
+    assert_failure
+    assert_output --partial "[helm-secrets] Decrypting ${FILE}"
+    assert_output --partial "[helm-secrets] File is not encrypted: ${FILE}"
+}
+
 @test "dec: Decrypt secrets.yaml + special char directory name" {
     if is_windows; then
         skip "Skip on Windows"
@@ -98,6 +107,18 @@ load '../bats/extensions/bats-file/load'
     run helm secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
+}
+
+@test "dec: Decrypt secrets.yaml + http://example.com/404.yaml" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="http://example.com/404.yaml"
+
+    run helm secrets dec "${FILE}"
+    assert_failure
+    assert_output --partial "[helm-secrets] File does not exist: ${FILE}"
 }
 
 @test "dec: Decrypt secrets.yaml + git://" {

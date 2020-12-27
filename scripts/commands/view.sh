@@ -24,7 +24,11 @@ view_helper() {
 
     real_file=$(_file_get "${file}")
 
-    driver_decrypt_file "yaml" "${real_file}"
+    if driver_is_file_encrypted "${real_file}"; then
+        driver_decrypt_file "yaml" "${real_file}"
+    else
+        cat "${real_file}"
+    fi
 }
 
 view() {

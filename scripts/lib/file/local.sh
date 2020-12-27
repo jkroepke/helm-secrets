@@ -7,7 +7,11 @@ _file_local_exists() {
 }
 
 _file_local_get() {
-    _file_local_exists "$@" && printf '%s' "${1}"
+    if ! _file_local_exists "$@"; then
+        exit 1
+    fi
+
+    printf '%s' "${1}"
 }
 
 _file_local_put() {
