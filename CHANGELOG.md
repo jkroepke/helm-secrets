@@ -8,6 +8,10 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Fixes
+- Handling `--` inside command line arguments
+- Fix handling errors with remote files
+
 ## [3.4.0] - 2020-12-26
 
 From this version, the installation on Helm 2 requires additional steps.

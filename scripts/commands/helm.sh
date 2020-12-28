@@ -44,59 +44,64 @@ helm_wrapper() {
     argc=$#
     j=0
 
+    SKIP_ARG_PARSE=false
     while [ $j -lt $argc ]; do
-        case "$1" in
-        --)
-            # skip --, and what remains are the cmd args
-            set -- "$1"
-            shift
-            break
-            ;;
-        -f | --values | --values=?*)
+        if [ "${SKIP_ARG_PARSE}" = "true" ]; then
+            set -- "$@" "$1"
+        else
+
             case "$1" in
-            *=*)
-                file="${1#*=}"
-
-                set -- "$@" "${1%%=*}"
-                ;;
-            *)
-                file="${2}"
-
+            --)
+                # skip --, and what remains are the cmd args
+                SKIP_ARG_PARSE=true
                 set -- "$@" "$1"
-                shift
-                j=$((j + 1))
                 ;;
-            esac
+            -f | --values | --values=?*)
+                case "$1" in
+                *=*)
+                    file="${1#*=}"
 
-            if ! real_file=$(_file_get "${file}"); then
-                printf '[helm-secrets] File does not exist: %s\n' "${file}"
-                exit 1
-            fi
+                    set -- "$@" "${1%%=*}"
+                    ;;
+                *)
+                    file="${2}"
 
-            file_dec="$(_file_dec_name "${real_file}")"
-            if [ -f "${file_dec}" ]; then
-                set -- "$@" "$file_dec"
+                    set -- "$@" "$1"
+                    shift
+                    j=$((j + 1))
+                    ;;
+                esac
 
-                if [ "${QUIET}" = "false" ]; then
-                    printf '[helm-secrets] Decrypt skipped: %s\n' "${file}" >&2
+                if ! real_file=$(_file_get "${file}"); then
+                    printf '[helm-secrets] File does not exist: %s\n' "${file}"
+                    exit 1
                 fi
-            else
-                if decrypt_helper "${real_file}"; then
+
+                file_dec="$(_file_dec_name "${real_file}")"
+                if [ -f "${file_dec}" ]; then
                     set -- "$@" "$file_dec"
-                    printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                     if [ "${QUIET}" = "false" ]; then
-                        printf '[helm-secrets] Decrypt: %s\n' "${file}" >&2
+                        printf '[helm-secrets] Decrypt skipped: %s\n' "${file}" >&2
                     fi
                 else
-                    set -- "$@" "$file"
+                    if decrypt_helper "${real_file}"; then
+                        set -- "$@" "$file_dec"
+                        printf '%s\0' "${file_dec}" >>"${decrypted_files}"
+
+                        if [ "${QUIET}" = "false" ]; then
+                            printf '[helm-secrets] Decrypt: %s\n' "${file}" >&2
+                        fi
+                    else
+                        set -- "$@" "$file"
+                    fi
                 fi
-            fi
-            ;;
-        *)
-            set -- "$@" "$1"
-            ;;
-        esac
+                ;;
+            *)
+                set -- "$@" "$1"
+                ;;
+            esac
+        fi
 
         shift
         j=$((j + 1))

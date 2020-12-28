@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -euf
+
 # shellcheck source=scripts/lib/file/local.sh
 . "${SCRIPT_DIR}/lib/file/local.sh"
 
