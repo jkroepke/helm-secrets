@@ -152,14 +152,14 @@ It's possible to use another secret driver then sops, e.g. Hasicorp Vault.
 
 Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/master/scripts/drivers/sops.sh) and adjust to your own needs.
 
-The custom driver can be load via `SECRET_DRIVER` parameter or `-d` option (higher preference):
+The custom driver can be load via `HELM_SECRETS_DRIVER` parameter or `-d` option (higher preference):
 
 ```bash
 # Example for in-tree drivers via option
 helm secrets -d sops view ./tests/assets/helm_vars/secrets.yaml
 
 # Example for in-tree drivers via environment variable
-SECRET_DRIVER=vault helm secrets view ./tests/assets/helm_vars/secrets.yaml
+HELM_SECRETS_DRIVER=vault helm secrets view ./tests/assets/helm_vars/secrets.yaml
 
 # Example for out-of-tree drivers
 helm secrets -d ./path/to/driver.sh view ./tests/assets/helm_vars/secrets.yaml
