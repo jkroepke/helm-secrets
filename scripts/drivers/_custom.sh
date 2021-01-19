@@ -78,6 +78,12 @@ driver_decrypt_file() {
         exit 1
     fi
 
+    # Insert the yaml anchor after the yaml document separator (if it exists)
+    if grep "\---" ${input_tmp} > /dev/null; then
+       _sed_i '1i\---' "${output_tmp}"
+       _sed_i 's/---//' "${input_tmp}"
+    fi
+
     if [ "${output}" = "" ]; then
         cat "${output_tmp}" "${input_tmp}"
     else
