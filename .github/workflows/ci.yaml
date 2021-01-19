@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run the sh-checker
-        uses: luizm/action-sh-checker@v0.1.9
+        uses: luizm/action-sh-checker@v0.1.10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHELLCHECK_OPTS: -x
