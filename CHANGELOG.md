@@ -11,6 +11,7 @@ Allow override sops version on installation
 ### Fixes
 - Handling `--` inside command line arguments
 - Fix handling errors with remote files
+- Strip yaml doc separator if vault driver is used
 
 ## [3.4.0] - 2020-12-26
 

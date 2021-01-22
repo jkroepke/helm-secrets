@@ -41,9 +41,11 @@ driver_decrypt_file() {
     # if omit then output to stdout
     output="${3:-}"
 
-    input_tmp="$(mktemp)"
-    output_tmp="$(mktemp)"
-    cp "${input}" "${input_tmp}"
+    output_yaml="$(mktemp)"
+    output_yaml_anchors="$(mktemp)"
+
+    # Strip yaml separator
+    sed -e '/^---$/d' "${input}" >"${output_yaml}"
 
     # Grab all patterns, deduplicate and pass it to loop
     # https://github.com/koalaman/shellcheck/wiki/SC2013
@@ -60,18 +62,18 @@ driver_decrypt_file() {
 
         # Replace vault expression with yaml anchor
         EXPRESSION="$(echo "${EXPRESSION}" | _regex_escape)"
-        _sed_i "s/${EXPRESSION}/*${YAML_ANCHOR}/g" "${input_tmp}"
+        _sed_i "s/${EXPRESSION}/*${YAML_ANCHOR}/g" "${output_yaml}"
 
         if _custom_driver_is_yaml "${type}" "${_SECRET}"; then
             {
                 printf '.%s: &%s\n' "${YAML_ANCHOR}" "${YAML_ANCHOR}"
                 printf '%s\n\n' "${SECRET}" | sed -e 's/^/  /g'
-            } >>"${output_tmp}"
+            } >>"${output_yaml_anchors}"
         else
             {
                 printf '.%s: &%s ' "${YAML_ANCHOR}" "${YAML_ANCHOR}"
                 printf '%s\n\n' "${SECRET}"
-            } >>"${output_tmp}"
+            } >>"${output_yaml_anchors}"
         fi
     done; then
         # pass exit from pipe/sub shell to main shell
@@ -79,9 +81,9 @@ driver_decrypt_file() {
     fi
 
     if [ "${output}" = "" ]; then
-        cat "${output_tmp}" "${input_tmp}"
+        cat "${output_yaml_anchors}" "${output_yaml}"
     else
-        cat "${output_tmp}" "${input_tmp}" >"${output}"
+        cat "${output_yaml_anchors}" "${output_yaml}" >"${output}"
     fi
 }
 
