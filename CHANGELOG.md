@@ -8,6 +8,8 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+## [3.4.1] - 2021-01-23
+
 ### Fixes
 - Handling `--` inside command line arguments
 - Fix handling errors with remote files
@@ -88,7 +90,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.4.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.4.1...HEAD
+[3.4.1]: https://github.com/jkroepke/helm-secrets/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/jkroepke/helm-secrets/compare/v3.3.5...v3.4.0
 [3.3.5]: https://github.com/jkroepke/helm-secrets/compare/v3.3.4...v3.3.5
 [3.3.4]: https://github.com/jkroepke/helm-secrets/compare/v3.3.0...v3.3.4
