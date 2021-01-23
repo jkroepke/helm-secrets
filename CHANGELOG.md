@@ -11,7 +11,8 @@ Allow override sops version on installation
 ### Fixes
 - Handling `--` inside command line arguments
 - Fix handling errors with remote files
-- Strip yaml doc separator if vault driver is used
+- Strip yaml doc separator if vault driver is used (https://github.com/jkroepke/helm-secrets/pull/70)
+- Incompatibilities if sed links to gnu sed on Mac OS (https://github.com/jkroepke/helm-secrets/pull/72)
 
 ## [3.4.0] - 2020-12-26
 
