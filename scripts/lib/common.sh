@@ -33,3 +33,19 @@ load_secret_driver() {
         . "${driver}"
     fi
 }
+
+_regex_escape() {
+    # This is a function because dealing with quotes is a pain.
+    # http://stackoverflow.com/a/2705678/120999
+    sed -e 's/[]\/()$*.^|[]/\\&/g'
+}
+
+_trap_hook() {
+    true
+}
+
+_trap() {
+    rm -rf "${TMPDIR}"
+
+    _trap_hook
+}

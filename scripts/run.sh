@@ -22,8 +22,8 @@ DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 # Make sure HELM_BIN is set (normally by the helm command)
 HELM_BIN="${HELM_BIN:-helm}"
 
-# shellcheck source=scripts/lib/functions.sh
-. "${SCRIPT_DIR}/lib/functions.sh"
+# shellcheck source=scripts/lib/common.sh
+. "${SCRIPT_DIR}/lib/common.sh"
 
 # shellcheck source=scripts/lib/file.sh
 . "${SCRIPT_DIR}/lib/file.sh"
@@ -31,40 +31,7 @@ HELM_BIN="${HELM_BIN:-helm}"
 # shellcheck source=scripts/lib/http.sh
 . "${SCRIPT_DIR}/lib/http.sh"
 
-_trap_hook() {
-    true
-}
-
-_trap() {
-    rm -rf "${TMPDIR}"
-
-    _trap_hook
-}
-
 trap _trap EXIT
-
-usage() {
-    cat <<EOF
-Secrets encryption in Helm Charts
-
-This plugin provides ability to encrypt/decrypt secrets files
-to store in less secure places, before they are installed using
-Helm.
-
-To decrypt/encrypt/edit you need to initialize/first encrypt secrets with
-sops - https://github.com/mozilla/sops
-
-Available Commands:
-  enc     Encrypt secrets file
-  dec     Decrypt secrets file
-  view    Print secrets decrypted
-  edit    Edit secrets file and encrypt afterwards
-  clean   Remove all decrypted files in specified directory (recursively)
-  dir     Get plugin directory
-  <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
-
-EOF
-}
 
 load_secret_driver "$SECRET_DRIVER"
 
@@ -142,7 +109,9 @@ while true; do
         break
         ;;
     --help | -h | help)
-        usage
+        # shellcheck source=scripts/commands/help.sh
+        . "${SCRIPT_DIR}/commands/help.sh"
+        help_usage
         break
         ;;
     --driver | -d)
@@ -154,7 +123,9 @@ while true; do
         QUIET=true
         ;;
     "")
-        usage
+        # shellcheck source=scripts/commands/help.sh
+        . "${SCRIPT_DIR}/commands/help.sh"
+        help_usage
         exit 1
         ;;
     *)
