@@ -8,6 +8,9 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+## Changed
+- Dev: Rename `master` branch to `main`
+
 ## [3.4.1] - 2021-01-23
 
 ### Fixes
