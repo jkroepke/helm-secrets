@@ -306,7 +306,7 @@ helm upgrade . -f sops://<uri to file>
 Example:
 ```
 helm upgrade . -f secrets://localfile.yaml
-helm upgrade . -f secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=master
+helm upgrade . -f secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main
 ```
 
 # Important Tips

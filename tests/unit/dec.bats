@@ -102,7 +102,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets dec "${FILE}"
     assert_success
@@ -127,7 +127,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     helm_plugin_install "git"
-    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
 
     run helm secrets dec "${FILE}"
     assert_success

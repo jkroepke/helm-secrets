@@ -1,10 +1,10 @@
 [![CI](https://github.com/jkroepke/helm-secrets/workflows/CI/badge.svg)](https://github.com/jkroepke/helm-secrets/)
-[![License](https://img.shields.io/github/license/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/blob/main/LICENSE)
 [![Current Release](https://img.shields.io/github/release/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/releases/latest)
 [![GitHub all releases](https://img.shields.io/github/downloads/jkroepke/helm-secrets/total?logo=github)](https://github.com/jkroepke/helm-secrets/releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/pulls)
-[![codecov](https://codecov.io/gh/jkroepke/helm-secrets/branch/master/graph/badge.svg?token=4qAukyB2yX)](https://codecov.io/gh/jkroepke/helm-secrets)
+[![codecov](https://codecov.io/gh/jkroepke/helm-secrets/branch/main/graph/badge.svg?token=4qAukyB2yX)](https://codecov.io/gh/jkroepke/helm-secrets)
 
 # helm-secrets
 
@@ -97,7 +97,7 @@ By default, helm plugin install does this for you.
 # Install a specific version (recommend)
 helm plugin install https://github.com/jkroepke/helm-secrets --version v3.4.0
 
-# Install latest unstable version from master branch
+# Install latest unstable version from main branch
 helm plugin install https://github.com/jkroepke/helm-secrets
 ```
 
@@ -151,7 +151,7 @@ Client [here](https://github.com/adorsys-containers/ci-helm/blob/f9a8a5bf8953ab8
 
 It's possible to use another secret driver then sops, e.g. Hasicorp Vault.
 
-Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/master/scripts/drivers/sops.sh) and adjust to your own needs.
+Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/main/scripts/drivers/sops.sh) and adjust to your own needs.
 
 The custom driver can be load via `HELM_SECRETS_DRIVER` parameter or `-d` option (higher preference):
 

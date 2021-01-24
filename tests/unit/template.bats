@@ -225,7 +225,7 @@ load '../bats/extensions/bats-file/load'
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
-    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -256,7 +256,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
     helm_plugin_install "git"
-    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -315,7 +315,7 @@ load '../bats/extensions/bats-file/load'
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
-    FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/master/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -344,7 +344,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     helm_plugin_install "git"
-    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=master"
+    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
 
     create_chart "${TEST_TEMP_DIR}"
 

@@ -15,8 +15,8 @@ if [ $# -lt 2 ] || [[ ! "${1}" =~ ^[0-9]\.[0-9]\.[0-9]$ ]] || [[ ! "${2}" =~ ^[0
 fi
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [[ "$BRANCH" != "master" ]]; then
-    echo "Please checkout master"
+if [[ "$BRANCH" != "main" ]]; then
+    echo "Please checkout main"
     exit 1
 fi
 
@@ -34,7 +34,7 @@ sedi "s/version:.*/version: \"${1}\"/" "$(git rev-parse --show-toplevel)/plugin.
 git commit -am "Release v${1}"
 git tag --annotate -m "Release v${1}" "v${1}"
 
-sedi "s/version:.*/version: \"${2}-master\"/" "$(git rev-parse --show-toplevel)/plugin.yaml"
+sedi "s/version:.*/version: \"${2}-dev\"/" "$(git rev-parse --show-toplevel)/plugin.yaml"
 git commit -am "Set next version"
 
 git push --follow-tags --atomic
