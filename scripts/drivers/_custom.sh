@@ -15,7 +15,7 @@ _custom_driver_get_secret() {
 driver_is_file_encrypted() {
     input="${1}"
 
-    grep -q -e "${_DRIVER_REGEX}" "${input}"
+    LC_ALL=C.UTF-8 grep -q -e "${_DRIVER_REGEX}" "${input}"
 }
 
 driver_encrypt_file() {
