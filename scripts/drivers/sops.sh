@@ -12,11 +12,12 @@ driver_encrypt_file() {
     type="${1}"
     input="${2}"
     output="${3}"
+    suffix="${4:-}"
 
     if [ "${input}" = "${output}" ]; then
-        $_SOPS --encrypt --input-type "${type}" --output-type "${type}" --in-place "${input}"
+        $_SOPS --encrypt --encrypted-suffix="${suffix}" --input-type "${type}" --output-type "${type}" --in-place "${input}"
     else
-        $_SOPS --encrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
+        $_SOPS --encrypt --encrypted-suffix="${suffix}" --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
     fi
 }
 

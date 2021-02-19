@@ -35,6 +35,19 @@ trap _trap EXIT
 
 load_secret_driver "$SECRET_DRIVER"
 
+# second key pairs
+case "${2:-}" in
+    --suffix | -r)
+        if [ "$1" != "enc" ]; then
+            echo "--suffix flag can be used only with enc command"
+            exit 1
+        fi
+        # enc file suffix
+        set $1 $4 $3
+        ;;
+esac
+
+# first keys
 while true; do
     case "${1:-}" in
     enc)
@@ -45,6 +58,10 @@ while true; do
             enc_usage
             echo "Error: secrets file required."
             exit 1
+        fi
+        if [ "x" != "${3:-x}" ]; then
+             enc "$2" "$3"
+             break
         fi
         enc "$2"
         break

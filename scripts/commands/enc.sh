@@ -4,7 +4,7 @@ set -euf
 
 enc_usage() {
     cat <<EOF
-helm secrets enc [ --driver <driver> | -d <driver> ] <path to file>
+helm secrets enc [ --driver <driver> | -d <driver> | --suffix "<suffix>" | -r "<suffix>" ] <path to file>
 
 Encrypt secrets
 
@@ -26,6 +26,7 @@ EOF
 encrypt_helper() {
     dir=$(dirname "$1")
     file=$(basename "$1")
+    suffix="$2"
 
     cd "$dir"
 
@@ -44,7 +45,7 @@ encrypt_helper() {
         exit 1
     fi
 
-    driver_encrypt_file "yaml" "${file_dec}" "${file}"
+    driver_encrypt_file "yaml" "${file_dec}" "${file}" "${suffix}"
 
     if [ "${file}" = "${file_dec}" ]; then
         printf 'Encrypted %s\n' "${file_dec}"
@@ -60,12 +61,13 @@ enc() {
     fi
 
     file="$1"
+    suffix="${2:-}"
 
     if [ ! -f "${file}" ]; then
         printf 'File does not exist: %s\n' "${file}"
         exit 1
     else
         printf 'Encrypting %s\n' "${file}"
-        encrypt_helper "${file}"
+        encrypt_helper "${file}" "${suffix}"
     fi
 }
