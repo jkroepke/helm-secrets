@@ -214,3 +214,131 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
+
+@test "lint: helm lint w/ chart + --driver-args (simple)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" 2>&1
+    assert_success
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+}
+
+@test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (simple)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "lint: helm lint w/ chart + some-secrets.yaml + -a (simple)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets -a "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "lint: helm lint w/ chart + some-secrets.yaml + HELM_SECRETS_DRIVER_ARGS (simple)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    HELM_SECRETS_DRIVER_ARGS=--verbose
+    export HELM_SECRETS_DRIVER_ARGS
+
+    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (complex)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets --driver-args "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "lint: helm lint w/ chart + some-secrets.yaml + -a (complex)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets -a "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "lint: helm lint w/ chart + some-secrets.yaml + HELM_SECRETS_DRIVER_ARGS (complex)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # shellcheck disable=SC2089
+    HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
+    # shellcheck disable=SC2090
+    export HELM_SECRETS_DRIVER_ARGS
+
+    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}

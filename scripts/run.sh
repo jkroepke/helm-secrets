@@ -13,6 +13,8 @@ QUIET="${HELM_SECRETS_QUIET:-false}"
 
 # Define the secret driver engine
 SECRET_DRIVER="${HELM_SECRETS_DRIVER:-sops}"
+# Define the secret driver engine
+SECRET_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS:-}"
 
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
@@ -121,6 +123,11 @@ while true; do
     --quiet | -q)
         # shellcheck disable=SC2034
         QUIET=true
+        ;;
+    --driver-args | -a)
+        # shellcheck disable=SC2034
+        SECRET_DRIVER_ARGS="$2"
+        shift
         ;;
     "")
         # shellcheck source=scripts/commands/help.sh

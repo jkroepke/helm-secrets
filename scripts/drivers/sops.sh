@@ -2,6 +2,12 @@
 
 _SOPS="${HELM_SECRETS_SOPS_BIN:-sops}"
 
+_sops() {
+    # shellcheck disable=SC2086
+    set -- ${SECRET_DRIVER_ARGS} "$@"
+    $_SOPS "$@"
+}
+
 driver_is_file_encrypted() {
     input="${1}"
 
@@ -14,9 +20,9 @@ driver_encrypt_file() {
     output="${3}"
 
     if [ "${input}" = "${output}" ]; then
-        $_SOPS --encrypt --input-type "${type}" --output-type "${type}" --in-place "${input}"
+        _sops --encrypt --input-type "${type}" --output-type "${type}" --in-place "${input}"
     else
-        $_SOPS --encrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
+        _sops --encrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
     fi
 }
 
@@ -27,9 +33,9 @@ driver_decrypt_file() {
     output="${3:-}"
 
     if [ "${output}" != "" ]; then
-        $_SOPS --decrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
+        _sops --decrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
     else
-        $_SOPS --decrypt --input-type "${type}" --output-type "${type}" "${input}"
+        _sops --decrypt --input-type "${type}" --output-type "${type}" "${input}"
     fi
 }
 
@@ -37,5 +43,5 @@ driver_edit_file() {
     type="${1}"
     input="${2}"
 
-    $_SOPS --input-type yaml --output-type yaml "${input}"
+    _sops --input-type yaml --output-type yaml "${input}"
 }
