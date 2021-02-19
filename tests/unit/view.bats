@@ -62,3 +62,95 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
 }
+
+@test "view: secrets.yaml + --driver-args (simple)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets --driver-args "--verbose" view "${FILE}"
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "view: secrets.yaml + -a (simple)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets -a "--verbose" view "${FILE}"
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "view: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (simple)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    HELM_SECRETS_DRIVER_ARGS=--verbose
+    export HELM_SECRETS_DRIVER_ARGS
+
+    run helm secrets view "${FILE}"
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "view: secrets.yaml + --driver-args (complex)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets --driver-args "--verbose --output-type \"yaml\"" view "${FILE}"
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "view: secrets.yaml + -a (complex)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets -a "--verbose --output-type \"yaml\"" view "${FILE}"
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "view: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (complex)" {
+    if ! is_driver_sops; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    # shellcheck disable=SC2089
+    HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
+    # shellcheck disable=SC2090
+    export HELM_SECRETS_DRIVER_ARGS
+
+    run helm secrets view "${FILE}"
+    assert_success
+    assert_output --partial "Data key recovered successfully"
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}

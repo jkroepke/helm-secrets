@@ -107,10 +107,6 @@ helm_wrapper() {
         j=$((j + 1))
     done
 
-    if [ "${QUIET}" = "false" ]; then
-        echo >&2
-    fi
-
     "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
 }
 

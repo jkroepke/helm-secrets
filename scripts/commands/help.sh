@@ -3,7 +3,7 @@
 set -euf
 
 help_usage() {
-    cat <<EOF
+    cat <<'EOF'
 Secrets encryption in Helm Charts
 
 This plugin provides ability to encrypt/decrypt secrets files
@@ -24,5 +24,10 @@ Available Commands:
   dir     Get plugin directory
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
+Available Options:
+  --quiet       -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
+  --driver      -d  Secret driver to use for decryption or encryption (env: $HELM_SECRETS_DRIVER)
+  --driver-args -a  Additional args for secret driver (env: $HELM_SECRETS_DRIVER_ARGS)
+  --help        -h  Show help
 EOF
 }
