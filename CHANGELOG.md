@@ -8,6 +8,8 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+## [3.4.2] - 2021-02-19
+
 ### Changed
 - Dev: Rename `master` branch to `main`
 
@@ -96,7 +98,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.4.1...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.4.2...HEAD
+[3.4.2]: https://github.com/jkroepke/helm-secrets/compare/v3.4.1...v3.4.2
 [3.4.1]: https://github.com/jkroepke/helm-secrets/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/jkroepke/helm-secrets/compare/v3.3.5...v3.4.0
 [3.3.5]: https://github.com/jkroepke/helm-secrets/compare/v3.3.4...v3.3.5
