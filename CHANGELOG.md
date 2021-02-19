@@ -8,13 +8,18 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+## [3.4.3] - 2021-02-19
+
+### Fixes
+- "grep: Invalid range end" if locale is not C (https://github.com/jkroepke/helm-secrets/pull/81)
+
 ## [3.4.2] - 2021-02-19
 
 ### Changed
 - Dev: Rename `master` branch to `main`
 
 ### Fixes
-- "grep: Invalid range end" if locale is different then C (https://github.com/jkroepke/helm-secrets/pull/79)
+- "grep: Invalid range end" if locale is not C (https://github.com/jkroepke/helm-secrets/pull/79)
 
 ## [3.4.1] - 2021-01-23
 
@@ -98,7 +103,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.4.2...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.4.3...HEAD
+[3.4.3]: https://github.com/jkroepke/helm-secrets/compare/v3.4.2...v3.4.3
 [3.4.2]: https://github.com/jkroepke/helm-secrets/compare/v3.4.1...v3.4.2
 [3.4.1]: https://github.com/jkroepke/helm-secrets/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/jkroepke/helm-secrets/compare/v3.3.5...v3.4.0

@@ -37,7 +37,7 @@ driver_decrypt_file() {
 
     # Grab all patterns, deduplicate and pass it to loop
     # https://github.com/koalaman/shellcheck/wiki/SC2013
-    if ! grep -o -e "${_DRIVER_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
+    if ! LC_ALL=C.UTF-8 grep -o -e "${_DRIVER_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
         # remove prefix
         _SECRET="${EXPRESSION#* }"
 
