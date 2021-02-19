@@ -8,8 +8,11 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
-## Changed
+### Changed
 - Dev: Rename `master` branch to `main`
+
+### Fixes
+- "grep: Invalid range end" if locale is different then C (https://github.com/jkroepke/helm-secrets/pull/79)
 
 ## [3.4.1] - 2021-01-23
 
