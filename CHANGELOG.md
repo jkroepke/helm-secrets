@@ -8,6 +8,9 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Added
+- Detect ArgoCD environment by `ARGOCD_APP_NAME` environment variable and set `HELM_SECRETS_QUIET=true` by default. (https://github.com/jkroepke/helm-secrets/pull/83)
+
 ## [3.5.0] - 2021-02-20
 
 ### Added

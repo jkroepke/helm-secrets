@@ -2,6 +2,10 @@
 
 set -euf
 
+if [ -n "${ARGOCD_APP_NAME+x}" ]; then
+    HELM_SECRETS_QUIET="${HELM_SECRETS_QUIET:-true}"
+fi
+
 # Path to current directory
 SCRIPT_DIR="$(dirname "$0")"
 

@@ -22,7 +22,7 @@ In meanwhile, this project is officially listed on the [community projects side]
 
 Wraps the whole helm command. Slow on multiple value files.
 
-```
+```bash
 helm secrets upgrade name . -f secrets.yaml
 ```
 
@@ -30,7 +30,7 @@ helm secrets upgrade name . -f secrets.yaml
 
 Run decrypted command on specific value files. Useful if you plan to use the helm terraform provider.
 
-```
+```bash
 helm upgrade name . -f secrets://secrets.yaml
 ```
 
@@ -218,6 +218,10 @@ If you are using sops (used by default) you have some additional features:
 - [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
 An additional documentation, resources and examples can be found [here](USAGE.md).
+
+### ArgoCD support
+
+helm-secrets could detect an ArgoCD environment by the `ARGOCD_APP_NAME` environment variable. If detected, `HELM_SECRETS_QUIET` is set to `true`.
 
 ## Moving parts of project
 
