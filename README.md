@@ -28,7 +28,7 @@ helm secrets upgrade name . -f secrets.yaml
 
 ### Decrypt secrets via protocol handler
 
-Run decrypted command on specific value files. Useful if you plan to use the helm terraform provider.
+Run decrypted command on specific value files.
 
 ```bash
 helm upgrade name . -f secrets://secrets.yaml
