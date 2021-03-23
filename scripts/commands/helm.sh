@@ -35,9 +35,8 @@ _trap_hook() {
         else
             xargs -0 rm >&2 <"${decrypted_files}"
         fi
-
-        rm "${decrypted_files}"
     fi
+    rm "${decrypted_files}"
 }
 
 helm_wrapper() {

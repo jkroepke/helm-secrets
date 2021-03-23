@@ -42,6 +42,7 @@ driver_decrypt_file() {
         _SECRET="${EXPRESSION#* }"
 
         if ! SECRET=$(_custom_driver_get_secret "${type}" "${_SECRET}"); then
+            rm -f "${output_yaml}" "${output_yaml_anchors}"
             exit 1
         fi
 
@@ -64,6 +65,7 @@ driver_decrypt_file() {
             } >>"${output_yaml_anchors}"
         fi
     done; then
+        rm -f "${output_yaml}" "${output_yaml_anchors}"
         # pass exit from pipe/sub shell to main shell
         exit 1
     fi
@@ -73,6 +75,8 @@ driver_decrypt_file() {
     else
         cat "${output_yaml_anchors}" "${output_yaml}" >"${output}"
     fi
+
+    rm -f "${output_yaml}" "${output_yaml_anchors}"
 }
 
 driver_edit_file() {
