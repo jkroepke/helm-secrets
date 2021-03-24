@@ -6,7 +6,7 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "plugin-install: helm plugin install" {
-    HOME="$(mktemp -d)"
+    HOME="$(mktemp -d "${TEST_TEMP_HOME}/tmp.XXXXXXXXXX")"
 
     # Windows
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
@@ -15,13 +15,15 @@ load '../bats/extensions/bats-file/load'
 
     run helm plugin install "${GIT_ROOT}"
     assert_output --regexp "$(printf "sops is already installed: sops .*\nInstalled plugin: secrets")"
+
+    HOME="${TEST_TEMP_HOME}"
 }
 
 @test "plugin-install: SKIP_SOPS_INSTALL=true helm plugin install" {
     SKIP_SOPS_INSTALL=true
     export SKIP_SOPS_INSTALL
 
-    HOME="$(mktemp -d)"
+    HOME="$(mktemp -d "${TEST_TEMP_HOME}/tmp.XXXXXXXXXX")"
 
     # Windows
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
@@ -30,6 +32,8 @@ load '../bats/extensions/bats-file/load'
 
     run helm plugin install "${GIT_ROOT}"
     assert_output --regexp "$(printf "Skipping sops installation.\nInstalled plugin: secrets")"
+
+    HOME="${TEST_TEMP_HOME}"
 }
 
 @test "plugin-install: helm plugin list" {
