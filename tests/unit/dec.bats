@@ -95,6 +95,8 @@ load '../bats/extensions/bats-file/load'
     assert_file_exist "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
     assert_file_contains "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" 'global_secret: '
     assert_file_contains "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" 'global_bar'
+
+    temp_del "${HELM_SECRETS_DEC_DIR}"
 }
 
 @test "dec: Decrypt secrets.yaml + http://" {

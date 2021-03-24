@@ -56,7 +56,8 @@ setup() {
     SEED="${RANDOM}"
 
     TEST_TEMP_DIR="$(TMPDIR="${W_TEMP:-/tmp/}" mktemp -d)"
-    HOME="$(mktemp -d)"
+    TEST_TEMP_HOME="$(mktemp -d)"
+    HOME="${TEST_TEMP_HOME}"
 
     # shellcheck disable=SC2034
     XDG_DATA_HOME="${HOME}"
@@ -132,6 +133,7 @@ teardown() {
     rm -rf "${TEST_TEMP_DIR}/home/.gnupg/"
 
     temp_del "${TEST_TEMP_DIR}"
+    temp_del "${TEST_TEMP_HOME}"
 }
 
 create_chart() {
