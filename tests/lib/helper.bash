@@ -160,6 +160,9 @@ helm_plugin_install() {
             esac
 
             env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install "${URL}" ${VERSION:+--version ${VERSION}}
+
+            # prevent temp_del to block on write-protected git objects
+            chmod -R +w "${HELM_CACHE}/home/.cache/helm/" "${HELM_CACHE}/home/.local/share/helm/"
         fi
 
         cp -r "${HELM_CACHE}/home/." "${HOME}"
