@@ -132,8 +132,8 @@ teardown() {
     # rm: cannot remove '/tmp/tmp.11dcSX0g8Q/home/.gnupg/S.gpg-agent.browser': No such file or directory
     rm -rf "${TEST_TEMP_DIR}/home/.gnupg/"
 
-    temp_del "${TEST_TEMP_DIR}"
-    temp_del "${TEST_TEMP_HOME}"
+    rm -rf "${TEST_TEMP_DIR}"
+    rm -rf "${TEST_TEMP_HOME}"
 }
 
 create_chart() {
