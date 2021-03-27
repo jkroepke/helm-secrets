@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -eufx
+set -euf
 
 # shellcheck disable=SC1090
 . "${SCRIPT_DIR}/commands/dec.sh"
