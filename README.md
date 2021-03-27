@@ -8,13 +8,13 @@
 
 # helm-secrets
 
-## This is a fork of futuresimple/helm-secrets or zendesk/helm-secrets?
+## Is this a fork of _futuresimple/helm-secrets_ or _zendesk/helm-secrets_?
 
 Yes. This repository is a fork of [zendesk/helm-secrets](https://github.com/zendesk/helm-secrets) (base commit [edffea3c94c9ed70891f838b3d881d3578f2599f](https://github.com/jkroepke/helm-secrets/commit/edffea3c94c9ed70891f838b3d881d3578f2599f)).
 
-This original helm-secrets project gets [abandoned](https://github.com/zendesk/helm-secrets/issues/100) and officially [deprecated](https://github.com/zendesk/helm-secrets/pull/168). I used this projects on my customer projects, and I also want to learn how unit tests for a shell language works.
+This original helm-secrets project has been [abandoned](https://github.com/zendesk/helm-secrets/issues/100) and officially [deprecated](https://github.com/zendesk/helm-secrets/pull/168). I have decided to maintain this for as I use this projects on my customer projects, and I also want to learn how unit tests for a shell language works.
 
-In meanwhile, this project is officially listed on the [community projects side](https://helm.sh/docs/community/related/) at the helm documentation.
+This project is officially listed as a [community project](https://helm.sh/docs/community/related/) in the Helm documentation.
 
 ## Usage
 
@@ -40,21 +40,27 @@ See: [USAGE.md](USAGE.md) for more information
 
 ### SOPS
 
-Just install the plugin using `helm plugin install https://github.com/jkroepke/helm-secrets` and sops will be installed if possible as part of it.
+#### Helm Plugin
+Install the plugin using `helm plugin install https://github.com/jkroepke/helm-secrets` and sops will be installed if possible as part of it.
 
-You can always install manually in MacOS as below:
+#### Brew
+You can install using [Homebrew](https://brew.sh/):
 
 ```bash
 brew install sops
 ```
 
+#### RPM and DEB 
 For Linux RPM or DEB, sops is available here: [Dist Packages](https://github.com/mozilla/sops/releases)
 
-For Windows, you cloud install sops separate to mange secrets. This plugin doesn't support Windows yet. See: [#7](https://github.com/jkroepke/helm-secrets/issues/7)
+#### Windows
+⚠️ _This plugin doesn't support Windows yet._
+
+`sops` does have Windows support however, so you can install sops separately to mange secrets.  See [Issue #7](https://github.com/jkroepke/helm-secrets/issues/7) for more information
 
 #### Override version of sops
 
-By override `SOPS_VERSION`, you could install a custom sops version of sops.
+To install a custom version of sops you can override `SOPS_VERSION`.
 
 ```bash
 SOPS_VERSION=v3.6.0 SOPS_LINUX_SHA=610fca9687d1326ef2e1a66699a740f5dbd5ac8130190275959da737ec52f096 helm plugin install https://github.com/jkroepke/helm-secrets
@@ -70,9 +76,9 @@ SKIP_SOPS_INSTALL=true helm plugin install https://github.com/jkroepke/helm-secr
 
 ### Hashicorp Vault
 
-If you use Vault with helm-secret, the vault CLI is needed.
+If you use Vault with helm-secret, the vault CLI tool is needed.
 
-You can always install it manually in MacOS as below:
+You can install it manually using Homebrew:
 
 ```bash
 brew install vault
@@ -129,7 +135,7 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.5.0/hel
 
 ### Installation on Helm 2
 
-Helm 2 doesn't support downloader plugins. Since unknown keys in `plugin.yaml` are fatal, then plugin installation need special handling.
+Helm 2 doesn't support downloading plugins. Since unknown keys in `plugin.yaml` are fatal plugin installation needs special handling.
 
 Error on Helm 2 installation:
 
