@@ -232,20 +232,3 @@ jobs:
         run: helm plugin install .
 
       - run: tests/bats/core/bin/bats --tap -r tests/it
-
-  plugin-install:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: ${{ env.VERSION_HELM }}
-
-      - name: helm plugin install
-        run: sudo helm plugin install .
-
-      - name: Tests if sops installed
-        run: sops --version
