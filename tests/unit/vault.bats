@@ -32,7 +32,7 @@ load '../bats/extensions/bats-file/load'
     export HELM_SECRETS_DEC_TMP_DIR="helm-secrets.$$"
 
     # If non mac, prefix own tmp directory
-    # See: https://unix.stackexchange.com/q/555058
+    # See: https://unix.stackexchange.com/a/555214
     if [ "$(uname)" != "Darwin" ]; then
         export HELM_SECRETS_DEC_TMP_DIR="${TMPDIR:-/tmp}/${HELM_SECRETS_DEC_TMP_DIR}"
     fi

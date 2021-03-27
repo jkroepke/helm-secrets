@@ -18,7 +18,7 @@ SCRIPT_DIR="$(dirname "$0")"
 # shellcheck source=scripts/lib/http.sh
 . "${SCRIPT_DIR}/lib/http.sh"
 
-# Create temporary directory (not working on mac os, see: https://unix.stackexchange.com/q/555058)
+# Create temporary directory (not working on mac os, see: https://unix.stackexchange.com/a/555214)
 if on_macos; then
     TMPDIR="$(basename "$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}")")"
 else
