@@ -9,8 +9,6 @@ fi
 # Path to current directory
 SCRIPT_DIR="$(dirname "$0")"
 
-_trap_hook() { true; }
-
 # shellcheck source=scripts/lib/common.sh
 . "${SCRIPT_DIR}/lib/common.sh"
 

@@ -45,7 +45,9 @@ _regex_escape() {
 }
 
 _trap() {
-    _trap_hook
+    if command -v _trap_hook >/dev/null; then
+        _trap_hook
+    fi
 
     rm -rf "${TMPDIR}"
 }
