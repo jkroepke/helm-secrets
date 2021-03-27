@@ -49,9 +49,9 @@ _trap_hook() {
 }
 
 _trap() {
-    rm -rf "${TMPDIR}"
-
     _trap_hook
+
+    rm -rf "${TMPDIR}"
 }
 
 if on_macos; then
