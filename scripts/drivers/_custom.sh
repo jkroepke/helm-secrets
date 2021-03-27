@@ -29,8 +29,8 @@ driver_decrypt_file() {
     # if omit then output to stdout
     output="${3:-}"
 
-    output_yaml="$(mktemp)"
-    output_yaml_anchors="$(mktemp)"
+    output_yaml="$(_mktemp)"
+    output_yaml_anchors="$(_mktemp)"
 
     # Strip yaml separator
     sed -e '/^---$/d' "${input}" >"${output_yaml}"

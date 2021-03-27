@@ -7,7 +7,7 @@ _file_custom_exists() {
 }
 
 _file_custom_get() {
-    _tmp_file=$(mktemp)
+    _tmp_file=$(_mktemp)
 
     if ! helm template "${SCRIPT_DIR}/lib/file/helm-values-getter" -f "${1}" >"${_tmp_file}"; then
         exit 1

@@ -13,6 +13,10 @@ is_help() {
     esac
 }
 
+on_macos() {
+    [ "$(uname)" = "Darwin" ]
+}
+
 load_secret_driver() {
     driver="${1}"
     if [ -f "${SCRIPT_DIR}/drivers/${driver}.sh" ]; then
@@ -49,3 +53,9 @@ _trap() {
 
     _trap_hook
 }
+
+if on_macos; then
+    _mktemp() { mktemp -t "${TMPDIR}/" "$@"; }
+else
+    _mktemp() { mktemp "$@"; }
+fi

@@ -7,10 +7,10 @@ insert_final_newline = true
 [*.cmd]
 end_of_line = crlf
 
-[*.{sh,bash,bats}]
+[*.{sh,bats,bash}]
 indent_style = space
 indent_size = 4
-max_line_length = 80
+max_line_length = 120
 trim_trailing_whitespace = true
 
 [*.sh]

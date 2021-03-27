@@ -9,8 +9,23 @@ fi
 # Path to current directory
 SCRIPT_DIR="$(dirname "$0")"
 
-# Create temporary directory
-TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-$(mktemp -d)}"
+# shellcheck source=scripts/lib/common.sh
+. "${SCRIPT_DIR}/lib/common.sh"
+
+# shellcheck source=scripts/lib/file.sh
+. "${SCRIPT_DIR}/lib/file.sh"
+
+# shellcheck source=scripts/lib/http.sh
+. "${SCRIPT_DIR}/lib/http.sh"
+
+# Create temporary directory (not working on mac os, see: https://unix.stackexchange.com/q/555058)
+if on_macos; then
+    TMPDIR="$(basename "$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}")")"
+else
+    TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-$(mktemp -d)}"
+fi
+
+export TMPDIR
 
 # Output debug infos
 QUIET="${HELM_SECRETS_QUIET:-false}"
@@ -27,15 +42,6 @@ DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 
 # Make sure HELM_BIN is set (normally by the helm command)
 HELM_BIN="${HELM_BIN:-helm}"
-
-# shellcheck source=scripts/lib/common.sh
-. "${SCRIPT_DIR}/lib/common.sh"
-
-# shellcheck source=scripts/lib/file.sh
-. "${SCRIPT_DIR}/lib/file.sh"
-
-# shellcheck source=scripts/lib/http.sh
-. "${SCRIPT_DIR}/lib/http.sh"
 
 trap _trap EXIT
 
