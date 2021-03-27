@@ -45,10 +45,7 @@ _regex_escape() {
 }
 
 _trap() {
-    # https://stackoverflow.com/a/85903/8087167
-    if LC_ALL=C type "_trap_hook" >/dev/null; then
-        _trap_hook
-    fi
+    _trap_hook
 
     rm -rf "${TMPDIR}"
 }
