@@ -27,8 +27,11 @@ if on_macos; then
     # shellcheck disable=SC2034
     TMPDIR="$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}")"
     TMPDIR_SUFFIX="$(basename "${TMPDIR}")"
+elif [ -n "${HELM_SECRETS_DEC_TMP_DIR+x}" ]; then
+    mkdir -p "${HELM_SECRETS_DEC_TMP_DIR}"
+    TMPDIR="${HELM_SECRETS_DEC_TMP_DIR}"
 else
-    TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-$(mktemp -d)}"
+    TMPDIR="$(mktemp -d)"
 fi
 
 export TMPDIR
