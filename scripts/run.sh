@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -euf
+set -eufx
 
 if [ -n "${ARGOCD_APP_NAME+x}" ]; then
     HELM_SECRETS_QUIET="${HELM_SECRETS_QUIET:-true}"
