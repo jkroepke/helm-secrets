@@ -44,12 +44,11 @@ _regex_escape() {
     sed -e 's/[]\/()$*.^|[]/\\&/g'
 }
 
-_trap_hook() {
-    true
-}
-
 _trap() {
-    _trap_hook
+    # https://stackoverflow.com/a/85903/8087167
+    if LC_ALL=C type _trap_hook > /dev/null; then
+        _trap_hook
+    fi
 
     rm -rf "${TMPDIR}"
 }
