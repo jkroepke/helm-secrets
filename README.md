@@ -40,43 +40,19 @@ See: [USAGE.md](USAGE.md) for more information
 
 ### SOPS
 
-#### Helm Plugin
-Install the plugin using `helm plugin install https://github.com/jkroepke/helm-secrets` and sops will be installed if possible as part of it.
+If you use sops with helm-secrets, the sops CLI tool is needed.
 
-#### Brew
-You can install using [Homebrew](https://brew.sh/):
+You can install it manually using Homebrew:
 
 ```bash
 brew install sops
 ```
 
-#### RPM and DEB 
-For Linux RPM or DEB, sops is available here: [Dist Packages](https://github.com/mozilla/sops/releases)
-
-#### Windows
-⚠️ _This plugin doesn't support Windows yet._
-
-`sops` does have Windows support however, so you can install sops separately to mange secrets.  See [Issue #7](https://github.com/jkroepke/helm-secrets/issues/7) for more information
-
-#### Override version of sops
-
-To install a custom version of sops you can override `SOPS_VERSION`.
-
-```bash
-SOPS_VERSION=v3.6.0 SOPS_LINUX_SHA=610fca9687d1326ef2e1a66699a740f5dbd5ac8130190275959da737ec52f096 helm plugin install https://github.com/jkroepke/helm-secrets
-```
-
-#### Skip sops installation
-
-It's possible to skip the automatic sops installation by defining `SKIP_SOPS_INSTALL=true` on the `helm plugin install` command, e.g:
-
-```bash
-SKIP_SOPS_INSTALL=true helm plugin install https://github.com/jkroepke/helm-secrets
-```
+Download: https://github.com/mozilla/sops/releases/latest
 
 ### Hashicorp Vault
 
-If you use Vault with helm-secret, the vault CLI tool is needed.
+If you use Vault with helm-secrets, the vault CLI tool is needed.
 
 You can install it manually using Homebrew:
 

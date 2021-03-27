@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 
-# shellcheck source=scripts/lib/http.sh
-. "${SCRIPT_DIR}/lib/sed.sh"
-
 _custom_driver_is_yaml() {
     false
 }

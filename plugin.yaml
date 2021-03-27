@@ -4,10 +4,6 @@ usage: "Secrets encryption in Helm for Git storing"
 description: |-
   This plugin provides secrets values encryption for Helm charts secure storing
 useTunnel: false
-hooks:
-  install: "$HELM_PLUGIN_DIR/scripts/wrapper/run.cmd $HELM_PLUGIN_DIR/scripts/install.sh"
-  update: "$HELM_PLUGIN_DIR/scripts/wrapper/run.cmd $HELM_PLUGIN_DIR/scripts/install.sh"
-
 command: "$HELM_PLUGIN_DIR/scripts/run.sh"
 platformCommand:
   - os: windows

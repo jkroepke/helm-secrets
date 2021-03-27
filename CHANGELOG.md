@@ -8,11 +8,17 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Breaking
+The default sops installation is removed, since helm-secrets could use with hashicorp vault which does not require sops.
+
 ### Added
 - Detect ArgoCD environment by `ARGOCD_APP_NAME` environment variable and set `HELM_SECRETS_QUIET=true` by default. (https://github.com/jkroepke/helm-secrets/pull/83)
 
 ### Fixes
 - Cleanup all temporary files.
+
+### Removed
+- Sops installation
 
 ## [3.5.0] - 2021-02-20
 
