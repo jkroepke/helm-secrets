@@ -3,7 +3,7 @@ name: CI
 
 env:
   VERSION_HELM: v3.5.0
-  VERSION_SOPS: v3.6.1
+  VERSION_SOPS: v3.7.0
 
 on:
   pull_request:
@@ -140,17 +140,6 @@ jobs:
         with:
           version: ${{ env.VERSION_HELM }}
 
-      - name: Install bashcov
-        run: gem install bashcov simplecov-cobertura
-
-      - name: Prepare
-        run: sudo chmod 777 /usr/local/bin/
-
-      - name: helm plugin install
-        run: bashcov -- scripts/install.sh
-        env:
-          BASHCOV_COMMAND_NAME: helm-secrets install
-
       - name: Setup Sops
         uses: mdgreenwald/mozilla-sops-action@v1
         with:
@@ -158,6 +147,9 @@ jobs:
 
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1
+
+      - name: Install bashcov
+        run: gem install bashcov simplecov-cobertura
 
       - name: Print Environment
         run: |-
