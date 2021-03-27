@@ -18,9 +18,15 @@ SCRIPT_DIR="$(dirname "$0")"
 # shellcheck source=scripts/lib/http.sh
 . "${SCRIPT_DIR}/lib/http.sh"
 
-# Create temporary directory (not working on mac os, see: https://unix.stackexchange.com/a/555214)
+# Create a base temporary directory
 if on_macos; then
-    TMPDIR="$(basename "$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}")")"
+    # on mac os TMPDIR does not work. see https://unix.stackexchange.com/a/555214)
+    # as workaround, we are going to create a base temporary directory inside the default directory and safe the
+    # generated directory name inside TMPDIR.
+    # The trap function late will care about this.
+    # shellcheck disable=SC2034
+    TMPDIR="$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}")"
+    TMPDIR_SUFFIX="$(basename "${TMPDIR}")"
 else
     TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-$(mktemp -d)}"
 fi
@@ -37,7 +43,9 @@ SECRET_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS:-}"
 
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
+# shellcheck disable=SC2034
 DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.yaml.dec}"
+# shellcheck disable=SC2034
 DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 
 # Make sure HELM_BIN is set (normally by the helm command)

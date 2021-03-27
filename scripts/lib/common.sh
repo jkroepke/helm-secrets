@@ -55,7 +55,7 @@ _trap() {
 }
 
 if on_macos; then
-    _mktemp() { mktemp -t "${TMPDIR}/" "$@"; }
+    _mktemp() { mktemp -t "${TMPDIR_SUFFIX}/" "$@"; }
 else
     _mktemp() { mktemp "$@"; }
 fi
