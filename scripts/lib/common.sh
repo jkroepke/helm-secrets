@@ -13,6 +13,10 @@ is_help() {
     esac
 }
 
+on_macos() {
+    [ "$(uname)" = "Darwin" ]
+}
+
 load_secret_driver() {
     driver="${1}"
     if [ -f "${SCRIPT_DIR}/drivers/${driver}.sh" ]; then
@@ -40,12 +44,16 @@ _regex_escape() {
     sed -e 's/[]\/()$*.^|[]/\\&/g'
 }
 
-_trap_hook() {
-    true
-}
-
 _trap() {
-    rm -rf "${TMPDIR}"
+    if command -v _trap_hook >/dev/null; then
+        _trap_hook
+    fi
 
-    _trap_hook
+    rm -rf "${TMPDIR}"
 }
+
+if on_macos; then
+    _mktemp() { mktemp -t "${TMPDIR_SUFFIX}/" "$@"; }
+else
+    _mktemp() { mktemp "$@"; }
+fi

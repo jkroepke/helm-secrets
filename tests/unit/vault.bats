@@ -23,3 +23,34 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "Error: plugin \"secrets\" exited with error"
     assert_file_not_exist "${FILE}.dec"
 }
+
+@test "vault: cleanup temporary files" {
+    if [ "${HELM_SECRETS_DRIVER}" != "vault" ]; then
+        skip
+    fi
+
+    export HELM_SECRETS_DEC_TMP_DIR="helm-secrets.$$"
+
+    # If non mac, prefix own tmp directory
+    # See: https://unix.stackexchange.com/a/555214
+    if [ "$(uname)" != "Darwin" ]; then
+        export HELM_SECRETS_DEC_TMP_DIR="${TMPDIR:-/tmp}/${HELM_SECRETS_DEC_TMP_DIR}"
+    fi
+
+    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+
+    if [ "$(uname)" == "Darwin" ]; then
+        assert_dir_not_exist "${TMPDIR}${HELM_SECRETS_DEC_TMP_DIR}"
+    else
+        assert_dir_not_exist "${HELM_SECRETS_DEC_TMP_DIR}"
+    fi
+}

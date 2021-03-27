@@ -24,7 +24,7 @@ Typical usage:
 EOF
 }
 
-decrypted_files=$(mktemp)
+decrypted_files=$(_mktemp)
 
 _trap_hook() {
     if [ -s "${decrypted_files}" ]; then
