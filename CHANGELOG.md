@@ -8,6 +8,8 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+## [3.6.0] - 2021-03-29
+
 ### Breaking
 The default sops installation is removed, since helm-secrets could use with hashicorp vault which does not require sops.
 

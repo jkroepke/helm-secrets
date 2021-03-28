@@ -79,7 +79,7 @@ By default, helm plugin install does this for you.
 
 ```bash
 # Install a specific version (recommend)
-helm plugin install https://github.com/jkroepke/helm-secrets --version v3.5.0
+helm plugin install https://github.com/jkroepke/helm-secrets --version v3.6.0
 
 # Install latest unstable version from main branch
 helm plugin install https://github.com/jkroepke/helm-secrets
@@ -103,10 +103,10 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/hel
 
 ```bash
 # Windows (inside cmd, needs to be verified)
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.5.0/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.6.0/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
 
 # MacOS / Linux
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.5.0/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.6.0/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
 ```
 
 ### Installation on Helm 2
@@ -207,7 +207,6 @@ helm-secrets could detect an ArgoCD environment by the `ARGOCD_APP_NAME` environ
 
 ## Moving parts of project
 
-- [`scripts/install.sh`](scripts/install.sh) - Script used as the hook to download and install sops and install git diff configuration for helm-secrets files.
 - [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
 - [`scripts/drivers`](scripts/drivers) - Location of the in-tree secrets drivers
 - [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
