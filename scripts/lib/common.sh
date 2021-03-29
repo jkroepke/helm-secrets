@@ -52,11 +52,12 @@ _trap() {
     rm -rf "${TMPDIR}"
 }
 
-if on_macos; then
-    _mktemp() { mktemp -t "${TMPDIR_SUFFIX}/" "$@"; }
-else
-    _mktemp() { mktemp "$@"; }
-fi
+# MacOS syntax and behavior is different for mktemp
+# https://unix.stackexchange.com/a/555214
+case $(mktemp --help 2>&1) in
+*BusyBox* | *GNU*) _mktemp() { mktemp "$@"; } ;;
+*) _mktemp() { mktemp -t "${TMPDIR_SUFFIX}/" "$@"; } ;;
+esac
 
 # MacOS syntax is different for in-place
 # https://unix.stackexchange.com/a/92907/433641
