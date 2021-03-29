@@ -25,7 +25,8 @@ if on_macos; then
     # generated directory name inside TMPDIR.
     # The trap function late will care about this.
     # shellcheck disable=SC2034
-    TMPDIR="$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}")"
+    TMPDIR="$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}.XXXXXX")"
+    # shellcheck disable=SC2034
     TMPDIR_SUFFIX="$(basename "${TMPDIR}")"
 elif [ -n "${HELM_SECRETS_DEC_TMP_DIR+x}" ]; then
     mkdir -p "${HELM_SECRETS_DEC_TMP_DIR}"
