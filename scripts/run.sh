@@ -19,7 +19,7 @@ SCRIPT_DIR="$(dirname "$0")"
 . "${SCRIPT_DIR}/lib/http.sh"
 
 # Create a base temporary directory
-TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-"$(mktemp -d "helm-secrets.XXXXXX")"}"
+TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-"$(mktemp -d)"}"
 mkdir -p "${TMPDIR}"
 export TMPDIR
 
