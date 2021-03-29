@@ -49,7 +49,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exist "${FILE}.dec"
 
     if [ "$(uname)" == "Darwin" ]; then
-        assert_dir_not_exist "${TMPDIR}${HELM_SECRETS_DEC_TMP_DIR}"
+        assert_dir_not_exist "${TMPDIR}${HELM_SECRETS_DEC_TMP_DIR}*"
     else
         assert_dir_not_exist "${HELM_SECRETS_DEC_TMP_DIR}"
     fi
