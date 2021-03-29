@@ -42,6 +42,8 @@ jobs:
             shell: bash
           - os: macos-latest
             shell: bash 3.2
+          - os: macos-latest
+            shell: bash 3.2 with coreutils
           - os: ubuntu-latest
             container: alpine
             shell: ash
@@ -89,6 +91,12 @@ jobs:
 
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1
+
+      - name: Setup coreutils
+        if: "contains(matrix.shell, 'coreutils')"
+        run: |-
+          brew install coreutils
+          echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Print Environment
         run: |-
