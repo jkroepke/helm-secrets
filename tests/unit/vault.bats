@@ -29,7 +29,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    export HELM_SECRETS_DEC_TMP_DIR="${TMPDIR:-/tmp}/${HELM_SECRETS_DEC_TMP_DIR}"
+    export HELM_SECRETS_DEC_TMP_DIR="${TMPDIR:-"/tmp/"}helm-secrets.$$"
 
     FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
