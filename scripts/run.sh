@@ -19,21 +19,8 @@ SCRIPT_DIR="$(dirname "$0")"
 . "${SCRIPT_DIR}/lib/http.sh"
 
 # Create a base temporary directory
-if on_macos; then
-    # on mac os TMPDIR does not work. see https://unix.stackexchange.com/a/555214)
-    # as workaround, we are going to create a base temporary directory inside the default directory and safe the
-    # generated directory name inside TMPDIR.
-    # The trap function late will care about this.
-    # shellcheck disable=SC2034
-    TMPDIR="$(mktemp -d -t "${HELM_SECRETS_DEC_TMP_DIR:-"helm-secrets"}")"
-    TMPDIR_SUFFIX="$(basename "${TMPDIR}")"
-elif [ -n "${HELM_SECRETS_DEC_TMP_DIR+x}" ]; then
-    mkdir -p "${HELM_SECRETS_DEC_TMP_DIR}"
-    TMPDIR="${HELM_SECRETS_DEC_TMP_DIR}"
-else
-    TMPDIR="$(mktemp -d)"
-fi
-
+TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-"$(mktemp -d)"}"
+mkdir -p "${TMPDIR}"
 export TMPDIR
 
 # Output debug infos
