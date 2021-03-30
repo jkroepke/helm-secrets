@@ -8,6 +8,8 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+## [3.6.1] - 2021-03-30
+
 ### Fixes
 - `mktemp: too few X's in template` error on Mac OS if gnu coreutils preferred over builtin bsd tools.
 
@@ -123,7 +125,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.6.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.6.1...HEAD
+[3.6.1]: https://github.com/jkroepke/helm-secrets/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/jkroepke/helm-secrets/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/jkroepke/helm-secrets/compare/v3.4.2...v3.5.0
 [3.4.2]: https://github.com/jkroepke/helm-secrets/compare/v3.4.1...v3.4.2
