@@ -8,6 +8,9 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Fixes
+- `mktemp: too few X's in template` error on Mac OS if gnu coreutils preferred over builtin bsd tools.
+
 ## [3.6.0] - 2021-03-29
 
 ### Breaking
