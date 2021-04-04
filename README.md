@@ -205,6 +205,12 @@ An additional documentation, resources and examples can be found [here](USAGE.md
 
 helm-secrets could detect an ArgoCD environment by the `ARGOCD_APP_NAME` environment variable. If detected, `HELM_SECRETS_QUIET` is set to `true`.
 
+### Terraform support
+
+The terraform helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
+
+An example how to use helm-secrets with terraform could be found in [contrib/terraform](contrib/terraform).
+
 ## Moving parts of project
 
 - [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
