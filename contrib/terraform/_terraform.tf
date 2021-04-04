@@ -5,5 +5,8 @@ terraform {
     helm = {}
     random = {}
     null = {}
+    sops = {
+      source = "carlpett/sops"
+    }
   }
 }
