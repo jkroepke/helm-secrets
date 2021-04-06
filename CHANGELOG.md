@@ -8,6 +8,9 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Changes
+- Output errors on stderr
+
 ## [3.6.1] - 2021-03-30
 
 ### Fixes

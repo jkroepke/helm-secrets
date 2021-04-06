@@ -30,8 +30,7 @@ decrypt_helper() {
     encrypted_file_dec="$(_file_dec_name "${encrypted_file_path}")"
 
     if ! driver_decrypt_file "yaml" "${encrypted_file_path}" "${encrypted_file_dec}"; then
-        printf '[helm-secrets] Error while decrypting file: %s\n' "${file}"
-        exit 1
+        error '[helm-secrets] Error while decrypting file: %s\n' "${file}"
     fi
 
     return 0
@@ -48,12 +47,10 @@ dec() {
     printf '[helm-secrets] Decrypting %s\n' "${file}"
 
     if ! encrypted_file_path=$(_file_get "${file}"); then
-        printf '[helm-secrets] File does not exist: %s\n' "${file}"
-        exit 1
+        error '[helm-secrets] File does not exist: %s\n' "${file}"
     fi
 
     if ! decrypt_helper "${encrypted_file_path}"; then
-        printf '[helm-secrets] File is not encrypted: %s\n' "${file}"
-        exit 1
+        error '[helm-secrets] File is not encrypted: %s\n' "${file}"
     fi
 }
