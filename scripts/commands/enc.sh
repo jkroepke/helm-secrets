@@ -30,8 +30,7 @@ encrypt_helper() {
     cd "$dir"
 
     if [ ! -f "${file}" ]; then
-        printf 'File does not exist: %s\n' "${dir}/${file}"
-        exit 1
+        error 'File does not exist: %s\n' "${dir}/${file}"
     fi
     file_dec="$(_file_dec_name "${file}")"
 
@@ -40,8 +39,7 @@ encrypt_helper() {
     fi
 
     if driver_is_file_encrypted "${file_dec}"; then
-        printf "Already encrypted: %s\n" "${file_dec}"
-        exit 1
+        error "Already encrypted: %s\n" "${file_dec}"
     fi
 
     driver_encrypt_file "yaml" "${file_dec}" "${file}"
@@ -62,8 +60,7 @@ enc() {
     file="$1"
 
     if [ ! -f "${file}" ]; then
-        printf 'File does not exist: %s\n' "${file}"
-        exit 1
+        error 'File does not exist: %s\n' "${file}"
     else
         printf 'Encrypting %s\n' "${file}"
         encrypt_helper "${file}"

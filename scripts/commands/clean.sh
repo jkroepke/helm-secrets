@@ -23,8 +23,7 @@ clean() {
     basedir="$1"
 
     if [ ! -d "${basedir}" ]; then
-        printf 'Directory does not exist: %s\n' "${basedir}"
-        exit 1
+        error 'Directory does not exist: %s\n' "${basedir}"
     fi
 
     find "$basedir" -type f -name "*${DEC_SUFFIX}" -exec rm -v {} \;

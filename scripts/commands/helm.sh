@@ -73,8 +73,7 @@ helm_wrapper() {
                 esac
 
                 if ! real_file=$(_file_get "${file}"); then
-                    printf '[helm-secrets] File does not exist: %s\n' "${file}"
-                    exit 1
+                    error '[helm-secrets] File does not exist: %s\n' "${file}"
                 fi
 
                 file_dec="$(_file_dec_name "${real_file}")"

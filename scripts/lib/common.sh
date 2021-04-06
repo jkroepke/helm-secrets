@@ -13,6 +13,20 @@ is_help() {
     esac
 }
 
+error() {
+    if [ $# -le 1 ]; then
+        printf '%s' "${1:-}" >&2
+    else
+        format="${1}"
+        shift
+
+        # shellcheck disable=SC2059
+        printf "$format" "$@" >&2
+    fi
+
+    exit 1
+}
+
 on_macos() {
     [ "$(uname)" = "Darwin" ]
 }
@@ -25,9 +39,7 @@ load_secret_driver() {
     else
         # Allow to load out of tree drivers.
         if [ ! -f "${driver}" ]; then
-
-            echo "Can't find secret driver: ${driver}"
-            exit 1
+            error "Can't find secret driver: ${driver}"
         fi
 
         # shellcheck disable=SC2034
