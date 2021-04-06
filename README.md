@@ -132,6 +132,14 @@ Workaround:
 
 Client [here](https://github.com/adorsys-containers/ci-helm/blob/f9a8a5bf8953ab876266ca39ccbdb49228e9f117/images/2.17/Dockerfile#L91) for an example!
 
+## Explicitly specify sops binary
+If sops is installed at the non-default location or if you have multiple versions of sops on your system, you can use `HELM_SECRETS_SOPS_PATH` to explicitly specify the sops binary to be used.
+
+```bash
+# Example for in-tree drivers via environment variable
+HELM_SECRETS_SOPS_PATH=/custom/location/sops helm secrets view ./tests/assets/helm_vars/secrets.yaml
+```
+
 ## Change secret driver
 
 It's possible to use another secret driver then sops, e.g. Hasicorp Vault.
