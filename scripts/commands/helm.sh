@@ -2,7 +2,7 @@
 
 set -euf
 
-# shellcheck disable=SC1090
+# shellcheck source=scripts/commands/dec.sh
 . "${SCRIPT_DIR}/commands/dec.sh"
 
 helm_command_usage() {
