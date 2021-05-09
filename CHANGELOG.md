@@ -8,6 +8,9 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Added
+- envsubst driver
+
 ### Changes
 - Output errors on stderr
 

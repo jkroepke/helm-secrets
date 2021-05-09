@@ -62,6 +62,14 @@ brew install vault
 
 Download: https://www.vaultproject.io/downloads
 
+### envsubst
+
+If you have stored you secret inside environment variables, you could use the envsubst driver.
+
+```bash
+brew install gettext
+```
+
 ### SOPS git diff
 
 Git config part is installed with the plugin, but to be fully functional the following needs to be added to the `.gitattributes` file in the root directory of a charts repo:

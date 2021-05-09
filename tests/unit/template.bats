@@ -27,7 +27,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -40,7 +40,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + --values" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -53,7 +53,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + --values=" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -66,7 +66,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -79,7 +79,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + values.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/values.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/values.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -92,7 +92,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --values" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -105,7 +105,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --values=" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -118,7 +118,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + helm flag" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -132,7 +132,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + helm flag + --" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -146,7 +146,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + pre decrypted secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     printf 'service:\n  port: 82' > "${FILE}.dec"
 
@@ -163,7 +163,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + q flag" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -176,7 +176,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + quiet flag" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -193,7 +193,7 @@ load '../bats/extensions/bats-file/load'
         skip "Skip on Windows"
     fi
 
-    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${SPECIAL_CHAR_DIR}"
 
@@ -221,7 +221,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + http://" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -237,7 +237,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + http://example.com/404.yaml" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -251,7 +251,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + git://" {
-    if is_windows || ! is_driver_sops; then
+    if is_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -273,7 +273,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -287,7 +287,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -301,7 +301,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -311,7 +311,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://" {
-    if is_windows || ! is_driver_sops; then
+    if is_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -325,7 +325,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://example.com/404.yaml" {
-    if is_windows || ! is_driver_sops; then
+    if is_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -338,7 +338,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://git://" {
-    if is_windows || ! is_driver_sops; then
+    if is_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -354,7 +354,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --driver-args (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
@@ -366,11 +366,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --driver-args (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -384,11 +384,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + -a (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -402,11 +402,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + HELM_SECRETS_DRIVER_ARGS (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -423,11 +423,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -441,11 +441,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + -a (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -459,11 +459,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + HELM_SECRETS_DRIVER_ARGS (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 

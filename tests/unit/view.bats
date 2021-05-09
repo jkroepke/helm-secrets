@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
@@ -33,7 +33,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: some-secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
@@ -42,7 +42,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: values.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/values.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/values.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
@@ -55,7 +55,7 @@ load '../bats/extensions/bats-file/load'
         skip "Skip on Windows"
     fi
 
-    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
@@ -64,11 +64,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + --driver-args (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets --driver-args "--verbose" view "${FILE}"
     assert_success
@@ -78,11 +78,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + -a (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets -a "--verbose" view "${FILE}"
     assert_success
@@ -92,11 +92,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
@@ -109,11 +109,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + --driver-args (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets --driver-args "--verbose --output-type \"yaml\"" view "${FILE}"
     assert_success
@@ -123,11 +123,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + -a (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets -a "--verbose --output-type \"yaml\"" view "${FILE}"
     assert_success
@@ -137,11 +137,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     # shellcheck disable=SC2089
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""

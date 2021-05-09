@@ -6,7 +6,7 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "secret-driver: helm secrets -d" {
-    FILE="${TEST_TEMP_DIR}/values/noop/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/noop/secrets.yaml"
 
     run helm secrets -d nonexists view "${FILE}"
     assert_failure
@@ -14,7 +14,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets --driver" {
-    FILE="${TEST_TEMP_DIR}/values/noop/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/noop/secrets.yaml"
 
     run helm secrets --driver nonexists view "${FILE}"
     assert_failure
@@ -22,11 +22,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER" {
-    # shellcheck disable=SC2030
     HELM_SECRETS_DRIVER=nonexists
     export HELM_SECRETS_DRIVER
 
-    FILE="${TEST_TEMP_DIR}/values/noop/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/noop/secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_failure
@@ -34,8 +33,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets -d sops" {
-    # shellcheck disable=SC2031
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets -d sops view "${FILE}"
     assert_success
@@ -43,8 +45,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets --driver sops" {
-    # shellcheck disable=SC2031
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets --driver sops view "${FILE}"
     assert_success
@@ -52,8 +57,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets -d sops + q flag" {
-    # shellcheck disable=SC2031
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets -q -d sops view "${FILE}"
     assert_success
@@ -61,10 +69,14 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=sops" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
     HELM_SECRETS_DRIVER=sops
     export HELM_SECRETS_DRIVER
 
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
@@ -72,7 +84,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets -d noop" {
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets -d noop view "${FILE}"
     assert_success
@@ -80,7 +92,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets --driver noop" {
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets --driver noop view "${FILE}"
     assert_success
@@ -89,31 +101,51 @@ load '../bats/extensions/bats-file/load'
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=noop" {
     HELM_SECRETS_DRIVER=noop
-    export HELM_SECRETS_DRIVER=noop
+    export HELM_SECRETS_DRIVER
 
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
     assert_output --partial 'sops:'
 }
 
-
 @test "secret-driver: helm secrets + prefer cli arg -d noop over env" {
     HELM_SECRETS_DRIVER=sops
-    export HELM_SECRETS_DRIVER=sops
+    export HELM_SECRETS_DRIVER
 
-    FILE="${TEST_TEMP_DIR}/values/sops/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
     run helm secrets -d noop view "${FILE}"
     assert_success
     assert_output --partial 'sops:'
 }
 
-@test "secret-driver: helm secrets --driver assets/custom-driver.sh" {
-    FILE="${TEST_TEMP_DIR}/values/vault/secrets.yaml"
+@test "secret-driver: helm secrets --driver envsubst" {
+    FILE="${TEST_TEMP_DIR}/assets/values/envsubst/secrets.yaml"
 
-    run helm secrets --driver "${TEST_TEMP_DIR}/custom-driver.sh" view "${FILE}"
+    run helm secrets --driver "envsubst" view "${FILE}"
+    assert_success
+    refute_output --partial "\${global_bar}"
+    assert_output --partial 'key: "-----BEGIN PGP MESSAGE-----'
+}
+
+@test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=envsubst" {
+    HELM_SECRETS_DRIVER="envsubst"
+    export HELM_SECRETS_DRIVER
+
+    FILE="${TEST_TEMP_DIR}/assets/values/envsubst/secrets.yaml"
+
+    run helm secrets view "${FILE}"
+    assert_success
+    refute_output --partial "\${global_bar}"
+    assert_output --partial 'key: "-----BEGIN PGP MESSAGE-----'
+}
+
+@test "secret-driver: helm secrets --driver assets/custom-driver.sh" {
+    FILE="${TEST_TEMP_DIR}/assets/values/vault/secrets.yaml"
+
+    run helm secrets --driver "${TEST_TEMP_DIR}/assets/custom-driver.sh" view "${FILE}"
     assert_success
     refute_output --partial '!vault'
     assert_output --partial 'production#global_secret'
@@ -121,9 +153,9 @@ load '../bats/extensions/bats-file/load'
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=assets/custom-driver.sh" {
     HELM_SECRETS_DRIVER="${TEST_TEMP_DIR}/assets/custom-driver.sh"
-    export HELM_SECRETS_DRIVER="${TEST_TEMP_DIR}/custom-driver.sh"
+    export HELM_SECRETS_DRIVER
 
-    FILE="${TEST_TEMP_DIR}/values/vault/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/vault/secrets.yaml"
 
     run helm secrets view "${FILE}"
     assert_success

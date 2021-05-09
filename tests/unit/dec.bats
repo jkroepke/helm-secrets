@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets dec "${FILE}"
     assert_success
@@ -35,7 +35,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt some-secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     run helm secrets dec "${FILE}"
     assert_success
@@ -46,9 +46,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt values.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/values.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/values.yaml"
 
     run helm secrets dec "${FILE}"
+
     assert_failure
     assert_output --partial "[helm-secrets] Decrypting ${FILE}"
     assert_output --partial "[helm-secrets] File is not encrypted: ${FILE}"
@@ -59,7 +60,7 @@ load '../bats/extensions/bats-file/load'
         skip "Skip on Windows"
     fi
 
-    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets dec "${FILE}"
     assert_success
@@ -70,7 +71,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_SUFFIX" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DEC_SUFFIX=.yaml.test
     export HELM_SECRETS_DEC_SUFFIX
@@ -84,7 +85,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_DIR" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DEC_DIR="$(mktemp -d)"
     export HELM_SECRETS_DEC_DIR
@@ -100,7 +101,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + http://" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
@@ -112,7 +113,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + http://example.com/404.yaml" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
@@ -124,7 +125,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + git://" {
-    if ! is_driver_sops || is_windows; then
+    if ! is_driver "sops" || is_windows; then
         skip
     fi
 
@@ -137,11 +138,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + --driver-args (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets --driver-args "--verbose" dec "${FILE}"
     assert_success
@@ -152,11 +153,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + -a (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets -a "--verbose" dec "${FILE}"
     assert_success
@@ -167,11 +168,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (simple)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
@@ -185,11 +186,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + --driver-args (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets --driver-args "--verbose --output-type \"yaml\"" dec "${FILE}"
     assert_success
@@ -200,11 +201,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + -a (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets -a "--verbose --output-type \"yaml\"" dec "${FILE}"
     assert_success
@@ -215,11 +216,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (complex)" {
-    if ! is_driver_sops; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     # shellcheck disable=SC2089
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""

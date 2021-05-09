@@ -18,7 +18,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: File if not exits + no valid encryption config" {
-    if ! is_driver_sops || is_windows; then
+    if ! is_driver "sops" || is_windows; then
         skip
     fi
 
@@ -28,14 +28,14 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: File if not exits + valid encryption config" {
-    if ! is_driver_sops || is_windows; then
+    if ! is_driver "sops" || is_windows; then
         skip
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
     export EDITOR
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/nonexists.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/nonexists.yaml"
 
     run helm secrets edit "${FILE}"
     assert_success
@@ -46,14 +46,14 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: secrets.yaml" {
-    if ! is_driver_sops || is_windows; then
+    if ! is_driver "sops" || is_windows; then
         skip
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
     export EDITOR
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets edit "${FILE}"
     assert_success
@@ -64,14 +64,14 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: some-secrets.yaml" {
-    if ! is_driver_sops || is_windows; then
+    if ! is_driver "sops" || is_windows; then
         skip
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
     export EDITOR
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     run helm secrets edit "${FILE}"
     assert_success
@@ -83,14 +83,14 @@ load '../bats/extensions/bats-file/load'
 
 
 @test "edit: secrets.yaml + special path" {
-    if ! is_driver_sops || is_windows; then
+    if ! is_driver "sops" || is_windows; then
         skip
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
     export EDITOR
 
-    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets edit "${FILE}"
     assert_success

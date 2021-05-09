@@ -66,7 +66,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -88,7 +88,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -110,7 +110,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -132,7 +132,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -154,7 +154,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/values.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/values.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -176,7 +176,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -198,7 +198,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -220,7 +220,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -242,7 +242,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -264,7 +264,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     printf 'service:\n  port: 82' > "${FILE}.dec"
 
@@ -290,7 +290,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -312,7 +312,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -334,7 +334,7 @@ load '../bats/extensions/bats-file/load'
 
     helm_plugin_install "kubeval"
 
-    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${SPECIAL_CHAR_DIR}"
 

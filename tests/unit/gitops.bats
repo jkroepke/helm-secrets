@@ -9,7 +9,7 @@ load '../bats/extensions/bats-file/load'
 @test "gitops: Be silent inside ArgoCD" {
     export ARGOCD_APP_NAME=helm-secrets
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
