@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets dec "${FILE}"
     assert_success
@@ -39,7 +39,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DEC_SUFFIX=.yaml.test
     export HELM_SECRETS_DEC_SUFFIX
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     run helm secrets dec "${FILE}"
     assert_success
@@ -51,7 +51,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with custom name" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
     run helm secrets dec "${FILE}"
     assert_success

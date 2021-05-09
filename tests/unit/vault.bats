@@ -11,7 +11,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -31,7 +31,7 @@ load '../bats/extensions/bats-file/load'
 
     export HELM_SECRETS_DEC_TMP_DIR="${TMPDIR:-"/tmp/"}helm-secrets.$$"
 
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 

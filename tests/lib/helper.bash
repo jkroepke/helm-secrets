@@ -8,8 +8,8 @@ is_windows() {
     ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]
 }
 
-is_driver_sops() {
-    [ "${HELM_SECRETS_DRIVER}" == "sops" ]
+is_driver() {
+    [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
 
 is_coverage() {
@@ -35,6 +35,14 @@ _sed_i() {
         sed -i "" "$@"
     else
         sed -i "$@"
+    fi
+}
+
+_ln_or_cp() {
+    if is_windows; then
+        cp -r "$@"
+    else
+        ln -sf "$@"
     fi
 }
 
@@ -66,14 +74,7 @@ setup() {
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
     # shellcheck disable=SC2034
     APPDATA="${HOME}"
-
-    # shellcheck disable=SC2016
-    SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
-
     mkdir "${TEST_TEMP_DIR}/chart"
-    if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
-        mkdir "${SPECIAL_CHAR_DIR}"
-    fi
 
     # install helm plugin
     helm plugin install "${GIT_ROOT}"
@@ -84,19 +85,21 @@ setup() {
     fi
 
     # copy assets
-    cp -r "${TEST_DIR}/assets/." "${TEST_TEMP_DIR}"
+    cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
-        cp -r "${TEST_DIR}/assets/." "$(printf '%s' "${SPECIAL_CHAR_DIR}")"
+        # shellcheck disable=SC2016
+        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
+        mkdir "${SPECIAL_CHAR_DIR}"
+        cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}"
     fi
 
     cp -r "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
-    # import default gpg key
-    gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
-
-    case "${HELM_SECRETS_DRIVER}" in
-    sops) ;;
-
+    case "${HELM_SECRETS_DRIVER:-sops}" in
+    sops)
+        # import default gpg key
+        gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
+        ;;
     vault)
         if [ -f .dockerenv ]; then
             # If we run inside docker, we expect vault on this location
@@ -107,17 +110,39 @@ setup() {
 
         vault login token=test
 
-        _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/values/vault/seed.sh' "${TEST_TEMP_DIR}")"
+        _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/assets/values/vault/seed.sh' "${TEST_TEMP_DIR}")"
 
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/secrets.yaml' "${TEST_TEMP_DIR}")"
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/secrets.yaml' "${SPECIAL_CHAR_DIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${TEST_TEMP_DIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${SPECIAL_CHAR_DIR}")"
 
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/some-secrets.yaml' "${TEST_TEMP_DIR}")"
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/values/vault/some-secrets.yaml' "${SPECIAL_CHAR_DIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${TEST_TEMP_DIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${SPECIAL_CHAR_DIR}")"
 
-        sh "${TEST_TEMP_DIR}/values/vault/seed.sh"
+        sh "${TEST_TEMP_DIR}/assets/values/vault/seed.sh"
         ;;
     esac
+
+    export _TEST_KEY="-----BEGIN PGP MESSAGE-----
+
+wcFMAxYpv4YXKfBAARAAVzE7/FMD7+UWwMls23zKKLoTs+5w9GMvugn0wi5KOJ8P
+PSrRY4r27VhwQH38gWDrzo3RCmO9414xZ0JW0HaN2Pgd3ml6mYCY/5RE7apgGZQI
+3Im0fv8bhIwaP2UWPp74EXLzA3mh1dUtwxmuWOeoSq+Vm5NtbjkfUt/4MIcF5IAY
+c+U4ZOdQlzgExwu+VtOpeBrkwfglh5fFuKqM8Fg1IICi/Pp6YAlpAdGqlt1zS4Pj
+yjAS6eAvnpM0eA5hShuoO9JsAu4kVjaaBlipVpc1I2zdcT3H/1d7ASziwbKOm6jE
+PJxzaMDxn0UfMjkhTaTZ8v27lz6W7qdlHdCWGGI348QkSoDotm7OzMC7ZLfps3+9
+GrXo9Kwxkj6oy/thn92W2cRSeSD28g6kcUkHeG8L3mMv+gpTjIhM+Z8x3jJcVp2i
+yoA2dO/kO2/HTcUfnEjppKigqUlRuKfDn8ercjYiq+foqtimH192iXXyRmltYlH0
+GUSJ1FcNLAC9g0WLFPQnMFh5KxSweavpbdd6PILqEsyKvZpC5a+hzLKwGjWOveW1
+K34QZf6Ay3CPCegAyGVjxmsg1vPKD+9WAZinveCl37l3cCQW1VZzbGkHgtLQ30Qr
+DCRFZEstraLAQUf6VLAk9bPYX/fvkXmra970i/CfJjIg0SpOXbADBR4x+zRRZqrS
+4AHkWTmhH/xXWyAgmh+sGs18OOFGfeC04AjhMmvg4uKzly6+4IDlNhPif2VpJYOi
+EmU8gQoUsAHKYro0hPfzBZyJlL+TqCPgHeRPANVgm4Ww6RlVrNFpTy9H4m4s5y/h
+EzAA
+=jf7D
+-----END PGP MESSAGE-----"
+    export _TEST_global_secret=global_bar
+    export _TEST_SERVICE_PORT=81
+    export _TEST_SOME_SERVICE_PORT=83
 }
 
 teardown() {
@@ -139,8 +164,8 @@ teardown() {
 create_chart() {
     {
         cp -r "${HELM_CACHE}/chart" "${1}"
-        cp -r "${TEST_TEMP_DIR}/values" "${1}/chart"
-        cp "${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart"
+        cp -r "${TEST_TEMP_DIR}/assets/values" "${1}/chart"
+        cp "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart"
     } >&2
 }
 

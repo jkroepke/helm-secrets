@@ -38,7 +38,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -53,7 +53,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + --values" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -68,7 +68,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + --values=" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -83,7 +83,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -98,7 +98,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -113,7 +113,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values=" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -128,7 +128,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + helm flag" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -144,7 +144,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + pre decrypted secrets.yaml" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     printf 'service:\n  port: 82' > "${FILE}.dec"
@@ -162,7 +162,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + q flag" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -177,7 +177,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + quiet flag" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -192,7 +192,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + special path" {
     helm_plugin_install "diff"
-    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${SPECIAL_CHAR_DIR}"
@@ -224,7 +224,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + sops://" {
     helm_plugin_install "diff"
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"

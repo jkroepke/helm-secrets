@@ -34,7 +34,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -51,7 +51,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + --values" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -68,7 +68,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + --values=" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -85,7 +85,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -102,7 +102,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml + --values" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -119,7 +119,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml + --values=" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -136,7 +136,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + helm flag" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -154,7 +154,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + pre decrypted secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     printf 'service:\n  port: 82' > "${FILE}.dec"
     create_chart "${TEST_TEMP_DIR}"
@@ -174,7 +174,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + q flag" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -191,7 +191,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + quiet flag" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -208,7 +208,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + special path" {
-    FILE="${SPECIAL_CHAR_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"
 
@@ -241,7 +241,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + sops://" {
-    FILE="${TEST_TEMP_DIR}/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
