@@ -90,7 +90,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup Vault
-        uses: innovationnorway/setup-vault@v1
+        uses: innovationnorway/setup-vault@v1.0.3
 
       - name: Setup coreutils
         if: "contains(matrix.shell, 'coreutils')"
@@ -161,7 +161,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup Vault
-        uses: innovationnorway/setup-vault@v1
+        uses: innovationnorway/setup-vault@v1.0.3
 
       - name: Install bashcov
         run: gem install bashcov simplecov-cobertura
@@ -235,7 +235,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup Vault
-        uses: innovationnorway/setup-vault@v1
+        uses: innovationnorway/setup-vault@v1.0.3
 
       - name: Print Environment
         run: |-
