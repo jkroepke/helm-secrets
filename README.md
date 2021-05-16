@@ -85,11 +85,13 @@ By default, helm plugin install does this for you.
 
 ### Using Helm plugin manager
 
+Install a specific version (recommend)
 ```bash
-# Install a specific version (recommend)
 helm plugin install https://github.com/jkroepke/helm-secrets --version v3.6.0
+```
 
-# Install latest unstable version from main branch
+Install latest unstable version from main branch
+```bash
 helm plugin install https://github.com/jkroepke/helm-secrets
 ```
 
@@ -99,21 +101,23 @@ Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
 
 #### Latest version
 
+Windows (inside cmd, needs to be verified)
 ```bash
-# Windows (inside cmd, needs to be verified)
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
-
-# MacOS / Linux
+```
+MacOS / Linux
+```bash
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
 ```
 
 #### Specific version
 
+Windows (inside cmd, needs to be verified)
 ```bash
-# Windows (inside cmd, needs to be verified)
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.6.0/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
-
-# MacOS / Linux
+```
+MacOS / Linux
+```bash
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.6.0/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
 ```
 
@@ -156,14 +160,16 @@ Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/m
 
 The custom driver can be load via `HELM_SECRETS_DRIVER` parameter or `-d` option (higher preference):
 
+Example for in-tree drivers via option
 ```bash
-# Example for in-tree drivers via option
 helm secrets -d sops view ./tests/assets/helm_vars/secrets.yaml
-
-# Example for in-tree drivers via environment variable
+```
+Example for in-tree drivers via environment variable
+```bash
 HELM_SECRETS_DRIVER=vault helm secrets view ./tests/assets/helm_vars/secrets.yaml
-
-# Example for out-of-tree drivers
+```
+Example for out-of-tree drivers
+```bash
 helm secrets -d ./path/to/driver.sh view ./tests/assets/helm_vars/secrets.yaml
 ```
 
