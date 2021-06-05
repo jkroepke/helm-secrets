@@ -198,6 +198,10 @@ create_chart() {
 
 helm_plugin_install() {
     {
+        if _helm_cache plugin list | grep -q "${1}"; then
+            return
+        fi
+
         case "${1}" in
         kubeval)
             URL="https://github.com/instrumenta/helm-kubeval"
