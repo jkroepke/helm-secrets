@@ -178,7 +178,7 @@ teardown() {
 create_chart() {
     {
         ln -sf "${HELM_CACHE}/chart" "${1}"
-        ln -sf "${TEST_TEMP_DIR}/assets/values" "${1}/chart"
+        #ln -sf "${TEST_TEMP_DIR}/assets/values" "${1}/chart/"
         ln -sf "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart"
     } >&2
 }
