@@ -92,7 +92,7 @@ helm_wrapper() {
                             printf '[helm-secrets] Decrypt: %s\n' "${file}" >&2
                         fi
                     else
-                        set -- "$@" "$file"
+                        set -- "$@" "$real_file"
                     fi
                 fi
                 ;;

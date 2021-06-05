@@ -61,8 +61,8 @@ enc() {
 
     if [ ! -f "${file}" ]; then
         error 'File does not exist: %s\n' "${file}"
-    else
-        printf 'Encrypting %s\n' "${file}"
-        encrypt_helper "${file}"
     fi
+
+    printf 'Encrypting %s\n' "${file}"
+    encrypt_helper "${file}"
 }

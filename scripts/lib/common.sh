@@ -27,10 +27,6 @@ error() {
     exit 1
 }
 
-on_macos() {
-    [ "$(uname)" = "Darwin" ]
-}
-
 load_secret_driver() {
     driver="${1}"
     if [ -f "${SCRIPT_DIR}/drivers/${driver}.sh" ]; then
@@ -75,4 +71,10 @@ _mktemp() {
 case $(sed --help 2>&1) in
 *BusyBox* | *GNU*) _sed_i() { sed -i "$@"; } ;;
 *) _sed_i() { sed -i '' "$@"; } ;;
+esac
+
+on_cygwin() { false; }
+
+case "$(uname -s)" in
+CYGWIN*) on_cygwin() { true; } ;;
 esac
