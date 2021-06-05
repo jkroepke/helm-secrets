@@ -129,7 +129,6 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    helm_plugin_install "git"
     FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
 
     run helm secrets dec "${FILE}"

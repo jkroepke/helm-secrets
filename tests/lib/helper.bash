@@ -26,6 +26,10 @@ is_curl_installed() {
     command -v curl >/dev/null
 }
 
+_helm_cache() {
+    env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm "$@"
+}
+
 _shasum() {
     # MacOS have shasum, others have sha1sum
     if command -v shasum >/dev/null; then
@@ -66,6 +70,12 @@ initiate() {
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             helm create "${HELM_CACHE}/chart"
         fi
+
+        helm_plugin_install "secrets"
+        helm_plugin_install "diff"
+        helm_plugin_install "git"
+
+        HOME="${HELM_CACHE}" _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
     } >&2
 }
 
@@ -90,30 +100,31 @@ setup() {
     # shellcheck disable=SC2034
     APPDATA="${HOME}"
     mkdir "${TEST_TEMP_DIR}/chart"
+    mkdir -p "$(dirname "$(helm env HELM_PLUGINS)")"
 
-    # install helm plugin
-    helm plugin install "${GIT_ROOT}"
+    ln -sf "$(_helm_cache env HELM_PLUGINS)" "$(helm env HELM_PLUGINS)"
+
+    # use cached gpg agent
+    ln -sf "${HELM_CACHE}/.gnupg/" "${HOME}/.gnupg/"
 
     # copy .kube from real home
     if [ -d "${REAL_HOME}/.kube" ]; then
-        cp -r "${REAL_HOME}/.kube" "${HOME}"
+        ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
     fi
 
     # copy assets
-    cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
+    ln -sf "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
         # shellcheck disable=SC2016
         SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
-        cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}"
+        ln -sf "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
 
-    cp -r "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
+    ln -sf "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     case "${HELM_SECRETS_DRIVER:-sops}" in
     sops)
-        # import default gpg key
-        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
         ;;
     vault)
         if [ -f .dockerenv ]; then
@@ -166,7 +177,9 @@ teardown() {
         helm del "${RELEASE}"
     fi
 
-    gpgconf --kill gpg-agent
+    if [[ ${BATS_TEST_NAME:?} == "${BATS_TEST_NAMES[-1]:?}" ]]; then
+        HOME="${HELM_CACHE}" gpgconf --kill gpg-agent
+    fi
 
     # https://github.com/bats-core/bats-file/pull/29
     chmod -R 777 "${TEST_TEMP_DIR}"
@@ -177,31 +190,30 @@ teardown() {
 
 create_chart() {
     {
-        ln -sf "${HELM_CACHE}/chart" "${1}"
-        #ln -sf "${TEST_TEMP_DIR}/assets/values" "${1}/chart/"
-        #ln -sf "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart/"
+        cp -r "${HELM_CACHE}/chart/" "${1}"
+        cp -r "${TEST_TEMP_DIR}/assets/values" "${1}/chart/"
+        cp -r "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart/"
     } >&2
 }
 
 helm_plugin_install() {
     {
-        if ! env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin list | grep -q "${1}"; then
-            case "${1}" in
-            kubeval)
-                URL="https://github.com/instrumenta/helm-kubeval"
-                ;;
-            diff)
-                URL="https://github.com/databus23/helm-diff"
-                ;;
-            git)
-                URL="https://github.com/aslafy-z/helm-git"
-                ;;
-            esac
+        case "${1}" in
+        kubeval)
+            URL="https://github.com/instrumenta/helm-kubeval"
+            ;;
+        diff)
+            URL="https://github.com/databus23/helm-diff"
+            ;;
+        git)
+            URL="https://github.com/aslafy-z/helm-git"
+            ;;
+        secrets)
+            URL="${GIT_ROOT}"
+            ;;
+        esac
 
-            env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install "${URL}" ${VERSION:+--version ${VERSION}}
-        fi
-
-        cp -r "${HELM_CACHE}/home/." "${HOME}"
+        _helm_cache plugin install "${URL}" ${VERSION:+--version ${VERSION}}
     } >&2
 }
 
