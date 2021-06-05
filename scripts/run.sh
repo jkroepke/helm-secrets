@@ -18,10 +18,20 @@ SCRIPT_DIR="$(dirname "$0")"
 # shellcheck source=scripts/lib/http.sh
 . "${SCRIPT_DIR}/lib/http.sh"
 
+# Make sure HELM_BIN is set (normally by the helm command)
+HELM_BIN="${HELM_BIN:-helm}"
+
+if on_cygwin; then
+    HELM_BIN="$(cygpath -u "${HELM_BIN}")"
+
+    TMPDIR="$(cygpath -w "${TEMP}")"
+    export TMPDIR
+fi
+
 # Create a base temporary directory
 TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-"$(mktemp -d)"}"
-mkdir -p "${TMPDIR}"
 export TMPDIR
+mkdir -p "${TMPDIR}"
 
 # Output debug infos
 QUIET="${HELM_SECRETS_QUIET:-false}"
@@ -35,11 +45,9 @@ SECRET_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS:-}"
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
 # shellcheck disable=SC2034
 DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.yaml.dec}"
+
 # shellcheck disable=SC2034
 DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
-
-# Make sure HELM_BIN is set (normally by the helm command)
-HELM_BIN="${HELM_BIN:-helm}"
 
 trap _trap EXIT
 

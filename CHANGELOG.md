@@ -8,6 +8,9 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Added
+- cygwin compatibility
+
 ## [3.7.0] - 2021-05-22
 
 ### Added

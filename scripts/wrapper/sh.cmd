@@ -10,6 +10,11 @@ if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 IF %ERRORLEVEL% EQU 0 GOTO :SH
 
 
+:: check for cygwin installation or git for windows is inside %PATH%
+"bash" -c exit  >nul 2>&1
+IF %ERRORLEVEL% EQU 0 GOTO :BASH
+
+
 :: check for git-bash
 "%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
 IF %ERRORLEVEL% EQU 0 GOTO :GITBASH
@@ -43,6 +48,11 @@ exit /b %errorlevel%
 
 :SH
 "sh" %*
+exit /b %errorlevel%
+
+
+:BASH
+"bash" %*
 exit /b %errorlevel%
 
 

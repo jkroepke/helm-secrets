@@ -4,6 +4,16 @@ HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
 REAL_HOME="${HOME}"
 
+# cygwin may not have a home directory
+[ -d "${HOME}" ] && mkdir -p "${HOME}"
+
+# Windows TMPDIR behavior
+if [[ "$(uname -s)" == CYGWIN* ]]; then
+    TMPDIR="$(cygpath -m "${TEMP}")"
+elif [ -n "${W_TEMP+x}" ]; then
+    TMPDIR="${W_TEMP}"
+fi
+
 is_windows() {
     ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]
 }
@@ -26,6 +36,23 @@ _shasum() {
         shasum "$@"
     else
         sha1sum "$@"
+    fi
+}
+
+_gpg() {
+    # cygwin does not have an alias
+    if command -v gpg2 >/dev/null; then
+        gpg2 "$@"
+    else
+        gpg "$@"
+    fi
+}
+
+_mktemp() {
+    if [ -n "${TMPDIR+x}" ]; then
+        TMPDIR="${TMPDIR}" mktemp "$@"
+    else
+        mktemp "$@"
     fi
 }
 
@@ -63,7 +90,7 @@ setup() {
 
     SEED="${RANDOM}"
 
-    TEST_TEMP_DIR="$(TMPDIR="${W_TEMP:-/tmp/}" mktemp -d)"
+    TEST_TEMP_DIR="$(_mktemp -d)"
     TEST_TEMP_HOME="$(mktemp -d)"
     HOME="${TEST_TEMP_HOME}"
 
@@ -71,6 +98,7 @@ setup() {
     XDG_DATA_HOME="${HOME}"
 
     # Windows
+    # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
     # shellcheck disable=SC2034
     APPDATA="${HOME}"
@@ -98,7 +126,7 @@ setup() {
     case "${HELM_SECRETS_DRIVER:-sops}" in
     sops)
         # import default gpg key
-        gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
+        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
         ;;
     vault)
         if [ -f .dockerenv ]; then
@@ -150,6 +178,8 @@ teardown() {
     if [ -n "${RELEASE+x}" ]; then
         helm del "${RELEASE}"
     fi
+
+    gpgconf --kill gpg-agent
 
     # https://github.com/bats-core/bats-file/pull/29
     chmod -R 777 "${TEST_TEMP_DIR}"
