@@ -171,18 +171,15 @@ teardown() {
     # https://github.com/bats-core/bats-file/pull/29
     chmod -R 777 "${TEST_TEMP_DIR}"
 
-    # rm: cannot remove '/tmp/tmp.11dcSX0g8Q/home/.gnupg/S.gpg-agent.browser': No such file or directory
-    rm -rf "${TEST_TEMP_DIR}/home/.gnupg/"
-
-    rm -rf "${TEST_TEMP_DIR}"
-    rm -rf "${TEST_TEMP_HOME}"
+    temp_del "${TEST_TEMP_DIR}"
+    temp_del "${TEST_TEMP_HOME}"
 }
 
 create_chart() {
     {
-        cp -r "${HELM_CACHE}/chart" "${1}"
-        cp -r "${TEST_TEMP_DIR}/assets/values" "${1}/chart"
-        cp "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart"
+        ln -sf "${HELM_CACHE}/chart" "${1}"
+        ln -sf "${TEST_TEMP_DIR}/assets/values" "${1}/chart"
+        ln -sf "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart"
     } >&2
 }
 
@@ -207,7 +204,6 @@ helm_plugin_install() {
         cp -r "${HELM_CACHE}/home/." "${HOME}"
     } >&2
 }
-
 
 on_windows() { true; }
 
