@@ -105,7 +105,7 @@ setup() {
     ln -sf "$(_helm_cache env HELM_PLUGINS)" "$(helm env HELM_PLUGINS)"
 
     # use cached gpg agent
-    ln -sf "${HELM_CACHE}/.gnupg/" "${HOME}/.gnupg/"
+    ln -sf "${HELM_CACHE}/.gnupg/" "${HOME}/.gnupg"
 
     # copy .kube from real home
     if [ -d "${REAL_HOME}/.kube" ]; then
