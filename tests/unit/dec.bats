@@ -56,7 +56,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + special char directory name" {
-    if is_windows; then
+    if on_windows; then
         skip "Skip on Windows"
     fi
 
@@ -125,7 +125,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + git://" {
-    if ! is_driver "sops" || is_windows; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 

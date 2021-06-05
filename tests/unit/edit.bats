@@ -18,7 +18,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: File if not exits + no valid encryption config" {
-    if ! is_driver "sops" || is_windows; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 
@@ -28,7 +28,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: File if not exits + valid encryption config" {
-    if ! is_driver "sops" || is_windows; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 
@@ -46,7 +46,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: secrets.yaml" {
-    if ! is_driver "sops" || is_windows; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 
@@ -64,7 +64,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "edit: some-secrets.yaml" {
-    if ! is_driver "sops" || is_windows; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 
@@ -83,7 +83,7 @@ load '../bats/extensions/bats-file/load'
 
 
 @test "edit: secrets.yaml + special path" {
-    if ! is_driver "sops" || is_windows; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 

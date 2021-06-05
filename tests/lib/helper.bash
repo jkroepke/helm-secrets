@@ -14,10 +14,6 @@ elif [ -n "${W_TEMP+x}" ]; then
     TMPDIR="${W_TEMP}"
 fi
 
-is_windows() {
-    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]
-}
-
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
@@ -56,17 +52,8 @@ _mktemp() {
     fi
 }
 
-_sed_i() {
-    # MacOS syntax is different for in-place
-    if [ "$(uname)" = "Darwin" ]; then
-        sed -i "" "$@"
-    else
-        sed -i "$@"
-    fi
-}
-
 _ln_or_cp() {
-    if is_windows; then
+    if on_windows; then
         cp -r "$@"
     else
         ln -sf "$@"
@@ -220,3 +207,18 @@ helm_plugin_install() {
         cp -r "${HELM_CACHE}/home/." "${HOME}"
     } >&2
 }
+
+
+on_windows() { true; }
+
+case "$(uname -s)" in
+Linux*) on_windows() { false; } ;;
+Darwin*) on_windows() { false; }; ;;
+esac
+
+# MacOS syntax is different for in-place
+# https://unix.stackexchange.com/a/92907/433641
+case $(sed --help 2>&1) in
+*BusyBox* | *GNU*) _sed_i() { sed -i "$@"; } ;;
+*) _sed_i() { sed -i '' "$@"; } ;;
+esac

@@ -271,7 +271,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "upgrade: helm install w/ chart + secrets.yaml + git://" {
-    if is_windows; then
+    if on_windows; then
         skip
     fi
 
@@ -308,7 +308,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "upgrade: helm install w/ chart + secrets.yaml + secrets://git://" {
-    if is_windows; then
+    if on_windows; then
         skip
     fi
 

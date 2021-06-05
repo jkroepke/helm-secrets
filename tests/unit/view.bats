@@ -51,7 +51,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + special char directory name" {
-    if is_windows; then
+    if on_windows; then
         skip "Skip on Windows"
     fi
 

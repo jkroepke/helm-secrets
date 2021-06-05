@@ -6,7 +6,7 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "dir: helm dir" {
-    if is_windows; then
+    if on_windows; then
         DS="\\"
     else
         DS="/"
