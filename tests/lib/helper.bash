@@ -1,9 +1,11 @@
-: "${TMPDIR=}"
-: "${GIT_ROOT=}"
-: "${TEST_DIR=}"
-: "${HELM_SECRETS_DRIVER=}"
-: "${HELM_CACHE=}"
-: "${REAL_HOME=}"
+#!/usr/bin/env bash
+
+TMPDIR=
+GIT_ROOT=
+TEST_DIR=
+HELM_SECRETS_DRIVER=
+HELM_CACHE=
+REAL_HOME=
 
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
@@ -40,7 +42,7 @@ _gpg() {
 }
 
 _mktemp() {
-    if [ -n "${TMPDIR+x}" ]; then
+    if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
         TMPDIR="${TMPDIR}" mktemp "$@"
     else
         mktemp "$@"
@@ -174,17 +176,17 @@ EzAA
 teardown() {
     # https://stackoverflow.com/a/13864829/8087167
     if [ -n "${RELEASE+x}" ]; then
-        helm del "${RELEASE}"
+        helm del "${RELEASE}" >&2
     fi
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        HOME="${HELM_CACHE}" gpgconf --kill gpg-agent
+        HOME="${HELM_CACHE}" gpgconf --kill gpg-agent >&2
         temp_del "${HELM_CACHE}/.gnupg/"
     fi
 
     # https://github.com/bats-core/bats-file/pull/29
-    chmod -R 777 "${TEST_TEMP_DIR}"
+    chmod -R 777 "${TEST_TEMP_DIR}" >&2
 
     temp_del "${TEST_TEMP_DIR}"
     temp_del "${TEST_TEMP_HOME}"
@@ -193,8 +195,6 @@ teardown() {
 create_chart() {
     {
         ln -sf "${HELM_CACHE}/chart/" "${1}"
-        #cp -r "${TEST_TEMP_DIR}/assets/values" "${1}/chart/"
-        #ln -sf "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart/"
     } >&2
 }
 
