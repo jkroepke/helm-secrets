@@ -80,8 +80,8 @@ initiate() {
 }
 
 setup() {
-    # https://github.com/bats-core/bats-core/issues/39
-    if [[ ${BATS_TEST_NAME:?} == "${BATS_TEST_NAMES[0]:?}" ]]; then
+    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+    if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
         initiate
     fi
 
@@ -177,7 +177,8 @@ teardown() {
         helm del "${RELEASE}"
     fi
 
-    if [[ ${BATS_TEST_NAME:?} == "${BATS_TEST_NAMES[-1]:?}" ]]; then
+    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+    if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
         HOME="${HELM_CACHE}" gpgconf --kill gpg-agent
     fi
 
