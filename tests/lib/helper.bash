@@ -113,7 +113,7 @@ setup() {
     fi
 
     # copy assets
-    ln -sf "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
+    cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
         # shellcheck disable=SC2016
         SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
@@ -190,9 +190,9 @@ teardown() {
 
 create_chart() {
     {
-        cp -r "${HELM_CACHE}/chart/" "${1}"
-        cp -r "${TEST_TEMP_DIR}/assets/values" "${1}/chart/"
-        cp -r "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart/"
+        ln -sf "${HELM_CACHE}/chart/" "${1}"
+        #cp -r "${TEST_TEMP_DIR}/assets/values" "${1}/chart/"
+        #ln -sf "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart/"
     } >&2
 }
 
