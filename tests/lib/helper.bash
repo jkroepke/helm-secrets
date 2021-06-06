@@ -1,10 +1,9 @@
-GIT_ROOT="$(git rev-parse --show-toplevel)"
-TEST_DIR="${GIT_ROOT}/tests"
-HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
-REAL_HOME="${HOME}"
-
-echo "HI" >&2
+: "${TMPDIR=}"
+: "${GIT_ROOT=}"
+: "${TEST_DIR=}"
+: "${HELM_SECRETS_DRIVER=}"
+: "${HELM_CACHE=}"
+: "${REAL_HOME=}"
 
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
@@ -50,6 +49,12 @@ _mktemp() {
 
 initiate() {
     {
+        GIT_ROOT="$(git rev-parse --show-toplevel)"
+        TEST_DIR="${GIT_ROOT}/tests"
+        HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
+        HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
+        REAL_HOME="${HOME}"
+
         # cygwin may not have a home directory
         [ -d "${HOME}" ] && mkdir -p "${HOME}"
 
