@@ -162,9 +162,9 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -q lint "${TEST_TEMP_DIR}/chart" -f "${TEST_TEMP_DIR}/chart/values/${HELM_SECRETS_DRIVER}/secrets.yaml" 2>&1
+    run helm secrets -q lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${TEST_TEMP_DIR}/chart/secrets.yaml"
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
@@ -175,9 +175,9 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --quiet lint "${TEST_TEMP_DIR}/chart" -f "${TEST_TEMP_DIR}/chart/values/${HELM_SECRETS_DRIVER}/secrets.yaml" 2>&1
+    run helm secrets --quiet lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${TEST_TEMP_DIR}/chart/secrets.yaml"
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
