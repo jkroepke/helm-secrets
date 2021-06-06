@@ -121,7 +121,7 @@ setup() {
         ln -sf "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
 
-    ln -sf "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
+    cp -r "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     case "${HELM_SECRETS_DRIVER:-sops}" in
     sops)
