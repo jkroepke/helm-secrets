@@ -26,9 +26,9 @@ _shasum() {
 _gpg() {
     # cygwin does not have an alias
     if command -v gpg2 >/dev/null; then
-        gpg2 "$@"
+        HOME="${HELM_CACHE}" gpg2 "$@"
     else
-        gpg "$@"
+        HOME="${HELM_CACHE}" gpg "$@"
     fi
 }
 
@@ -37,14 +37,6 @@ _mktemp() {
         TMPDIR="${TMPDIR}" mktemp "$@"
     else
         mktemp "$@"
-    fi
-}
-
-_ln_or_cp() {
-    if on_windows; then
-        cp -r "$@"
-    else
-        ln -sf "$@"
     fi
 }
 
@@ -75,7 +67,7 @@ initiate() {
         helm_plugin_install "diff"
         helm_plugin_install "git"
 
-        HOME="${HELM_CACHE}" _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
+        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
     } >&2
 }
 
@@ -103,7 +95,7 @@ setup() {
     #mkdir "${TEST_TEMP_DIR}/chart"
 
     mkdir -p "$(dirname "${_HELM_PLUGINS}")"
-    ln -sf "$(_helm_cache env HELM_PLUGINS)" "$(helm env "${_HELM_PLUGINS}")"
+    ln -sf "$(_helm_cache env HELM_PLUGINS)" "${_HELM_PLUGINS}"
 
     # use cached gpg agent
     ln -sf "${HELM_CACHE}/.gnupg/" "${HOME}/.gnupg"
