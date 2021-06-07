@@ -272,11 +272,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + git://" {
-    if is_windows; then
+    if on_windows; then
         skip
     fi
 
-    helm_plugin_install "git"
     FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
@@ -309,11 +308,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + secrets:/git://" {
-    if is_windows; then
+    if on_windows; then
         skip
     fi
 
-    helm_plugin_install "git"
     FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"

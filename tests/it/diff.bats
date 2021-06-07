@@ -7,23 +7,18 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "diff: helm install" {
-    helm_plugin_install "diff"
-
     run helm secrets diff
     assert_success
     assert_output --partial 'helm secrets diff'
 }
 
 @test "diff: helm diff upgrade --help" {
-    helm_plugin_install "diff"
-
     run helm secrets diff --help
     assert_success
     assert_output --partial 'helm secrets diff'
 }
 
 @test "diff: helm diff upgrade w/ chart" {
-    helm_plugin_install "diff"
     RELEASE="diff-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -37,7 +32,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -52,7 +46,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + --values" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -67,7 +60,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + --values=" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -82,7 +74,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -97,7 +88,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -112,7 +102,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values=" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -127,7 +116,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + helm flag" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -143,7 +131,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + pre decrypted secrets.yaml" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -161,7 +148,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + q flag" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -176,7 +162,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + quiet flag" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -191,7 +176,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + special path" {
-    helm_plugin_install "diff"
     FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -206,7 +190,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + invalid yaml" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -223,7 +206,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + sops://" {
-    helm_plugin_install "diff"
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -235,7 +217,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + http://" {
-    helm_plugin_install "diff"
     FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -250,11 +231,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm install w/ chart + secrets.yaml + git://" {
-    if is_windows; then
+    if on_windows; then
         skip
     fi
 
-    helm_plugin_install "git"
     FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -269,7 +249,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + secrets://http://" {
-    helm_plugin_install "diff"
     FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -282,11 +261,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm install w/ chart + secrets.yaml + secrets://git://" {
-    if is_windows; then
+    if on_windows; then
         skip
     fi
 
-    helm_plugin_install "git"
     FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
     RELEASE="diff-$(date +%s)-${SEED}"
 

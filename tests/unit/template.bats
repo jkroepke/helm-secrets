@@ -189,7 +189,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + special path" {
-    if is_windows; then
+    if on_windows; then
         skip "Skip on Windows"
     fi
 
@@ -251,11 +251,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + git://" {
-    if is_windows || ! is_driver "sops"; then
+    if on_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
-    helm_plugin_install "git"
+
     FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -269,7 +269,7 @@ load '../bats/extensions/bats-file/load'
 
 
 @test "template: helm template w/ chart + secrets.yaml + sops://" {
-    if is_windows ; then
+    if on_windows ; then
         skip
     fi
 
@@ -283,7 +283,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secret://" {
-    if is_windows ; then
+    if on_windows ; then
         skip
     fi
 
@@ -297,7 +297,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://" {
-    if is_windows ; then
+    if on_windows ; then
         skip
     fi
 
@@ -311,7 +311,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://" {
-    if is_windows || ! is_driver "sops"; then
+    if on_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -325,7 +325,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://example.com/404.yaml" {
-    if is_windows || ! is_driver "sops"; then
+    if on_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -338,12 +338,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://git://" {
-    if is_windows || ! is_driver "sops"; then
+    if on_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
 
-    helm_plugin_install "git"
     FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
 
     create_chart "${TEST_TEMP_DIR}"

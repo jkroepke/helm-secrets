@@ -1,22 +1,4 @@
-GIT_ROOT="$(git rev-parse --show-toplevel)"
-TEST_DIR="${GIT_ROOT}/tests"
-HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
-REAL_HOME="${HOME}"
-
-# cygwin may not have a home directory
-[ -d "${HOME}" ] && mkdir -p "${HOME}"
-
-# Windows TMPDIR behavior
-if [[ "$(uname -s)" == CYGWIN* ]]; then
-    TMPDIR="$(cygpath -m "${TEMP}")"
-elif [ -n "${W_TEMP+x}" ]; then
-    TMPDIR="${W_TEMP}"
-fi
-
-is_windows() {
-    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]
-}
+#!/usr/bin/env bash
 
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
@@ -28,6 +10,20 @@ is_coverage() {
 
 is_curl_installed() {
     command -v curl >/dev/null
+}
+
+on_windows() {
+    _uname="$(uname)"
+    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
+}
+
+_sed_i() {
+    # MacOS syntax is different for in-place
+    if [ "$(uname)" = "Darwin" ]; then
+        sed -i "" "$@"
+    else
+        sed -i "$@"
+    fi
 }
 
 _shasum() {
@@ -49,24 +45,19 @@ _gpg() {
 }
 
 _mktemp() {
-    if [ -n "${TMPDIR+x}" ]; then
+    if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
         TMPDIR="${TMPDIR}" mktemp "$@"
     else
         mktemp "$@"
     fi
 }
 
-_sed_i() {
-    # MacOS syntax is different for in-place
-    if [ "$(uname)" = "Darwin" ]; then
-        sed -i "" "$@"
-    else
-        sed -i "$@"
-    fi
+_home_dir() {
+    printf '%s' "/tmp/helm-secrets-test.${BATS_ROOT_PID}/$(basename "${BATS_TEST_FILENAME}")/home"
 }
 
-_ln_or_cp() {
-    if is_windows; then
+_copy() {
+    if on_windows; then
         cp -r "$@"
     else
         ln -sf "$@"
@@ -76,40 +67,56 @@ _ln_or_cp() {
 initiate() {
     {
         mkdir -p "${HELM_CACHE}/home"
+        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
+
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             helm create "${HELM_CACHE}/chart"
+        fi
+
+        helm_plugin_install "secrets"
+        helm_plugin_install "git"
+        if [[ "${BATS_TEST_FILENAME}" = *"/it/"* ]]; then
+            helm_plugin_install "diff" --version 3.1.3
         fi
     } >&2
 }
 
 setup() {
-    # https://github.com/bats-core/bats-core/issues/39
-    if [[ ${BATS_TEST_NAME:?} == "${BATS_TEST_NAMES[0]:?}" ]]; then
-        initiate
-    fi
+    REAL_HOME="${HOME}"
+    # shellcheck disable=SC2153
+    HOME="$(_home_dir)"
+
+    [ -d "${HOME}" ] || mkdir -p "${HOME}"
+    export HOME
+
+    GIT_ROOT="$(git rev-parse --show-toplevel)"
+    TEST_DIR="${GIT_ROOT}/tests"
+    HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
+
+    CACHE_DIR="${TEST_DIR}/.tmp/cache"
+    HELM_CACHE="${CACHE_DIR}/$(uname)/helm"
+    HELM_DATA_HOME="${HELM_CACHE}"
+    export HELM_DATA_HOME
 
     SEED="${RANDOM}"
 
+    # Windows TMPDIR behavior
+    if [[ "$(uname -s)" == CYGWIN* ]]; then
+        TMPDIR="$(cygpath -m "${TEMP}")"
+    elif [ -n "${W_TEMP+x}" ]; then
+        TMPDIR="${W_TEMP}"
+    fi
+
+    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+    if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
+        initiate
+    fi
+
     TEST_TEMP_DIR="$(_mktemp -d)"
-    TEST_TEMP_HOME="$(mktemp -d)"
-    HOME="${TEST_TEMP_HOME}"
-
-    # shellcheck disable=SC2034
-    XDG_DATA_HOME="${HOME}"
-
-    # Windows
-    # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
-    # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
-    # shellcheck disable=SC2034
-    APPDATA="${HOME}"
-    mkdir "${TEST_TEMP_DIR}/chart"
-
-    # install helm plugin
-    helm plugin install "${GIT_ROOT}"
 
     # copy .kube from real home
     if [ -d "${REAL_HOME}/.kube" ]; then
-        cp -r "${REAL_HOME}/.kube" "${HOME}"
+        ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
     fi
 
     # copy assets
@@ -118,16 +125,12 @@ setup() {
         # shellcheck disable=SC2016
         SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
-        cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}"
+        cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
 
-    cp -r "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
+    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     case "${HELM_SECRETS_DRIVER:-sops}" in
-    sops)
-        # import default gpg key
-        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
-        ;;
     vault)
         if [ -f .dockerenv ]; then
             # If we run inside docker, we expect vault on this location
@@ -176,47 +179,45 @@ EzAA
 teardown() {
     # https://stackoverflow.com/a/13864829/8087167
     if [ -n "${RELEASE+x}" ]; then
-        helm del "${RELEASE}"
+        helm del "${RELEASE}" >&2
     fi
 
-    gpgconf --kill gpg-agent
+    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+    if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
+        gpgconf --kill gpg-agent >&2
+        temp_del "$(_home_dir)"
+    fi
 
     # https://github.com/bats-core/bats-file/pull/29
-    chmod -R 777 "${TEST_TEMP_DIR}"
+    chmod -R 777 "${TEST_TEMP_DIR}" >&2
 
-    # rm: cannot remove '/tmp/tmp.11dcSX0g8Q/home/.gnupg/S.gpg-agent.browser': No such file or directory
-    rm -rf "${TEST_TEMP_DIR}/home/.gnupg/"
-
-    rm -rf "${TEST_TEMP_DIR}"
-    rm -rf "${TEST_TEMP_HOME}"
+    temp_del "${TEST_TEMP_DIR}"
 }
 
 create_chart() {
     {
-        cp -r "${HELM_CACHE}/chart" "${1}"
-        cp -r "${TEST_TEMP_DIR}/assets/values" "${1}/chart"
-        cp "${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml" "${1}/chart"
+        _copy "${HELM_CACHE}/chart/" "${1}"
     } >&2
 }
 
 helm_plugin_install() {
     {
-        if ! env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin list | grep -q "${1}"; then
-            case "${1}" in
-            kubeval)
-                URL="https://github.com/instrumenta/helm-kubeval"
-                ;;
-            diff)
-                URL="https://github.com/databus23/helm-diff"
-                ;;
-            git)
-                URL="https://github.com/aslafy-z/helm-git"
-                ;;
-            esac
-
-            env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm plugin install "${URL}" ${VERSION:+--version ${VERSION}}
+        if helm plugin list | grep -q "${1}"; then
+            return
         fi
 
-        cp -r "${HELM_CACHE}/home/." "${HOME}"
+        case "${1}" in
+        diff)
+            URL="https://github.com/databus23/helm-diff"
+            ;;
+        git)
+            URL="https://github.com/aslafy-z/helm-git"
+            ;;
+        secrets)
+            URL="${GIT_ROOT}"
+            ;;
+        esac
+
+        helm plugin install "${URL}" "${@:2}"
     } >&2
 }

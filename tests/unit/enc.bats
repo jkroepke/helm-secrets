@@ -84,7 +84,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    if is_windows; then
+    if on_windows; then
         skip "Skip on Windows"
     fi
 
