@@ -13,7 +13,8 @@ is_curl_installed() {
 }
 
 on_windows() {
-    _uname="$(uname)"; ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
+    _uname="$(uname)"
+    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
 }
 
 _sed_i() {
@@ -53,6 +54,14 @@ _mktemp() {
 
 _home_dir() {
     printf '%s' "/tmp/helm-secrets-test.${BATS_ROOT_PID}/$(basename "${BATS_TEST_FILENAME}")/home"
+}
+
+_copy() {
+    if on_windows; then
+        cp -r "$@"
+    else
+        ln -sf "$@"
+    fi
 }
 
 initiate() {
@@ -187,7 +196,7 @@ teardown() {
 
 create_chart() {
     {
-        ln -sf "${HELM_CACHE}/chart/" "${1}"
+        _copy "${HELM_CACHE}/chart/" "${1}"
     } >&2
 }
 
