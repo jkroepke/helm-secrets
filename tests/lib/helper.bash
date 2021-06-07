@@ -43,12 +43,6 @@ _mktemp() {
 
 initiate() {
     {
-        GIT_ROOT="$(git rev-parse --show-toplevel)"
-        TEST_DIR="${GIT_ROOT}/tests"
-        HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-        HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
-        REAL_HOME="${HOME}"
-
         # cygwin may not have a home directory
         [ -d "${HOME}" ] && mkdir -p "${HOME}"
 
@@ -73,12 +67,20 @@ initiate() {
 }
 
 setup() {
+    env
+
+    GIT_ROOT="$(git rev-parse --show-toplevel)"
+    TEST_DIR="${GIT_ROOT}/tests"
+    HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
+    HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
+    REAL_HOME="${HOME}"
+
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
         initiate
     fi
 
-    env | grep TEST_
+    env | grep tests
 
     SEED="${RANDOM}"
 
