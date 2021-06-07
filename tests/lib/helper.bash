@@ -24,10 +24,6 @@ _sed_i() {
     fi
 }
 
-_helm_cache() {
-    env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm "$@"
-}
-
 _shasum() {
     # MacOS have shasum, others have sha1sum
     if command -v shasum >/dev/null; then
@@ -73,11 +69,16 @@ initiate() {
 }
 
 setup() {
+    REAL_HOME="${HOME}"
+
     GIT_ROOT="$(git rev-parse --show-toplevel)"
     TEST_DIR="${GIT_ROOT}/tests"
     HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-    HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
-    REAL_HOME="${HOME}"
+
+    CACHE_DIR="${TEST_DIR}/.tmp/cache"
+    HELM_CACHE="${CACHE_DIR}/$(uname)/helm"
+    HELM_DATA_HOME="${HELM_CACHE}"
+    export HELM_DATA_HOME
 
     SEED="${RANDOM}"
 
@@ -96,18 +97,6 @@ setup() {
     TEST_TEMP_DIR="$(_mktemp -d)"
     TEST_TEMP_HOME="$(mktemp -d)"
     HOME="${TEST_TEMP_HOME}"
-
-    # shellcheck disable=SC2034
-    XDG_DATA_HOME="${HOME}"
-    _HELM_PLUGINS="$(helm env HELM_PLUGINS)"
-
-    # Windows
-    # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
-    # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
-    # shellcheck disable=SC2034
-    APPDATA="${HOME}"
-    mkdir -p "$(dirname "${_HELM_PLUGINS}")"
-    ln -sf "$(_helm_cache env HELM_PLUGINS)" "${_HELM_PLUGINS}"
 
     # use cached gpg agent
     ln -sf "${HELM_CACHE}/.gnupg/" "${HOME}/.gnupg"
@@ -201,7 +190,7 @@ create_chart() {
 
 helm_plugin_install() {
     {
-        if _helm_cache plugin list | grep -q "${1}"; then
+        if helm plugin list | grep -q "${1}"; then
             return
         fi
 
@@ -220,6 +209,6 @@ helm_plugin_install() {
             ;;
         esac
 
-        _helm_cache plugin install "${URL}" ${VERSION:+--version ${VERSION}}
+        helm plugin install "${URL}" ${VERSION:+--version ${VERSION}}
     } >&2
 }
