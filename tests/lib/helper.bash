@@ -78,6 +78,8 @@ setup() {
         initiate
     fi
 
+    env | grep TEST_
+
     SEED="${RANDOM}"
 
     TEST_TEMP_DIR="$(_mktemp -d)"
