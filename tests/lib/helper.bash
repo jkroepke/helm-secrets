@@ -12,7 +12,8 @@ is_curl_installed() {
 }
 
 on_windows() {
-    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]
+    _uname="$(uname)"
+    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
 }
 
 _sed_i() {
