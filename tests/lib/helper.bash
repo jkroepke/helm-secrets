@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
@@ -51,7 +52,7 @@ _mktemp() {
 }
 
 _home_dir() {
-    printf '%s' "${BATS_RUN_TMPDIR}/$(basename "${BATS_TEST_FILENAME}")/home"
+    printf '%s' "/tmp/helm-secrets-test.${BATS_ROOT_PID}/$(basename "${BATS_TEST_FILENAME}")/home"
 }
 
 initiate() {
