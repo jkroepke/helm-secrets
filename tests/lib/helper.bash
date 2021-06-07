@@ -73,7 +73,7 @@ setup() {
     REAL_HOME="${HOME}"
     # shellcheck disable=SC2153
     HOME="$(_home_dir)"
-    [ -d "${HOME}" ] && mkdir -p "${HOME}"
+    [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
     GIT_ROOT="$(git rev-parse --show-toplevel)"
