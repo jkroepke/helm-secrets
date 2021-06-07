@@ -36,9 +36,9 @@ _shasum() {
 _gpg() {
     # cygwin does not have an alias
     if command -v gpg2 >/dev/null; then
-        HOME="${HELM_CACHE}" gpg2 "$@"
+        gpg2 "$@"
     else
-        HOME="${HELM_CACHE}" gpg "$@"
+        gpg "$@"
     fi
 }
 
@@ -52,10 +52,6 @@ _mktemp() {
 
 initiate() {
     {
-        env | grep unit
-        # cygwin may not have a home directory
-        [ -d "${HOME}" ] && mkdir -p "${HOME}"
-
         mkdir -p "${HELM_CACHE}/home"
         _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
 
@@ -71,6 +67,10 @@ initiate() {
 
 setup() {
     REAL_HOME="${HOME}"
+    # shellcheck disable=SC2153
+    BATS_TEST_FILENAME_ONLY=$(basename "${BATS_TEST_FILENAME}")
+    export HOME="${BATS_RUN_TMPDIR}/${BATS_TEST_FILENAME_ONLY}/home"
+    [ -d "${HOME}" ] && mkdir -p "${HOME}"
 
     GIT_ROOT="$(git rev-parse --show-toplevel)"
     TEST_DIR="${GIT_ROOT}/tests"
@@ -96,11 +96,6 @@ setup() {
     fi
 
     TEST_TEMP_DIR="$(_mktemp -d)"
-    TEST_TEMP_HOME="$(mktemp -d)"
-    HOME="${TEST_TEMP_HOME}"
-
-    # use cached gpg agent
-    ln -sf "${HELM_CACHE}/.gnupg/" "${HOME}/.gnupg"
 
     # copy .kube from real home
     if [ -d "${REAL_HOME}/.kube" ]; then
@@ -172,15 +167,13 @@ teardown() {
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        HOME="${HELM_CACHE}" gpgconf --kill gpg-agent >&2
-        temp_del "${HELM_CACHE}/.gnupg/"
+        gpgconf --kill gpg-agent >&2
     fi
 
     # https://github.com/bats-core/bats-file/pull/29
     chmod -R 777 "${TEST_TEMP_DIR}" >&2
 
     temp_del "${TEST_TEMP_DIR}"
-    temp_del "${TEST_TEMP_HOME}"
 }
 
 create_chart() {
