@@ -50,6 +50,10 @@ _mktemp() {
     fi
 }
 
+_home_dir() {
+    printf '%s' "${BATS_RUN_TMPDIR}/$(basename "${BATS_TEST_FILENAME}")/home"
+}
+
 initiate() {
     {
         mkdir -p "${HELM_CACHE}/home"
@@ -68,9 +72,9 @@ initiate() {
 setup() {
     REAL_HOME="${HOME}"
     # shellcheck disable=SC2153
-    BATS_TEST_FILENAME_ONLY=$(basename "${BATS_TEST_FILENAME}")
-    export HOME="${BATS_RUN_TMPDIR}/${BATS_TEST_FILENAME_ONLY}/home"
+    HOME="$(_home_dir)"
     [ -d "${HOME}" ] && mkdir -p "${HOME}"
+    export HOME
 
     GIT_ROOT="$(git rev-parse --show-toplevel)"
     TEST_DIR="${GIT_ROOT}/tests"
@@ -83,16 +87,16 @@ setup() {
 
     SEED="${RANDOM}"
 
-    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-    if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
-        initiate
-    fi
-
     # Windows TMPDIR behavior
     if [[ "$(uname -s)" == CYGWIN* ]]; then
         TMPDIR="$(cygpath -m "${TEMP}")"
     elif [ -n "${W_TEMP+x}" ]; then
         TMPDIR="${W_TEMP}"
+    fi
+
+    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+    if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
+        initiate
     fi
 
     TEST_TEMP_DIR="$(_mktemp -d)"
@@ -168,6 +172,7 @@ teardown() {
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
         gpgconf --kill gpg-agent >&2
+        temp_del "$(_home_dir)"
     fi
 
     # https://github.com/bats-core/bats-file/pull/29
