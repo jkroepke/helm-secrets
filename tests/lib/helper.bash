@@ -76,7 +76,7 @@ initiate() {
         helm_plugin_install "secrets"
         helm_plugin_install "git"
 
-        env
+        env | grep BATS_TEST_FILENAME >&2
 
         if [[ "${BATS_TEST_FILENAME}" = *"it"* ]]; then
             helm_plugin_install "diff" --version 3.1.3
@@ -88,6 +88,9 @@ setup() {
     REAL_HOME="${HOME}"
     # shellcheck disable=SC2153
     HOME="$(_home_dir)"
+    env | grep BATS_TEST_FILENAME >&2
+
+
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
@@ -130,7 +133,7 @@ setup() {
         cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
 
-    ln -sf "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
+    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     case "${HELM_SECRETS_DRIVER:-sops}" in
     vault)
