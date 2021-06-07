@@ -52,6 +52,7 @@ _mktemp() {
 
 initiate() {
     {
+        env | grep unit
         # cygwin may not have a home directory
         [ -d "${HOME}" ] && mkdir -p "${HOME}"
 
