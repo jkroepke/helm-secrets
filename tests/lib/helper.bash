@@ -11,6 +11,19 @@ is_curl_installed() {
     command -v curl >/dev/null
 }
 
+on_windows() {
+    ! [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]
+}
+
+_sed_i() {
+    # MacOS syntax is different for in-place
+    if [ "$(uname)" = "Darwin" ]; then
+        sed -i "" "$@"
+    else
+        sed -i "$@"
+    fi
+}
+
 _helm_cache() {
     env APPDATA="${HELM_CACHE}/home/" HOME="${HELM_CACHE}/home/" helm "$@"
 }
@@ -210,17 +223,3 @@ helm_plugin_install() {
         _helm_cache plugin install "${URL}" ${VERSION:+--version ${VERSION}}
     } >&2
 }
-
-on_windows() { true; }
-
-case "$(uname -s)" in
-Linux*) on_windows() { false; } ;;
-Darwin*) on_windows() { false; }; ;;
-esac
-
-# MacOS syntax is different for in-place
-# https://unix.stackexchange.com/a/92907/433641
-case $(sed --help 2>&1) in
-*BusyBox* | *GNU*) _sed_i() { sed -i "$@"; } ;;
-*) _sed_i() { sed -i '' "$@"; } ;;
-esac
