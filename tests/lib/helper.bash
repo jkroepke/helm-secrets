@@ -63,7 +63,7 @@ initiate() {
         fi
 
         helm_plugin_install "secrets"
-        helm_plugin_install "diff"
+        helm_plugin_install "diff" --version 3.1.3
         helm_plugin_install "git"
     } >&2
 }
@@ -195,9 +195,6 @@ helm_plugin_install() {
         fi
 
         case "${1}" in
-        kubeval)
-            URL="https://github.com/instrumenta/helm-kubeval"
-            ;;
         diff)
             URL="https://github.com/databus23/helm-diff"
             ;;
@@ -209,6 +206,6 @@ helm_plugin_install() {
             ;;
         esac
 
-        helm plugin install "${URL}" ${VERSION:+--version ${VERSION}}
+        helm plugin install "${URL}" "${@:2}"
     } >&2
 }
