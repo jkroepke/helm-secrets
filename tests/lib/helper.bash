@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-
-TMPDIR=
-GIT_ROOT=
-TEST_DIR=
-HELM_SECRETS_DRIVER=
-HELM_CACHE=
-REAL_HOME=
-
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
