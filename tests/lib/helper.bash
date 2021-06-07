@@ -78,6 +78,8 @@ initiate() {
 
         env | grep BATS_TEST_FILENAME >&2
 
+        echo "${BATS_TEST_FILENAME}"
+
         if [[ "${BATS_TEST_FILENAME}" = *"it"* ]]; then
             helm_plugin_install "diff" --version 3.1.3
         fi
@@ -88,6 +90,7 @@ setup() {
     REAL_HOME="${HOME}"
     # shellcheck disable=SC2153
     HOME="$(_home_dir)"
+    echo "${BATS_TEST_FILENAME}"
     env | grep BATS_TEST_FILENAME >&2
 
 
