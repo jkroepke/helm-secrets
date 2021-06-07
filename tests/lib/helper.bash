@@ -65,8 +65,11 @@ initiate() {
         fi
 
         helm_plugin_install "secrets"
-        helm_plugin_install "diff" --version 3.1.3
         helm_plugin_install "git"
+
+        if [[ "${BATS_TEST_FILENAME}" = *"it"* ]]; then
+            helm_plugin_install "diff" --version 3.1.3
+        fi
     } >&2
 }
 
