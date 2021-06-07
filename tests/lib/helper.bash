@@ -46,13 +46,6 @@ initiate() {
         # cygwin may not have a home directory
         [ -d "${HOME}" ] && mkdir -p "${HOME}"
 
-        # Windows TMPDIR behavior
-        if [[ "$(uname -s)" == CYGWIN* ]]; then
-            TMPDIR="$(cygpath -m "${TEMP}")"
-        elif [ -n "${W_TEMP+x}" ]; then
-            TMPDIR="${W_TEMP}"
-        fi
-
         mkdir -p "${HELM_CACHE}/home"
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             helm create "${HELM_CACHE}/chart"
@@ -67,22 +60,25 @@ initiate() {
 }
 
 setup() {
-    env
-
     GIT_ROOT="$(git rev-parse --show-toplevel)"
     TEST_DIR="${GIT_ROOT}/tests"
     HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
     HELM_CACHE="${TEST_DIR}/.tmp/cache/$(uname)/helm"
     REAL_HOME="${HOME}"
 
+    SEED="${RANDOM}"
+
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
         initiate
     fi
 
-    env | grep tests
-
-    SEED="${RANDOM}"
+    # Windows TMPDIR behavior
+    if [[ "$(uname -s)" == CYGWIN* ]]; then
+        TMPDIR="$(cygpath -m "${TEMP}")"
+    elif [ -n "${W_TEMP+x}" ]; then
+        TMPDIR="${W_TEMP}"
+    fi
 
     TEST_TEMP_DIR="$(_mktemp -d)"
     TEST_TEMP_HOME="$(mktemp -d)"
@@ -97,8 +93,6 @@ setup() {
     # See: https://github.com/helm/helm/blob/b4f8312dbaf479e5f772cd17ae3768c7a7bb3832/pkg/helmpath/lazypath_windows.go#L22
     # shellcheck disable=SC2034
     APPDATA="${HOME}"
-    #mkdir "${TEST_TEMP_DIR}/chart"
-
     mkdir -p "$(dirname "${_HELM_PLUGINS}")"
     ln -sf "$(_helm_cache env HELM_PLUGINS)" "${_HELM_PLUGINS}"
 
@@ -122,8 +116,6 @@ setup() {
     ln -sf "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     case "${HELM_SECRETS_DRIVER:-sops}" in
-    sops)
-        ;;
     vault)
         if [ -f .dockerenv ]; then
             # If we run inside docker, we expect vault on this location
