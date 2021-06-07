@@ -12,8 +12,7 @@ is_curl_installed() {
 }
 
 on_windows() {
-    _uname="$(uname)"
-    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
+    _uname="$(uname)"; ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
 }
 
 _sed_i() {
@@ -61,6 +60,8 @@ initiate() {
         [ -d "${HOME}" ] && mkdir -p "${HOME}"
 
         mkdir -p "${HELM_CACHE}/home"
+        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
+
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             helm create "${HELM_CACHE}/chart"
         fi
@@ -68,8 +69,6 @@ initiate() {
         helm_plugin_install "secrets"
         helm_plugin_install "diff"
         helm_plugin_install "git"
-
-        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
     } >&2
 }
 
