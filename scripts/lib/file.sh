@@ -45,8 +45,8 @@ _file_put() {
 
 _file_dec_name() {
     if [ "${DEC_DIR}" != "" ]; then
-        printf '%s' "${DEC_DIR}/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+        printf '%s' "${DEC_DIR}/$(basename "${1}")${DEC_SUFFIX}"
     else
-        printf '%s' "$(dirname "${1}")/$(basename "${1}" ".yaml")${DEC_SUFFIX}"
+        printf '%s' "${1}${DEC_SUFFIX}"
     fi
 }

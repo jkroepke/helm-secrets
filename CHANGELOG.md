@@ -11,6 +11,10 @@ Allow override sops version on installation
 ### Added
 - cygwin compatibility
 
+### Changes
+- `HELM_SECRETS_DEC_SUFFIX` has been changed from `.yaml.dec` to `.dec`. Additionally, while append the suffix, the file extension `.yaml` is not stripped anymore.
+- The detection of encrypted sops files has been changed. Instead, looking for `sops:` and `version:`, the string `unencrypted_suffix` is used now.
+
 ## [3.7.0] - 2021-05-22
 
 ### Added

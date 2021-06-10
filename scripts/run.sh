@@ -44,7 +44,7 @@ SECRET_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS:-}"
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
 # shellcheck disable=SC2034
-DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.yaml.dec}"
+DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX:-.dec}"
 
 # shellcheck disable=SC2034
 DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"

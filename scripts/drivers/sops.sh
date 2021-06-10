@@ -11,7 +11,7 @@ _sops() {
 driver_is_file_encrypted() {
     input="${1}"
 
-    grep -q 'sops:' "${input}" && grep -q 'version:' "${input}"
+    grep -q 'unencrypted_suffix' "${input}"
 }
 
 driver_encrypt_file() {

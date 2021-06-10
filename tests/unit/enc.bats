@@ -108,7 +108,7 @@ load '../bats/extensions/bats-file/load'
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
     cp "${FILE}" "${FILE}.test"
 
-    HELM_SECRETS_DEC_SUFFIX=.yaml.test
+    HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
 
     run helm secrets enc "${FILE}"

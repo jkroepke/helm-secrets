@@ -36,7 +36,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_SUFFIX" {
-    HELM_SECRETS_DEC_SUFFIX=.yaml.test
+    HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
