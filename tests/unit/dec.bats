@@ -89,9 +89,9 @@ load '../bats/extensions/bats-file/load'
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     DIR="$(dirname "${FILE}")"
 
-    HELM_SECRETS_DEC_PREFIX="."
+    HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
-    HELM_SECRETS_DEC_SUFFIX=""
+    HELM_SECRETS_DEC_SUFFIX=
     export HELM_SECRETS_DEC_SUFFIX
 
     run helm secrets dec "${FILE}"
@@ -120,9 +120,9 @@ load '../bats/extensions/bats-file/load'
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     DIR="$(dirname "${FILE}")"
 
-    HELM_SECRETS_DEC_PREFIX="."
+    HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
-    HELM_SECRETS_DEC_SUFFIX=.test
+    HELM_SECRETS_DEC_SUFFIX=.foo
     export HELM_SECRETS_DEC_SUFFIX
 
     run helm secrets dec "${FILE}"
