@@ -101,20 +101,69 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_bar'
 }
 
+@test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    DIR="$(dirname "${FILE}")"
+
+    HELM_SECRETS_DEC_PREFIX=.
+    export HELM_SECRETS_DEC_PREFIX
+    cp "${FILE}" "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
+
+    run helm secrets enc "${FILE}"
+    assert_success
+    assert_output --partial "Encrypting ${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
+    assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml to secrets.dec.yaml"
+
+    run helm secrets view "${FILE}"
+    assert_success
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_SUFFIX" {
     if ! is_driver "sops"; then
         skip
     fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
-    cp "${FILE}" "${FILE}.test"
 
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
+    cp "${FILE}" "${FILE}.${HELM_SECRETS_DEC_SUFFIX}"
 
     run helm secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
-    assert_output --partial "Encrypted secrets.dec.yaml.test to secrets.dec.yaml"
+    assert_output --partial "Encrypted secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
+
+    run helm secrets view "${FILE}"
+    assert_success
+    assert_output --partial 'global_secret: '
+    assert_output --partial 'global_bar'
+}
+
+@test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX + HELM_SECRETS_DEC_SUFFIX" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    DIR="$(dirname "${FILE}")"
+
+    HELM_SECRETS_DEC_PREFIX=.
+    export HELM_SECRETS_DEC_PREFIX
+    HELM_SECRETS_DEC_SUFFIX=.test
+    export HELM_SECRETS_DEC_SUFFIX
+    cp "${FILE}" "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
+
+    run helm secrets enc "${FILE}"
+    assert_success
+    assert_output --partial "Encrypting ${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
+    assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
