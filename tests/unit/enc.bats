@@ -71,7 +71,7 @@ load '../bats/extensions/bats-file/load'
     run helm secrets enc "${FILE}"
 
     assert_output --partial "Encrypting ${FILE}"
-    assert_output --partial "Encrypted secrets.dec.yaml.dec to secrets.dec.yaml"
+    assert_output --partial "Encrypted ./secrets.dec.yaml.dec to secrets.dec.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
@@ -109,7 +109,7 @@ load '../bats/extensions/bats-file/load'
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
     DIR="$(dirname "${FILE}")"
 
-    HELM_SECRETS_DEC_PREFIX=.
+    HELM_SECRETS_DEC_PREFIX="."
     export HELM_SECRETS_DEC_PREFIX
     cp "${FILE}" "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
 
@@ -154,7 +154,7 @@ load '../bats/extensions/bats-file/load'
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
     DIR="$(dirname "${FILE}")"
 
-    HELM_SECRETS_DEC_PREFIX=.
+    HELM_SECRETS_DEC_PREFIX="."
     export HELM_SECRETS_DEC_PREFIX
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
