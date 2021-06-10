@@ -34,6 +34,21 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${FILE}.dec" 'global_bar'
 }
 
+@test "dec: Decrypt secrets.yaml.gotpl" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml.gotpl"
+
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_output "[helm-secrets] Decrypting ${FILE}"
+    assert_file_exist "${FILE}.dec"
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_tpl'
+}
+
 @test "dec: Decrypt some-secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 

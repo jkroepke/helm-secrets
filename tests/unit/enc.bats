@@ -71,7 +71,7 @@ load '../bats/extensions/bats-file/load'
     run helm secrets enc "${FILE}"
 
     assert_output --partial "Encrypting ${FILE}"
-    assert_output --partial "Encrypted ./secrets.dec.yaml.dec to secrets.dec.yaml"
+    assert_output --partial "Encrypted secrets.dec.yaml.dec to secrets.dec.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
@@ -114,7 +114,7 @@ load '../bats/extensions/bats-file/load'
     run helm secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
-    assert_output --partial "Encrypted ./secrets.dec.yaml.test to secrets.dec.yaml"
+    assert_output --partial "Encrypted secrets.dec.yaml.test to secrets.dec.yaml"
 
     run helm secrets view "${FILE}"
     assert_success
