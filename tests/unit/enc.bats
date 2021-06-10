@@ -111,11 +111,11 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX="."
     export HELM_SECRETS_DEC_PREFIX
-    cp "${FILE}" "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
+    cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
 
     run helm secrets enc "${FILE}"
     assert_success
-    assert_output --partial "Encrypting ${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
+    assert_output --partial "Encrypting ${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
     assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml to secrets.dec.yaml"
 
     run helm secrets view "${FILE}"
@@ -158,11 +158,11 @@ load '../bats/extensions/bats-file/load'
     export HELM_SECRETS_DEC_PREFIX
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
-    cp "${FILE}" "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
+    cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
 
     run helm secrets enc "${FILE}"
     assert_success
-    assert_output --partial "Encrypting ${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
+    assert_output --partial "Encrypting ${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
     assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
 
     run helm secrets view "${FILE}"

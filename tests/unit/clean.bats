@@ -44,11 +44,11 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert_file_exist "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
+    assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
 
     run helm secrets clean "$(dirname "${FILE}")"
-    assert_file_not_exist "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
-    assert_output --partial "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
+    assert_file_not_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
+    assert_output --partial "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_SUFFIX" {
@@ -78,11 +78,11 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets dec "${FILE}"
     assert_success
-    assert_file_exist "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
+    assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
 
     run helm secrets clean "$(dirname "${FILE}")"
-    assert_file_not_exist "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
-    assert_output --partial "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
+    assert_file_not_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
+    assert_output --partial "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
 }
 
 @test "clean: Cleanup with custom name" {

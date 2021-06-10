@@ -95,9 +95,9 @@ load '../bats/extensions/bats-file/load'
     run helm secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
-    assert_file_exist "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
-    assert_file_contains "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml" 'global_secret: '
-    assert_file_contains "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml" 'global_bar'
+    assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
+    assert_file_contains "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml" 'global_secret: '
+    assert_file_contains "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml" 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_SUFFIX" {
@@ -126,9 +126,9 @@ load '../bats/extensions/bats-file/load'
     run helm secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
-    assert_file_exist "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
-    assert_file_contains "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}" 'global_secret: '
-    assert_file_contains "${DIR}${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}" 'global_bar'
+    assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
+    assert_file_contains "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}" 'global_secret: '
+    assert_file_contains "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}" 'global_bar'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_DIR" {
