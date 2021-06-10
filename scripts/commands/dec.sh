@@ -8,8 +8,7 @@ helm secrets dec [ --driver <driver> | -d <driver> ] <path to file>
 
 Decrypt secrets
 
-It uses your gpg credentials to decrypt previously encrypted .yaml file.
-Produces ${DEC_SUFFIX} file.
+It uses your gpg credentials to decrypt previously encrypted values file.
 
 You can use plain sops to decrypt specific files - https://github.com/mozilla/sops
 

@@ -8,7 +8,7 @@ helm secrets clean <dir with secrets>
 
 Clean all decrypted files if any exist
 
-It removes all decrypted ${DEC_SUFFIX} files in the specified directory
+It removes all decrypted files in the specified directory
 (recursively) if they exist.
 
 EOF
@@ -26,5 +26,11 @@ clean() {
         error 'Directory does not exist: %s\n' "${basedir}"
     fi
 
-    find "$basedir" -type f -name "*${DEC_SUFFIX}" -exec rm -v {} \;
+    if [ "${DEC_SUFFIX}" != "" ]; then
+        find "$basedir" -type f -name "${DEC_PREFIX}*" -exec rm -v {} \;
+    fi
+
+    if [ "${DEC_SUFFIX}" != "" ]; then
+        find "$basedir" -type f -name "*${DEC_SUFFIX}" -exec rm -v {} \;
+    fi
 }

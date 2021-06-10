@@ -9,7 +9,7 @@ helm secrets enc [ --driver <driver> | -d <driver> ] <path to file>
 Encrypt secrets
 
 It uses your gpg credentials to encrypt .yaml file. If the file is already
-encrypted, look for a decrypted ${DEC_SUFFIX} file and encrypt that to .yaml.
+encrypted, look for a decrypted file and encrypt that to .yaml.
 This allows you to first decrypt the file, edit it, then encrypt it again.
 
 You can use plain sops to encrypt - https://github.com/mozilla/sops
