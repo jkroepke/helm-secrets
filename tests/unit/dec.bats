@@ -91,6 +91,8 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX="."
     export HELM_SECRETS_DEC_PREFIX
+    HELM_SECRETS_DEC_SUFFIX=""
+    export HELM_SECRETS_DEC_SUFFIX
 
     run helm secrets dec "${FILE}"
     assert_success
