@@ -106,7 +106,6 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    set -x
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
     DIR="$(dirname "${FILE}")"
 
@@ -115,9 +114,8 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DEC_SUFFIX=
     export HELM_SECRETS_DEC_SUFFIX
 
+    echo "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml" >&2
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
-
-    set +x
 
     run helm secrets enc "${FILE}"
     assert_success
