@@ -102,7 +102,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX" {
-    if ! is_driver "sops"; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 
@@ -117,7 +117,7 @@ load '../bats/extensions/bats-file/load'
     echo "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml" >&2
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
 
-    run HELM_SECRETS_DEC_SUFFIX="" helm secrets enc "${FILE}"
+    run helm secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml to secrets.dec.yaml"
@@ -151,7 +151,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX + HELM_SECRETS_DEC_SUFFIX" {
-    if ! is_driver "sops"; then
+    if ! is_driver "sops" || on_windows; then
         skip
     fi
 

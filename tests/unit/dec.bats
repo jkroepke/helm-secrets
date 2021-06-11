@@ -86,6 +86,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_PREFIX" {
+    if on_windows; then
+        skip
+    fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     DIR="$(dirname "${FILE}")"
 
