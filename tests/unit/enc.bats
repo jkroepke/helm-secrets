@@ -102,11 +102,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX" {
-    set -x
     if ! is_driver "sops"; then
         skip
     fi
 
+    set -x
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
     DIR="$(dirname "${FILE}")"
 
@@ -116,6 +116,8 @@ load '../bats/extensions/bats-file/load'
     export HELM_SECRETS_DEC_SUFFIX
 
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
+
+    set +x
 
     run helm secrets enc "${FILE}"
     assert_success
