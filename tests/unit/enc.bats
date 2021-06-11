@@ -102,6 +102,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX" {
+    set -x
     if ! is_driver "sops"; then
         skip
     fi
