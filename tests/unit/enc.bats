@@ -111,7 +111,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
-    HELM_SECRETS_DEC_SUFFIX=
+    HELM_SECRETS_DEC_SUFFIX=""
     export HELM_SECRETS_DEC_SUFFIX
 
     echo "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml" >&2

@@ -34,7 +34,7 @@ encrypt_helper() {
     fi
     file_dec="$(_file_dec_name "${file}")"
 
-    env | grep DEC_SUFFIX
+    env
     echo "$PWD"
     echo "${file_dec}"
     ls -lah "$PWD"
