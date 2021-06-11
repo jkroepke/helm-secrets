@@ -34,12 +34,12 @@ encrypt_helper() {
     fi
     file_dec="$(_file_dec_name "${file}")"
 
+    env | grep DEC_SUFFIX
     echo "$PWD"
     echo "${file_dec}"
     ls -lah "$PWD"
     ls -lah "$PWD/${file_dec}"
     ls -lah "${file_dec}"
-    env | grep DEC_SUFFIX
 
     if [ ! -f "${file_dec}" ]; then
         file_dec="${file}"
