@@ -48,7 +48,7 @@ _file_dec_name() {
 
     if [ "${DEC_DIR}" != "" ]; then
         printf '%s/%s%s%s' "${DEC_DIR}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
-    elif [ "${1}" = "${_basename}" ]; then
+    elif [ "${1}" != "${_basename}" ]; then
         printf '%s/%s%s%s' "$(dirname "${1}")" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
     else
         printf '%s%s%s' "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
