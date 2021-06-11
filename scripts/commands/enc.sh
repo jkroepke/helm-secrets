@@ -39,6 +39,7 @@ encrypt_helper() {
     ls -lah "$PWD"
     ls -lah "$PWD/${file_dec}"
     ls -lah "${file_dec}"
+    env | grep DEC_SUFFIX
 
     if [ ! -f "${file_dec}" ]; then
         file_dec="${file}"
