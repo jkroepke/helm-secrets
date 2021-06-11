@@ -35,7 +35,10 @@ encrypt_helper() {
     file_dec="$(_file_dec_name "${file}")"
 
     echo "$PWD"
+    echo "${file_dec}"
     ls -lah "$PWD"
+    ls -lah "$PWD/${file_dec}"
+    ls -lah "${file_dec}"
 
     if [ ! -f "${file_dec}" ]; then
         file_dec="${file}"
