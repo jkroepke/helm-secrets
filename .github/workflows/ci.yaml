@@ -121,13 +121,6 @@ jobs:
           gpg --version
           vault --version
 
-      - name: Print Environment
-        if: "contains(matrix.shell, 'cygwin')"
-        run: |-
-          TEST=
-          export TEST
-          bash -c "env | grep TEST"
-
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
