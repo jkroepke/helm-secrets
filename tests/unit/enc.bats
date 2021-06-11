@@ -117,7 +117,7 @@ load '../bats/extensions/bats-file/load'
     echo "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml" >&2
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
 
-    run helm secrets enc "${FILE}"
+    run HELM_SECRETS_DEC_SUFFIX="" helm secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml to secrets.dec.yaml"
