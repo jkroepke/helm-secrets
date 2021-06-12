@@ -9,13 +9,13 @@ load '../bats/extensions/bats-file/load'
 @test "template: helm template" {
     run helm secrets template
     assert_success
-    assert_output --partial 'helm secrets template'
+    assert_output --partial 'helm secrets [ OPTIONS ] template'
 }
 
 @test "template: helm template --help" {
     run helm secrets template --help
     assert_success
-    assert_output --partial 'helm secrets template'
+    assert_output --partial 'helm secrets [ OPTIONS ] template'
 }
 
 @test "template: helm template w/ chart" {

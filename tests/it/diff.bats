@@ -9,13 +9,13 @@ load '../bats/extensions/bats-file/load'
 @test "diff: helm install" {
     run helm secrets diff
     assert_success
-    assert_output --partial 'helm secrets diff'
+    assert_output --partial 'helm secrets [ OPTIONS ] diff'
 }
 
 @test "diff: helm diff upgrade --help" {
     run helm secrets diff --help
     assert_success
-    assert_output --partial 'helm secrets diff'
+    assert_output --partial 'helm secrets [ OPTIONS ] diff'
 }
 
 @test "diff: helm diff upgrade w/ chart" {

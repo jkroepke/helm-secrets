@@ -33,8 +33,10 @@ TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-"$(mktemp -d)"}"
 export TMPDIR
 mkdir -p "${TMPDIR}"
 
+OUTPUT_DECRYPTED_FILE_PATH="${HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH:-false}"
+
 # Output debug infos
-QUIET="${HELM_SECRETS_QUIET:-false}"
+QUIET="${HELM_SECRETS_QUIET:-"${OUTPUT_DECRYPTED_FILE_PATH}"}"
 
 # Define the secret driver engine
 SECRET_DRIVER="${HELM_SECRETS_DRIVER:-sops}"
@@ -142,6 +144,11 @@ while true; do
     --driver | -d)
         load_secret_driver "$2"
         shift
+        ;;
+    --output-decrypt-file-path)
+        # shellcheck disable=SC2034
+        OUTPUT_DECRYPTED_FILE_PATH=true
+        QUIET=true
         ;;
     --quiet | -q)
         # shellcheck disable=SC2034

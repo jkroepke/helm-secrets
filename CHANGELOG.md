@@ -11,6 +11,7 @@ Allow override sops version on installation
 ### Added
 - cygwin compatibility
 - `HELM_SECRETS_DEC_PREFIX` variable in addition to `HELM_SECRETS_DEC_SUFFIX`
+- New parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
 - version parameter
 
 ### Changes

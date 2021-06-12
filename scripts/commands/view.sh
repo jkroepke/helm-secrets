@@ -4,7 +4,7 @@ set -euf
 
 view_usage() {
     cat <<EOF
-helm secrets view [ --driver <driver> | -d <driver> ] <path to file>
+helm secrets [ OPTIONS ] view <path to file>
 
 View specified encrypted yaml file
 

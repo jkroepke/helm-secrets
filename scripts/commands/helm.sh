@@ -7,7 +7,7 @@ set -euf
 
 helm_command_usage() {
     cat <<EOF
-helm secrets $1 [ --driver <driver> | -d <driver> ] [ --quiet | -q ]
+helm secrets [ OPTIONS ] $1
 
 This is a wrapper for "helm [command]". It will detect -f and
 --values options, and decrypt any encrypted *.yaml files before running "helm
