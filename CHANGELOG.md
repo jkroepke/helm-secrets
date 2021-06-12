@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
-## [3.8.0] - 2021-05-22
+## [3.8.1] - 2021-06-12
+
+### Fixed
+- OUTPUT_DECRYPTED_FILE_PATH: parameter not set
+
+## [3.8.0] - 2021-06-12
 
 ### Added
 - New parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
@@ -143,7 +148,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.1...HEAD
+[3.8.1]: https://github.com/jkroepke/helm-secrets/compare/v3.8.1...v3.8.1
 [3.8.0]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...v3.8.0
 [3.7.0]: https://github.com/jkroepke/helm-secrets/compare/v3.6.1...v3.7.0
 [3.6.1]: https://github.com/jkroepke/helm-secrets/compare/v3.6.0...v3.6.1
