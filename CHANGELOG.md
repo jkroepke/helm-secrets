@@ -6,13 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
-## [Unreleased]
+## [3.8.0] - 2021-05-22
 
 ### Added
-- cygwin compatibility
-- `HELM_SECRETS_DEC_PREFIX` variable in addition to `HELM_SECRETS_DEC_SUFFIX`
 - New parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
-- version parameter
+- `HELM_SECRETS_DEC_PREFIX` variable in addition to `HELM_SECRETS_DEC_SUFFIX`
+- New parameter `--version`
+- cygwin compatibility
 
 ### Changes
 - `HELM_SECRETS_DEC_SUFFIX` has been changed from `.yaml.dec` to `.dec`. Additionally, while append the suffix, the file extension `.yaml` is not stripped anymore.
@@ -143,7 +143,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.0...HEAD
+[4.0.0]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...v3.8.0
 [3.7.0]: https://github.com/jkroepke/helm-secrets/compare/v3.6.1...v3.7.0
 [3.6.1]: https://github.com/jkroepke/helm-secrets/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/jkroepke/helm-secrets/compare/v3.5.0...v3.6.0
