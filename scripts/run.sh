@@ -133,6 +133,12 @@ while true; do
         help_usage
         break
         ;;
+    --version | -v | version)
+        # shellcheck source=scripts/commands/version.sh
+        . "${SCRIPT_DIR}/commands/version.sh"
+        version
+        break
+        ;;
     --driver | -d)
         load_secret_driver "$2"
         shift

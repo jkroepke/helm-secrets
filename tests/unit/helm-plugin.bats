@@ -22,3 +22,27 @@ load '../bats/extensions/bats-file/load'
     assert_success
     assert_output --partial 'Available Commands:'
 }
+
+@test "helm-plugin: helm secrets -v" {
+    VERSION=$(grep version "${GIT_ROOT}/plugin.yaml" | cut -d'"' -f2) >&2
+
+    run helm secrets -v
+    assert_success
+    assert_output "${VERSION}"
+}
+
+@test "helm-plugin: helm secrets --version" {
+    VERSION=$(grep version "${GIT_ROOT}/plugin.yaml" | cut -d'"' -f2) >&2
+
+    run helm secrets --version
+    assert_success
+    assert_output "${VERSION}"
+}
+
+@test "helm-plugin: helm secrets version" {
+    VERSION=$(grep version "${GIT_ROOT}/plugin.yaml" | cut -d'"' -f2) >&2
+
+    run helm secrets version
+    assert_success
+    assert_output "${VERSION}"
+}

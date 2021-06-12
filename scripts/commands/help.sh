@@ -29,5 +29,6 @@ Available Options:
   --driver      -d  Secret driver to use for decryption or encryption (env: $HELM_SECRETS_DRIVER)
   --driver-args -a  Additional args for secret driver (env: $HELM_SECRETS_DRIVER_ARGS)
   --help        -h  Show help
+  --version     -v  Display version of helm-secrets
 EOF
 }
