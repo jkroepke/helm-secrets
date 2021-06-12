@@ -10,6 +10,11 @@ Allow override sops version on installation
 
 ### Added
 - cygwin compatibility
+- `HELM_SECRETS_DEC_PREFIX` variable in addition to `HELM_SECRETS_DEC_SUFFIX`
+
+### Changes
+- `HELM_SECRETS_DEC_SUFFIX` has been changed from `.yaml.dec` to `.dec`. Additionally, while append the suffix, the file extension `.yaml` is not stripped anymore.
+- The detection of encrypted sops files has been changed. Instead, looking for `sops:` and `version:`, the string `unencrypted_suffix` is used now.
 
 ## [3.7.0] - 2021-05-22
 
@@ -136,7 +141,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.6.1...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...HEAD
+[3.7.0]: https://github.com/jkroepke/helm-secrets/compare/v3.6.1...v3.7.0
 [3.6.1]: https://github.com/jkroepke/helm-secrets/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/jkroepke/helm-secrets/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/jkroepke/helm-secrets/compare/v3.4.2...v3.5.0
