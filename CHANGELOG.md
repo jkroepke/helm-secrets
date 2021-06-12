@@ -11,6 +11,7 @@ Allow override sops version on installation
 ### Added
 - cygwin compatibility
 - `HELM_SECRETS_DEC_PREFIX` variable in addition to `HELM_SECRETS_DEC_SUFFIX`
+- version parameter
 
 ### Changes
 - `HELM_SECRETS_DEC_SUFFIX` has been changed from `.yaml.dec` to `.dec`. Additionally, while append the suffix, the file extension `.yaml` is not stripped anymore.
