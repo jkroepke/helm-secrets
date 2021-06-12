@@ -144,7 +144,7 @@ Started a fork of https://github.com/zendesk/helm-secrets
 
 
 [Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.0...HEAD
-[4.0.0]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...v3.8.0
+[3.8.0]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...v3.8.0
 [3.7.0]: https://github.com/jkroepke/helm-secrets/compare/v3.6.1...v3.7.0
 [3.6.1]: https://github.com/jkroepke/helm-secrets/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/jkroepke/helm-secrets/compare/v3.5.0...v3.6.0
