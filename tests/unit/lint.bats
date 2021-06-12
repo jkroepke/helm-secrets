@@ -9,13 +9,13 @@ load '../bats/extensions/bats-file/load'
 @test "lint: helm lint" {
     run helm secrets lint
     assert_success
-    assert_output --partial 'helm secrets lint'
+    assert_output --partial 'helm secrets [ OPTIONS ] lint'
 }
 
 @test "lint: helm lint --help" {
     run helm secrets lint --help
     assert_success
-    assert_output --partial 'helm secrets lint'
+    assert_output --partial 'helm secrets [ OPTIONS ] lint'
 }
 
 @test "lint: helm lint w/ chart" {

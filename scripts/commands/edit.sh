@@ -4,7 +4,7 @@ set -euf
 
 edit_usage() {
     cat <<EOF
-helm secrets edit [ --driver <driver> | -d <driver> ] <path to file>
+helm secrets [ OPTIONS ] edit <path to file>
 
 Edit encrypted secrets
 

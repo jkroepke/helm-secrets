@@ -4,7 +4,7 @@ set -euf
 
 enc_usage() {
     cat <<EOF
-helm secrets enc [ --driver <driver> | -d <driver> ] <path to file>
+helm secrets [ OPTIONS ] enc <path to file>
 
 Encrypt secrets
 

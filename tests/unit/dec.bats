@@ -34,6 +34,56 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${FILE}.dec" 'global_bar'
 }
 
+@test "dec: Decrypt secrets.yaml + quiet flag" {
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets --quiet dec "${FILE}"
+    assert_success
+    refute_output "[helm-secrets] Decrypting ${FILE}"
+    assert_file_exist "${FILE}.dec"
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_bar'
+}
+
+@test "dec: Decrypt secrets.yaml + HELM_SECRETS_QUIET" {
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    HELM_SECRETS_QUIET=true
+    export HELM_SECRETS_QUIET
+
+    run helm secrets dec "${FILE}"
+    assert_success
+    refute_output "[helm-secrets] Decrypting ${FILE}"
+    assert_file_exist "${FILE}.dec"
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_bar'
+}
+
+@test "dec: Decrypt secrets.yaml + --output-decrypt-file-path" {
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    run helm secrets --output-decrypt-file-path dec "${FILE}"
+    assert_success
+    assert_output "${FILE}.dec"
+    assert_file_exist "${FILE}.dec"
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_bar'
+}
+
+@test "dec: Decrypt secrets.yaml + HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH" {
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH=true
+    export HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH
+
+    run helm secrets dec "${FILE}"
+    assert_success
+    assert_output "${FILE}.dec"
+    assert_file_exist "${FILE}.dec"
+    assert_file_contains "${FILE}.dec" 'global_secret: '
+    assert_file_contains "${FILE}.dec" 'global_bar'
+}
+
 @test "dec: Decrypt secrets.yaml.gotpl" {
     if ! is_driver "sops"; then
         skip

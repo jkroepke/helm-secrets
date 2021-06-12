@@ -9,13 +9,13 @@ load '../bats/extensions/bats-file/load'
 @test "upgrade: helm upgrade" {
     run helm secrets upgrade
     assert_success
-    assert_output --partial 'helm secrets upgrade'
+    assert_output --partial 'helm secrets [ OPTIONS ] upgrade'
 }
 
 @test "upgrade: helm upgrade --help" {
     run helm secrets upgrade --help
     assert_success
-    assert_output --partial 'helm secrets upgrade'
+    assert_output --partial 'helm secrets [ OPTIONS ] upgrade'
 }
 
 @test "upgrade: helm upgrade w/ chart" {

@@ -25,10 +25,11 @@ Available Commands:
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
 Available Options:
-  --quiet       -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
-  --driver      -d  Secret driver to use for decryption or encryption (env: $HELM_SECRETS_DRIVER)
-  --driver-args -a  Additional args for secret driver (env: $HELM_SECRETS_DRIVER_ARGS)
-  --help        -h  Show help
-  --version     -v  Display version of helm-secrets
+  --quiet                    -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
+  --driver                   -d  Secret driver to use for decryption or encryption (env: $HELM_SECRETS_DRIVER)
+  --driver-args              -a  Additional args for secret driver (env: $HELM_SECRETS_DRIVER_ARGS)
+  --help                     -h  Show help
+  --version                  -v  Display version of helm-secrets
+  --output-decrypt-file-path     Output the path of decrypted file
 EOF
 }
