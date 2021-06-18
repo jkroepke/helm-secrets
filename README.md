@@ -50,6 +50,8 @@ brew install sops
 
 Download: https://github.com/mozilla/sops/releases/latest
 
+sops 3.2.0 is required at minimum.
+
 ### Hashicorp Vault
 
 If you use Vault with helm-secrets, the vault CLI tool is needed.
