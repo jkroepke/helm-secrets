@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
+## [3.8.2] - 2021-07-14
+
+### Fixed
+- Decrypt partially encrypted sops files correctly
+
 ## [3.8.1] - 2021-06-12
 
 ### Fixed
@@ -148,8 +153,9 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.1...HEAD
-[3.8.1]: https://github.com/jkroepke/helm-secrets/compare/v3.8.1...v3.8.1
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.2...HEAD
+[3.8.2]: https://github.com/jkroepke/helm-secrets/compare/v3.8.1...v3.8.2
+[3.8.1]: https://github.com/jkroepke/helm-secrets/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...v3.8.0
 [3.7.0]: https://github.com/jkroepke/helm-secrets/compare/v3.6.1...v3.7.0
 [3.6.1]: https://github.com/jkroepke/helm-secrets/compare/v3.6.0...v3.6.1
