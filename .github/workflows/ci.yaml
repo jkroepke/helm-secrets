@@ -217,7 +217,7 @@ jobs:
           BATSLIB_TEMP_PRESERVE: "0"
           BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
 
-      - uses: codecov/codecov-action@v1.5.2
+      - uses: codecov/codecov-action@v2.0.2
         with:
           directory: coverage
           fail_ci_if_error: true
