@@ -43,7 +43,7 @@ driver_decrypt_file() {
         fi
 
         # generate yaml anchor name
-        YAML_ANCHOR=$(printf 'helm-secret-%s' "${_SECRET}" | tr '#$/' '_')
+        YAML_ANCHOR=$(printf 'helm-secret-%s' "${_SECRET}" | tr '#$/*.' '_')
 
         # Replace vault expression with yaml anchor
         EXPRESSION="$(echo "${EXPRESSION}" | _regex_escape)"
