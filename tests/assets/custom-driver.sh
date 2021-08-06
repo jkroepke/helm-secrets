@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # shellcheck disable=SC2034
-_DRIVER_REGEX='!vault [A-z0-9][A-z0-9/\-]*\#[A-z0-9][A-z0-9-]*'
+_DRIVER_REGEX='!vault [A-z0-9][A-z0-9/*\.\_\-]*\#[A-z0-9*\.\_\-][A-z0-9*\.\_\-]*'
 
 . "${HELM_SECRETS_SCRIPT_DIR}/drivers/_custom.sh"
 
