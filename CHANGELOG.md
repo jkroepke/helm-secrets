@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
+## [3.8.3] - 2021-08-06
+
+### Changes
+- Allow dot, asterisk and underscore for vault path
+
 ## [3.8.2] - 2021-07-14
 
 ### Fixed
@@ -153,7 +158,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.2...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.8.3...HEAD
+[3.8.3]: https://github.com/jkroepke/helm-secrets/compare/v3.8.2...v3.8.3
 [3.8.2]: https://github.com/jkroepke/helm-secrets/compare/v3.8.1...v3.8.2
 [3.8.1]: https://github.com/jkroepke/helm-secrets/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/jkroepke/helm-secrets/compare/v3.7.0...v3.8.0
