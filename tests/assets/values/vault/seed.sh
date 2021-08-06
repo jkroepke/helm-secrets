@@ -1,9 +1,7 @@
 #!/usr/bin/env sh
 
 vault kv put secret/production global_secret=global_bar port=81 port2=83
-vault kv put secret/domain tls.crt=tls.value
-vault kv put secret/domain *.test-example.com=key1
-vault kv put secret/domain example_com=key1
+vault kv put secret/domain tls.crt=tls.value *.test-example.com=key1 example_com=key1
 vault kv put secret/*.test-example.com tls.key=key2
 vault kv put secret/example_com tls-2.key=key2
 
