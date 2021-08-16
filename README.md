@@ -8,14 +8,6 @@
 
 # helm-secrets
 
-## Is this a fork of _futuresimple/helm-secrets_ or _zendesk/helm-secrets_?
-
-Yes. This repository is a fork of [zendesk/helm-secrets](https://github.com/zendesk/helm-secrets) (base commit [edffea3c94c9ed70891f838b3d881d3578f2599f](https://github.com/jkroepke/helm-secrets/commit/edffea3c94c9ed70891f838b3d881d3578f2599f)).
-
-This original helm-secrets project has been [abandoned](https://github.com/zendesk/helm-secrets/issues/100) and officially [deprecated](https://github.com/zendesk/helm-secrets/pull/168). I have decided to maintain this for as I use this projects on my customer projects, and I also want to learn how unit tests for a shell language works.
-
-This project is officially listed as a [community project](https://helm.sh/docs/community/related/) in the Helm documentation.
-
 ## Usage
 
 ### Decrypt secrets via plugin command
