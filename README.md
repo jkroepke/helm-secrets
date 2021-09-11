@@ -221,6 +221,8 @@ An additional documentation, resources and examples can be found [here](USAGE.md
 
 helm-secrets could detect an ArgoCD environment by the `ARGOCD_APP_NAME` environment variable. If detected, `HELM_SECRETS_QUIET` is set to `true`.
 
+See [USAGE.md](./USAGE.md#argo-cd-integration) for example.
+
 ### Terraform support
 
 The terraform helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
