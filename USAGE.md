@@ -153,20 +153,20 @@ As we use simple -f option when running the helm wrapper we can just use encrypt
 
 `.sops.yaml` file example
 
-```
+```yaml
 ---
 creation_rules:
- Encrypt with AWS KMS
+# Encrypt with AWS KMS
 - kms: 'arn:aws:kms:us-east-1:222222222222:key/111b1c11-1c11-1fd1-aa11-a1c1a1sa1dsl1+arn:aws:iam::222222222222:role/helm_secrets'
 
- Encrypt using GCP KMS
+# Encrypt using GCP KMS
 - gcp_kms: projects/mygcproject/locations/global/keyRings/mykeyring/cryptoKeys/thekey
 
- As failover encrypt with PGP (obtan via gpg --list-secret-keys)
+# As failover encrypt with PGP (obtan via gpg --list-secret-keys)
 - pgp: '000111122223333444AAAADDDDFFFFGGGG000999'
 
- For more help look at https://github.com/mozilla/sops
 ```
+For more help look at https://github.com/mozilla/sops
 
 Multiple KMS and PGP are allowed.
 
@@ -309,6 +309,44 @@ helm upgrade . -f secrets://localfile.yaml
 helm upgrade . -f secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main
 ```
 
+# Argo CD Integration
+
+Integrating `helm-secrets` with Argo CD can be achieved by building a custom Argo CD server image.
+
+Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` into the Argo CD image:
+```Dockerfile
+ARG ARGOCD_VERSION="v2.1.2"
+FROM argoproj/argocd:$ARGOCD_VERSION
+ARG SOPS_VERSION="3.7.1"
+ARG HELM_SECRETS_VERSION="3.8.3"
+
+USER root
+RUN apt-get update && \
+    apt-get install -y \
+      curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN curl -fSSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
+    -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
+
+USER argocd
+ENV HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/"
+RUN helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkroepke/helm-secrets
+```
+
+Make sure to specify your custom image when deploying Argo CD. Then, when deploying an Argo CD application, encrypted values files can be specified using the downloader plugin syntax:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+...
+spec:
+  source:
+    helm:
+      valueFiles:
+        - path/to/values.yaml
+        - secrets://path/to/secrets.yaml
+``` 
 # Important Tips
 
 ## Prevent committing decrypted files to git
