@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-_SOPS="${HELM_SECRETS_SOPS_BIN:-sops}"
+_SOPS="${HELM_SECRETS_SOPS_PATH:-${HELM_SECRETS_SOPS_BIN:-sops}}"
 
 _sops() {
     # shellcheck disable=SC2086
