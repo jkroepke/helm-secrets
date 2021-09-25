@@ -18,10 +18,11 @@ _custom_driver_get_secret() {
 
     # Tokenize
     IFS="#"
+    # shellcheck disable=SC2086
     set -- $_SECRET
     project=$1
     config=$2
     secret=$3
 
-    _doppler secrets get -p ${project} -c ${config} ${secret} --plain || exit 1
+    _doppler secrets get -p "${project}" -c "${config}" "${secret}" --plain || exit 1
 }
