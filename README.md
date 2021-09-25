@@ -64,6 +64,17 @@ If you have stored you secret inside environment variables, you could use the en
 brew install gettext
 ```
 
+### Doppler
+
+If you use [Doppler](https://doppler.com) with helm-secrets, the doppler CLI tool is needed.
+
+
+```bash
+brew install dopplerhq/cli/doppler
+```
+
+You need to make sure chart folder or parent one is in correct CLI's scope with enough access to project.
+
 ### SOPS git diff
 
 Git config part is installed with the plugin, but to be fully functional the following needs to be added to the `.gitattributes` file in the root directory of a charts repo:
