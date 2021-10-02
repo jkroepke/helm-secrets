@@ -91,6 +91,10 @@ setup() {
 
     GIT_ROOT="$(git rev-parse --show-toplevel)"
     TEST_DIR="${GIT_ROOT}/tests"
+
+    # shellcheck disable=SC2164
+    cd "${TEST_DIR}"
+
     HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 
     CACHE_DIR="${TEST_DIR}/.tmp/cache"

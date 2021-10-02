@@ -22,6 +22,24 @@ create_encrypted_file() {
             printf '%s: !vault secret/%s#key' "$(echo "$1" | cut -d: -f1)" "${secret_key}" >"${TEST_TEMP_DIR}/${file}"
             printf '%s' "${secret_content}" | vault kv put "secret/${secret_key}" key=-
             ;;
+        vals)
+            # shellcheck disable=SC2059
+            printf "$1" > "${TEST_TEMP_DIR}/vals.${file}"
+            cat "${TEST_TEMP_DIR}/vals.${file}"
+
+            yaml_key="$(echo "$1" | cut -d: -f1)"
+
+            # Check for multiline
+            if echo "$1" | grep -q ': |'; then
+                # shellcheck disable=SC2059
+                secret_content="$(printf "$1" | tail -n +2 | sed -e 's/^  //g')"
+            else
+                # shellcheck disable=SC2059
+                secret_content="$(printf "$1" | cut -d: -f2 | tr -d ' ')"
+            fi
+
+            printf '%s: ref+file://%s#%s' "${yaml_key}" "${TEST_TEMP_DIR}/vals.${file}" "${yaml_key}" >"${TEST_TEMP_DIR}/${file}"
+            ;;
         envsubst)
             # Check for multiline
             if echo "$1" | grep -q ': |'; then
@@ -44,6 +62,7 @@ create_encrypted_file() {
             ;;
         *)
             echo "Unknown driver ${HELM_SECRETS_DRIVER}"
+            exit 1
             ;;
         esac
     } >&2

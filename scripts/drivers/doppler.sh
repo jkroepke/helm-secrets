@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+_DOPPLER="${HELM_SECRETS_VAULT_PATH:-doppler}"
+
 # shellcheck disable=SC2034
 _DRIVER_REGEX='!doppler [a-z0-9_-]*\#.*\#[A-Z0-9_]*'
 
@@ -9,11 +11,10 @@ _DRIVER_REGEX='!doppler [a-z0-9_-]*\#.*\#[A-Z0-9_]*'
 _doppler() {
     # shellcheck disable=SC2086
     set -- ${SECRET_DRIVER_ARGS} "$@"
-    doppler "$@"
+    $_DOPPLER "$@"
 }
 
 _custom_driver_get_secret() {
-    _type=$1
     _SECRET=$2
 
     # Tokenize

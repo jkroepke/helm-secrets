@@ -44,6 +44,26 @@ Download: https://github.com/mozilla/sops/releases/latest
 
 sops 3.2.0 is required at minimum.
 
+### vals
+
+[vals](https://github.com/variantdev/vals) is a tool for managing configuration values and secrets form various sources.
+
+It supports various backends including:
+
+* [Vault](https://github.com/variantdev/vals#vault)
+* [AWS SSM Parameter Store](https://github.com/variantdev/vals#aws-ssm-parameter-store)
+* [AWS Secrets Manager](https://github.com/variantdev/vals#aws-secrets-manager)
+* [AWS S3](https://github.com/variantdev/vals#aws-s3)
+* [GCP Secrets Manager](https://github.com/variantdev/vals#gcp-secrets-manager)
+* [Azure Key Vault](https://github.com/variantdev/vals#azure-key-vault)
+* [SOPS-encrypted files](https://github.com/variantdev/vals#sops)
+* [Terraform State](https://github.com/variantdev/vals#terraform-tfstate)
+* [Plain File](https://github.com/variantdev/vals#file)
+
+All clients are integrated into vals, no additional tools required.
+
+Download: https://github.com/variantdev/vals/releases/latest
+
 ### Hashicorp Vault
 
 If you use Vault with helm-secrets, the vault CLI tool is needed.
@@ -149,12 +169,13 @@ Workaround:
 
 Client [here](https://github.com/adorsys-containers/ci-helm/blob/f9a8a5bf8953ab876266ca39ccbdb49228e9f117/images/2.17/Dockerfile#L91) for an example!
 
-## Explicitly specify sops binary
-If sops is installed at the non-default location or if you have multiple versions of sops on your system, you can use `HELM_SECRETS_SOPS_PATH` to explicitly specify the sops binary to be used.
+## Explicitly specify binary path
+If sops is installed at the non-default location or if you have multiple versions of sops on your system, you can use `HELM_SECRETS_$DRIVER_PATH` to explicitly specify the sops binary to be used.
 
 ```bash
 # Example for in-tree drivers via environment variable
 HELM_SECRETS_SOPS_PATH=/custom/location/sops helm secrets view ./tests/assets/helm_vars/secrets.yaml
+HELM_SECRETS_VALS_PATH=/custom/location/vals helm secrets view ./tests/assets/helm_vars/secrets.yaml
 ```
 
 ## Change secret driver
