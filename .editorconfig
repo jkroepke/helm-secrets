@@ -16,5 +16,8 @@ trim_trailing_whitespace = true
 [*.sh]
 shell_variant = posix
 
+[*.yaml]
+indent_size = 2
+
 [*.{bash,bats}]
 shell_variant = bash

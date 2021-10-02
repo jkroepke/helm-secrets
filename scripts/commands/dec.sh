@@ -29,6 +29,7 @@ decrypt_helper() {
     encrypted_file_dec="$(_file_dec_name "${encrypted_file_path}")"
 
     if ! driver_decrypt_file "yaml" "${encrypted_file_path}" "${encrypted_file_dec}"; then
+        rm -rf "${encrypted_file_dec}"
         error '[helm-secrets] Error while decrypting file: %s\n' "${file}"
     fi
 }

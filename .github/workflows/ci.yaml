@@ -4,6 +4,7 @@ name: CI
 env:
   VERSION_HELM: v3.6.0
   VERSION_SOPS: v3.7.1
+  VERSION_VALS: v0.14.0
 
 on:
   pull_request:
@@ -100,6 +101,12 @@ jobs:
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1.0.3
 
+      - name: Setup vals
+        uses: jkroepke/setup-vals@v1
+        if: "!contains(matrix.os, 'windows-latest')"
+        with:
+          version: ${{ env.VERSION_VALS }}
+
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
         uses: egor-tensin/setup-cygwin@v3
@@ -142,6 +149,12 @@ jobs:
         env:
           HELM_SECRETS_DRIVER: envsubst
 
+      - name: HELM_SECRETS_DRIVER=vals bats --tap -r tests/unit
+        if: "!contains(matrix.os, 'windows-latest')"
+        run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: vals
+
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit (on windows)
         if: "contains(matrix.os, 'windows-latest')"
         run: |
@@ -172,6 +185,11 @@ jobs:
         uses: mdgreenwald/mozilla-sops-action@v1
         with:
           version: ${{ env.VERSION_SOPS }}
+
+      - name: Setup vals
+        uses: jkroepke/setup-vals@v1
+        with:
+          version: ${{ env.VERSION_VALS }}
 
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1.0.3
@@ -208,12 +226,18 @@ jobs:
           BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
 
       - name: bashcov bats --tap -r tests/unit
-        run: |
-          vault server -dev -dev-root-token-id=test &>/dev/null &
-          bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
+        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: envsubst
           BASHCOV_COMMAND_NAME: helm-secrets envsubst
+          BATSLIB_TEMP_PRESERVE: "0"
+          BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
+
+      - name: bashcov bats --tap -r tests/unit
+        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_DRIVER: vals
+          BASHCOV_COMMAND_NAME: helm-secrets vals
           BATSLIB_TEMP_PRESERVE: "0"
           BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
 
@@ -246,6 +270,11 @@ jobs:
         uses: mdgreenwald/mozilla-sops-action@v1
         with:
           version: ${{ env.VERSION_SOPS }}
+
+      - name: Setup vals
+        uses: jkroepke/setup-vals@v1
+        with:
+          version: ${{ env.VERSION_VALS }}
 
       - name: Setup Vault
         uses: innovationnorway/setup-vault@v1.0.3

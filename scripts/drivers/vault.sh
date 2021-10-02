@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+_VAULT="${HELM_SECRETS_VAULT_PATH:-vault}"
+
 # shellcheck disable=SC2034
 _DRIVER_REGEX='!vault [A-z0-9][A-z0-9/*\.\_\-]*\#[A-z0-9*\.\_\-][A-z0-9*\.\_\-]*'
 
@@ -9,7 +11,7 @@ _DRIVER_REGEX='!vault [A-z0-9][A-z0-9/*\.\_\-]*\#[A-z0-9*\.\_\-][A-z0-9*\.\_\-]*
 _vault() {
     # shellcheck disable=SC2086
     set -- ${SECRET_DRIVER_ARGS} "$@"
-    vault "$@"
+    $_VAULT "$@"
 }
 
 _custom_driver_get_secret() {
