@@ -15,3 +15,4 @@ downloaders:
       - "sops"
       - "secret"
       - "secrets"
+      - "gpg-import+secrets"
