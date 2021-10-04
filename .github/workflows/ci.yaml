@@ -75,7 +75,7 @@ jobs:
             fi
             yum install -y git-core unzip gettext
           elif command -v microdnf > /dev/null; then
-            microdnf install --nodocs --noplugins git-core unzip gettext tar
+            microdnf install --nodocs --noplugins git-core unzip gettext tar findutils
           fi
 
       - name: Install zsh
