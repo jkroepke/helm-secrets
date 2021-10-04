@@ -1,5 +1,7 @@
 # Argo CD Integration
 
+_Available since helm-secrets 3.9.0_
+
 When deploying an Argo CD application, encrypted values files can be specified using the downloader plugin syntax:
 
 ```yaml
