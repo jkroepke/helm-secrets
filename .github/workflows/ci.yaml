@@ -73,7 +73,6 @@ jobs:
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
               rpm --import https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg
             fi
-          fi
           elif command -v microdnf > /dev/null; then
             microdnf install --nodocs --noplugins git-core unzip gettext
           fi

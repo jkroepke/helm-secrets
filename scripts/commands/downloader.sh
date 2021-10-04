@@ -12,7 +12,7 @@ _trap_hook() {
             case $(gpgconf --help 2>&1) in
             *--kill*)
                 gpgconf --kill gpg-agent
-            ;;
+                ;;
             esac
         fi
     fi
