@@ -5,14 +5,6 @@ set -euf
 # shellcheck source=scripts/commands/view.sh
 . "${SCRIPT_DIR}/commands/view.sh"
 
-_trap_hook() {
-    if [ -n "${_GNUPGHOME+x}" ]; then
-        if [ -f "${_GNUPGHOME}/.helm-secrets" ]; then
-            gpgconf --kill gpg-agent
-        fi
-    fi
-}
-
 downloader() {
     # https://helm.sh/docs/topics/plugins/#downloader-plugins
     # It's always the 4th parameter
