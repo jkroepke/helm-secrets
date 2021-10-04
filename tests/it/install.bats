@@ -326,7 +326,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
 }
 
-@test "install: helm install w/ chart + secrets.gpg_key.yaml + gpg-import+secrets://" {
+@test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://" {
     if on_windows || ! is_driver "sops"; then
         skip
     fi
@@ -336,7 +336,49 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "gpg-import+secrets://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 91"
+}
+
+@test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://name#key" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+    kubectl create secret generic gpg-key --from-file=private2.gpg="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" >&2
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://gpg-key#private2.gpg?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 91"
+}
+
+@test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/name#key" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+    kubectl -n kube-system create secret generic gpg-key --from-file=private3.gpg="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" >&2
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]

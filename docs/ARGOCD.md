@@ -13,7 +13,7 @@ spec:
     helm:
       valueFiles:
         - path/to/values.yaml
-        - gpg-import+secrets:///gpg-private-keys/app.asc?path/to/secrets.yaml
+        - secrets+gpg-import:///gpg-private-keys/app.asc?path/to/secrets.yaml
 ``` 
 
 ### External Chart and local values
@@ -30,6 +30,7 @@ ARG ARGOCD_VERSION="v2.1.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.1"
 ARG HELM_SECRETS_VERSION="3.9.0"
+ARG KUBECTL_VERSION="1.22.0"
 
 USER root
 RUN apt-get update && \
@@ -39,6 +40,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN curl -fSSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
+RUN curl -fSSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
+    -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 USER argocd
 ENV HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/"
@@ -60,6 +63,8 @@ repoServer:
       value: /custom-tools/helm-plugins/
     - name: HELM_SECRETS_SOPS_PATH
       value: /custom-tools/sops
+    - name: HELM_SECRETS_KUBECTL_PATH
+      value: /custom-tools/kubectl
   volumes:
     - name: custom-tools
       emptyDir: {}
@@ -72,16 +77,21 @@ repoServer:
       image: alpine:latest
       command: [sh, -ec]
       env:
-        - name: SOPS_VERSION
-          value: "3.7.1"
         - name: HELM_SECRETS_VERSION
           value: "3.9.0"
+        - name: SOPS_VERSION
+          value: "3.7.1"
+        - name: KUBECTL_VERSION
+          value: "1.22.0"
       args:
         - |
-          wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
-          chmod +x /custom-tools/sops
           mkdir -p /custom-tools/helm-plugins
           wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf-;
+
+          wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
+          wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+
+          chmod +x /custom-tools/*
       volumeMounts:
         - mountPath: /custom-tools
           name: custom-tools

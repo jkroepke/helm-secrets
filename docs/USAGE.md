@@ -312,14 +312,24 @@ helm upgrade . -f 'secrets://git+https://github.com/jkroepke/helm-secrets@tests/
 To assist the CD pipeline in certain situations (e.g. ArgoCD), helm-secret can load the gpg key from disk into a temporary gpg agent.
 
 ```bash
-helm upgrade . -f 'gpg-import+secrets://<uri to gpg key>?<uri to file>'
+helm upgrade . -f 'secrets+gpg-import://<uri to gpg key>?<uri to file>'
 ```
 Example:
 
 ```bash
-helm upgrade . -f 'gpg-import+secrets://tests/assets/gpg/private.gpg?examples/sops/secrets.yaml'
+helm upgrade . -f 'secrets+gpg-import://tests/assets/gpg/private.gpg?examples/sops/secrets.yaml'
 ```
 
+Support kubernetes secrets as source is possible, too:
+
+```bash
+helm upgrade . -f 'secrets+gpg-import-kubernetes://[<namespace>]/<name>#<key>?<uri to file>'
+```
+Example:
+
+```bash
+helm upgrade . -f 'secrets+gpg-import-kubernetes://default/gpg-key#examples/sops/secrets.yaml'
+```
 
 # Important Tips
 
