@@ -200,7 +200,7 @@ load '../bats/extensions/bats-file/load'
     run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
-    assert_output --partial "Error: YAML parse error on"
+    assert_output --partial "YAML parse error on"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert [ ! -f "${FILE}.dec" ]
 }
