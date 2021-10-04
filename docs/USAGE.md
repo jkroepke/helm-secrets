@@ -258,7 +258,7 @@ removed helm_vars/secrets.yaml.dec
 We just need to create Kubernetes secrets template in chart templates dir.
 For example in your charts repo you have `stable/helloworld/`. Inside this chart you should have `stable/helloworld/templates/` dir and then create the `stable/helloworld/templates/secrets.yaml` file with content as specified bellow.
 
-```
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -277,7 +277,7 @@ In this example you have a Kubernetes secret named "helloworld" and data inside 
 
 You can now use the "helloworld" secret in your deployment manifest (or any other manifest supporting secretKeyRef) in the env section like this:
 
-```
+```yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 ...
@@ -297,56 +297,30 @@ kind: Deployment
 
 Helm supports [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins) for value files, too.
 
-```
-helm upgrade . -f secrets://<uri to file>
-helm upgrade . -f secret://<uri to file>
-helm upgrade . -f sops://<uri to file>
+```bash
+helm upgrade . -f 'secrets://<uri to file>'
 ```
 
 Example:
-```
-helm upgrade . -f secrets://localfile.yaml
-helm upgrade . -f secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main
-```
-
-# Argo CD Integration
-
-Integrating `helm-secrets` with Argo CD can be achieved by building a custom Argo CD server image.
-
-Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` into the Argo CD image:
-```Dockerfile
-ARG ARGOCD_VERSION="v2.1.2"
-FROM argoproj/argocd:$ARGOCD_VERSION
-ARG SOPS_VERSION="3.7.1"
-ARG HELM_SECRETS_VERSION="3.8.3"
-
-USER root
-RUN apt-get update && \
-    apt-get install -y \
-      curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN curl -fSSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
-    -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
-
-USER argocd
-ENV HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/"
-RUN helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkroepke/helm-secrets
+```bash
+helm upgrade . -f 'secrets://localfile.yaml'
+helm upgrade . -f 'secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main'
 ```
 
-Make sure to specify your custom image when deploying Argo CD. Then, when deploying an Argo CD application, encrypted values files can be specified using the downloader plugin syntax:
+### Load a gpg key on-demand
 
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-...
-spec:
-  source:
-    helm:
-      valueFiles:
-        - path/to/values.yaml
-        - secrets://path/to/secrets.yaml
-``` 
+To assist the CD pipeline in certain situations (e.g. ArgoCD), helm-secret can load the gpg key from disk into a temporary gpg agent.
+
+```bash
+helm upgrade . -f 'gpg-import+secrets://<uri to gpg key>?<uri to file>'
+```
+Example:
+
+```bash
+helm upgrade . -f 'gpg-import+secrets://tests/assets/gpg/private.gpg?examples/sops/secrets.yaml'
+```
+
+
 # Important Tips
 
 ## Prevent committing decrypted files to git
@@ -372,7 +346,7 @@ done
 exit
 ```
 
-Additionally you could create a `.gitignore` to exclude decrypted files from checkin:
+Additionally, you could create a `.gitignore` to exclude decrypted files from checkin:
 
 ```gitignore
 *.yaml.dec

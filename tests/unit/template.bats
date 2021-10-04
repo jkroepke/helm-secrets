@@ -369,6 +369,34 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
 }
 
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + gpg-import+secrets://" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "gpg-import+secrets://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 91"
+}
+
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + gpg-import+secrets://git://" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml?ref=main"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "gpg-import+secrets://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 91"
+}
+
 @test "template: helm template w/ chart + --driver-args (simple)" {
     if ! is_driver "sops"; then
         skip

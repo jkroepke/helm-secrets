@@ -26,7 +26,11 @@ Run decrypted command on specific value files.
 helm upgrade name . -f secrets://secrets.yaml
 ```
 
-See: [USAGE.md](USAGE.md) for more information
+See: [docs/USAGE.md](docs/USAGE.md) for more information
+
+### ArgoCD
+
+For running helm-secrets with ArgoCD, see [docs/ARGOCD.md](docs/ARGOCD.md) for more information.
 
 ## Installation and Dependencies
 
