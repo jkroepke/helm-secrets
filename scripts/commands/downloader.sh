@@ -17,10 +17,10 @@ downloader() {
         _gpg_key=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
         _gpg_init "${_gpg_key}"
-    ;;
+        ;;
     *)
         file=$(printf '%s' "${4}" | sed -E -e 's!(sops|secrets?)://!!')
-    ;;
+        ;;
     esac
 
     view_helper "${file}"
