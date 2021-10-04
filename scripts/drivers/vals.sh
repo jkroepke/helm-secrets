@@ -9,7 +9,6 @@ _vals() {
     # In case of an error, give us stderr
     # https://github.com/variantdev/vals/issues/60
     if ! $_VALS "$@" 2>/dev/null; then
-        # shellcheck disable=SC2069
         $_VALS "$@" >/dev/null
     fi
 }
