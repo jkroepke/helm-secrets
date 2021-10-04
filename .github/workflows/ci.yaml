@@ -56,6 +56,9 @@ jobs:
           - os: ubuntu-latest
             container: alpine
             shell: zsh
+          - os: ubuntu-latest
+            container: registry.access.redhat.com/ubi8/ubi-minimal
+            shell: bash
     steps:
       - name: Install dependencies
         if: "matrix.container"
@@ -70,8 +73,9 @@ jobs:
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
               rpm --import https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg
             fi
-
             yum install -y git-core unzip gettext
+          elif command -v microdnf > /dev/null; then
+            microdnf install --nodocs --noplugins git-core unzip gettext tar findutils diffutils
           fi
 
       - name: Install zsh
