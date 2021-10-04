@@ -2,7 +2,7 @@
 name: CI
 
 env:
-  VERSION_HELM: v3.6.0
+  VERSION_HELM: v3.7.0
   VERSION_SOPS: v3.7.1
   VERSION_VALS: v0.14.0
 
@@ -257,7 +257,7 @@ jobs:
     steps:
       - uses: engineerd/setup-kind@v0.5.0
         with:
-          version: "v0.9.0"
+          version: "v0.11.1"
 
       - run: kubectl cluster-info
 
