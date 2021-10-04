@@ -2,6 +2,9 @@
 
 set -euf
 
+ALLOW_GPG_IMPORT="${HELM_SECRETS_ALLOW_GPG_IMPORT:-"true"}"
+ALLOW_GPG_IMPORT_KUBERNETES="${HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES:-"true"}"
+
 # shellcheck source=scripts/commands/view.sh
 . "${SCRIPT_DIR}/commands/view.sh"
 
@@ -25,12 +28,20 @@ downloader() {
 
     case "${_file_url}" in
     secrets+gpg-import://*)
+        if [ "${ALLOW_GPG_IMPORT}" != "true" ]; then
+            error "[helm-secret] secrets+gpg-import:// is not allowed in this context!"
+        fi
+
         _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import://!!')
         _gpg_key_path=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
         _gpg_init "${_gpg_key_path}"
         ;;
     secrets+gpg-import-kubernetes://*)
+        if [ "${ALLOW_GPG_IMPORT_KUBERNETES}" != "true" ]; then
+            error "[helm-secret] secrets+gpg-import-kubernetes:// is not allowed in this context!"
+        fi
+
         _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import-kubernetes://!!')
         _gpg_key_location=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
@@ -39,14 +50,14 @@ downloader() {
     *)
         case "${_file_url}" in
         sops://*)
-            printf '[helm-secrets] sops:// is deprecated. Use secrets://'
+            echo '[helm-secrets] sops:// is deprecated. Use secrets://' >&2
             ;;
         secret://*)
-            printf '[helm-secrets] secret:// is deprecated. Use secrets://'
+            echo '[helm-secrets] secret:// is deprecated. Use secrets://' >&2
             ;;
         esac
 
-        file=$(printf '%s' "${4}" | sed -E -e 's!(sops|secrets?)://!!')
+        file=$(printf '%s' "${_file_url}" | sed -E -e 's!(sops|secrets?)://!!')
         ;;
     esac
 
@@ -82,8 +93,8 @@ _gpg_init_kubernetes() {
     "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
         -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_gpg_key_path}.base64"
 
-    if base64 -d <"${_gpg_key_path}.base64" >"${_gpg_key_path}"; then
-        error "Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
+    if ! base64 -d <"${_gpg_key_path}.base64" >"${_gpg_key_path}"; then
+        error "[helm-secrets] Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
     fi
 
     _gpg_init "${_gpg_key_path}"

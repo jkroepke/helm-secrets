@@ -15,7 +15,7 @@ is_help() {
 
 error() {
     if [ $# -le 1 ]; then
-        printf '%s' "${1:-}" >&2
+        printf '%s\n' "${1:-}" >&2
     else
         format="${1}"
         shift

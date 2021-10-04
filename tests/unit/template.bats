@@ -397,6 +397,20 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 91"
 }
 
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import:// + HELM_SECRETS_ALLOW_GPG_IMPORT" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_ALLOW_GPG_IMPORT=false helm template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secret] secrets+gpg-import:// is not allowed in this context!"
+}
+
 @test "template: helm template w/ chart + --driver-args (simple)" {
     if ! is_driver "sops"; then
         skip
