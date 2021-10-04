@@ -5,17 +5,18 @@ set -euf
 # shellcheck source=scripts/commands/view.sh
 . "${SCRIPT_DIR}/commands/view.sh"
 
-# _trap_hook() {
-#     if [ -n "${_GNUPGHOME+x}" ]; then
-#         if [ -f "${_GNUPGHOME}/.helm-secrets" ]; then
-#             case $(gpgconf --help 2>&1) in
-#             *--kill*)
-#                 gpgconf --kill gpg-agent
-#             ;;
-#             esac
-#         fi
-#     fi
-# }
+_trap_hook() {
+    if [ -n "${_GNUPGHOME+x}" ]; then
+        if [ -f "${_GNUPGHOME}/.helm-secrets" ]; then
+            # On CentOS 7, there is no kill option
+            case $(gpgconf --help 2>&1) in
+            *--kill*)
+                gpgconf --kill gpg-agent
+            ;;
+            esac
+        fi
+    fi
+}
 
 downloader() {
     # https://helm.sh/docs/topics/plugins/#downloader-plugins

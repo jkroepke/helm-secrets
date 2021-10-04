@@ -11,7 +11,7 @@ spec:
     helm:
       valueFiles:
         - path/to/values.yaml
-        - gpg-import+secrets://path/to/app.asc?path/to/secrets.yaml
+        - gpg-import+secrets:///gpg-private-keys/app.asc?path/to/secrets.yaml
 ``` 
 
 ### External Chart and local values
@@ -27,7 +27,7 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 ARG ARGOCD_VERSION="v2.1.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.1"
-ARG HELM_SECRETS_VERSION="3.8.3"
+ARG HELM_SECRETS_VERSION="3.9.0"
 
 USER root
 RUN apt-get update && \
@@ -73,7 +73,7 @@ repoServer:
         - name: SOPS_VERSION
           value: "3.7.1"
         - name: HELM_SECRETS_VERSION
-          value: "3.8.3"
+          value: "3.9.0"
       args:
         - |
           wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
