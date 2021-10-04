@@ -378,7 +378,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "gpg-import+secrets://tests/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run helm template "${TEST_TEMP_DIR}/chart" -f "gpg-import+secrets://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 91"
 }

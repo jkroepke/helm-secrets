@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -eufx
+set -euf
 
 # shellcheck source=scripts/commands/view.sh
 . "${SCRIPT_DIR}/commands/view.sh"
