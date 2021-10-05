@@ -15,4 +15,5 @@ downloaders:
       - "sops"
       - "secret"
       - "secrets"
-      - "gpg-import+secrets"
+      - "secrets+gpg-import"
+      - "secrets+gpg-import-kubernetes"
