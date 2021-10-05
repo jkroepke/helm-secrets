@@ -11,6 +11,7 @@ Allow override sops version on installation
 ### Added
 - [vals](https://github.com/variantdev/vals) driver. vals supporting Vault, AWS SSM, GCP, sops, terraform states or other files.
 - A better ArgoCD Integration. helm-secrets can load now gpg keys for you by using the uri `secrets+gpg-import://path/key.asc?path/secrets.yaml` as value file.
+  As alternative, you can use `secrets+gpg-import-kubernetes://` to import a gpg key from a existing kubernetes secret, but it require the kubectl command.
   Checkout the [docs/ARGOCD.md](docs/ARGOCD.md) for more information.
 
 ## [3.8.3] - 2021-08-06
