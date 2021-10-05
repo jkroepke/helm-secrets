@@ -14,6 +14,7 @@ spec:
       valueFiles:
         - path/to/values.yaml
         - secrets+gpg-import:///gpg-private-keys/app.asc?path/to/secrets.yaml
+        - secrets+gpg-import-kubernetes://argocd/argocd-gpg-key#private.asc?path/to/secrets.yaml
 ``` 
 
 ### External Chart and local values
