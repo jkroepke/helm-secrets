@@ -100,10 +100,23 @@ repoServer:
 
 ## GPG keys
 
-ArgoCD currently supports only gpg public keys at the moment.
+Since ArgoCD currently supports only gpg public keys at the moment, we have to handle the gpg private keys around ArgoCD.
 
 ### Method 1: Mount the gpg key from secret as volume
 Private keys needs to be mounted externally. helm-secrets is able to import them as needed.
+
+Example Application:
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+...
+spec:
+  source:
+    helm:
+      valueFiles:
+        - path/to/values.yaml
+        - secrets+gpg-import:///gpg-private-keys/app.asc?path/to/secrets.yaml
+```
 
 #### 1. Create Secrets with gpg keys
 All gpg keys needs to be available as kubernetes secret.
@@ -132,6 +145,19 @@ repoServer:
 As alternative to Method 1, is avoid the requirement to mount gpg keys inside ArgoCD.
 
 This method requires a installed kubectl binary inside the ArgoCD repo server container and the service account of argocd repo server needs the permission to read secrets.
+
+Example Application:
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+...
+spec:
+  source:
+    helm:
+      valueFiles:
+        - path/to/values.yaml
+        - secrets+gpg-import-kubernetes://argocd/argocd-gpg-key#private.asc?path/to/secrets.yaml
+``` 
 
 #### 1. Create Secrets with gpg keys
 All gpg keys needs to be available as kubernetes secret. 
