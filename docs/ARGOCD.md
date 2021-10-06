@@ -119,7 +119,7 @@ spec:
 ```
 
 #### 1. Create Secrets with gpg keys
-All gpg keys needs to be available as kubernetes secret.
+All gpg keys needs to be available as kubernetes secret. Create the secret in the same namespace where the argocd repo server is running.
 
 ```bash
 kubectl create secret generic gpg-private-keys --from-file=app.asc
@@ -160,10 +160,10 @@ spec:
 ``` 
 
 #### 1. Create Secrets with gpg keys
-All gpg keys needs to be available as kubernetes secret. 
+All gpg keys needs to be available as kubernetes secret. Create the secret in the same namespace where the argocd repo server is running.
 
 ```bash
-kubectl create secret generic gpg-private-keys --from-file=app.asc
+kubectl -n argocd create secret generic gpg-private-keys --from-file=app.asc
 ```
 
 #### 2. Extends the Kubernetes RBAC Role für repo server
