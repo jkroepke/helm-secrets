@@ -173,6 +173,10 @@ This is an example values file for the [ArgoCD Server Helm chart](https://argopr
 ```yaml
 # This allows to read secrets in the same namespace
 repoServer:
+  serviceAccount:
+    create: true
+    name: argocd-repo-server
+
   rbac:
   - apiGroups:
     - ""
