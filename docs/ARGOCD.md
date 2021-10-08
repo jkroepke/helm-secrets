@@ -181,9 +181,15 @@ repoServer:
   - apiGroups:
     - ""
     resources:
-    - secret
+    - secrets
     verbs:
     - get
     - list
     - watch
+```
+
+RBAC permissions can be verified by executing the command below:
+
+```bash
+kubectl auth can-i get secrets --namespace argo-cd --as system:serviceaccount:argo-cd:argo-cd-argocd-repo-server
 ```
