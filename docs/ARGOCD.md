@@ -20,6 +20,24 @@ spec:
 ### External Chart and local values
 Please mention, this won't work with external helm charts, subscribe https://github.com/argoproj/argo-cd/issues/7257 for more infos.
 
+As workaround, you can fetch additional values from remote locations:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+...
+spec:
+  source:
+    helm:
+      valueFiles:
+        - https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
+        - secrets+gpg-import:///gpg-private-keys/app.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
+        - secrets+gpg-import-kubernetes://argocd/argocd-gpg-key#private.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
+        # Using https://github.com/aslafy-z/helm-git
+        - secrets+gpg-import-kubernetes://argocd/argocd-gpg-key#private.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
+
+``` 
+
 ## Install helm-secrets and sops
 
 ### Method 1: Custom Server Image
@@ -116,6 +134,7 @@ spec:
       valueFiles:
         - path/to/values.yaml
         - secrets+gpg-import:///gpg-private-keys/app.asc?path/to/secrets.yaml
+        - secrets+gpg-import:///gpg-private-keys/app.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
 ```
 
 #### 1. Create Secrets with gpg keys
@@ -125,7 +144,7 @@ All gpg keys needs to be available as kubernetes secret. Create the secret in th
 kubectl create secret generic gpg-private-keys --from-file=app.asc
 ```
 
-#### 2. Attach newly created secrets to argocd repo server
+#### 2. Attach newly created secrets to ArgoCD repo server
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 
@@ -191,5 +210,5 @@ repoServer:
 RBAC permissions can be verified by executing the command below:
 
 ```bash
-kubectl auth can-i get secrets --namespace argo-cd --as system:serviceaccount:argo-cd:argo-cd-argocd-repo-server
+kubectl auth can-i get secrets --namespace argo-cd --as system:serviceaccount:$NAMESPACE:argo-cd-argocd-repo-server
 ```
