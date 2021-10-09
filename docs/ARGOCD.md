@@ -17,6 +17,8 @@ spec:
         - secrets+gpg-import-kubernetes://argocd/argocd-gpg-key#private.asc?path/to/secrets.yaml
 ``` 
 
+In background, helm with call helm-secrets because helm-secrets is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
+
 ### External Chart and local values
 Please mention, this won't work with external helm charts, subscribe https://github.com/argoproj/argo-cd/issues/7257 for more infos.
 
