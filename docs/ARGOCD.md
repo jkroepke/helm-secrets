@@ -13,7 +13,9 @@ spec:
     helm:
       valueFiles:
         - path/to/values.yaml
+        # secrets+gpg-import://<path to gpg key>?path/to/secrets.yaml
         - secrets+gpg-import:///gpg-private-keys/app.asc?path/to/secrets.yaml
+        # secrets+gpg-import-kubernetes://<namespace>/<secret-name>#<key>?path/to/secrets.yaml
         - secrets+gpg-import-kubernetes://argocd/argocd-gpg-key#private.asc?path/to/secrets.yaml
 ``` 
 
@@ -177,6 +179,7 @@ spec:
     helm:
       valueFiles:
         - path/to/values.yaml
+        # secrets+gpg-import-kubernetes://<namespace>/<secret-name>#<key>?path/to/secrets.yaml
         - secrets+gpg-import-kubernetes://argocd/argocd-gpg-key#private.asc?path/to/secrets.yaml
 ``` 
 
