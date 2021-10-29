@@ -190,7 +190,7 @@ All gpg keys needs to be available as kubernetes secret. Create the secret in th
 kubectl -n argocd create secret generic gpg-private-keys --from-file=app.asc
 ```
 
-#### 2. Extends the Kubernetes RBAC Role für repo server
+#### 2. Extends the Kubernetes RBAC Role for repo server
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 
