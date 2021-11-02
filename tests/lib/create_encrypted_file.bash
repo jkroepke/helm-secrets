@@ -4,8 +4,8 @@ create_encrypted_file() {
         case "${3:-${HELM_SECRETS_DRIVER}}" in
         sops)
             # shellcheck disable=SC2059
-            printf "$1" >"${TEST_TEMP_DIR}/${file}"
-            (cd "${TEST_TEMP_DIR}" && exec sops -e -i "${file}")
+            printf "$1" >"${BATS_TEST_TMPDIR}/${file}"
+            (cd "${BATS_TEST_TMPDIR}" && exec sops -e -i "${file}")
             ;;
         vault)
             # Check for multiline
@@ -19,13 +19,13 @@ create_encrypted_file() {
                 secret_key="$(printf '%s' "$secret_content" | _shasum | cut -d' ' -f1)"
             fi
 
-            printf '%s: !vault secret/%s#key' "$(echo "$1" | cut -d: -f1)" "${secret_key}" >"${TEST_TEMP_DIR}/${file}"
+            printf '%s: !vault secret/%s#key' "$(echo "$1" | cut -d: -f1)" "${secret_key}" >"${BATS_TEST_TMPDIR}/${file}"
             printf '%s' "${secret_content}" | vault kv put "secret/${secret_key}" key=-
             ;;
         vals)
             # shellcheck disable=SC2059
-            printf "$1" > "${TEST_TEMP_DIR}/vals.${file}"
-            cat "${TEST_TEMP_DIR}/vals.${file}"
+            printf "$1" > "${BATS_TEST_TMPDIR}/vals.${file}"
+            cat "${BATS_TEST_TMPDIR}/vals.${file}"
 
             yaml_key="$(echo "$1" | cut -d: -f1)"
 
@@ -38,7 +38,7 @@ create_encrypted_file() {
                 secret_content="$(printf "$1" | cut -d: -f2 | tr -d ' ')"
             fi
 
-            printf '%s: ref+file://%s#%s' "${yaml_key}" "${TEST_TEMP_DIR}/vals.${file}" "${yaml_key}" >"${TEST_TEMP_DIR}/${file}"
+            printf '%s: ref+file://%s#%s' "${yaml_key}" "${BATS_TEST_TMPDIR}/vals.${file}" "${yaml_key}" >"${BATS_TEST_TMPDIR}/${file}"
             ;;
         envsubst)
             # Check for multiline
@@ -53,12 +53,12 @@ create_encrypted_file() {
             fi
 
             # shellcheck disable=SC2016
-            printf '%s: "${_TEST_%s}"' "$(printf '%s' "$1" | cut -d: -f1)" "${secret_key}" >"${TEST_TEMP_DIR}/${file}"
+            printf '%s: "${_TEST_%s}"' "$(printf '%s' "$1" | cut -d: -f1)" "${secret_key}" >"${BATS_TEST_TMPDIR}/${file}"
             export _TEST_"${secret_key}"="${secret_content}"
             ;;
         noop)
             # shellcheck disable=SC2059
-            printf "$1" >"${TEST_TEMP_DIR}/${file}"
+            printf "$1" >"${BATS_TEST_TMPDIR}/${file}"
             ;;
         *)
             echo "Unknown driver ${HELM_SECRETS_DRIVER}"

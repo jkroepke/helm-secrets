@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+GIT_ROOT="$(git rev-parse --show-toplevel)"
+export GIT_ROOT
+
+load "${GIT_ROOT}/scripts/lib/common.sh"
+
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
@@ -13,17 +18,7 @@ is_curl_installed() {
 }
 
 on_windows() {
-    _uname="$(uname)"
-    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
-}
-
-_sed_i() {
-    # MacOS syntax is different for in-place
-    if [ "$(uname)" = "Darwin" ]; then
-        sed -i "" "$@"
-    else
-        sed -i "$@"
-    fi
+    ! [[ "${_UNAME}" == "Darwin" || "${_UNAME}" == "Linux" ]]
 }
 
 _shasum() {
@@ -42,18 +37,6 @@ _gpg() {
     else
         gpg "$@"
     fi
-}
-
-_mktemp() {
-    if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
-        TMPDIR="${TMPDIR}" mktemp "$@"
-    else
-        mktemp "$@"
-    fi
-}
-
-_home_dir() {
-    printf '%s' "/tmp/helm-secrets-test.${BATS_ROOT_PID}/$(basename "${BATS_TEST_FILENAME}")/home"
 }
 
 _copy() {
@@ -82,15 +65,15 @@ initiate() {
 }
 
 setup() {
+    TEST_DIR="${GIT_ROOT}/tests"
+    _UNAME="$(uname)"
+
     REAL_HOME="${HOME}"
     # shellcheck disable=SC2153
-    HOME="$(_home_dir)"
+    HOME="${BATS_SUITE_TMPDIR}/home"
 
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
-
-    GIT_ROOT="$(git rev-parse --show-toplevel)"
-    TEST_DIR="${GIT_ROOT}/tests"
 
     # shellcheck disable=SC2164
     cd "${TEST_DIR}"
@@ -98,25 +81,16 @@ setup() {
     HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 
     CACHE_DIR="${TEST_DIR}/.tmp/cache"
-    HELM_CACHE="${CACHE_DIR}/$(uname)/helm"
+    HELM_CACHE="${CACHE_DIR}/${_UNAME}/helm"
     HELM_DATA_HOME="${HELM_CACHE}"
     export HELM_DATA_HOME
 
     SEED="${RANDOM}"
 
-    # Windows TMPDIR behavior
-    if [[ "$(uname -s)" == CYGWIN* ]]; then
-        TMPDIR="$(cygpath -m "${TEMP}")"
-    elif [ -n "${W_TEMP+x}" ]; then
-        TMPDIR="${W_TEMP}"
-    fi
-
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
         initiate
     fi
-
-    TEST_TEMP_DIR="$(_mktemp -d)"
 
     # copy .kube from real home
     if [ -d "${REAL_HOME}/.kube" ]; then
@@ -124,15 +98,15 @@ setup() {
     fi
 
     # copy assets
-    cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
-    if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
+    cp -r "${TEST_DIR}/assets" "${BATS_TEST_TMPDIR}/"
+    if ! on_windows; then
         # shellcheck disable=SC2016
-        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
+        SPECIAL_CHAR_DIR="${BATS_TEST_TMPDIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
         cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
 
-    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
+    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${BATS_TEST_TMPDIR}"
 
     case "${HELM_SECRETS_DRIVER:-sops}" in
     vault)
@@ -145,15 +119,15 @@ setup() {
 
         vault login token=test
 
-        _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/assets/values/vault/seed.sh' "${TEST_TEMP_DIR}")"
+        _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/assets/values/vault/seed.sh' "${BATS_TEST_TMPDIR}")"
 
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${TEST_TEMP_DIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${BATS_TEST_TMPDIR}")"
         _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${SPECIAL_CHAR_DIR}")"
 
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${TEST_TEMP_DIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${BATS_TEST_TMPDIR}")"
         _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${SPECIAL_CHAR_DIR}")"
 
-        sh "${TEST_TEMP_DIR}/assets/values/vault/seed.sh"
+        sh "${BATS_TEST_TMPDIR}/assets/values/vault/seed.sh"
         ;;
     esac
 
@@ -189,13 +163,10 @@ teardown() {
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
         gpgconf --kill gpg-agent >&2
-        temp_del "$(_home_dir)"
     fi
 
     # https://github.com/bats-core/bats-file/pull/29
-    chmod -R 777 "${TEST_TEMP_DIR}" >&2
-
-    temp_del "${TEST_TEMP_DIR}"
+    chmod -R 777 "${BATS_TEST_TMPDIR}" >&2
 }
 
 create_chart() {
