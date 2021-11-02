@@ -80,6 +80,7 @@ setup() {
 
     HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 
+    TEST_TEMP_DIR="${BATS_TEST_TMPDIR}"
     CACHE_DIR="${TEST_DIR}/.tmp/cache"
     HELM_CACHE="${CACHE_DIR}/${_UNAME}/helm"
     HELM_DATA_HOME="${HELM_CACHE}"
@@ -98,15 +99,15 @@ setup() {
     fi
 
     # copy assets
-    cp -r "${TEST_DIR}/assets" "${BATS_TEST_TMPDIR}/"
+    cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if ! on_windows; then
         # shellcheck disable=SC2016
-        SPECIAL_CHAR_DIR="${BATS_TEST_TMPDIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
+        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
         cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
 
-    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${BATS_TEST_TMPDIR}"
+    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
     case "${HELM_SECRETS_DRIVER:-sops}" in
     vault)
@@ -119,15 +120,15 @@ setup() {
 
         vault login token=test
 
-        _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/assets/values/vault/seed.sh' "${BATS_TEST_TMPDIR}")"
+        _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/assets/values/vault/seed.sh' "${TEST_TEMP_DIR}")"
 
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${BATS_TEST_TMPDIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${TEST_TEMP_DIR}")"
         _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${SPECIAL_CHAR_DIR}")"
 
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${BATS_TEST_TMPDIR}")"
+        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${TEST_TEMP_DIR}")"
         _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${SPECIAL_CHAR_DIR}")"
 
-        sh "${BATS_TEST_TMPDIR}/assets/values/vault/seed.sh"
+        sh "${TEST_TEMP_DIR}/assets/values/vault/seed.sh"
         ;;
     esac
 
@@ -166,7 +167,7 @@ teardown() {
     fi
 
     # https://github.com/bats-core/bats-file/pull/29
-    chmod -R 777 "${BATS_TEST_TMPDIR}" >&2
+    chmod -R 777 "${TEST_TEMP_DIR}" >&2
 }
 
 create_chart() {
