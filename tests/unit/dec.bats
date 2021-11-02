@@ -190,7 +190,8 @@ load '../bats/extensions/bats-file/load'
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_DIR" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    HELM_SECRETS_DEC_DIR="$(_mktemp -d)"
+    HELM_SECRETS_DEC_DIR="${TEST_TEMP_DIR}/result/"
+    mkdir "${HELM_SECRETS_DEC_DIR}"
     export HELM_SECRETS_DEC_DIR
 
     run helm secrets dec "${FILE}"
@@ -199,8 +200,6 @@ load '../bats/extensions/bats-file/load'
     assert_file_exist "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
     assert_file_contains "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" 'global_secret: '
     assert_file_contains "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec" 'global_bar'
-
-    temp_del "${HELM_SECRETS_DEC_DIR}"
 }
 
 @test "dec: Decrypt secrets.yaml + http://" {

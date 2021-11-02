@@ -2,6 +2,14 @@
 
 GIT_ROOT="$(git rev-parse --show-toplevel)"
 export GIT_ROOT
+_UNAME="$(uname)"
+export _UNAME
+
+export REAL_HOME="${HOME}"
+export TEST_DIR="${GIT_ROOT}/tests"
+export CACHE_DIR="${TEST_DIR}/.tmp/cache"
+export HELM_DATA_HOME="${CACHE_DIR}/${_UNAME}/helm"
+export HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 
 load "${GIT_ROOT}/scripts/lib/common.sh"
 
@@ -39,6 +47,25 @@ _gpg() {
     fi
 }
 
+_mktemp() {
+    # Windows TMPDIR behavior
+    if [[ "$(uname -s)" == CYGWIN* ]]; then
+        TMPDIR="$(cygpath -m "${TEMP}")"
+    elif [ -n "${W_TEMP+x}" ]; then
+        TMPDIR="${W_TEMP}"
+    fi
+
+    if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
+        TMPDIR="${TMPDIR}" mktemp "$@"
+    else
+        mktemp "$@"
+    fi
+}
+
+_home_dir() {
+    printf '%s' "/tmp/helm-secrets-test.${BATS_ROOT_PID}/$(basename "${BATS_TEST_FILENAME}")/home"
+}
+
 _copy() {
     if on_windows; then
         cp -r "$@"
@@ -47,8 +74,13 @@ _copy() {
     fi
 }
 
-initiate() {
+setup_file() {
     {
+        # shellcheck disable=SC2153
+        HOME="$(_home_dir)"
+        [ -d "${HOME}" ] || mkdir -p "${HOME}"
+        export HOME
+
         mkdir -p "${HELM_CACHE}/home"
         _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
 
@@ -65,33 +97,10 @@ initiate() {
 }
 
 setup() {
-    TEST_DIR="${GIT_ROOT}/tests"
-    _UNAME="$(uname)"
-
-    REAL_HOME="${HOME}"
-    # shellcheck disable=SC2153
-    HOME="${BATS_SUITE_TMPDIR}/home"
-
-    [ -d "${HOME}" ] || mkdir -p "${HOME}"
-    export HOME
-
     # shellcheck disable=SC2164
     cd "${TEST_DIR}"
 
-    HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-
-    TEST_TEMP_DIR="${BATS_TEST_TMPDIR}"
-    CACHE_DIR="${TEST_DIR}/.tmp/cache"
-    HELM_CACHE="${CACHE_DIR}/${_UNAME}/helm"
-    HELM_DATA_HOME="${HELM_CACHE}"
-    export HELM_DATA_HOME
-
-    SEED="${RANDOM}"
-
-    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-    if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
-        initiate
-    fi
+    TEST_TEMP_DIR="$(_mktemp -d)"
 
     # copy .kube from real home
     if [ -d "${REAL_HOME}/.kube" ]; then
@@ -109,7 +118,8 @@ setup() {
 
     _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
-    case "${HELM_SECRETS_DRIVER:-sops}" in
+    export SEED="${RANDOM}"
+    case "${HELM_SECRETS_DRIVER}" in
     vault)
         if [ -f .dockerenv ]; then
             # If we run inside docker, we expect vault on this location
@@ -133,7 +143,6 @@ setup() {
     esac
 
     export _TEST_KEY="-----BEGIN PGP MESSAGE-----
-
 wcFMAxYpv4YXKfBAARAAVzE7/FMD7+UWwMls23zKKLoTs+5w9GMvugn0wi5KOJ8P
 PSrRY4r27VhwQH38gWDrzo3RCmO9414xZ0JW0HaN2Pgd3ml6mYCY/5RE7apgGZQI
 3Im0fv8bhIwaP2UWPp74EXLzA3mh1dUtwxmuWOeoSq+Vm5NtbjkfUt/4MIcF5IAY
@@ -156,18 +165,24 @@ EzAA
 }
 
 teardown() {
+    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+    if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
+        _teardown_file
+    fi
+
     # https://stackoverflow.com/a/13864829/8087167
     if [ -n "${RELEASE+x}" ]; then
         helm del "${RELEASE}" >&2
     fi
 
-    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-    if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        gpgconf --kill gpg-agent >&2
-    fi
-
     # https://github.com/bats-core/bats-file/pull/29
     chmod -R 777 "${TEST_TEMP_DIR}" >&2
+    temp_del "${TEST_TEMP_DIR}"
+}
+
+_teardown_file() {
+    gpgconf --kill gpg-agent >&2
+    temp_del "$(_home_dir)"
 }
 
 create_chart() {
