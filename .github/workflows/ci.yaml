@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@v0.3.0
         env:
@@ -88,7 +88,7 @@ jobs:
           git config --global core.eol lf
         if: "contains(matrix.shell, 'cygwin')"
 
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
         with:
           submodules: true
 
@@ -170,7 +170,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
         with:
           submodules: true
           fetch-depth: 0
@@ -261,7 +261,7 @@ jobs:
 
       - run: kubectl cluster-info
 
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
         with:
           submodules: true
 
