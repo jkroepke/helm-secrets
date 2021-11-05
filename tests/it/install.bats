@@ -402,3 +402,80 @@ load '../bats/extensions/bats-file/load'
     assert_failure
     assert_output --partial "[helm-secret] secrets+gpg-import-kubernetes:// is not allowed in this context!"
 }
+
+@test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import://" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 92"
+}
+
+@test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://name#key" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+    kubectl create secret generic age-key --from-file=key.txt="${TEST_TEMP_DIR}/assets/age/key.txt" >&2
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://age-key#key.txt?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 92"
+}
+
+@test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/name#key" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+    kubectl -n kube-system create secret generic age-key --from-file=keys.txt="${TEST_TEMP_DIR}/assets/age/key.txt" >&2
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "STATUS: deployed"
+    assert [ ! -f "${FILE}.dec" ]
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_success
+    assert_output --partial "port: 92"
+}
+
+@test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/name#key + HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secret] secrets+age-import-kubernetes:// is not allowed in this context!"
+}

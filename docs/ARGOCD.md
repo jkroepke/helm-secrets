@@ -1,5 +1,8 @@
 # Argo CD Integration
 
+Before start to integration helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
+[It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
+
 ## Prerequisite
 
 helm-secrets 3.9.x or higher
@@ -8,8 +11,8 @@ helm-secrets 3.9.x or higher
 
 An Argo CD Application can use the downloader plugin syntax to use encrypted value files.
 There are two methods how to use an encrypted value file.
-- Method 1: Mount the gpg key from a kubernetes secret as volume
-- Method 2: Fetch the gpg key directly from a kubernetes secret
+- Method 1: Mount the private key from a kubernetes secret as volume
+- Method 2: Fetch the private key directly from a kubernetes secret
 
 Please refer to the configuration section of the corresponding method for further instructions.
 
@@ -21,15 +24,17 @@ spec:
   source:
     helm:
       valueFiles:
-        # Method 1: Mount the gpg key from a kubernetes secret as volume
+        # Method 1: Mount the gpg/age key from a kubernetes secret as volume
         # secrets+gpg-import://<key-volume-mount>/<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
-        # Example Method 1: (Assumptions: key-volume-mount=/gpg-private-keys, key-name=app, secret.yaml is in the root folder)
-        - secrets+gpg-import:///gpg-private-keys/key.asc?secrets.yaml
+        # secrets+age-import://<key-volume-mount>/<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
+        # Example Method 1: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
+        - secrets+gpg-import:///helm-secrets-private-keys/key.asc?secrets.yaml
         
-        # ### Method 2: Fetch the gpg key from kubernetes secret
+        # ### Method 2: Fetch the gpg/age key from kubernetes secret
         # secrets+gpg-import-kubernetes://<namespace>/<secret-name>#<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
-        # Example Method 2: (Assumptions: namespace=argocd, secret-name=gpg-private-keys, key-name=app, secret.yaml is in the root folder)
-        - secrets+gpg-import-kubernetes://argocd/gpg-private-keys#key.asc?secrets.yaml
+        # secrets+age-import-kubernetes://<namespace>/<secret-name>#<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
+        # Example Method 2: (Assumptions: namespace=argocd, secret-name=helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
+        - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 ``` 
 
 Helm will call helm-secrets because helm-secrets is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
@@ -37,7 +42,7 @@ Helm will call helm-secrets because helm-secrets is [registered](https://github.
 ## Installation on Argo CD
 
 Before using helm secrets, we are required to install helm-secrets and sops on the ArgoCD Repo Server.
-There are two methods to do this. Either create your custom ArgoCD Docker Image or install them via InitContainer.
+There are two methods to do this. Either create your custom ArgoCD Docker Image or install them via init container.
 
 ### Option 1: Custom Docker Image
 Integrating `helm-secrets` with Argo CD can be achieved by building a custom Argo CD Server image.
@@ -122,7 +127,8 @@ There are two ways to achieve this.
 Either mount the gpg key from secret as volume or access the fetch the private key directly from a kubernetes secret.
 Both methods depend on a secret holding the key in asci format.
 
-### Generating the key and export it as ASCI File.
+### Using GPG
+#### Generating the key and export it as ASCI File.
 
 ```shell
 gpg --full-generate-key --rfc4880
@@ -142,28 +148,44 @@ It looks something like this:
 gpg: key 1234567890987654321 marked as ultimately trusted
 ```
 
+### Using age
+
+#### Generating the key 
+
+```shell
+age-keygen -o key.txt
+```
+
+The public key can be found in the output of the generate-key command.
+Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://github.com/mozilla/sops#encrypting-using-age), set the environment variables
+
+* `SOPS_AGE_KEY_FILE="path/age/key.txt"`
+* `SOPS_AGE_RECIPIENTS=public-key`
+
+before running sops. Define `SOPS_AGE_RECIPIENTS` is only required on initial encryption of a plain file.
+
 ### Creating the kubernetes secret holding the exported private key
 ```shell
-kubectl create secret generic gpg-private-keys --from-file=key.asc
+kubectl create secret generic helm-secrets-private-keys --from-file=key.asc
 ```
 
 ### Making the key accessible within ArgoCD
 
-#### Method 1: Mount the gpg key from a kubernetes secret as volume
+#### Method 1: Mount the private key from a kubernetes secret as volume
 
-To use the *secrets+gpg-import* syntax, we need to mount the key on the ArgoCD Repo Server.
+To use the *secrets+gpg-import / secrets+age-import* syntax, we need to mount the key on the ArgoCD Repo Server.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 ```yaml
 repoServer:
   volumes:
-    - name: gpg-private-keys
+    - name: helm-secrets-private-keys
       secret:
-        secretName: gpg-private-keys
+        secretName: helm-secrets-private-keys
 
   volumeMounts:
-    - mountPath: /gpg-private-keys/
-      name: gpg-private-keys
+    - mountPath: /helm-secrets-private-keys/
+      name: helm-secrets-private-keys
 ```
 
 Once mounted, your Argo CD Application should look similar to this:
@@ -177,14 +199,15 @@ spec:
       valueFiles:
         # Method 1: Mount the gpg key from a kubernetes secret as volume
         # secrets+gpg-import://<key-volume-mount>/<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
-        # Example Method 1: (Assumptions: key-volume-mount=/gpg-private-keys, key-name=app, secret.yaml is in the root folder)
-        - secrets+gpg-import:///gpg-private-keys/key.asc?secrets.yaml
+        # secrets+age-import://<key-volume-mount>/<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
+        # Example Method 1: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
+        - secrets+gpg-import:///helm-secrets-private-keys/key.asc?secrets.yaml
 ```
 
 
 ### Method 2: Fetch the gpg key directly from a kubernetes secret
 
-To use the *secrets+gpg-import-kubernetes* syntax, we need Argo CD's service account to be able to access the secret.
+To use the *secrets+gpg-import-kubernetes / secrets+age-import-kubernetes* syntax, we need Argo CD's service account to be able to access the secret.
 To achieve this we use the RBAC Permissions.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
@@ -224,8 +247,9 @@ spec:
         
         # ### Method 2: Fetch the gpg key from kubernetes secret
         # secrets+gpg-import-kubernetes://<namespace>/<secret-name>#<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
-        # Example Method 2: (Assumptions: namespace=argocd, secret-name=gpg-private-keys, key-name=app, secret.yaml is in the root folder)
-        - secrets+gpg-import-kubernetes://argocd/gpg-private-keys#key.asc?secrets.yaml
+        # secrets+age-import-kubernetes://<namespace>/<secret-name>#<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
+        # Example Method 2: (Assumptions: namespace=argocd, secret-name=helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
+        - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 ```
 
 ## Known Limitations
@@ -242,10 +266,10 @@ spec:
   source:
     helm:
       valueFiles:
-        - secrets+gpg-import:///gpg-private-keys/key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
-        - secrets+gpg-import-kubernetes://argocd/gpg-private-keys#key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
+        - secrets+gpg-import:///helm-secrets-private-keys/key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
+        - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
         # Using https://github.com/aslafy-z/helm-git
-        - secrets+gpg-import-kubernetes://argocd/gpg-private-keys#key.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
+        - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
 ``` 
 
 ## Known Issues

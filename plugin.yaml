@@ -17,3 +17,5 @@ downloaders:
       - "secrets"
       - "secrets+gpg-import"
       - "secrets+gpg-import-kubernetes"
+      - "secrets+age-import"
+      - "secrets+age-import-kubernetes"

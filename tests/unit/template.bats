@@ -411,6 +411,48 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secret] secrets+gpg-import:// is not allowed in this context!"
 }
 
+@test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import://" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 92"
+}
+
+@test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import://git://" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml?ref=main"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 92"
+}
+
+@test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import:// + HELM_SECRETS_ALLOW_AGE_IMPORT" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_ALLOW_AGE_IMPORT=false helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secret] secrets+age-import:// is not allowed in this context!"
+}
+
 @test "template: helm template w/ chart + --driver-args (simple)" {
     if ! is_driver "sops"; then
         skip
