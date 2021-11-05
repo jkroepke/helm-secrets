@@ -104,7 +104,7 @@ You need to make sure chart folder or parent one is in correct CLI's scope with 
 
 Install a specific version (recommend)
 ```bash
-helm plugin install https://github.com/jkroepke/helm-secrets --version v3.9.1
+helm plugin install https://github.com/jkroepke/helm-secrets --version v3.10.0
 ```
 
 Install latest unstable version from main branch
@@ -131,11 +131,11 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/hel
 
 Windows (inside cmd, needs to be verified)
 ```bash
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.9.1/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.10.0/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
 ```
 MacOS / Linux
 ```bash
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.9.1/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
+curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.10.0/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
 ```
 
 ### Installation on Helm 2
