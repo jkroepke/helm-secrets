@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
+## [Unreleased]
+
+### Added
+- Add [age](https://github.com/mozilla/sops#encrypting-using-age) support for downloader plugin syntax.
+
+### Changes
+- Improvements to the ArgoCD integration documentation.
+
 ## [3.9.1] - 2021-10-09
 
 ### Fixed

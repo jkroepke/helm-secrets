@@ -99,18 +99,6 @@ brew install dopplerhq/cli/doppler
 
 You need to make sure chart folder or parent one is in correct CLI's scope with enough access to project.
 
-### SOPS git diff
-
-Git config part is installed with the plugin, but to be fully functional the following needs to be added to the `.gitattributes` file in the root directory of a charts repo:
-
-```
-secrets.yaml diff=sopsdiffer
-secrets.*.yaml diff=sopsdiffer
-```
-
-More info on [sops page](https://github.com/mozilla/sops#showing-diffs-in-cleartext-in-git)
-
-By default, helm plugin install does this for you.
 
 ### Using Helm plugin manager
 

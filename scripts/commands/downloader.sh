@@ -4,6 +4,8 @@ set -euf
 
 ALLOW_GPG_IMPORT="${HELM_SECRETS_ALLOW_GPG_IMPORT:-"true"}"
 ALLOW_GPG_IMPORT_KUBERNETES="${HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES:-"true"}"
+ALLOW_AGE_IMPORT="${HELM_SECRETS_ALLOW_AGE_IMPORT:-"true"}"
+ALLOW_AGE_IMPORT_KUBERNETES="${HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES:-"true"}"
 
 # shellcheck source=scripts/commands/view.sh
 . "${SCRIPT_DIR}/commands/view.sh"
@@ -46,6 +48,26 @@ downloader() {
         _gpg_key_location=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
         _gpg_init_kubernetes "${_gpg_key_location}"
+        ;;
+    secrets+age-import://*)
+        if [ "${ALLOW_AGE_IMPORT}" != "true" ]; then
+            error "[helm-secret] secrets+age-import:// is not allowed in this context!"
+        fi
+
+        _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import://!!')
+        _age_key_path=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f1)
+        file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
+        _age_init "${_age_key_path}"
+        ;;
+    secrets+age-import-kubernetes://*)
+        if [ "${ALLOW_AGE_IMPORT_KUBERNETES}" != "true" ]; then
+            error "[helm-secret] secrets+age-import-kubernetes:// is not allowed in this context!"
+        fi
+
+        _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import-kubernetes://!!')
+        _age_key_location=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f1)
+        file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
+        _age_init_kubernetes "${_age_key_location}"
         ;;
     *)
         case "${_file_url}" in
@@ -98,4 +120,34 @@ _gpg_init_kubernetes() {
     fi
 
     _gpg_init "${_gpg_key_path}"
+}
+
+_age_init() {
+    export SOPS_AGE_KEY_FILE="${1}"
+}
+
+_age_init_kubernetes() {
+    _secret_location="${1%#*}"
+    _secret_key="${1#*#}"
+
+    case "${1}" in
+    */*)
+        _kubernetes_namespace="${_secret_location%/*}"
+        _kubernetes_secret_name="${_secret_location#*/}"
+        ;;
+    *)
+        _kubernetes_secret_name="${_secret_location}"
+        ;;
+    esac
+
+    _age_key_path="$(_mktemp)"
+
+    "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
+        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_age_key_path}.base64"
+
+    if ! base64 -d <"${_age_key_path}.base64" >"${_age_key_path}"; then
+        error "[helm-secrets] Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
+    fi
+
+    _age_init "${_age_key_path}"
 }
