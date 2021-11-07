@@ -5,7 +5,7 @@ Before start to integration helm-secrets with ArgoCD, consider using [age](https
 
 ## Prerequisite
 
-helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher. The age encrypted requires at least [3.10.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0).
+helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher. age encrypted values requires at least [3.10.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0).
 
 ## Usage
 
