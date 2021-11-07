@@ -35,13 +35,13 @@ body:
       label: Environment
       description: |
         examples:
-        - **Keycloak Version**: 10.0.1
-        - **keycloak-config-cli Version**: 1.4.0
-        - **Java Version**: 11
+        - **Helm Version**: 3.7.1
+        - **OS*: Alpine
+        - **Shell*: busybox
       value: |
-        - Keycloak Version: [e.g. 10.0.1]
-        - keycloak-config-cli Version: [e.g. 1.4.0]
-        - Java Version: [e.g. 11]
+        - Helm Version:
+        - OS:
+        - Shell:
     validations:
       required: false
   - type: textarea
