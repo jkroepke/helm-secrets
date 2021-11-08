@@ -39,7 +39,7 @@ spec:
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 
         # ### Method 3: No keys provided
-        # Example Method 3: (Assumptions: secrets.yaml is in the root folder)
+        # Example Method 3: (Assumptions: kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
 ```
 
@@ -287,7 +287,7 @@ spec:
       valueFiles:
 
         # ### Method 3: No keys provided
-        # Example Method 3: (Assumptions: secrets.yaml is in the root folder)
+        # Example Method 3: (Assumptions: kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
 ```
 
