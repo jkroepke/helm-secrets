@@ -1,18 +1,20 @@
 # Argo CD Integration
 
-Before start to integration helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
+Before starting to integrate helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
 [It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
 
-## Prerequisite
+## Prerequisites
 
-helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher. age encrypted values requires at least [3.10.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0).
+- helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
+- age encrypted values requires at least [3.10.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0).
 
 ## Usage
 
 An Argo CD Application can use the downloader plugin syntax to use encrypted value files.
-There are two methods how to use an encrypted value file.
+There are three methods how to use an encrypted value file.
 - Method 1: Mount the private key from a kubernetes secret as volume
 - Method 2: Fetch the private key directly from a kubernetes secret
+- Method 3: Using GCP KMS (no keys provided)
 
 Please refer to the configuration section of the corresponding method for further instructions.
 
@@ -27,15 +29,19 @@ spec:
         # Method 1: Mount the gpg/age key from a kubernetes secret as volume
         # secrets+gpg-import://<key-volume-mount>/<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
         # secrets+age-import://<key-volume-mount>/<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
-        # Example Method 1: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
+        # Example Method 1: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secrets.yaml is in the root folder)
         - secrets+gpg-import:///helm-secrets-private-keys/key.asc?secrets.yaml
-        
+
         # ### Method 2: Fetch the gpg/age key from kubernetes secret
         # secrets+gpg-import-kubernetes://<namespace>/<secret-name>#<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
         # secrets+age-import-kubernetes://<namespace>/<secret-name>#<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
         # Example Method 2: (Assumptions: namespace=argocd, secret-name=helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
-``` 
+
+        # ### Method 3: No keys provided
+        # Example Method 3: (Assumptions: secrets.yaml is in the root folder)
+        - secrets://secrets.yaml
+```
 
 Helm will call helm-secrets because helm-secrets is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
 
@@ -122,13 +128,15 @@ repoServer:
 
 ## Configuration of ArgoCD
 
-It is required to configure ArgoCD so that it has access to the private key to decrypt the encrypted value file.
-There are two ways to achieve this.
+When using private key encryption it is required to configure ArgoCD so that it has access to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s) can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
+
+### Private key encryption
+There are two ways to configure ArgoCD to have access to your private key.
 Either mount the gpg key from secret as volume or access the fetch the private key directly from a kubernetes secret.
 Both methods depend on a secret holding the key in asci format.
 
-### Using GPG
-#### Generating the key and export it as ASCI File.
+#### Using GPG
+##### Generating the key and export it as ASCI File.
 
 ```shell
 gpg --full-generate-key --rfc4880
@@ -148,9 +156,8 @@ It looks something like this:
 gpg: key 1234567890987654321 marked as ultimately trusted
 ```
 
-### Using age
-
-#### Generating the key 
+#### Using age
+##### Generating the key
 
 ```shell
 age-keygen -o key.txt
@@ -164,14 +171,13 @@ Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://g
 
 before running sops. Define `SOPS_AGE_RECIPIENTS` is only required on initial encryption of a plain file.
 
-### Creating the kubernetes secret holding the exported private key
+#### Creating the kubernetes secret holding the exported private key
 ```shell
 kubectl create secret generic helm-secrets-private-keys --from-file=key.asc
 ```
 
-### Making the key accessible within ArgoCD
-
-#### Method 1: Mount the private key from a kubernetes secret as volume
+#### Making the key accessible within ArgoCD
+##### Method 1: Mount the private key from a kubernetes secret as volume
 
 To use the *secrets+gpg-import / secrets+age-import* syntax, we need to mount the key on the ArgoCD Repo Server.
 
@@ -205,7 +211,7 @@ spec:
 ```
 
 
-### Method 2: Fetch the gpg key directly from a kubernetes secret
+#### Method 2: Fetch the gpg key directly from a kubernetes secret
 
 To use the *secrets+gpg-import-kubernetes / secrets+age-import-kubernetes* syntax, we need Argo CD's service account to be able to access the secret.
 To achieve this we use the RBAC Permissions.
@@ -244,12 +250,45 @@ spec:
   source:
     helm:
       valueFiles:
-        
+
         # ### Method 2: Fetch the gpg key from kubernetes secret
         # secrets+gpg-import-kubernetes://<namespace>/<secret-name>#<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
         # secrets+age-import-kubernetes://<namespace>/<secret-name>#<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
         # Example Method 2: (Assumptions: namespace=argocd, secret-name=helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
+```
+
+### No private key encryption
+#### Method 3: GCP KMS
+
+To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD, but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission. There are various ways to achieve this, but the recommended way is to use [GKE Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity). Please read Google's documentation to link your Kubernetes ServiceAccount and a Google Service Account.
+
+This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm):
+```
+repoServer:
+  serviceAccount:
+    create: true
+    name: "argocd-repo-server"
+    annotations:
+      iam.gke.io/gcp-service-account: YOUR_GOOGLE_SERVICE_ACCOUNT_EMAIL_ID
+    automountServiceAccountToken: true
+```
+
+To ensure your Google Service Account has the right permission, the easiest way is to grant it the role `roles/cloudkms.cryptoKeyDecrypter`.
+
+Once granted access, your Argo CD Application should look similar to this:
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+...
+spec:
+  source:
+    helm:
+      valueFiles:
+
+        # ### Method 3: No keys provided
+        # Example Method 3: (Assumptions: secrets.yaml is in the root folder)
+        - secrets://secrets.yaml
 ```
 
 ## Known Limitations
@@ -270,7 +309,7 @@ spec:
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
         # Using https://github.com/aslafy-z/helm-git
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
-``` 
+```
 
 ## Known Issues
 ### Compatibility issue between gpg 2.2 and gpg 2.3.
@@ -278,5 +317,5 @@ spec:
 Error:
 ```
 Error decrypting tree: Error walking tree: Could not decrypt value: crypto/aes: invalid key size 0
-``` 
+```
 For possible workarounds see [Issue 1](https://github.com/jkroepke/helm-secrets/issues/158) and [Issue 2](https://github.com/mozilla/sops/issues/896)
