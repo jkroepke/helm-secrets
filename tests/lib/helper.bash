@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
+GIT_ROOT="$(git rev-parse --show-toplevel)"
+export GIT_ROOT
+_UNAME="$(uname)"
+export _UNAME
+
+export REAL_HOME="${HOME}"
+export TEST_DIR="${GIT_ROOT}/tests"
+export CACHE_DIR="${TEST_DIR}/.tmp/cache"
+export HELM_DATA_HOME="${CACHE_DIR}/${_UNAME}/helm"
+export HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
+
+load "${GIT_ROOT}/scripts/lib/common.sh"
+
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
@@ -13,8 +26,7 @@ is_curl_installed() {
 }
 
 on_windows() {
-    _uname="$(uname)"
-    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
+    ! [[ "${_UNAME}" == "Darwin" || "${_UNAME}" == "Linux" ]]
 }
 
 _sed_i() {
@@ -45,6 +57,13 @@ _gpg() {
 }
 
 _mktemp() {
+    # Windows TMPDIR behavior
+    if [[ "$(uname -s)" == CYGWIN* ]]; then
+        TMPDIR="$(cygpath -m "${TEMP}")"
+    elif [ -n "${W_TEMP+x}" ]; then
+        TMPDIR="${W_TEMP}"
+    fi
+
     if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
         TMPDIR="${TMPDIR}" mktemp "$@"
     else
@@ -66,6 +85,11 @@ _copy() {
 
 initiate() {
     {
+        HOME="$(_home_dir)"
+
+        [ -d "${HOME}" ] || mkdir -p "${HOME}"
+        export HOME
+
         mkdir -p "${HELM_CACHE}/home"
         _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
 
@@ -82,34 +106,9 @@ initiate() {
 }
 
 setup() {
-    REAL_HOME="${HOME}"
-    # shellcheck disable=SC2153
-    HOME="$(_home_dir)"
-
-    [ -d "${HOME}" ] || mkdir -p "${HOME}"
-    export HOME
-
-    GIT_ROOT="$(git rev-parse --show-toplevel)"
-    TEST_DIR="${GIT_ROOT}/tests"
-
     # shellcheck disable=SC2164
     cd "${TEST_DIR}"
-
-    HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-
-    CACHE_DIR="${TEST_DIR}/.tmp/cache"
-    HELM_CACHE="${CACHE_DIR}/$(uname)/helm"
-    HELM_DATA_HOME="${HELM_CACHE}"
-    export HELM_DATA_HOME
-
     SEED="${RANDOM}"
-
-    # Windows TMPDIR behavior
-    if [[ "$(uname -s)" == CYGWIN* ]]; then
-        TMPDIR="$(cygpath -m "${TEMP}")"
-    elif [ -n "${W_TEMP+x}" ]; then
-        TMPDIR="${W_TEMP}"
-    fi
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
@@ -134,7 +133,7 @@ setup() {
 
     _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 
-    case "${HELM_SECRETS_DRIVER:-sops}" in
+    case "${HELM_SECRETS_DRIVER}" in
     vault)
         if [ -f .dockerenv ]; then
             # If we run inside docker, we expect vault on this location
@@ -186,16 +185,14 @@ teardown() {
         helm del "${RELEASE}" >&2
     fi
 
-    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-    if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        gpgconf --kill gpg-agent >&2
-        temp_del "$(_home_dir)"
-    fi
-
     # https://github.com/bats-core/bats-file/pull/29
     chmod -R 777 "${TEST_TEMP_DIR}" >&2
-
     temp_del "${TEST_TEMP_DIR}"
+}
+
+_teardown_file() {
+    gpgconf --kill gpg-agent >&2
+    temp_del "$(_home_dir)"
 }
 
 create_chart() {
