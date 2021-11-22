@@ -26,10 +26,12 @@ body:
       description: |
         examples:
         - **Helm Version**: 3.7.1
+        - **Helm Secrets Version**: 3.10.0
         - **OS*: Alpine
         - **Shell*: busybox
       value: |
         - Helm Version:
+        - Helm Secrets Version:
         - OS:
         - Shell:
     validations:
