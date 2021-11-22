@@ -64,7 +64,7 @@ ARG KUBECTL_VERSION="1.22.0"
 USER root
 RUN apt-get update && \
     apt-get install -y \
-      curl && \
+      curl gettext-base && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN curl -fSSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
@@ -309,6 +309,8 @@ spec:
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
         # Using https://github.com/aslafy-z/helm-git
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
+        # Fetching from a private repo with env variable
+        - secrets://https://$GITHUB_TOKEN@raw.githubusercontent.com/org/repo/ref/pathtofile.yml
 ```
 
 ## Known Issues

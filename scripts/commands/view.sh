@@ -15,7 +15,7 @@ EOF
 }
 
 view_helper() {
-    file="$1"
+    file=$(echo "${1}" | envsubst) # translate env vars supplied
 
     if ! _file_exists "$file"; then
         error 'File does not exist: %s\n' "${file}"
