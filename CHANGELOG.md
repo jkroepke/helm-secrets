@@ -8,6 +8,10 @@ Allow override sops version on installation
 
 ## [Unreleased]
 
+### Added
+- Add environment variable expansion for value files like `secrets://https://${GITHUB_TOKEN}@raw.githubusercontent.com/org/repo/ref/pathtofile.yml`.
+  This feature is disabled by default and can be enabled by set the env var `HELM_SECRETS_URL_VARIABLE_EXPANSION=true`
+
 ### Changes
 
 - Add more strict behavior around the downloader syntax to avoid infinite loops
