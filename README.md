@@ -26,11 +26,11 @@ Run decrypted command on specific value files.
 helm upgrade name . -f secrets://secrets.yaml
 ```
 
-See: [docs/USAGE.md](docs/USAGE.md) for more information
+See: [docs/Usage.md](docs/Usage.md) for more information
 
 ### ArgoCD
 
-For running helm-secrets with ArgoCD, see [docs/ARGOCD.md](docs/ARGOCD.md) for more information.
+For running helm-secrets with ArgoCD, see [docs/ArgoCD Integration.md](docs/ArgoCD Integration.md) for more information.
 
 ## Installation and Dependencies
 
@@ -239,13 +239,13 @@ If you are using sops (used by default) you have some additional features:
 - [Extracting sub-elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
 - [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
-An additional documentation, resources and examples can be found [here](USAGE.md).
+An additional documentation, resources and examples can be found [here](docs/Usage.md).
 
 ### ArgoCD support
 
 helm-secrets could detect an ArgoCD environment by the `ARGOCD_APP_NAME` environment variable. If detected, `HELM_SECRETS_QUIET` is set to `true`.
 
-See [USAGE.md](./USAGE.md#argo-cd-integration) for example.
+See [ArgoCD Integration.md](docs/ArgoCD Integration.md) for more information.
 
 ### Terraform support
 

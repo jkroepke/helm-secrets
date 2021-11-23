@@ -310,12 +310,3 @@ spec:
         # Using https://github.com/aslafy-z/helm-git
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
 ```
-
-## Known Issues
-### Compatibility issue between gpg 2.2 and gpg 2.3.
-
-Error:
-```
-Error decrypting tree: Error walking tree: Could not decrypt value: crypto/aes: invalid key size 0
-```
-For possible workarounds see [Issue 1](https://github.com/jkroepke/helm-secrets/issues/158) and [Issue 2](https://github.com/mozilla/sops/issues/896)
