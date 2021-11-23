@@ -1,4 +1,4 @@
-name: Documentation
+name: Push to GH Wiki
 
 on:
   push:
@@ -24,12 +24,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
-          git diff-index --quiet HEAD || git commit -m "Automatically publish wiki"
+          git diff-index --quiet HEAD || git commit -m "Automatically publish wiki" && git push
         working-directory: wiki
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          repository: ${{github.repository}}.wiki
-          github_token: ${{ secrets.GH_TOKEN }}
-          directory: wiki
