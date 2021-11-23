@@ -10,7 +10,7 @@
 
 ## Installation
 
-See [docs/Installation.md](docs/Installation.md) for more information.
+See [Installation](https://github.com/jkroepke/helm-secrets/wiki/Installation) for more information.
 
 ## Usage
 
@@ -30,11 +30,11 @@ Run decrypted command on specific value files.
 helm upgrade name . -f secrets://secrets.yaml
 ```
 
-See [docs/Usage.md](docs/Usage.md) for more information
+See [Usage](https://github.com/jkroepke/helm-secrets/wiki/Usage) for more information
 
 ## ArgoCD support
 
-For running helm-secrets with ArgoCD, see [docs/ArgoCD Integration.md](docs/ArgoCD%20Integration.md) for more information.
+For running helm-secrets with ArgoCD, see [ArgoCD Integration](https://github.com/jkroepke/helm-secrets/wiki/ArgoCD-Integration) for more information.
 
 ## Terraform support
 
@@ -45,7 +45,7 @@ An example how to use helm-secrets with terraform could be found in [contrib/ter
 
 helm-secrets supports multiplie secret drivers like [sops](https://github.com/mozilla/sops), [Hasicorp Vault](https://www.vaultproject.io/), [vals](https://github.com/variantdev/vals/) and more.
 
-See [docs/Secret Driver.md](docs/Secret%20Driver.md) how to use them.
+See [Secret-Driver](https://github.com/jkroepke/helm-secrets/wiki/Secret-Driver) how to use them.
 
 ## Main features
 
@@ -70,7 +70,7 @@ If you are using sops (used by default) you have some additional features:
 - [Extracting sub-elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
 - [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
-An additional documentation, resources and examples can be found [here](docs/Usage.md).
+An additional documentation, resources and examples can be found [here](https://github.com/jkroepke/helm-secrets/wiki/Usage).
 
 ## Moving parts of project
 
