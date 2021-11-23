@@ -8,6 +8,10 @@
 
 # helm-secrets
 
+## Installation
+
+See [docs/Installation.md](docs/Installation.md) for more information.
+
 ## Usage
 
 ### Decrypt secrets via plugin command
@@ -26,195 +30,22 @@ Run decrypted command on specific value files.
 helm upgrade name . -f secrets://secrets.yaml
 ```
 
-See: [docs/Usage.md](docs/Usage.md) for more information
+See [docs/Usage.md](docs/Usage.md) for more information
 
-### ArgoCD
+## ArgoCD support
 
-For running helm-secrets with ArgoCD, see [docs/ArgoCD Integration.md](docs/ArgoCD Integration.md) for more information.
+For running helm-secrets with ArgoCD, see [docs/ArgoCD Integration.md](docs/ArgoCD%20Integration.md) for more information.
 
-## Installation and Dependencies
+## Terraform support
 
-### SOPS
+The Terraform helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
+An example how to use helm-secrets with terraform could be found in [contrib/terraform](contrib/terraform).
 
-If you use sops with helm-secrets, the sops CLI tool is needed.
+## Secret drivers
 
-You can install it manually using Homebrew:
+helm-secrets supports multiplie secret drivers like [sops](https://github.com/mozilla/sops), [Hasicorp Vault](https://www.vaultproject.io/), [vals](https://github.com/variantdev/vals/) and more.
 
-```bash
-brew install sops
-```
-
-Download: https://github.com/mozilla/sops/releases/latest
-
-sops 3.2.0 is required at minimum.
-
-### vals
-
-[vals](https://github.com/variantdev/vals) is a tool for managing configuration values and secrets form various sources.
-
-It supports various backends including:
-
-* [Vault](https://github.com/variantdev/vals#vault)
-* [AWS SSM Parameter Store](https://github.com/variantdev/vals#aws-ssm-parameter-store)
-* [AWS Secrets Manager](https://github.com/variantdev/vals#aws-secrets-manager)
-* [AWS S3](https://github.com/variantdev/vals#aws-s3)
-* [GCP Secrets Manager](https://github.com/variantdev/vals#gcp-secrets-manager)
-* [Azure Key Vault](https://github.com/variantdev/vals#azure-key-vault)
-* [SOPS-encrypted files](https://github.com/variantdev/vals#sops)
-* [Terraform State](https://github.com/variantdev/vals#terraform-tfstate)
-* [Plain File](https://github.com/variantdev/vals#file)
-
-All clients are integrated into vals, no additional tools required.
-
-Download: https://github.com/variantdev/vals/releases/latest
-
-### Hashicorp Vault
-
-If you use Vault with helm-secrets, the vault CLI tool is needed.
-
-You can install it manually using Homebrew:
-
-```bash
-brew install vault
-```
-
-Download: https://www.vaultproject.io/downloads
-
-### envsubst
-
-If you have stored you secret inside environment variables, you could use the envsubst driver.
-
-```bash
-brew install gettext
-```
-
-### Doppler
-
-If you use [Doppler](https://doppler.com) with helm-secrets, the doppler CLI tool is needed.
-
-
-```bash
-brew install dopplerhq/cli/doppler
-```
-
-You need to make sure chart folder or parent one is in correct CLI's scope with enough access to project.
-
-
-### Using Helm plugin manager
-
-Install a specific version (recommend)
-```bash
-helm plugin install https://github.com/jkroepke/helm-secrets --version v3.10.0
-```
-
-Install latest unstable version from main branch
-```bash
-helm plugin install https://github.com/jkroepke/helm-secrets
-```
-
-Find the latest version here: https://github.com/jkroepke/helm-secrets/releases
-
-### Manual installation
-
-#### Latest version
-
-Windows (inside cmd, needs to be verified)
-```bash
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
-```
-MacOS / Linux
-```bash
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
-```
-
-#### Specific version
-
-Windows (inside cmd, needs to be verified)
-```bash
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.10.0/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
-```
-MacOS / Linux
-```bash
-curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.10.0/helm-secrets.tar.gz | tar -C "$(helm env HELM_PLUGINS)" -xzf-
-```
-
-### Installation on Helm 2
-
-Helm 2 doesn't support downloading plugins. Since unknown keys in `plugin.yaml` are fatal plugin installation needs special handling.
-
-Error on Helm 2 installation:
-
-```
-# helm plugin install https://github.com/jkroepke/helm-secrets
-Error: yaml: unmarshal errors:
-  line 12: field platformCommand not found in type plugin.Metadata
-```
-
-Workaround:
-
-1. Install helm-secrets via [manual installation](README.md#manual-installation), but extract inside helm2 plugin directory e.g.: `$(helm home)/plugins/`
-2. Strip `platformCommand` from `plugin.yaml` like:
-   ```
-   sed -i '/platformCommand:/,+2 d' "${HELM_HOME:-"${HOME}/.helm"}/plugins/helm-secrets*/plugin.yaml"
-   ```
-3. Done
-
-Client [here](https://github.com/adorsys-containers/ci-helm/blob/f9a8a5bf8953ab876266ca39ccbdb49228e9f117/images/2.17/Dockerfile#L91) for an example!
-
-## Explicitly specify binary path
-If sops is installed at the non-default location or if you have multiple versions of sops on your system, you can use `HELM_SECRETS_$DRIVER_PATH` to explicitly specify the sops binary to be used.
-
-```bash
-# Example for in-tree drivers via environment variable
-HELM_SECRETS_SOPS_PATH=/custom/location/sops helm secrets view ./tests/assets/helm_vars/secrets.yaml
-HELM_SECRETS_VALS_PATH=/custom/location/vals helm secrets view ./tests/assets/helm_vars/secrets.yaml
-```
-
-## Change secret driver
-
-It's possible to use another secret driver then sops, e.g. Hasicorp Vault.
-
-Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/main/scripts/drivers/sops.sh) and adjust to your own needs.
-
-The custom driver can be load via `HELM_SECRETS_DRIVER` parameter or `-d` option (higher preference):
-
-Example for in-tree drivers via option
-```bash
-helm secrets -d sops view ./tests/assets/helm_vars/secrets.yaml
-```
-Example for in-tree drivers via environment variable
-```bash
-HELM_SECRETS_DRIVER=vault helm secrets view ./tests/assets/helm_vars/secrets.yaml
-```
-Example for out-of-tree drivers
-```bash
-helm secrets -d ./path/to/driver.sh view ./tests/assets/helm_vars/secrets.yaml
-```
-
-Pull Requests are much appreciated.
-
-The driver option is a global one. A file level switch isn't supported yet.
-
-## Pass additional arguments to secret driver
-
-```bash
-helm secrets -a "--verbose" view ./tests/assets/helm_vars/secrets.yaml
-```
-
-results into:
-
-```
-[PGP]    INFO[0000] Decryption succeeded                          fingerprint=D6174A02027050E59C711075B430C4E58E2BBBA3
-[SOPS]   INFO[0000] Data key recovered successfully
-[SOPS]   DEBU[0000] Decrypting tree
-[helm-secrets] Decrypt: tests/assets/values/sops/secrets.yaml
-==> Linting examples/sops
-[INFO] Chart.yaml: icon is recommended
-
-1 chart(s) linted, 0 chart(s) failed
-
-[helm-secrets] Removed: tests/assets/values/sops/secrets.yaml.dec
-```
+See [docs/Secret Driver.md](docs/Secret%20Driver.md) how to use them.
 
 ## Main features
 
@@ -240,18 +71,6 @@ If you are using sops (used by default) you have some additional features:
 - [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
 
 An additional documentation, resources and examples can be found [here](docs/Usage.md).
-
-### ArgoCD support
-
-helm-secrets could detect an ArgoCD environment by the `ARGOCD_APP_NAME` environment variable. If detected, `HELM_SECRETS_QUIET` is set to `true`.
-
-See [ArgoCD Integration.md](docs/ArgoCD Integration.md) for more information.
-
-### Terraform support
-
-The terraform helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
-
-An example how to use helm-secrets with terraform could be found in [contrib/terraform](contrib/terraform).
 
 ## Moving parts of project
 
