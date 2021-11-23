@@ -1,5 +1,6 @@
-## Known Issues
-### Compatibility issue between gpg 2.2 and gpg 2.3.
+# Known Issues
+
+# Compatibility issue between gpg 2.2 and gpg 2.3.
 
 Error:
 ```
