@@ -3,12 +3,12 @@
 Before starting to integrate helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
 [It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
 
-## Prerequisites
+# Prerequisites
 
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
 - age encrypted values requires at least [3.10.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0).
 
-## Usage
+# Usage
 
 An Argo CD Application can use the downloader plugin syntax to use encrypted value files.
 There are three methods how to use an encrypted value file.
@@ -45,12 +45,12 @@ spec:
 
 Helm will call helm-secrets because helm-secrets is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
 
-## Installation on Argo CD
+# Installation on Argo CD
 
 Before using helm secrets, we are required to install helm-secrets and sops on the ArgoCD Repo Server.
 There are two methods to do this. Either create your custom ArgoCD Docker Image or install them via init container.
 
-### Option 1: Custom Docker Image
+## Option 1: Custom Docker Image
 Integrating `helm-secrets` with Argo CD can be achieved by building a custom Argo CD Server image.
 
 Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` into the Argo CD image:
@@ -79,7 +79,7 @@ RUN helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkr
 
 Make sure to specify your custom image when deploying Argo CD.
 
-### Option 2: Init Container
+## Option 2: Init Container
 
 install sops or vals and helm-secret through an init container.
 
@@ -126,17 +126,17 @@ repoServer:
           name: custom-tools
 ```
 
-## Configuration of ArgoCD
+# Configuration of ArgoCD
 
 When using private key encryption it is required to configure ArgoCD so that it has access to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s) can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
 
-### Private key encryption
+## Private key encryption
 There are two ways to configure ArgoCD to have access to your private key.
 Either mount the gpg key from secret as volume or access the fetch the private key directly from a kubernetes secret.
 Both methods depend on a secret holding the key in asci format.
 
-#### Using GPG
-##### Generating the key and export it as ASCI File.
+### Using GPG
+#### Generating the key and export it as ASCI File.
 
 ```shell
 gpg --full-generate-key --rfc4880
@@ -156,8 +156,8 @@ It looks something like this:
 gpg: key 1234567890987654321 marked as ultimately trusted
 ```
 
-#### Using age
-##### Generating the key
+### Using age
+#### Generating the key
 
 ```shell
 age-keygen -o key.txt
@@ -171,13 +171,13 @@ Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://g
 
 before running sops. Define `SOPS_AGE_RECIPIENTS` is only required on initial encryption of a plain file.
 
-#### Creating the kubernetes secret holding the exported private key
+### Creating the kubernetes secret holding the exported private key
 ```shell
 kubectl create secret generic helm-secrets-private-keys --from-file=key.asc
 ```
 
-#### Making the key accessible within ArgoCD
-##### Method 1: Mount the private key from a kubernetes secret as volume
+### Making the key accessible within ArgoCD
+#### Method 1: Mount the private key from a kubernetes secret as volume
 
 To use the *secrets+gpg-import / secrets+age-import* syntax, we need to mount the key on the ArgoCD Repo Server.
 
@@ -211,7 +211,7 @@ spec:
 ```
 
 
-#### Method 2: Fetch the gpg key directly from a kubernetes secret
+### Method 2: Fetch the gpg key directly from a kubernetes secret
 
 To use the *secrets+gpg-import-kubernetes / secrets+age-import-kubernetes* syntax, we need Argo CD's service account to be able to access the secret.
 To achieve this we use the RBAC Permissions.
@@ -258,8 +258,8 @@ spec:
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 ```
 
-### No private key encryption
-#### Method 3: GCP KMS
+## No private key encryption
+### Method 3: GCP KMS
 
 To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD, but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission. There are various ways to achieve this, but the recommended way is to use [GKE Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity). Please read Google's documentation to link your Kubernetes ServiceAccount and a Google Service Account.
 
@@ -291,8 +291,8 @@ spec:
         - secrets://secrets.yaml
 ```
 
-## Known Limitations
-### External Chart and local values
+# Known Limitations
+## External Chart and local values
 Please note that it is not possible to use helm secrets in Argo CD for external Charts.
 Please take a look at [this issue](https://github.com/argoproj/argo-cd/issues/7257) for more information.
 

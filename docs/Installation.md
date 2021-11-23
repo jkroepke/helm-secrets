@@ -48,7 +48,7 @@ Error: yaml: unmarshal errors:
   line 12: field platformCommand not found in type plugin.Metadata
 ```
 
-## Workaround
+## Installation on Helm 2
 
 1. Install helm-secrets via [manual installation](README.md#manual-installation), but extract inside helm2 plugin directory e.g.: `$(helm home)/plugins/`
 2. Strip `platformCommand` from `plugin.yaml` like:
