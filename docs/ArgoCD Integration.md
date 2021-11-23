@@ -305,8 +305,13 @@ spec:
   source:
     helm:
       valueFiles:
-        - secrets+gpg-import:///helm-secrets-private-keys/key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
-        - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/sops/values.yaml
+        # if AWS KMS or GCP is used
+        - secrets://https://raw.githubusercontent.com/org/repo/ref/pathtofile.yml
+        # if gpg or age encrypted is used.
+        - secrets+gpg-import:///helm-secrets-private-keys/key.asc?https://raw.githubusercontent.com/org/repo/ref/pathtofile.yml
+        - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?https://raw.githubusercontent.com/org/repo/ref/pathtofile.yml
+        # if HELM_SECRETS_URL_VARIABLE_EXPANSION is set to true, GITHUB_TOKEN needs to be set as environment variables else where, e.g. at the deployment spec
+        - secrets://https://${GITHUB_TOKEN}@raw.githubusercontent.com/org/repo/ref/pathtofile.yml
         # Using https://github.com/aslafy-z/helm-git
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
 ```
