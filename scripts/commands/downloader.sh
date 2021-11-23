@@ -69,17 +69,19 @@ downloader() {
         file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
         _age_init_kubernetes "${_age_key_location}"
         ;;
+    sops://*)
+        echo '[helm-secrets] sops:// is deprecated. Use secrets://' >&2
+        file=$(printf '%s' "${_file_url}" | sed -E -e 's!sops://!!')
+        ;;
+    secret://*)
+        echo '[helm-secrets] secret:// is deprecated. Use secrets://' >&2
+        file=$(printf '%s' "${_file_url}" | sed -E -e 's!secret://!!')
+        ;;
+    secrets://*)
+        file=$(printf '%s' "${_file_url}" | sed -E -e 's!secrets://!!')
+        ;;
     *)
-        case "${_file_url}" in
-        sops://*)
-            echo '[helm-secrets] sops:// is deprecated. Use secrets://' >&2
-            ;;
-        secret://*)
-            echo '[helm-secrets] secret:// is deprecated. Use secrets://' >&2
-            ;;
-        esac
-
-        file=$(printf '%s' "${_file_url}" | sed -E -e 's!(sops|secrets?)://!!')
+        error "[helm-secrets] Unknown protocol '${_file_url}'!"
         ;;
     esac
 
