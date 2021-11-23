@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
+## [Unreleased]
+
+### Changes
+
+- Add more strict behavior around the downloader syntax to avoid infinite loops
+
 ## [3.10.0] - 2021-11-05
 
 ### Added
