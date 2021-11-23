@@ -10,10 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
-      - name: Upload Documentation to Wiki
-        uses: SwiftDocOrg/github-wiki-publish-action@v1
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
-          path: "docs"
-        env:
-          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+
+      - name: sync wiki
+        run: rsync -a --exclude=.git docs/ wiki/
+
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Automatically publish wiki"
+
+      - name: Push changes to wiki repo
+        uses: ad-m/github-push-action@master
+        with:
+          repository: ${{ github.repository }}.wiki    # specify the wiki repo and push the update.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
