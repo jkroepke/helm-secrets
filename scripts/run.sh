@@ -16,6 +16,9 @@ SCRIPT_DIR="$(dirname "$0")"
 # shellcheck source=scripts/lib/common.sh
 . "${SCRIPT_DIR}/lib/common.sh"
 
+# shellcheck source=scripts/lib/expand_vars_strict.sh
+. "${SCRIPT_DIR}/lib/expand_vars_strict.sh"
+
 # shellcheck source=scripts/lib/file.sh
 . "${SCRIPT_DIR}/lib/file.sh"
 

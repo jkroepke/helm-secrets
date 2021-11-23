@@ -341,6 +341,33 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
 }
 
+@test "template: helm template w/ chart + secrets.yaml + secrets://http:// + HELM_SECRETS_URL_VARIABLE_EXPANSION=true" {
+    if on_windows || ! is_driver "sops"; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
+        skip
+    fi
+    FILE="secrets://https://raw.githubusercontent.com/\${GH_OWNER}/\${GH_REPO}/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_URL_VARIABLE_EXPANSION=true GH_OWNER=jkroepke GH_REPO=helm-secrets helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 81"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + secrets://http:// + HELM_SECRETS_URL_VARIABLE_EXPANSION=false" {
+    if on_windows || ! is_driver "sops"; then
+        # For vault its pretty hard to have a committed files with temporary seed of this test run
+        skip
+    fi
+    FILE="secrets://https://raw.githubusercontent.com/\${GH_OWNER}/\${GH_REPO}/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_URL_VARIABLE_EXPANSION=false helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_failure
+}
+
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://example.com/404.yaml" {
     if on_windows || ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
