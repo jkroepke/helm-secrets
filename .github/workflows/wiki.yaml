@@ -13,21 +13,23 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
-          repository: ${{ github.repository }}.wiki
+          repository: ${{ github.repository }}.wiki.git
           path: wiki
 
       - name: sync wiki
-        run: rsync -a --exclude=.git docs/ wiki/
+        run: rsync -av --exclude=.git docs/ wiki/
 
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
-          git commit -m "Automatically publish wiki"
+          git diff-index --quiet HEAD || git commit -m "Automatically publish wiki"
+        working-directory: wiki
 
-      - name: Push changes to wiki repo
+      - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          repository: ${{ github.repository }}.wiki    # specify the wiki repo and push the update.
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{github.repository}}.wiki.git
+          github_token: ${{ secrets.GH_TOKEN }}
+          directory: wiki
