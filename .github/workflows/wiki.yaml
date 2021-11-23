@@ -19,6 +19,9 @@ jobs:
       - name: sync wiki
         run: rsync -av --delete --exclude=.git docs/ wiki/
 
+      - name: remove header line
+        run: sed -i '1d' wiki/*.md
+
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
