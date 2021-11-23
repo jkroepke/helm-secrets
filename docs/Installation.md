@@ -1,3 +1,5 @@
+# Installation
+
 # Using Helm plugin manager
 
 Install a specific version (recommend)
