@@ -211,7 +211,7 @@ spec:
 ```
 
 
-### Method 2: Fetch the gpg key directly from a kubernetes secret
+#### Method 2: Fetch the gpg key directly from a kubernetes secret
 
 To use the *secrets+gpg-import-kubernetes / secrets+age-import-kubernetes* syntax, we need Argo CD's service account to be able to access the secret.
 To achieve this we use the RBAC Permissions.
@@ -258,8 +258,11 @@ spec:
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 ```
 
-## No private key encryption
-### Method 3: GCP KMS
+## External key location
+
+sops is supporting multiple cloud providers.
+
+### GCP KMS
 
 To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD, but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission. There are various ways to achieve this, but the recommended way is to use [GKE Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity). Please read Google's documentation to link your Kubernetes ServiceAccount and a Google Service Account.
 
