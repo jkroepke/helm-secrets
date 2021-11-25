@@ -249,7 +249,7 @@ jobs:
 
       - uses: codecov/codecov-action@v2.1.0
         with:
-          directory: coverage
+          files: ./coverage/coverage.xml
           fail_ci_if_error: true
 
   integration-tests:
