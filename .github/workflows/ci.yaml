@@ -201,7 +201,7 @@ jobs:
         uses: innovationnorway/setup-vault@v1.0.3
 
       - name: Install bashcov
-        run: gem install bashcov simplecov-cobertura
+        run: gem install bashcov:'< 2' simplecov-cobertura:'< 2'
 
       - name: Print Environment
         run: |-
@@ -249,7 +249,7 @@ jobs:
 
       - uses: codecov/codecov-action@v2.1.0
         with:
-          directory: coverage
+          files: ./coverage/coverage.xml
           fail_ci_if_error: true
 
   integration-tests:
