@@ -6,7 +6,7 @@ Before starting to integrate helm-secrets with ArgoCD, consider using [age](http
 # Prerequisites
 
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
-- age encrypted values requires at least [3.10.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0).
+- age encrypted values requires at least [3.10.0](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0).
 
 # Usage
 
@@ -58,7 +58,7 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 ARG ARGOCD_VERSION="v2.1.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.1"
-ARG HELM_SECRETS_VERSION="3.10.0"
+ARG HELM_SECRETS_VERSION="3.11.0"
 ARG KUBECTL_VERSION="1.22.0"
 
 USER root
@@ -107,7 +107,7 @@ repoServer:
       command: [sh, -ec]
       env:
         - name: HELM_SECRETS_VERSION
-          value: "3.10.0"
+          value: "3.11.0"
         - name: SOPS_VERSION
           value: "3.7.1"
         - name: KUBECTL_VERSION

@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allow override sops version on installation
 
-## [Unreleased]
+## [3.11.0] - 2021-11-25
 
 ### Added
 - Add environment variable expansion for value files like `secrets://https://${GITHUB_TOKEN}@raw.githubusercontent.com/org/repo/ref/pathtofile.yml`.
@@ -189,7 +189,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.10.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.11.0...HEAD
+[3.11.0]: https://github.com/jkroepke/helm-secrets/compare/v3.10.0...v3.11.0
 [3.10.0]: https://github.com/jkroepke/helm-secrets/compare/v3.9.1...v3.10.0
 [3.9.1]: https://github.com/jkroepke/helm-secrets/compare/v3.9.0...v3.9.1
 [3.9.0]: https://github.com/jkroepke/helm-secrets/compare/v3.8.3...v3.9.0
