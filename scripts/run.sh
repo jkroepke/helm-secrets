@@ -136,6 +136,13 @@ while true; do
         downloader "$2" "$3" "$4" "$5"
         break
         ;;
+    terraform)
+        # shellcheck source=scripts/commands/downloader.sh
+        . "${SCRIPT_DIR}/commands/terraform.sh"
+
+        terraform "$2"
+        break
+        ;;
     --help | -h | help)
         # shellcheck source=scripts/commands/help.sh
         . "${SCRIPT_DIR}/commands/help.sh"

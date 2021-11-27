@@ -31,7 +31,7 @@ downloader() {
     case "${_file_url}" in
     secrets+gpg-import://*)
         if [ "${ALLOW_GPG_IMPORT}" != "true" ]; then
-            error "[helm-secret] secrets+gpg-import:// is not allowed in this context!"
+            error "secrets+gpg-import:// is not allowed in this context!"
         fi
 
         _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import://!!')
@@ -41,7 +41,7 @@ downloader() {
         ;;
     secrets+gpg-import-kubernetes://*)
         if [ "${ALLOW_GPG_IMPORT_KUBERNETES}" != "true" ]; then
-            error "[helm-secret] secrets+gpg-import-kubernetes:// is not allowed in this context!"
+            error "secrets+gpg-import-kubernetes:// is not allowed in this context!"
         fi
 
         _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import-kubernetes://!!')
@@ -51,7 +51,7 @@ downloader() {
         ;;
     secrets+age-import://*)
         if [ "${ALLOW_AGE_IMPORT}" != "true" ]; then
-            error "[helm-secret] secrets+age-import:// is not allowed in this context!"
+            error "secrets+age-import:// is not allowed in this context!"
         fi
 
         _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import://!!')
@@ -61,7 +61,7 @@ downloader() {
         ;;
     secrets+age-import-kubernetes://*)
         if [ "${ALLOW_AGE_IMPORT_KUBERNETES}" != "true" ]; then
-            error "[helm-secret] secrets+age-import-kubernetes:// is not allowed in this context!"
+            error "secrets+age-import-kubernetes:// is not allowed in this context!"
         fi
 
         _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import-kubernetes://!!')
@@ -81,7 +81,7 @@ downloader() {
         file=$(printf '%s' "${_file_url}" | sed -E -e 's!secrets://!!')
         ;;
     *)
-        error "[helm-secrets] Unknown protocol '${_file_url}'!"
+        error "Unknown protocol '${_file_url}'!"
         ;;
     esac
 
@@ -116,11 +116,11 @@ _gpg_init_kubernetes() {
 
     if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
         -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_gpg_key_path}.base64"; then
-        error "[helm-secrets] Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
+        error "Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
     fi
 
     if ! base64 --decode <"${_gpg_key_path}.base64" >"${_gpg_key_path}"; then
-        error "[helm-secrets] Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
+        error "Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
     fi
 
     _gpg_init "${_gpg_key_path}"
@@ -148,11 +148,11 @@ _age_init_kubernetes() {
 
     if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
         -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_age_key_path}.base64"; then
-        error "[helm-secrets] Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
+        error "Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
     fi
 
     if ! base64 --decode <"${_age_key_path}.base64" >"${_age_key_path}"; then
-        error "[helm-secrets] Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
+        error "Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
     fi
 
     _age_init "${_age_key_path}"

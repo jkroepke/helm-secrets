@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Terraform Integration. Can be used together with [external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source)
+
 ## [3.11.0] - 2021-11-25
 
 ### Added
