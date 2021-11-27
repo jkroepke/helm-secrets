@@ -46,6 +46,15 @@ helm secrets can be used together with the [terraform external data source provi
 data "external" "helm-secrets" {
   program = ["helm", "secrets", "terraform", "../../examples/sops/secrets.yaml"]
 }
+
+resource "helm_release" "example" {
+  ...
+
+  values = concat(
+    file("../../examples/sops/values.yaml"),
+    base64decode(data.external.helm-secrets.result.content_base64),
+  )
+}
 ```
 An example how to use helm-secrets with terraform could be found in [contrib/terraform](contrib/terraform).
 
