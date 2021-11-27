@@ -400,7 +400,7 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
     assert_failure
-    assert_output --partial "[helm-secret] secrets+gpg-import-kubernetes:// is not allowed in this context!"
+    assert_output --partial "[helm-secrets] secrets+gpg-import-kubernetes:// is not allowed in this context!"
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/non-exists#key" {
@@ -492,7 +492,7 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
     assert_failure
-    assert_output --partial "[helm-secret] secrets+age-import-kubernetes:// is not allowed in this context!"
+    assert_output --partial "[helm-secrets] secrets+age-import-kubernetes:// is not allowed in this context!"
 }
 
 
