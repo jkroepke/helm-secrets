@@ -435,7 +435,7 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_ALLOW_GPG_IMPORT=false helm template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_failure
-    assert_output --partial "[helm-secret] secrets+gpg-import:// is not allowed in this context!"
+    assert_output --partial "[helm-secrets] secrets+gpg-import:// is not allowed in this context!"
 }
 
 @test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import://" {
@@ -477,7 +477,7 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_ALLOW_AGE_IMPORT=false helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_failure
-    assert_output --partial "[helm-secret] secrets+age-import:// is not allowed in this context!"
+    assert_output --partial "[helm-secrets] secrets+age-import:// is not allowed in this context!"
 }
 
 @test "template: helm template w/ chart + --driver-args (simple)" {

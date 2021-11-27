@@ -30,7 +30,7 @@ decrypt_helper() {
 
     if ! driver_decrypt_file "yaml" "${encrypted_file_path}" "${encrypted_file_dec}"; then
         rm -rf "${encrypted_file_dec}"
-        error '[helm-secrets] Error while decrypting file: %s\n' "${file}"
+        error 'Error while decrypting file: %s' "${file}"
     fi
 }
 
@@ -47,11 +47,11 @@ dec() {
     fi
 
     if ! encrypted_file_path=$(_file_get "${file}"); then
-        error '[helm-secrets] File does not exist: %s\n' "${file}"
+        error 'File does not exist: %s' "${file}"
     fi
 
     if ! decrypt_helper "${encrypted_file_path}"; then
-        error '[helm-secrets] File is not encrypted: %s\n' "${file}"
+        error 'File is not encrypted: %s' "${file}"
     fi
 
     if [ "${OUTPUT_DECRYPTED_FILE_PATH}" = "true" ]; then

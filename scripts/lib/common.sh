@@ -15,13 +15,13 @@ is_help() {
 
 error() {
     if [ $# -le 1 ]; then
-        printf '%s\n' "${1:-}" >&2
+        printf '[helm-secrets] %s\n' "${1:-}" >&2
     else
         format="${1}"
         shift
 
         # shellcheck disable=SC2059
-        printf "$format" "$@" >&2
+        printf "[helm-secrets] $format\n" "$@" >&2
     fi
 
     exit 1
