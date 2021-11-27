@@ -39,6 +39,14 @@ For running helm-secrets with ArgoCD, see [ArgoCD Integration](https://github.co
 ## Terraform support
 
 The Terraform helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
+
+helm secrets can be used together with the [terraform external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source).
+
+```hcl
+data "external" "helm-secrets" {
+  program = ["helm", "secrets", "terraform", "../../examples/sops/secrets.yaml"]
+}
+```
 An example how to use helm-secrets with terraform could be found in [contrib/terraform](contrib/terraform).
 
 ## Secret drivers
