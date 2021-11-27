@@ -20,7 +20,7 @@ load '../bats/extensions/bats-file/load'
 @test "dec: File not exits" {
     run helm secrets dec nonexists
     assert_failure
-    assert_output --partial 'File does not exist: nonexists'
+    assert_output --partial '[helm-secrets] File does not exist: nonexists'
 }
 
 @test "dec: Decrypt secrets.yaml" {

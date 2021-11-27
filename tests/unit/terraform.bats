@@ -19,5 +19,5 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets terraform "${FILE}"
     assert_failure
-    assert_output 'error'
+    assert_output --partial '[helm-secrets] File does not exist:'
 }

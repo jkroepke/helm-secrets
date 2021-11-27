@@ -20,7 +20,7 @@ load '../bats/extensions/bats-file/load'
 @test "enc: File not exits" {
     run helm secrets enc nonexists
     assert_failure
-    assert_output --partial 'File does not exist: nonexists'
+    assert_output --partial '[helm-secrets] File does not exist: nonexists'
 }
 
 @test "enc: Encrypt secrets.yaml" {

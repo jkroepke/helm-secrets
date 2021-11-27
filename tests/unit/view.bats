@@ -8,7 +8,7 @@ load '../bats/extensions/bats-file/load'
 @test "view: helm view" {
     run helm secrets view
     assert_failure
-    assert_output --partial 'Error: secrets file required.'
+    assert_output --partial '[helm-secrets] Error: secrets file required.'
 }
 
 @test "view: helm view --help" {
@@ -20,7 +20,7 @@ load '../bats/extensions/bats-file/load'
 @test "view: File not exits" {
     run helm secrets view nonexists
     assert_failure
-    assert_output --partial 'File does not exist: nonexists'
+    assert_output --partial '[helm-secrets] File does not exist: nonexists'
 }
 
 @test "view: secrets.yaml" {
