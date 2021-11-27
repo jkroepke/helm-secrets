@@ -114,10 +114,12 @@ _gpg_init_kubernetes() {
 
     _gpg_key_path="$(_mktemp)"
 
-    "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
-        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_gpg_key_path}.base64"
+    if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
+        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_gpg_key_path}.base64"; then
+        error "[helm-secrets] Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
+    fi
 
-    if ! base64 -d <"${_gpg_key_path}.base64" >"${_gpg_key_path}"; then
+    if ! base64 --decode <"${_gpg_key_path}.base64" >"${_gpg_key_path}"; then
         error "[helm-secrets] Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
     fi
 
@@ -144,10 +146,12 @@ _age_init_kubernetes() {
 
     _age_key_path="$(_mktemp)"
 
-    "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
-        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_age_key_path}.base64"
+    if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
+        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_age_key_path}.base64"; then
+        error "[helm-secrets] Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
+    fi
 
-    if ! base64 -d <"${_age_key_path}.base64" >"${_age_key_path}"; then
+    if ! base64 --decode <"${_age_key_path}.base64" >"${_age_key_path}"; then
         error "[helm-secrets] Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
     fi
 
