@@ -403,6 +403,21 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secret] secrets+gpg-import-kubernetes:// is not allowed in this context!"
 }
 
+@test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/non-exists#key" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/non-exists#private3.gpg?${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secrets] Couldn't get kubernetes secret kube-system/non-exists"
+}
+
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import://" {
     if on_windows || ! is_driver "sops"; then
         skip
@@ -478,4 +493,20 @@ load '../bats/extensions/bats-file/load'
     run env HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secret] secrets+age-import-kubernetes:// is not allowed in this context!"
+}
+
+
+@test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/non-exists#key" {
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/non-exists#keys.txt?${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secrets] Couldn't get kubernetes secret kube-system/non-exists"
 }

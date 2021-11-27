@@ -14,6 +14,16 @@ See [Installation](https://github.com/jkroepke/helm-secrets/wiki/Installation) f
 
 ## Usage
 
+### Decrypt secrets via protocol handler
+
+Run decrypted command on specific value files. This is method is preferred over the plugin command below.
+
+```bash
+helm upgrade name . -f secrets://secrets.yaml
+```
+
+See [Usage](https://github.com/jkroepke/helm-secrets/wiki/Usage) for more information
+
 ### Decrypt secrets via plugin command
 
 Wraps the whole helm command. Slow on multiple value files.
@@ -21,16 +31,6 @@ Wraps the whole helm command. Slow on multiple value files.
 ```bash
 helm secrets upgrade name . -f secrets.yaml
 ```
-
-### Decrypt secrets via protocol handler
-
-Run decrypted command on specific value files.
-
-```bash
-helm upgrade name . -f secrets://secrets.yaml
-```
-
-See [Usage](https://github.com/jkroepke/helm-secrets/wiki/Usage) for more information
 
 ## ArgoCD support
 
