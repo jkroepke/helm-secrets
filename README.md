@@ -50,10 +50,10 @@ data "external" "helm-secrets" {
 resource "helm_release" "example" {
   ...
 
-  values = concat(
+  values = [
     file("../../examples/sops/values.yaml"),
     base64decode(data.external.helm-secrets.result.content_base64),
-  )
+  ]
 }
 ```
 An example how to use helm-secrets with terraform could be found in [contrib/terraform](contrib/terraform).
