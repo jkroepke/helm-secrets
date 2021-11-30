@@ -19,7 +19,7 @@ jobs:
           path: wiki
 
       - name: sync wiki
-        run: rsync -av --delete --exclude=README.md --exclude=.git docs/ wiki/
+        run: rsync -av --delete --exclude=ARGOCD.md --exclude=README.md --exclude=.git docs/ wiki/
 
       - name: remove header line
         run: sed -i '1d' wiki/*.md
