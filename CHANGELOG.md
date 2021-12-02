@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Terraform Integration. Can be used together with [external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source)
+- Enable parsing of [.netrc](https://everything.curl.dev/usingcurl/netrc) for http based values. The location of the .netrc can be overridden by `NETRC` environment variable.
 
 ## [3.11.0] - 2021-11-25
 
