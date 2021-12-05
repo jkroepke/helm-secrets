@@ -25,10 +25,9 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    refute_output --partial "[helm-secrets] Decrypt:"
     assert_output --partial "Release was not present in Helm."
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    refute_output --partial "[helm-secrets] Removed:"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml" {
