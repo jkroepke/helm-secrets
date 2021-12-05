@@ -44,10 +44,13 @@ The `wget` command on alpine linux does not support `.netrc` and `curl` is requi
 Example `.netrc` file:
 
 ```
+# cat .netrc
 machine raw.githubusercontent.com
 login ghp_xxxxxx
 password
 ```
+
+Then run
 
 ```bash
 export NETRC="${PWD}/.netrc" # needs to be defined 
