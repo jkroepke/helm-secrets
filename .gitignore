@@ -5,3 +5,5 @@ coverage
 
 *.dec
 *.test
+
+.netrc

@@ -21,7 +21,8 @@ Please refer to the configuration section of the corresponding method for furthe
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
-...
+metadata:
+  name: app
 spec:
   source:
     helm:
@@ -198,7 +199,8 @@ Once mounted, your Argo CD Application should look similar to this:
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
-...
+metadata:
+  name: app
 spec:
   source:
     helm:
@@ -245,7 +247,8 @@ Once granted access, your Argo CD Application should look similar to this:
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
-...
+metadata:
+  name: app
 spec:
   source:
     helm:
@@ -283,7 +286,8 @@ Once granted access, your Argo CD Application should look similar to this:
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
-...
+metadata:
+  name: app
 spec:
   source:
     helm:
@@ -300,10 +304,12 @@ Please note that it is not possible to use helm secrets in Argo CD for external 
 Please take a look at [this issue](https://github.com/argoproj/argo-cd/issues/7257) for more information.
 
 As workaround, you can fetch additional values from remote locations:
+
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
-...
+metadata:
+  name: app
 spec:
   source:
     helm:
@@ -318,3 +324,5 @@ spec:
         # Using https://github.com/aslafy-z/helm-git
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main"
 ```
+
+See https://github.com/jkroepke/helm-secrets/wiki/Values for more information about remote value files.

@@ -283,9 +283,7 @@ kind: Deployment
 ...
 ...
         containers:
-        ...
-        ...
-          env:
+        - env:
             - name: my_new_secret_key
               valueFrom:
                 secretKeyRef:
@@ -329,35 +327,4 @@ Example:
 
 ```bash
 helm upgrade . -f 'secrets+gpg-import-kubernetes://default/gpg-key#examples/sops/secrets.yaml'
-```
-
-# Important Tips
-
-## Prevent committing decrypted files to git
-
-If you like to secure situation when decrypted file is committed by mistake to git you can add your secrets.yaml.dec files to you charts project repository `.gitignore`.
-
-A second level of security is to add for example a `.sopscommithook` file inside your chart repository local commit hook.
-
-This will prevent committing decrypted files without sops metadata.
-
-`.sopscommithook` content example:
-
-```
-!/bin/sh
-
-for FILE in $(git diff-index HEAD --name-only | grep <your vars dir> | grep "secrets.y"); do
-    if [ -f "$FILE" ] && ! grep -C10000 "sops:" $FILE | grep -q "version:"; then
-        echo "!!!!! $FILE" 'File is not encrypted !!!!!'
-        echo "Run: helm secrets enc <file path>"
-        exit 1
-    fi
-done
-exit
-```
-
-Additionally, you could create a `.gitignore` to exclude decrypted files from checkin:
-
-```gitignore
-*.yaml.dec
 ```
