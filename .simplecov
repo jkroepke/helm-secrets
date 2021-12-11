@@ -9,4 +9,5 @@ SimpleCov.start do
   add_filter "/lib/file/helm-values-getter/"
   add_filter "/tests/"
   add_filter "/.git/"
+  add_filter "/tmp/"
 end
