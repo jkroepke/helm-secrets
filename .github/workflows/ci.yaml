@@ -222,17 +222,6 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:sops
 
-
-
-      - uses: engineerd/setup-kind@v0.5.0
-        with:
-          version: "v0.11.1"
-
-      - name: bashcov bats --tap -r tests/it
-        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
-        env:
-          BASHCOV_COMMAND_NAME: helm-secrets:it
-
       - name: bashcov bats --tap -r tests/unit
         run: |
           vault server -dev -dev-root-token-id=test &>/dev/null &
@@ -252,6 +241,15 @@ jobs:
         env:
           HELM_SECRETS_DRIVER: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
+
+      - uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.11.1"
+
+      - name: bashcov bats --tap -r tests/it
+        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
+        env:
+          BASHCOV_COMMAND_NAME: helm-secrets:it
 
       - uses: codecov/codecov-action@v2.1.0
         with:
