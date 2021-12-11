@@ -38,7 +38,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        container: [~]
+        container: [""]
         shell: [dash]
         include:
           - os: windows-latest
@@ -171,6 +171,9 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    env:
+      BATSLIB_TEMP_PRESERVE: "0"
+      BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
     steps:
       - uses: actions/checkout@v2.4.0
         with:
@@ -217,9 +220,7 @@ jobs:
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
-          BASHCOV_COMMAND_NAME: helm-secrets sops
-          BATSLIB_TEMP_PRESERVE: "0"
-          BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
+          BASHCOV_COMMAND_NAME: helm-secrets:sops
 
       - name: bashcov bats --tap -r tests/unit
         run: |
@@ -227,25 +228,35 @@ jobs:
           bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: vault
-          BASHCOV_COMMAND_NAME: helm-secrets vault
-          BATSLIB_TEMP_PRESERVE: "0"
-          BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
+          BASHCOV_COMMAND_NAME: helm-secrets:vault
 
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: envsubst
-          BASHCOV_COMMAND_NAME: helm-secrets envsubst
-          BATSLIB_TEMP_PRESERVE: "0"
-          BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
+          BASHCOV_COMMAND_NAME: helm-secrets:envsubst
 
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: vals
-          BASHCOV_COMMAND_NAME: helm-secrets vals
-          BATSLIB_TEMP_PRESERVE: "0"
-          BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
+          BASHCOV_COMMAND_NAME: helm-secrets:vals
+
+      - uses: codecov/codecov-action@v2.1.0
+        with:
+          files: ./coverage/coverage.xml
+          fail_ci_if_error: true
+
+      - run: rm -rf ./coverage/
+
+      - uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.11.1"
+
+      - name: bashcov bats --tap -r tests/it
+        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
+        env:
+          BASHCOV_COMMAND_NAME: helm-secrets:it
 
       - uses: codecov/codecov-action@v2.1.0
         with:

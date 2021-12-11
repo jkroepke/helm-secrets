@@ -24,10 +24,9 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    refute_output --partial "[helm-secrets] Decrypt:"
     assert_output --partial 'STATUS: deployed'
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    refute_output --partial "[helm-secrets] Removed:"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
     assert_success
