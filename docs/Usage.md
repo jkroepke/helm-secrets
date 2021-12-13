@@ -305,26 +305,32 @@ helm upgrade . -f 'secrets://localfile.yaml'
 helm upgrade . -f 'secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/sops/secrets.yaml?ref=main'
 ```
 
-### Load a gpg key on-demand
+See also: https://github.com/jkroepke/helm-secrets/wiki/Values
+
+### Load a gpg/age key on-demand
 
 To assist the CD pipeline in certain situations (e.g. ArgoCD), helm-secret can load the gpg key from disk into a temporary gpg agent.
 
 ```bash
 helm upgrade . -f 'secrets+gpg-import://<uri to gpg key>?<uri to file>'
+helm upgrade . -f 'secrets+age-import://<uri to age key txt>?<uri to file>'
 ```
 Example:
 
 ```bash
 helm upgrade . -f 'secrets+gpg-import://tests/assets/gpg/private.gpg?examples/sops/secrets.yaml'
+helm upgrade . -f 'secrets+age-import://tests/assets/age/keys.txt?examples/sops/secrets.yaml'
 ```
 
 Support kubernetes secrets as source is possible, too:
 
 ```bash
 helm upgrade . -f 'secrets+gpg-import-kubernetes://[<namespace>]/<name>#<key>?<uri to file>'
+helm upgrade . -f 'secrets+age-import-kubernetes://[<namespace>]/<name>#<key>?<uri to file>'
 ```
 Example:
 
 ```bash
 helm upgrade . -f 'secrets+gpg-import-kubernetes://default/gpg-key#examples/sops/secrets.yaml'
+helm upgrade . -f 'secrets+age-import-kubernetes://default/age-key.txt#examples/sops/secrets.yaml'
 ```
