@@ -14,6 +14,8 @@ helm plugin install https://github.com/jkroepke/helm-secrets
 
 Find the latest version here: https://github.com/jkroepke/helm-secrets/releases/latest
 
+See [Secret Driver manual](https://github.com/jkroepke/helm-secrets/wiki/Secret-Driver#list-of-implemented-secret-drivers) for additional installaton tasks.
+
 # Manual installation
 
 ## Latest version
