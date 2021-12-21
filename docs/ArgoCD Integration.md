@@ -149,7 +149,7 @@ Please also note that currently it is recommended to use the --rfc4880.
 This prevents you from running into a compatibility issue between gpg 2.2 and gpg 2.3. (Related Issue: [Encryption with GnuPG 2.3 (RFC4880bis) causes compatibility issues with GnuPG 2.2](https://github.com/mozilla/sops/issues/896))
 
 ```shell
-gpg --armor --export-key <key-id> > key.asc
+gpg --armor --export-secret-keys <key-id> > key.asc
 ```
 The key-id can be found in the output of the generate-key command.
 It looks something like this:
@@ -233,14 +233,13 @@ repoServer:
     - secrets
     verbs:
     - get
-    - list
-    - watch
 ```
 
 RBAC permissions can be verified by executing the command below:
 
 ```bash
-kubectl auth can-i get secrets --namespace argo-cd --as system:serviceaccount:$NAMESPACE:argo-cd-argocd-repo-server
+export NAMESPACE=argo-cd
+kubectl auth can-i get secrets --namespace $NAMESPACE --as system:serviceaccount:$NAMESPACE:argocd-repo-server
 ```
 
 Once granted access, your Argo CD Application should look similar to this:
