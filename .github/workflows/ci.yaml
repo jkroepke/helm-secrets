@@ -95,7 +95,7 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@v1.1
+        uses: azure/setup-helm@v2.0
         with:
           version: ${{ env.VERSION_HELM }}
 
@@ -186,7 +186,7 @@ jobs:
           ruby-version: 2.6
 
       - name: Setup Helm
-        uses: azure/setup-helm@v1.1
+        uses: azure/setup-helm@v2.0
         with:
           version: ${{ env.VERSION_HELM }}
 
@@ -279,7 +279,7 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@v1.1
+        uses: azure/setup-helm@v2.0
         with:
           version: ${{ env.VERSION_HELM }}
 
