@@ -57,7 +57,7 @@ resource "helm_release" "example" {
   ]
 }
 ```
-An example how to use helm-secrets with terraform could be found in [contrib/terraform](contrib/terraform).
+An example how to use helm-secrets with terraform could be found in [examples/terraform](examples/terraform/helm.tf).
 
 ## Secret drivers
 
