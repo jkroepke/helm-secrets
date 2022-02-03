@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.12.0] - 2022-02-03
 
 ### Added
 - [Terraform Integration](https://github.com/jkroepke/helm-secrets/blob/5feb8cd38f6e89e680cab9c428d0a97e0143e703/examples/terraform/helm.tf). Can be used together with [external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source)
@@ -193,7 +193,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.11.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.12.0...HEAD
+[3.12.0]: https://github.com/jkroepke/helm-secrets/compare/v3.11.0...v3.12.0
 [3.11.0]: https://github.com/jkroepke/helm-secrets/compare/v3.10.0...v3.11.0
 [3.10.0]: https://github.com/jkroepke/helm-secrets/compare/v3.9.1...v3.10.0
 [3.9.1]: https://github.com/jkroepke/helm-secrets/compare/v3.9.0...v3.9.1

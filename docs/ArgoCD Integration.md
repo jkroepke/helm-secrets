@@ -59,7 +59,7 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 ARG ARGOCD_VERSION="v2.1.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.1"
-ARG HELM_SECRETS_VERSION="3.11.0"
+ARG HELM_SECRETS_VERSION="3.12.0"
 ARG KUBECTL_VERSION="1.22.0"
 
 USER root
@@ -108,7 +108,7 @@ repoServer:
       command: [sh, -ec]
       env:
         - name: HELM_SECRETS_VERSION
-          value: "3.11.0"
+          value: "3.12.0"
         - name: SOPS_VERSION
           value: "3.7.1"
         - name: KUBECTL_VERSION
