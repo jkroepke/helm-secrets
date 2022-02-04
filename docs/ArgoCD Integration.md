@@ -10,6 +10,9 @@ Before starting to integrate helm-secrets with ArgoCD, consider using [age](http
 
 # Usage
 
+> **⚠ WARNING: Avoid wrapper scripts**  
+> There are a lot of tutorials around ArgoCD and helm-secrets which introduce a wrapper. Latest versions of helm-secrets does not need such wrapper. The mentioned wrapper script may be the source of additional incompabilities, like `file secrets+gpg-import://.. not found`. The steps documented on this page works only without a configured wrapper script.
+
 An Argo CD Application can use the downloader plugin syntax to use encrypted value files.
 There are three methods how to use an encrypted value file.
 - Method 1: Mount the private key from a kubernetes secret as volume
