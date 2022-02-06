@@ -3,9 +3,9 @@
 Before starting to integrate helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
 [It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
 
-> **⚠ WARNING: ArgoCD incompability**
-> Due (CVE-2022-24348)[https://www.tenable.com/cve/CVE-2022-24348], ArgoCD restricts the protocols in helm value files. This fix is introduced in ArgoCD 2.1.9 and 2.2.4.
-> If you depends on helm-secrets integration, please stay below ArgoCD 2.1.9 and 2.2.4 untils is fixed upstream.
+> **⚠ WARNING: ArgoCD incompatibility**
+> Due (CVE-2022-24348)[https://www.tenable.com/cve/CVE-2022-24348], ArgoCD restricts the protocols in helm value files. The fix is introduced in ArgoCD 2.1.9 and 2.2.4.
+> If you depend on helm-secrets integration, please stay below ArgoCD 2.1.9 and 2.2.4 until the problem fixed upstream.
 > See https://github.com/argoproj/argo-cd/issues/8397 and https://github.com/jkroepke/helm-secrets/issues/185 for more information.
 
 # Prerequisites
