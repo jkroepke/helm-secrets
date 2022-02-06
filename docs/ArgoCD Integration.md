@@ -66,11 +66,14 @@ Integrating `helm-secrets` with Argo CD can be achieved by building a custom Arg
 
 Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` into the Argo CD image:
 ```Dockerfile
-ARG ARGOCD_VERSION="v2.1.2"
+ARG ARGOCD_VERSION="v2.3.0"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.1"
 ARG HELM_SECRETS_VERSION="3.12.0"
 ARG KUBECTL_VERSION="1.22.0"
+
+ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm
+ENV HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/"
 
 USER root
 RUN apt-get update && \
@@ -84,7 +87,7 @@ RUN curl -fSSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kub
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 USER argocd
-ENV HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/"
+
 RUN helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkroepke/helm-secrets
 ```
 
@@ -101,6 +104,8 @@ repoServer:
   env:
     - name: HELM_PLUGINS
       value: /custom-tools/helm-plugins/
+    - name: HELM_SECRETS_HELM_PATH
+      value: /usr/local/bin/helm
     - name: HELM_SECRETS_SOPS_PATH
       value: /custom-tools/sops
     - name: HELM_SECRETS_KUBECTL_PATH

@@ -26,7 +26,7 @@ SCRIPT_DIR="$(dirname "$0")"
 . "${SCRIPT_DIR}/lib/http.sh"
 
 # Make sure HELM_BIN is set (normally by the helm command)
-HELM_BIN="${HELM_BIN:-helm}"
+HELM_BIN="${HELM_SECRETS_HELM_PATH:-"${HELM_BIN:-helm}"}"
 
 if on_cygwin; then
     HELM_BIN="$(cygpath -u "${HELM_BIN}")"
