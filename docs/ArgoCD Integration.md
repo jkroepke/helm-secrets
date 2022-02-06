@@ -4,7 +4,8 @@ Before starting to integrate helm-secrets with ArgoCD, consider using [age](http
 [It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
 
 > **⚠ WARNING: ArgoCD incompatibility**
-> Due (CVE-2022-24348)[https://www.tenable.com/cve/CVE-2022-24348], ArgoCD restricts the protocols in helm value files. The fix is introduced in ArgoCD 2.1.9 and 2.2.4.
+> 
+> Due [CVE-2022-24348](https://www.tenable.com/cve/CVE-2022-24348), ArgoCD restricts the protocols in helm value files. The [fix](https://github.com/argoproj/argo-cd/commit/78c2084f0febd159039ff785ddc2bd4ba1cecf88) is introduced in ArgoCD 2.1.9 and 2.2.4.
 > If you depend on helm-secrets integration, please stay below ArgoCD 2.1.9 and 2.2.4 until the problem fixed upstream.
 > See https://github.com/argoproj/argo-cd/issues/8397 and https://github.com/jkroepke/helm-secrets/issues/185 for more information.
 
@@ -16,6 +17,7 @@ Before starting to integrate helm-secrets with ArgoCD, consider using [age](http
 # Usage
 
 > **⚠ WARNING: Avoid wrapper scripts**  
+> 
 > There are a lot of tutorials around ArgoCD and helm-secrets which introduce a wrapper. Latest versions of helm-secrets does not need such wrapper. The mentioned wrapper script may be the source of additional incompabilities, like `file secrets+gpg-import://.. not found`. The steps documented on this page works only without a configured wrapper script.
 
 An Argo CD Application can use the downloader plugin syntax to use encrypted value files.
