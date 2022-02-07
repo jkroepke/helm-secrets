@@ -411,7 +411,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + secrets+gpg-import://" {
-    if on_windows || ! is_driver "sops"; then
+    if ! on_linux || ! is_driver "sops"; then
         skip
     fi
 
@@ -422,7 +422,7 @@ load '../bats/extensions/bats-file/load'
     printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" > "${TEST_TEMP_DIR}/helm"
     chmod +x "${TEST_TEMP_DIR}/helm"
 
-    run env HELM_SECRETS_DEBUG=true HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" "${TEST_TEMP_DIR}/helm" template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run env HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" "${TEST_TEMP_DIR}/helm" template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 91"
 }

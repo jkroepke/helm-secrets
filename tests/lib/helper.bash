@@ -17,6 +17,11 @@ on_windows() {
     ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
 }
 
+on_linux() {
+    _uname="$(uname)"
+    [[ "${_uname}" == "Linux" ]]
+}
+
 _sed_i() {
     # MacOS syntax is different for in-place
     if [ "$(uname)" = "Darwin" ]; then
