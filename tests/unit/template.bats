@@ -420,6 +420,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
     printf '#!/usr/bin/env sh\nexec /usr/local/bin/helm secrets "$@"' > "${TEST_TEMP_DIR}/helm"
+    chmod +x "${TEST_TEMP_DIR}/helm"
 
     run env HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" "${TEST_TEMP_DIR}/helm" template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
