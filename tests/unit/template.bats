@@ -410,6 +410,23 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 91"
 }
 
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + secrets+gpg-import://" {
+    if ! on_linux || ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    HELM_SECRETS_HELM_PATH="$(command -v helm)"
+
+    create_chart "${TEST_TEMP_DIR}"
+    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" > "${TEST_TEMP_DIR}/helm"
+    chmod +x "${TEST_TEMP_DIR}/helm"
+
+    run env HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" "${TEST_TEMP_DIR}/helm" template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 91"
+}
+
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://git://" {
     if on_windows || ! is_driver "sops"; then
         skip
@@ -450,6 +467,10 @@ load '../bats/extensions/bats-file/load'
     run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 92"
 }
 
 @test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import://git://" {
@@ -462,6 +483,10 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    assert_success
+    assert_output --partial "port: 92"
+
+    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
 }
