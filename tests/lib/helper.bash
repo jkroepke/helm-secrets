@@ -135,7 +135,7 @@ setup() {
 
     # copy assets
     cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
-    if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
+    if ! on_windows; then
         # shellcheck disable=SC2016
         SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
