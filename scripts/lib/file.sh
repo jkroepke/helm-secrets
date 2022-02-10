@@ -41,8 +41,8 @@ _file_get() {
     set -x
 
     if [ "${file_type}" = "local" ]; then
-        ls -lah "${1}"
-        readlink "${1}"
+        ls -lah "$(basename "${1}")"
+
         if [ "${VALUES_ALLOW_SYMLINKS}" = "false" ] && [ -L "${1}" ]; then
             error "Values file '%s' is a symlink. Symlinks are not allowed." "${1}"
         fi
