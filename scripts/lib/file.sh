@@ -46,6 +46,8 @@ _file_get() {
         if [ "${VALUES_ALLOW_ABSOLUTE_PATH}" = "false" ]; then
             case "${1}" in
             /*) error "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
+            \\*) error "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
+            *:*) error "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
             esac
         fi
 
