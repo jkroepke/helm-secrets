@@ -13,16 +13,20 @@ is_help() {
     esac
 }
 
-error() {
+log() {
     if [ $# -le 1 ]; then
-        printf '[helm-secrets] %s\n' "${1:-}" >&2
+        printf '[helm-secrets] %s\n' "${1:-}"
     else
         format="${1}"
         shift
 
         # shellcheck disable=SC2059
-        printf "[helm-secrets] $format\n" "$@" >&2
+        printf "[helm-secrets] $format\n" "$@"
     fi
+}
+
+error() {
+    log "$@" >&2
 
     exit 1
 }

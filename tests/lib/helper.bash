@@ -128,13 +128,18 @@ setup() {
         ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
     fi
 
+    if on_windows; then
+        # remove symlink, since its not supported on windows
+        find "${TEST_DIR}" -name secrets.symlink.yaml -delete
+    fi
+
     # copy assets
-    cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
-    if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
+    cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
+    if ! on_windows; then
         # shellcheck disable=SC2016
         SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
-        cp -r "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
+        cp -a "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
 
     _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"

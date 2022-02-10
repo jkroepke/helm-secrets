@@ -43,7 +43,7 @@ dec() {
     file="$1"
 
     if [ "${QUIET}" = "false" ]; then
-        printf '[helm-secrets] Decrypting %s\n' "${file}"
+        log 'Decrypting %s' "${file}"
     fi
 
     if ! encrypted_file_path=$(_file_get "${file}"); then
