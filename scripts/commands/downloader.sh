@@ -7,6 +7,8 @@ ALLOW_GPG_IMPORT_KUBERNETES="${HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES:-"true"}
 ALLOW_AGE_IMPORT="${HELM_SECRETS_ALLOW_AGE_IMPORT:-"true"}"
 ALLOW_AGE_IMPORT_KUBERNETES="${HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES:-"true"}"
 
+KEY_LOCATION_PREFIX="${HELM_SECRETS_KEY_LOCATION_PREFIX:-""}"
+
 # shellcheck source=scripts/commands/view.sh
 . "${SCRIPT_DIR}/commands/view.sh"
 
@@ -37,6 +39,11 @@ downloader() {
         _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import://!!')
         _gpg_key_path=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
+
+        if ! _key_location_allowed "${_gpg_key_path}"; then
+            error "Key location '%s' is not allowed" "${_gpg_key_path}"
+        fi
+
         _gpg_init "${_gpg_key_path}"
         ;;
     secrets+gpg-import-kubernetes://*)
@@ -57,6 +64,11 @@ downloader() {
         _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import://!!')
         _age_key_path=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
+
+        if ! _key_location_allowed "${_age_key_path}"; then
+            error "Key location '%s' is not allowed" "${_age_key_path}"
+        fi
+
         _age_init "${_age_key_path}"
         ;;
     secrets+age-import-kubernetes://*)
@@ -156,4 +168,15 @@ _age_init_kubernetes() {
     fi
 
     _age_init "${_age_key_path}"
+}
+
+_key_location_allowed() {
+    case "${1}" in
+    "${KEY_LOCATION_PREFIX}"*)
+        return 0
+        ;;
+    *)
+        return 1
+        ;;
+    esac
 }

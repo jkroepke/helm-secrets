@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [Terraform Integration](https://github.com/jkroepke/helm-secrets/blob/5feb8cd38f6e89e680cab9c428d0a97e0143e703/examples/terraform/helm.tf). Can be used together with [external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source)
 - Enable parsing of [.netrc](https://everything.curl.dev/usingcurl/netrc) for http based values. The location of the .netrc can be overridden by `NETRC` environment variable.
+- Environment variable `HELM_SECRETS_VALUES_ALLOW_SYMLINKS` to allow or deny follow symlinks.
+- Environment variable `HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH` to allow or deny absolute value file paths.
+- Environment variable `HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL` to allow or deny `dot-dot-slash` values file paths.
 
 ## [3.11.0] - 2021-11-25
 

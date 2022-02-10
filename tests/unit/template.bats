@@ -632,3 +632,99 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
+
+@test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.symlink.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secrets] Values file '${FILE}' is a symlink. Symlinks are not allowed."
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_SYMLINKS=true" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.symlink.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_VALUES_ALLOW_SYMLINKS=true helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.symlink.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secrets] Values filepath '${FILE}' is an absolute path. Absolute paths are not allowed."
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.symlink.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/../values/${HELM_SECRETS_DRIVER}/secrets.symlink.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_failure
+    assert_output --partial "[helm-secrets] Values filepath '${FILE}' contains '..'. Path traversal is not allowed."
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=true" {
+    if ! is_driver "sops"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.symlink.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=true helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
