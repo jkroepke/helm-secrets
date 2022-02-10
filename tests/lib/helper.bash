@@ -128,6 +128,11 @@ setup() {
         ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
     fi
 
+    if on_windows; then
+        # remove symlink, since its not supported on windows
+        find "${TEST_DIR}" -name secrets.symlink.yaml -delete
+    fi
+
     # copy assets
     cp -r "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if [[ "$(uname)" == "Darwin" || "$(uname)" == "Linux" ]]; then
