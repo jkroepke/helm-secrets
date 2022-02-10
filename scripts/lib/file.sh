@@ -38,8 +38,6 @@ _file_exists() {
 _file_get() {
     file_type=$(_file_get_protocol "${1}")
 
-    set -x
-
     if [ "${file_type}" = "local" ]; then
         if [ "${VALUES_ALLOW_SYMLINKS}" = "false" ] && [ -L "${1}" ]; then
             error "Values file '%s' is a symlink. Symlinks are not allowed." "${1}"
