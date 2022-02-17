@@ -6,22 +6,13 @@ Before starting to integrate helm-secrets with ArgoCD, consider using [age](http
 Since ArgoCD is a shared environment, consider to read [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
 to prevent users from reading files outside the own directory.
 
-> **⚠ WARNING: ArgoCD incompatibility**
-> 
-> Due [CVE-2022-24348](https://www.tenable.com/cve/CVE-2022-24348), ArgoCD restricts the protocols in helm value files. The [fix](https://github.com/argoproj/argo-cd/commit/78c2084f0febd159039ff785ddc2bd4ba1cecf88) is introduced in ArgoCD 2.1.9 and 2.2.4.
-> If you depend on helm-secrets integration, please stay below ArgoCD 2.1.9 and 2.2.4 until the problem fixed upstream.
-> See https://github.com/argoproj/argo-cd/issues/8397 and https://github.com/jkroepke/helm-secrets/issues/185 for more information.
-
 # Prerequisites
 
+- ArgoCD 2.3.0 (ArgoCD versions before 2.2.4 are supported, too)
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
 - age encrypted values requires at least [3.10.0](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0) and sops [3.7.0](https://github.com/mozilla/sops/releases/tag/v3.7.0)
 
 # Usage
-
-> **⚠ WARNING: Avoid wrapper scripts**  
-> 
-> There are a lot of tutorials around ArgoCD and helm-secrets which introduce a wrapper. Latest versions of helm-secrets does not need such wrapper. The mentioned wrapper script may be the source of additional incompabilities, like `file secrets+gpg-import://.. not found`. The steps documented on this page works only without a configured wrapper script.
 
 An Argo CD Application can use the downloader plugin syntax to use encrypted value files.
 There are three methods how to use an encrypted value file.
@@ -75,8 +66,12 @@ ARG SOPS_VERSION="3.7.1"
 ARG HELM_SECRETS_VERSION="3.12.0"
 ARG KUBECTL_VERSION="1.22.0"
 
-ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm
-ENV HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/"
+# In case, wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
+ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
+    HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
+    HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
+    HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
+    HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false
 
 USER root
 RUN apt-get update && \
@@ -103,16 +98,31 @@ install sops or vals and helm-secret through an init container.
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 
 ```yaml
+configs:
+  helm.valuesFileSchemes: >-
+    secrets+gpg-import, secrets+gpg-import-kubernetes,
+    secrets+age-import, secrets+age-import-kubernetes,
+    secrets,
+    https
+
 repoServer:
   env:
     - name: HELM_PLUGINS
       value: /custom-tools/helm-plugins/
+    # In case, wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
     - name: HELM_SECRETS_HELM_PATH
       value: /usr/local/bin/helm
     - name: HELM_SECRETS_SOPS_PATH
       value: /custom-tools/sops
     - name: HELM_SECRETS_KUBECTL_PATH
       value: /custom-tools/kubectl
+    # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
+    - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
+      value: "false"
+    - name: HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH
+      value: "false"
+    - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
+      value: "false"
   volumes:
     - name: custom-tools
       emptyDir: {}
@@ -147,15 +157,17 @@ repoServer:
 
 # Configuration of ArgoCD
 
-When using private key encryption it is required to configure ArgoCD so that it has access to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s) can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
+When using private key encryption it is required to configure ArgoCD repo server so that it has access 
+to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s)
+can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
 
 ## Private key encryption
 There are two ways to configure ArgoCD to have access to your private key.
-Either mount the gpg key from secret as volume or access the fetch the private key directly from a kubernetes secret.
-Both methods depend on a secret holding the key in asci format.
+Either mount on the argocd-repo-server the gpg/age key from secret as volume or access the fetch the
+private key directly from a kubernetes secret. Both methods depend on a secret holding the key in ASCII format.
 
 ### Using GPG
-#### Generating the key and export it as ASCI File.
+#### Generating the key and export it as ASCII File.
 
 ```shell
 gpg --full-generate-key --rfc4880
@@ -164,7 +176,8 @@ gpg --full-generate-key --rfc4880
 When asked to enter a password you need to omit it.
 
 Please also note that currently it is recommended to use the --rfc4880.
-This prevents you from running into a compatibility issue between gpg 2.2 and gpg 2.3. (Related Issue: [Encryption with GnuPG 2.3 (RFC4880bis) causes compatibility issues with GnuPG 2.2](https://github.com/mozilla/sops/issues/896))
+This prevents you from running into a compatibility issue between gpg 2.2 and gpg 2.3
+(Related Issue: [Encryption with GnuPG 2.3 (RFC4880bis) causes compatibility issues with GnuPG 2.2](https://github.com/mozilla/sops/issues/896))
 
 ```shell
 gpg --armor --export-secret-keys <key-id> > key.asc
@@ -196,9 +209,9 @@ kubectl create secret generic helm-secrets-private-keys --from-file=key.asc
 ```
 
 ### Making the key accessible within ArgoCD
-#### Method 1: Mount the private key from a kubernetes secret as volume
+#### Method 1: Mount the private key from a kubernetes secret as volume on the argocd-repo-server
 
-To use the *secrets+gpg-import / secrets+age-import* syntax, we need to mount the key on the ArgoCD Repo Server.
+To use the *secrets+gpg-import / secrets+age-import* syntax, the keys needs to be mounted on the **argocd-repo-server**.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 ```yaml
