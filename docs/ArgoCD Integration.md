@@ -66,7 +66,7 @@ ARG SOPS_VERSION="3.7.1"
 ARG HELM_SECRETS_VERSION="3.12.0"
 ARG KUBECTL_VERSION="1.22.0"
 
-# In case, wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
+# In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
 ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
     HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
@@ -109,7 +109,7 @@ repoServer:
   env:
     - name: HELM_PLUGINS
       value: /custom-tools/helm-plugins/
-    # In case, wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
+    # In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
     - name: HELM_SECRETS_HELM_PATH
       value: /usr/local/bin/helm
     - name: HELM_SECRETS_SOPS_PATH
@@ -162,12 +162,15 @@ to the private key to decrypt the encrypted value file(s). When using GCP KMS, e
 can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
 
 ## Private key encryption
-There are two ways to configure ArgoCD to have access to your private key.
-Either mount on the argocd-repo-server the gpg/age key from secret as volume or access the fetch the
-private key directly from a kubernetes secret. Both methods depend on a secret holding the key in ASCII format.
+There are two ways to configure ArgoCD to have access to your private key:
+
+- mount the PGP/age key secret as a volume in the argocd-repo-server; or
+- fetch the secret value (private key) directly using Kubernetes API.
+
+Both methods depend on a Kubernetes secret holding the key in plain-text format (i.e., not encrypted or protected by a passphrase).
 
 ### Using GPG
-#### Generating the key and export it as ASCII File.
+#### Generating the key and export it as ASCII armored file.
 
 ```shell
 gpg --full-generate-key --rfc4880
@@ -300,7 +303,7 @@ sops is supporting multiple cloud providers.
 To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD, but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission. There are various ways to achieve this, but the recommended way is to use [GKE Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity). Please read Google's documentation to link your Kubernetes ServiceAccount and a Google Service Account.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm):
-```
+```yaml
 repoServer:
   serviceAccount:
     create: true
