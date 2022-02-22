@@ -11,8 +11,9 @@ load '../bats/extensions/bats-file/load'
 
     run helm secrets terraform "${FILE}"
     assert_success
-    assert_output --partial '{"content_base64":"'
-    assert_output --partial '"}'
+
+    # assert that there are no new lines in the base64
+    assert_output --regexp '\{"content_base64":"([A-Za-z0-9=]*)"\}'
 }
 
 @test "terraform: read invalid file" {

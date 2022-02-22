@@ -30,5 +30,5 @@ terraform() {
         exit 1
     fi
 
-    printf '{"content_base64":"%s"}' "$(printf '%s' "${content}" | base64)"
+    printf '{"content_base64":"%s"}' "$(printf '%s' "${content}" | base64 | tr -d \\n)"
 }
