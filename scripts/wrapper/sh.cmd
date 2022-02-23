@@ -99,7 +99,7 @@ SET STR1="%1"
 if not "x%STR1:\=%"=="x%STR1%" (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
     FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath "%1"`) DO (
-      SET WSLPATH=%%F
+      SET WSLPATH="%%F"
     )
 ) else (
     SET WSLPATH=%1
@@ -110,6 +110,7 @@ shift
 goto LOOP
 :ENDLOOP
 
+IF "%HELM_SECRETS_SOPS_PATH%"=="" SET HELM_SECRETS_SOPS_PATH=sops.exe
 wsl bash %ARGS%
 exit /b %errorlevel%
 
