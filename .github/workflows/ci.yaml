@@ -136,14 +136,14 @@ jobs:
 
       - name: Run helm-secrets w/o bats
         run: |-
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            helm plugin install "${{ github.server_url }}/${{ github.event.pull_request.head.repo.full_name }}" --version "${{ github.head_ref }}"
-          else
-            helm plugin install "${{ github.server_url }}/${{ github.repository }}" --version "${{ github.ref }}"
-          fi
-            
+          helm plugin install "${{ github.event_name == "pull_request"
+            && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
+            || format('{0}/{1}', github.server_url, github.repository)
+          }}" --version "${{ github.event_name == "pull_request"
+            && github.head_ref
+            || github.ref
+          }}"
           helm secrets -v
-
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
