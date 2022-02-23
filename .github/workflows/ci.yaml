@@ -136,7 +136,12 @@ jobs:
 
       - name: Run helm-secrets w/o bats
         run: |-
-          helm plugin install "${{ github.server_url }}/${{ github.repository }}" --version "${{ github.ref }}"
+          if [ "${{ github.event_name }} = "pull_request" ]; then
+            helm plugin install "${{ github.server_url }}/${{ github.event.pull_request.head.repo.full_name }}" --version "${{ github.base_ref }}"
+          else
+            helm plugin install "${{ github.server_url }}/${{ github.repository }}" --version "${{ github.ref }}"
+          fi
+            
           helm secrets -v
 
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
