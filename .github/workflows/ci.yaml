@@ -180,6 +180,7 @@ jobs:
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit (on windows)
         if: "contains(matrix.os, 'windows-latest')"
         run: |
+          echo $env:TEMP
           $env:W_TEMP=$env:TEMP; bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: sops
