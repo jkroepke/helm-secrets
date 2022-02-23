@@ -2,38 +2,38 @@
 @echo on
 
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
-if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
+if not [%HELM_SECRETS_WINDOWS_SHELL%]==[] GOTO :ENVSH
 
 
 :: check for wsl
 wsl bash -c exit  >nul 2>&1
 echo %ERRORLEVEL%
-IF NOT ERRORLEVEL 1 GOTO :WSL
+IF %ERRORLEVEL% EQU 0 GOTO :WSL
 
 
 :: check for cygwin installation or git for windows is inside %PATH%
 "sh" -c exit  >nul 2>&1
-IF NOT ERRORLEVEL 1 GOTO :SH
+IF %ERRORLEVEL% EQU 0 GOTO :SH
 
 
 :: check for cygwin installation or git for windows is inside %PATH%
 "bash" -c exit  >nul 2>&1
-IF NOT ERRORLEVEL 1 GOTO :BASH
+IF %ERRORLEVEL% EQU 0 GOTO :BASH
 
 
 :: check for git-bash
 "%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
-IF NOT ERRORLEVEL 1 GOTO :GITBASH
+IF %ERRORLEVEL% EQU 0 GOTO :GITBASH
 
 
 :: check for git-bash (32-bit)
 "%programfiles(x86)%\Git\bin\bash.exe" -c exit  >nul 2>&1
-IF NOT ERRORLEVEL 1 GOTO :GITBASH32
+IF %ERRORLEVEL% EQU 0 GOTO :GITBASH32
 
 
 :: check git for windows
 where.exe git.exe  >nul 2>&1
-IF NOT ERRORLEVEL 1 GOTO :GITBASH_CUSTOM
+IF %ERRORLEVEL% EQU 0 GOTO :GITBASH_CUSTOM
 :RETURN_GITBASH
 
 GOTO :NOSHELL
@@ -41,7 +41,7 @@ GOTO :NOSHELL
 
 
 :ENVSH
-IF "%HELM_SECRETS_WINDOWS_SHELL%"=="wsl" GOTO :WSL
+IF [%HELM_SECRETS_WINDOWS_SHELL%]==[wsl] GOTO :WSL
 
 "%HELM_SECRETS_WINDOWS_SHELL%" %*
 exit /b %errorlevel%
@@ -74,7 +74,7 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`where.exe git.exe`) DO (
   SET GIT_FILEPATH=%%F
 )
 
-IF "%GIT_FILEPATH%"=="" GOTO :RETURN_GITBASH
+IF [%GIT_FILEPATH%]==[] GOTO :RETURN_GITBASH
 
 FOR %%F in ("%GIT_FILEPATH%") DO SET GIT_DIRPATH=%%~dpF
 
@@ -113,14 +113,14 @@ goto LOOP
 
 IF NOT DEFINED HELM_SECRETS_HELM_PATH (
     where /q helm.exe
-    IF NOT ERRORLEVEL 1 (
+    IF %ERRORLEVEL% EQU 0 (
         SET HELM_SECRETS_HELM_PATH=helm.exe
     )
 )
 
 IF NOT DEFINED HELM_SECRETS_SOPS_PATH (
     where /q sops.exe
-    IF NOT ERRORLEVEL 1 (
+    IF %ERRORLEVEL% EQU 0 (
         SET HELM_SECRETS_SOPS_PATH=sops.exe
     )
 )
