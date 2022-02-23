@@ -44,6 +44,8 @@ _gpg() {
     # cygwin does not have an alias
     if command -v gpg2 >/dev/null; then
         gpg2 "$@"
+    elif on_windows; then
+        gpg.exe "$@"
     else
         gpg "$@"
     fi

@@ -7,7 +7,6 @@ if not [%HELM_SECRETS_WINDOWS_SHELL%]==[] GOTO :ENVSH
 
 :: check for wsl
 wsl bash -c exit  >nul 2>&1
-echo %ERRORLEVEL%
 IF %ERRORLEVEL% EQU 0 GOTO :WSL
 
 
