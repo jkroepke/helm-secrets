@@ -137,7 +137,7 @@ jobs:
       - name: Run helm-secrets w/o bats
         run: |-
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            helm plugin install "${{ github.server_url }}/${{ github.event.pull_request.head.repo.full_name }}" --version "${{ github.base_ref }}"
+            helm plugin install "${{ github.server_url }}/${{ github.event.pull_request.head.repo.full_name }}" --version "${{ github.head_ref }}"
           else
             helm plugin install "${{ github.server_url }}/${{ github.repository }}" --version "${{ github.ref }}"
           fi
