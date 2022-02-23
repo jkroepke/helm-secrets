@@ -134,6 +134,11 @@ jobs:
           gpg --version
           vault --version
 
+      - name: Run helm-secrets w/o bats
+        run: |-
+          helm plugin install "${{ github.server_url }}/${{ github.repository }}" --version "${{ github.ref }}"
+          helm secrets -v
+
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
