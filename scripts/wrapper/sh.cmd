@@ -128,15 +128,13 @@ IF NOT DEFINED HELM_SECRETS_SOPS_PATH (
 :: https://devblogs.microsoft.com/commandline/share-environment-vars-between-wsl-and-windows/
 if not "x%HELM_SECRETS_HELM_PATH:\=%"=="x%HELM_SECRETS_HELM_PATH%" (
     SET WSLENV=HELM_SECRETS_HELM_PATH/p:%WSLENV%
-)
-else (
+) else (
     SET WSLENV=HELM_SECRETS_HELM_PATH:%WSLENV%
 )
 
 if not "x%HELM_SECRETS_SOPS_PATH:\=%"=="x%HELM_SECRETS_SOPS_PATH%" (
     SET WSLENV=HELM_SECRETS_SOPS_PATH/p:%WSLENV%
-)
-else (
+) else (
     SET WSLENV=HELM_SECRETS_SOPS_PATH:%WSLENV%
 )
 
