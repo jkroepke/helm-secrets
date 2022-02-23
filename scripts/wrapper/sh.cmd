@@ -110,6 +110,7 @@ shift
 goto LOOP
 :ENDLOOP
 
+:: WSL needs .exe suffix for windows binary. Define path only if exists in windows PATH
 IF NOT DEFINED HELM_SECRETS_HELM_PATH (
     where /q helm.exe
     IF %ERRORLEVEL% EQU 0 (
@@ -125,7 +126,19 @@ IF NOT DEFINED HELM_SECRETS_SOPS_PATH (
 )
 
 :: https://devblogs.microsoft.com/commandline/share-environment-vars-between-wsl-and-windows/
-SET WSLENV=HELM_SECRETS_HELM_PATH/p:HELM_SECRETS_SOPS_PATH/p
+if not "x%HELM_SECRETS_HELM_PATH:\=%"=="x%HELM_SECRETS_HELM_PATH%" (
+    SET WSLENV=HELM_SECRETS_HELM_PATH/p:%WSLENV%
+)
+else (
+    SET WSLENV=HELM_SECRETS_HELM_PATH:%WSLENV%
+)
+
+if not "x%HELM_SECRETS_SOPS_PATH:\=%"=="x%HELM_SECRETS_SOPS_PATH%" (
+    SET WSLENV=HELM_SECRETS_SOPS_PATH/p:%WSLENV%
+)
+else (
+    SET WSLENV=HELM_SECRETS_SOPS_PATH:%WSLENV%
+)
 
 wsl bash %ARGS%
 exit /b %errorlevel%
