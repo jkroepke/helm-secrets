@@ -5,6 +5,11 @@
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 
+:: check for wsl
+wsl bash -c exit  >nul 2>&1
+IF %ERRORLEVEL% EQU 0 GOTO :WSL
+
+
 :: check for cygwin installation or git for windows is inside %PATH%
 "sh" -c exit  >nul 2>&1
 IF %ERRORLEVEL% EQU 0 GOTO :SH
@@ -29,11 +34,6 @@ IF %ERRORLEVEL% EQU 0 GOTO :GITBASH32
 where.exe git.exe  >nul 2>&1
 IF %ERRORLEVEL% EQU 0 GOTO :GITBASH_CUSTOM
 :RETURN_GITBASH
-
-
-:: check for wsl
-wsl sh -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :WSL
 
 GOTO :NOSHELL
 
@@ -94,9 +94,15 @@ SET ARGS=
 :LOOP
 if "%1"=="" goto ENDLOOP
 
-:: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
-FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath "%1"`) DO (
-  SET WSLPATH=%%F
+:: IF string contains string - https://stackoverflow.com/a/7006016/8087167
+SET STR1="%1"
+if not "x%STR1:\=%"=="x%STR1%" (
+    :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
+    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath "%1"`) DO (
+      SET WSLPATH=%%F
+    )
+) else (
+    SET WSLPATH=%1
 )
 SET ARGS=%ARGS% %WSLPATH%
 
