@@ -110,10 +110,23 @@ shift
 goto LOOP
 :ENDLOOP
 
-where /q sops.exe
-IF ERRORLEVEL 1 (
-    IF "%HELM_SECRETS_SOPS_PATH%"=="" SET HELM_SECRETS_SOPS_PATH=sops.exe
+IF NOT DEFINED HELM_SECRETS_HELM_PATH (
+    where /q helm.exe
+    IF NOT ERRORLEVEL 1 (
+        SET HELM_SECRETS_HELM_PATH=helm.exe
+    )
 )
+
+IF NOT DEFINED HELM_SECRETS_SOPS_PATH (
+    where /q sops.exe
+    IF NOT ERRORLEVEL 1 (
+        SET HELM_SECRETS_SOPS_PATH=sops.exe
+    )
+)
+
+:: https://devblogs.microsoft.com/commandline/share-environment-vars-between-wsl-and-windows/
+SET WSLENV=HELM_SECRETS_HELM_PATH/p:HELM_SECRETS_SOPS_PATH/p
+
 wsl bash %ARGS%
 exit /b %errorlevel%
 
