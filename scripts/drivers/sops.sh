@@ -72,18 +72,18 @@ windows_path_required() {
     fi
 
     case "${_SOPS}" in
-        *.exe)
-            case "${1}" in
-                /mnt/*)
-                    return 0
-                    ;;
-                *)
-                    return 1
-                    ;;
-            esac
+    *.exe)
+        case "${1}" in
+        /mnt/*)
+            return 0
             ;;
         *)
             return 1
             ;;
+        esac
+        ;;
+    *)
+        return 1
+        ;;
     esac
 }
