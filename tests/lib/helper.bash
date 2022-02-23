@@ -89,6 +89,7 @@ initiate() {
 }
 
 setup() {
+    set -x
     REAL_HOME="${HOME}"
     # shellcheck disable=SC2153
     HOME="$(_home_dir)"
@@ -190,6 +191,8 @@ EzAA
     export _TEST_global_secret=global_bar
     export _TEST_SERVICE_PORT=81
     export _TEST_SOME_SERVICE_PORT=83
+    
+    set +x
 }
 
 teardown() {
