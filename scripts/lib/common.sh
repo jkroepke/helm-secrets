@@ -82,9 +82,3 @@ on_cygwin() { false; }
 case "$(uname -s)" in
 CYGWIN*) on_cygwin() { true; } ;;
 esac
-
-on_wsl() { false; }
-
-if command -v wslpath >/dev/null; then
-    on_wsl() { true; }
-fi
