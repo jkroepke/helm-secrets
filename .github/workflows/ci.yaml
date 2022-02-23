@@ -178,7 +178,7 @@ jobs:
           HELM_SECRETS_DRIVER: vals
 
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit (on windows/non wsl)
-        if: "contains(matrix.os, 'windows-latest') && !contains(matrix.shell, 'wsl')"
+        if: "contains(matrix.os, 'windows-latest')"
         run: |
           $env:W_TEMP=$env:TEMP; bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
