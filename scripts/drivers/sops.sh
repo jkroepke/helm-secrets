@@ -67,6 +67,10 @@ driver_edit_file() {
 }
 
 windows_path_required() {
+    if ! on_wsl; then
+        return 1
+    fi
+
     case "${_SOPS}" in
         *.exe)
             case "${1}" in

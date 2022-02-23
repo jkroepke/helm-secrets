@@ -82,3 +82,9 @@ on_cygwin() { false; }
 case "$(uname -s)" in
 CYGWIN*) on_cygwin() { true; } ;;
 esac
+
+if grep -q Microsoft /proc/version; then
+  on_wsl() { true; }
+else
+  on_wsl() { false; }
+fi
