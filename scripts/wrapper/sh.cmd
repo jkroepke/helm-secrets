@@ -1,5 +1,5 @@
 @setlocal enableextensions enabledelayedexpansion
-@echo off
+@echo on
 
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
@@ -7,6 +7,7 @@ if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 :: check for wsl
 wsl bash -c exit  >nul 2>&1
+echo %ERRORLEVEL%
 IF NOT ERRORLEVEL 1 GOTO :WSL
 
 
