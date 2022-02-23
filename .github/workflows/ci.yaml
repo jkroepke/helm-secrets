@@ -136,10 +136,10 @@ jobs:
 
       - name: Run helm-secrets w/o bats
         run: |-
-          helm plugin install "${{ github.event_name == "pull_request"
+          helm plugin install "${{ github.event_name == 'pull_request'
             && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
             || format('{0}/{1}', github.server_url, github.repository)
-          }}" --version "${{ github.event_name == "pull_request"
+          }}" --version "${{ github.event_name == 'pull_request'
             && github.head_ref
             || github.ref
           }}"
