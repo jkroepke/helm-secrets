@@ -183,7 +183,6 @@ jobs:
           $env:W_TEMP=$env:TEMP; bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: sops
-          HELM_SECRETS_DRIVER_ARGS: --verbose
 
   coverage:
     runs-on: ubuntu-latest
