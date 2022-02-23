@@ -45,6 +45,8 @@ jobs:
             shell: bash
           - os: windows-latest
             shell: cygwin
+          - os: windows-latest
+            shell: wsl
           - os: macos-latest
             shell: bash 3.2
           - os: macos-latest
@@ -119,6 +121,10 @@ jobs:
         with:
           platform: x64
           packages: gnupg2
+
+      - name: Setup WSL
+        if: "contains(matrix.shell, 'wsl')"
+        uses: Vampire/setup-wsl@v1
 
       - name: Setup coreutils
         if: "contains(matrix.shell, 'coreutils')"
