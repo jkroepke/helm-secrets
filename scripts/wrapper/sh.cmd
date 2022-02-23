@@ -7,32 +7,32 @@ if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 :: check for wsl
 wsl bash -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :WSL
+IF NOT ERRORLEVEL 1 GOTO :WSL
 
 
 :: check for cygwin installation or git for windows is inside %PATH%
 "sh" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :SH
+IF NOT ERRORLEVEL 1 GOTO :SH
 
 
 :: check for cygwin installation or git for windows is inside %PATH%
 "bash" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :BASH
+IF NOT ERRORLEVEL 1 GOTO :BASH
 
 
 :: check for git-bash
 "%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH
+IF NOT ERRORLEVEL 1 GOTO :GITBASH
 
 
 :: check for git-bash (32-bit)
 "%programfiles(x86)%\Git\bin\bash.exe" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH32
+IF NOT ERRORLEVEL 1 GOTO :GITBASH32
 
 
 :: check git for windows
 where.exe git.exe  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH_CUSTOM
+IF NOT ERRORLEVEL 1 GOTO :GITBASH_CUSTOM
 :RETURN_GITBASH
 
 GOTO :NOSHELL
@@ -80,7 +80,7 @@ FOR %%F in ("%GIT_FILEPATH%") DO SET GIT_DIRPATH=%%~dpF
 :: check for git-bash
 "%GIT_DIRPATH%..\bin\bash.exe" -c exit  >nul 2>&1
 
-IF %ERRORLEVEL% NEQ 0 GOTO :RETURN_GITBASH
+IF ERRORLEVEL 1 GOTO :RETURN_GITBASH
 
 "%GIT_DIRPATH%..\bin\bash.exe" %*
 exit /b %errorlevel%
@@ -110,7 +110,10 @@ shift
 goto LOOP
 :ENDLOOP
 
-IF "%HELM_SECRETS_SOPS_PATH%"=="" SET HELM_SECRETS_SOPS_PATH=sops.exe
+where /q sops.exe
+IF ERRORLEVEL 1 (
+    IF "%HELM_SECRETS_SOPS_PATH%"=="" SET HELM_SECRETS_SOPS_PATH=sops.exe
+)
 wsl bash %ARGS%
 exit /b %errorlevel%
 
