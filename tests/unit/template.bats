@@ -294,7 +294,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "sops://${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "sops://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -308,7 +308,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secret://${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secret://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -322,7 +322,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets://${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -336,7 +336,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -377,7 +377,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
 }
 
@@ -391,7 +391,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -405,7 +405,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 91"
 }
@@ -436,7 +436,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 91"
 }
@@ -464,7 +464,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
 
@@ -482,7 +482,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
 
