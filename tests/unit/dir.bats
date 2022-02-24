@@ -14,5 +14,5 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets dir
     assert_success
-    assert_output "$(helm env HELM_PLUGINS)${DS}helm-secrets"
+    assert_output "$("${HELM_DIR}" env HELM_PLUGINS)${DS}helm-secrets"
 }

@@ -70,6 +70,21 @@ _mktemp() {
     mktemp "$@" "${TMPDIR}/XXXXXX"
 }
 
+_convert_path() {
+    if ! on_wsl; then
+        printf '%s' "${1}"
+    fi
+
+    case "${1}" in
+    /mnt/*)
+        printf '%s' "$(wslpath "${1}")"
+        ;;
+    *)
+        printf '%s' "${1}"
+        ;;
+    esac
+}
+
 # MacOS syntax is different for in-place
 # https://unix.stackexchange.com/a/92907/433641
 case $(sed --help 2>&1) in

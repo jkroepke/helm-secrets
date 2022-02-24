@@ -20,11 +20,11 @@ driver_encrypt_file() {
     output="${3}"
 
     if windows_path_required "${input}"; then
-        input="$(wslpath -w "${input}")"
+        input="$(_convert_path "${input}")"
     fi
 
     if windows_path_required "${output}"; then
-        output="$(wslpath -w "${output}")"
+        output="$(_convert_path "${output}")"
     fi
 
     if [ "${input}" = "${output}" ]; then
@@ -41,11 +41,11 @@ driver_decrypt_file() {
     output="${3:-}"
 
     if windows_path_required "${input}"; then
-        input="$(wslpath -w "${input}")"
+        input="$(_convert_path "${input}")"
     fi
 
     if windows_path_required "${output}"; then
-        output="$(wslpath -w "${output}")"
+        output="$(_convert_path "${output}")"
     fi
 
     if [ "${output}" != "" ]; then
@@ -60,7 +60,7 @@ driver_edit_file() {
     input="${2}"
 
     if windows_path_required "${input}"; then
-        input="$(wslpath -w "${input}")"
+        input="$(_convert_path "${input}")"
     fi
 
     _sops --input-type yaml --output-type yaml "${input}"
@@ -73,14 +73,7 @@ windows_path_required() {
 
     case "${_SOPS}" in
     *.exe)
-        case "${1}" in
-        /mnt/*)
-            return 0
-            ;;
-        *)
-            return 1
-            ;;
-        esac
+        return 0
         ;;
     *)
         return 1
