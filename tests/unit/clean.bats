@@ -59,6 +59,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_SUFFIX" {
+    if on_windows; then
+        skip
+    fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DEC_SUFFIX=.test
