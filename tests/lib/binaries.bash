@@ -1,55 +1,37 @@
 #!/usr/bin/env bash
 
-
-_sed_i() {
-    # MacOS syntax is different for in-place
-    if [ "$(uname)" = "Darwin" ]; then
-        sed -i "" "$@"
-    else
-        sed -i "$@"
-    fi
-}
-
-_shasum() {
+define_binaries() {
     # MacOS have shasum, others have sha1sum
     if command -v shasum >/dev/null; then
-        shasum "$@"
+        export SHA1SUM_BIN=shasum
     else
-        sha1sum "$@"
+        export SHA1SUM_BIN=sha1sum
     fi
-}
 
-_gpg() {
     # cygwin does not have an alias
     if command -v gpg2 >/dev/null; then
-        gpg2 "$@"
+        export GPG_BIN=gpg2
     elif command -v gpg.exe >/dev/null; then
-        gpg.exe "$@"
+        export GPG_BIN=gpg.exe
     else
-        gpg "$@"
+        export GPG_BIN=gpg
     fi
-}
 
-_gpgconf() {
     if command -v gpgconf.exe >/dev/null; then
-        gpgconf.exe "$@"
+        export GITCONF_BIN=gpgconf.exe
     else
-        gpgconf "$@"
+        export GITCONF_BIN=gpgconf
     fi
-}
 
-_git() {
     if command -v git.exe >/dev/null; then
-        git.exe "$@"
+        export GIT_BIN=git.exe
     else
-        git "$@"
+        export GIT_BIN=git
     fi
-}
 
-_helm() {
     if command -v helm.exe >/dev/null; then
-        helm.exe "$@"
+        export HELM_BIN=helm.exe
     else
-        helm "$@"
+        export HELM_BIN=helm
     fi
 }

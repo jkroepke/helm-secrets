@@ -7,13 +7,13 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "upgrade: helm upgrade" {
-    run helm secrets upgrade
+    run "${HELM_BIN}" secrets upgrade
     assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] upgrade'
 }
 
 @test "upgrade: helm upgrade --help" {
-    run helm secrets upgrade --help
+    run "${HELM_BIN}" secrets upgrade --help
     assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] upgrade'
 }
@@ -22,7 +22,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt:"
     assert_output --partial 'STATUS: deployed'
@@ -37,7 +37,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -54,7 +54,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -71,7 +71,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -88,7 +88,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -105,7 +105,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -122,7 +122,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -139,7 +139,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" --set service.type=NodePort 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" --set service.type=NodePort 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -158,7 +158,7 @@ load '../bats/extensions/bats-file/load'
     printf 'service:\n  port: 82' > "${FILE}.dec"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -177,7 +177,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -q upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets -q upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -194,7 +194,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --quiet upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets --quiet upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -211,7 +211,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -230,7 +230,7 @@ load '../bats/extensions/bats-file/load'
     create_encrypted_file 'replicaCount: |\n  a:'
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "YAML parse error on"
@@ -243,7 +243,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
+    run "${HELM_BIN}"upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
 
@@ -257,7 +257,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -278,7 +278,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
@@ -295,7 +295,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}"upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -314,7 +314,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}"upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]

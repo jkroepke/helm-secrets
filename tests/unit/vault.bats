@@ -15,7 +15,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env VAULT_ADDR= helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env VAULT_ADDR= "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "Error while get secret from vault!"
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -35,7 +35,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"

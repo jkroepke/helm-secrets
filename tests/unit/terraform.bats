@@ -9,7 +9,7 @@ load '../bats/extensions/bats-file/load'
 @test "terraform: read valid file" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets terraform "${FILE}"
+    run "${HELM_BIN}" secrets terraform "${FILE}"
     assert_success
 
     # assert that there are no new lines in the base64
@@ -19,7 +19,7 @@ load '../bats/extensions/bats-file/load'
 @test "terraform: read invalid file" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/non-exists.yaml"
 
-    run helm secrets terraform "${FILE}"
+    run "${HELM_BIN}" secrets terraform "${FILE}"
     assert_failure
     assert_output --partial '[helm-secrets] File does not exist:'
 }

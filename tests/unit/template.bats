@@ -7,13 +7,13 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "template: helm template" {
-    run helm secrets template
+    run "${HELM_BIN}" secrets template
     assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] template'
 }
 
 @test "template: helm template --help" {
-    run helm secrets template --help
+    run "${HELM_BIN}" secrets template --help
     assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] template'
 }
@@ -21,7 +21,7 @@ load '../bats/extensions/bats-file/load'
 @test "template: helm template w/ chart" {
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial 'RELEASE-NAME-'
 }
@@ -31,7 +31,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -44,7 +44,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -57,7 +57,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -74,7 +74,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 85"
@@ -87,7 +87,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
@@ -100,7 +100,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 85"
@@ -113,7 +113,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
@@ -126,7 +126,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
@@ -139,7 +139,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -153,7 +153,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template -f "${FILE}" --set service.type=NodePort -- "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets template -f "${FILE}" --set service.type=NodePort -- "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -169,7 +169,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
     assert_output --partial "port: 82"
@@ -184,7 +184,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -q template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets -q template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -197,7 +197,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --quiet template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets --quiet template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -214,7 +214,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${SPECIAL_CHAR_DIR}"
 
-    run helm secrets template "${SPECIAL_CHAR_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${SPECIAL_CHAR_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -229,7 +229,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "Error: YAML parse error"
@@ -246,7 +246,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -262,7 +262,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] File does not exist: ${FILE}"
 }
@@ -277,7 +277,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -294,7 +294,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "sops://${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "sops://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -308,7 +308,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "secret://${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secret://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -322,7 +322,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets://${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets://${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -336,7 +336,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -377,7 +377,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
 }
 
@@ -391,7 +391,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
@@ -405,7 +405,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 91"
 }
@@ -436,7 +436,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 91"
 }
@@ -464,11 +464,11 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
 }
@@ -482,11 +482,11 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}"template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 92"
 }
@@ -512,7 +512,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --driver-args "--verbose" template "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets --driver-args "--verbose" template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial 'RELEASE-NAME-'
 }
@@ -526,7 +526,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --driver-args "--verbose" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets --driver-args "--verbose" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -544,7 +544,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -a "--verbose" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets -a "--verbose" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -565,7 +565,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -583,7 +583,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --driver-args "--verbose --output-type \"yaml\"" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets --driver-args "--verbose --output-type \"yaml\"" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -601,7 +601,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -a "--verbose --output-type \"yaml\"" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets -a "--verbose --output-type \"yaml\"" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -624,7 +624,7 @@ load '../bats/extensions/bats-file/load'
     # shellcheck disable=SC2090
     export HELM_SECRETS_DRIVER_ARGS
 
-    run helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"

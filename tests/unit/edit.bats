@@ -6,13 +6,13 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "edit: helm edit" {
-    run helm secrets edit
+    run "${HELM_BIN}" secrets edit
     assert_failure
     assert_output --partial 'Edit encrypted secrets'
 }
 
 @test "edit: helm edit --help" {
-    run helm secrets edit --help
+    run "${HELM_BIN}" secrets edit --help
     assert_success
     assert_output --partial 'Edit encrypted secrets'
 }
@@ -22,7 +22,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    run helm secrets edit nonexists
+    run "${HELM_BIN}" secrets edit nonexists
     assert_failure
     assert_output --partial 'config file not found and no keys provided through command line options'
 }
@@ -37,10 +37,10 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/nonexists.yaml"
 
-    run helm secrets edit "${FILE}"
+    run "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -55,10 +55,10 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets edit "${FILE}"
+    run "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -73,10 +73,10 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
-    run helm secrets edit "${FILE}"
+    run "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -92,10 +92,10 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets edit "${FILE}"
+    run "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }

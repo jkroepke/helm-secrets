@@ -14,6 +14,15 @@ is_curl_installed() {
     command -v curl >/dev/null
 }
 
+_sed_i() {
+    # MacOS syntax is different for in-place
+    if [ "$(uname)" = "Darwin" ]; then
+        sed -i "" "$@"
+    else
+        sed -i "$@"
+    fi
+}
+
 on_windows() {
     _uname="$(uname)"
     ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
@@ -58,10 +67,10 @@ initiate() {
             GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
         fi
 
-        _gpg --batch --import "${GPG_PRIVATE_KEY}"
+        "${GPG_BIN}"--batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
-            _helm create "${HELM_CACHE}/chart"
+            "${HELM_BIN}" create "${HELM_CACHE}/chart"
         fi
 
         helm_plugin_install "secrets"
@@ -80,7 +89,9 @@ setup() {
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
-    GIT_ROOT="$(_git rev-parse --show-toplevel)"
+    define_binaries
+
+    GIT_ROOT="$("${GIT_BIN}" rev-parse --show-toplevel)"
     if on_wsl; then
         GIT_ROOT="$(wslpath "${GIT_ROOT}")"
     fi
@@ -186,12 +197,12 @@ EzAA
 teardown() {
     # https://stackoverflow.com/a/13864829/8087167
     if [ -n "${RELEASE+x}" ]; then
-        _helm del "${RELEASE}" >&2
+        "${HELM_BIN}"del "${RELEASE}" >&2
     fi
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        _gpgconf --kill gpg-agent >&2
+        "${GPGCONF_BIN}" --kill gpg-agent >&2
         temp_del "$(_home_dir)"
     fi
 
@@ -209,7 +220,7 @@ create_chart() {
 
 helm_plugin_install() {
     {
-        if _helm plugin list | grep -q "${1}"; then
+        if "${HELM_BIN}"plugin list | grep -q "${1}"; then
             return
         fi
 
@@ -225,6 +236,6 @@ helm_plugin_install() {
             ;;
         esac
 
-        _helm plugin install "${URL}" "${@:2}"
+        "${HELM_BIN}"plugin install "${URL}" "${@:2}"
     } >&2
 }
