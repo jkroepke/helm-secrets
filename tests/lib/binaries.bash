@@ -18,9 +18,9 @@ define_binaries() {
     fi
 
     if command -v gpgconf.exe >/dev/null; then
-        export GITCONF_BIN=gpgconf.exe
+        export GPGCONF_BIN=gpgconf.exe
     else
-        export GITCONF_BIN=gpgconf
+        export GPGCONF_BIN=gpgconf
     fi
 
     if command -v git.exe >/dev/null; then
