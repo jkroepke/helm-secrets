@@ -157,6 +157,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_SUFFIX" {
+    if on_wsl; then
+        skip
+    fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DEC_SUFFIX=.test
@@ -171,6 +175,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_PREFIX + HELM_SECRETS_DEC_SUFFIX" {
+    if on_wsl; then
+        skip
+    fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     DIR="$(dirname "${FILE}")"
 
