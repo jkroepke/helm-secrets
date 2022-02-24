@@ -24,7 +24,7 @@ on_linux() {
 
 on_wsl() {
     cat /proc/version
-    [ -f /proc/version ] && grep -qi microsoft /proc/version
+    [[ -f /proc/version ]] && grep -qi microsoft /proc/version
 }
 
 _sed_i() {
