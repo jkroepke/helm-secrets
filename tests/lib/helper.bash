@@ -25,7 +25,7 @@ _sed_i() {
 
 on_windows() {
     _uname="$(uname)"
-    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
+    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]] || on_wsl
 }
 
 on_linux() {
@@ -50,7 +50,7 @@ _home_dir() {
 }
 
 _copy() {
-    if on_windows || on_wsl; then
+    if on_windows; then
         cp -r "$@"
     else
         ln -sf "$@"
@@ -71,6 +71,8 @@ initiate() {
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             if on_wsl; then
+                echo "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
+                ls -lah "${HELM_CACHE}/chart"
                 "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
             else
                 "${HELM_BIN}" create "${HELM_CACHE}/chart"

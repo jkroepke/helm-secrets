@@ -45,11 +45,11 @@ create_encrypted_file() {
             if echo "$1" | grep -q ': |'; then
                 # shellcheck disable=SC2059
                 secret_content="$(printf "$1" | tail -n +2 | sed -e 's/^  //g')"
-                secret_key="$(printf '%s' "$secret_content" | _shasum | cut -d' ' -f1)"
+                secret_key="$(printf '%s' "$secret_content" | "${SHA1SUM_BIN}" | cut -d' ' -f1)"
             else
                 # shellcheck disable=SC2059
                 secret_content="$(printf "$1" | cut -d: -f2 | tr -d ' ')"
-                secret_key="$(printf '%s' "$secret_content" | _shasum | cut -d' ' -f1)"
+                secret_key="$(printf '%s' "$secret_content" | "${SHA1SUM_BIN}" | cut -d' ' -f1)"
             fi
 
             # shellcheck disable=SC2016
