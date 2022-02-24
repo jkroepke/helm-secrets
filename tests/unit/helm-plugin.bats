@@ -6,7 +6,7 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "helm-plugin: helm plugin list" {
-    run "${HELM_BIN}"plugin list
+    run "${HELM_BIN}" plugin list
     assert_success
     assert_output --partial 'secrets'
 }
