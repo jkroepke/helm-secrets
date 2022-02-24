@@ -141,7 +141,6 @@ setup() {
     fi
 
     # copy assets
-    echo cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if ! on_windows; then
         # shellcheck disable=SC2016
