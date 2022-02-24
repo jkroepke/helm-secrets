@@ -416,7 +416,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
-    HELM_SECRETS_HELM_PATH="$(command -v helm)"
+    HELM_SECRETS_HELM_PATH="$(command -v "${HELM_BIN}")"
 
     create_chart "${TEST_TEMP_DIR}"
     printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" > "${TEST_TEMP_DIR}/helm"
