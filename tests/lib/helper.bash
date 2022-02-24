@@ -23,7 +23,6 @@ on_linux() {
 }
 
 on_wsl() {
-    cat /proc/version
     [[ -f /proc/version ]] && grep -qi microsoft /proc/version
 }
 
@@ -56,6 +55,14 @@ _gpg() {
     fi
 }
 
+_gpgconf() {
+    if command -v gpgconf.exe >/dev/null; then
+        gpgconf.exe "$@"
+    else
+        gpgconf "$@"
+    fi
+}
+
 _git() {
     if command -v git.exe >/dev/null; then
         git.exe "$@"
@@ -77,7 +84,7 @@ _home_dir() {
 }
 
 _copy() {
-    if on_windows; then
+    if on_windows || on_wsl; then
         cp -r "$@"
     else
         ln -sf "$@"
@@ -220,7 +227,7 @@ teardown() {
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        gpgconf --kill gpg-agent >&2
+        _gpgconf --kill gpg-agent >&2
         temp_del "$(_home_dir)"
     fi
 
