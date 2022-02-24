@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+load '../lib/binaries.bash'
+
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
@@ -24,51 +26,6 @@ on_linux() {
 
 on_wsl() {
     [[ -f /proc/version ]] && grep -qi microsoft /proc/version
-}
-
-_sed_i() {
-    # MacOS syntax is different for in-place
-    if [ "$(uname)" = "Darwin" ]; then
-        sed -i "" "$@"
-    else
-        sed -i "$@"
-    fi
-}
-
-_shasum() {
-    # MacOS have shasum, others have sha1sum
-    if command -v shasum >/dev/null; then
-        shasum "$@"
-    else
-        sha1sum "$@"
-    fi
-}
-
-_gpg() {
-    # cygwin does not have an alias
-    if command -v gpg2 >/dev/null; then
-        gpg2 "$@"
-    elif command -v gpg.exe >/dev/null; then
-        gpg.exe "$@"
-    else
-        gpg "$@"
-    fi
-}
-
-_gpgconf() {
-    if command -v gpgconf.exe >/dev/null; then
-        gpgconf.exe "$@"
-    else
-        gpgconf "$@"
-    fi
-}
-
-_git() {
-    if command -v git.exe >/dev/null; then
-        git.exe "$@"
-    else
-        git "$@"
-    fi
 }
 
 _mktemp() {
@@ -96,14 +53,10 @@ initiate() {
         mkdir -p "${HELM_CACHE}/home"
 
         GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
-        if on_wsl; then
-            GPG_PRIVATE_KEY="$(wslpath "${GPG_PRIVATE_KEY}")"
-        fi
-
         _gpg --batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
-            helm create "${HELM_CACHE}/chart"
+            _helm create "${HELM_CACHE}/chart"
         fi
 
         helm_plugin_install "secrets"
@@ -228,7 +181,7 @@ EzAA
 teardown() {
     # https://stackoverflow.com/a/13864829/8087167
     if [ -n "${RELEASE+x}" ]; then
-        helm del "${RELEASE}" >&2
+        _helm del "${RELEASE}" >&2
     fi
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
@@ -251,7 +204,7 @@ create_chart() {
 
 helm_plugin_install() {
     {
-        if helm plugin list | grep -q "${1}"; then
+        if _helm plugin list | grep -q "${1}"; then
             return
         fi
 
@@ -267,6 +220,6 @@ helm_plugin_install() {
             ;;
         esac
 
-        helm plugin install "${URL}" "${@:2}"
+        _helm plugin install "${URL}" "${@:2}"
     } >&2
 }
