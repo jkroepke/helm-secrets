@@ -5,7 +5,7 @@ create_encrypted_file() {
         sops)
             # shellcheck disable=SC2059
             printf "$1" >"${TEST_TEMP_DIR}/${file}"
-            (cd "${TEST_TEMP_DIR}" && exec sops -e -i "${file}")
+            (cd "${TEST_TEMP_DIR}" && exec "${SOPS_BIN}" -e -i "${file}")
             ;;
         vault)
             # Check for multiline

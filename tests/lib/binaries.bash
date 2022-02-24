@@ -34,4 +34,10 @@ define_binaries() {
     else
         export HELM_BIN=helm
     fi
+
+    if command -v sops.exe >/dev/null; then
+        export SOPS_BIN=sops.exe
+    else
+        export SOPS_BIN=sops
+    fi
 }
