@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 
-set -eufx
-env
+set -euf
 
 if [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
     set -x
