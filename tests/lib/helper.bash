@@ -56,6 +56,14 @@ _gpg() {
     fi
 }
 
+_git() {
+    if command -v git.exe >/dev/null; then
+        git.exe "$@"
+    else
+        git "$@"
+    fi
+}
+
 _mktemp() {
     if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
         TMPDIR="${TMPDIR}" mktemp "$@"
@@ -101,7 +109,7 @@ setup() {
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
-    GIT_ROOT="$(git rev-parse --show-toplevel)"
+    GIT_ROOT="$(_git rev-parse --show-toplevel)"
     if on_wsl; then
         GIT_ROOT="$(wslpath "${GIT_ROOT}")"
     fi
