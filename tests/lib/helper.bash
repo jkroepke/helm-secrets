@@ -53,6 +53,11 @@ initiate() {
         mkdir -p "${HELM_CACHE}/home"
 
         GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
+
+        if on_wsl; then
+            GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
+        fi
+
         _gpg --batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
