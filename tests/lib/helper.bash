@@ -22,6 +22,14 @@ on_linux() {
     [[ "${_uname}" == "Linux" ]]
 }
 
+on_wsl() {
+    if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 _sed_i() {
     # MacOS syntax is different for in-place
     if [ "$(uname)" = "Darwin" ]; then
@@ -99,6 +107,9 @@ setup() {
 
     GIT_ROOT="$(git rev-parse --show-toplevel)"
     TEST_DIR="${GIT_ROOT}/tests"
+    if on_wsl; then
+        TEST_DIR="$(wslpath "${GIT_ROOT}/tests")"
+    fi
 
     # shellcheck disable=SC2164
     cd "${TEST_DIR}"
@@ -115,6 +126,8 @@ setup() {
     # Windows TMPDIR behavior
     if [[ "$(uname -s)" == CYGWIN* ]]; then
         TMPDIR="$(cygpath -m "${TEMP}")"
+    elif on_wsl; then
+        TMPDIR="$(wslpath "${TEMP}")"
     elif [ -n "${W_TEMP+x}" ]; then
         TMPDIR="${W_TEMP}"
     fi
@@ -191,7 +204,7 @@ EzAA
     export _TEST_global_secret=global_bar
     export _TEST_SERVICE_PORT=81
     export _TEST_SOME_SERVICE_PORT=83
-    
+
     set +x
 }
 
