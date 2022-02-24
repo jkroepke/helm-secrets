@@ -70,6 +70,7 @@ initiate() {
         "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
+            mkdir -p "${HELM_CACHE}/chart"
             if on_wsl; then
                 echo "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
                 ls -lah "${HELM_CACHE}/chart"
