@@ -94,7 +94,13 @@ _copy() {
 initiate() {
     {
         mkdir -p "${HELM_CACHE}/home"
-        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
+
+        GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
+        if on_wsl; then
+            GPG_PRIVATE_KEY="$(wslpath "${GPG_PRIVATE_KEY}")"
+        fi
+
+        _gpg --batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             helm create "${HELM_CACHE}/chart"
