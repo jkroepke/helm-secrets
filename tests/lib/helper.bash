@@ -70,7 +70,11 @@ initiate() {
         "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
-            "${HELM_BIN}"  create "${HELM_CACHE}/chart"
+            if on_wsl; then
+                "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
+            else
+                "${HELM_BIN}" create "${HELM_CACHE}/chart"
+            fi
         fi
 
         helm_plugin_install "secrets"
