@@ -23,11 +23,7 @@ on_linux() {
 }
 
 on_wsl() {
-    if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
-        return 0
-    else
-        return 1
-    fi
+    [ -f /proc/version ] && grep -qi microsoft /proc/version
 }
 
 _sed_i() {
@@ -52,7 +48,7 @@ _gpg() {
     # cygwin does not have an alias
     if command -v gpg2 >/dev/null; then
         gpg2 "$@"
-    elif on_windows; then
+    elif command -v gpg.exe >/dev/null; then
         gpg.exe "$@"
     else
         gpg "$@"
@@ -97,7 +93,6 @@ initiate() {
 }
 
 setup() {
-    set -x
     REAL_HOME="${HOME}"
     # shellcheck disable=SC2153
     HOME="$(_home_dir)"
@@ -106,10 +101,11 @@ setup() {
     export HOME
 
     GIT_ROOT="$(git rev-parse --show-toplevel)"
-    TEST_DIR="${GIT_ROOT}/tests"
     if on_wsl; then
-        TEST_DIR="$(wslpath "${GIT_ROOT}/tests")"
+        GIT_ROOT="$(wslpath "${GIT_ROOT}")"
     fi
+
+    TEST_DIR="${GIT_ROOT}/tests"
 
     # shellcheck disable=SC2164
     cd "${TEST_DIR}"
@@ -150,6 +146,7 @@ setup() {
     fi
 
     # copy assets
+    echo cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if ! on_windows; then
         # shellcheck disable=SC2016
@@ -204,7 +201,6 @@ EzAA
     export _TEST_global_secret=global_bar
     export _TEST_SERVICE_PORT=81
     export _TEST_SOME_SERVICE_PORT=83
-    set +x
 }
 
 teardown() {
