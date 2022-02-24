@@ -67,10 +67,10 @@ initiate() {
             GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
         fi
 
-        "${GPG_BIN}"--batch --import "${GPG_PRIVATE_KEY}"
+        "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
-            "${HELM_BIN}" create "${HELM_CACHE}/chart"
+            "${HELM_BIN}"  create "${HELM_CACHE}/chart"
         fi
 
         helm_plugin_install "secrets"
@@ -197,7 +197,7 @@ EzAA
 teardown() {
     # https://stackoverflow.com/a/13864829/8087167
     if [ -n "${RELEASE+x}" ]; then
-        "${HELM_BIN}"del "${RELEASE}" >&2
+        "${HELM_BIN}" del "${RELEASE}" >&2
     fi
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
@@ -220,7 +220,7 @@ create_chart() {
 
 helm_plugin_install() {
     {
-        if "${HELM_BIN}"plugin list | grep -q "${1}"; then
+        if "${HELM_BIN}" plugin list | grep -q "${1}"; then
             return
         fi
 
@@ -236,6 +236,6 @@ helm_plugin_install() {
             ;;
         esac
 
-        "${HELM_BIN}"plugin install "${URL}" "${@:2}"
+        "${HELM_BIN}" plugin install "${URL}" "${@:2}"
     } >&2
 }
