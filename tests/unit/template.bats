@@ -411,7 +411,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + secrets+gpg-import://" {
-    if ! on_linux || ! is_driver "sops"; then
+    if ! on_linux || ! on_wsl || ! is_driver "sops"; then
         skip
     fi
 
