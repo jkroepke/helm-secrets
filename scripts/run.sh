@@ -34,7 +34,7 @@ if on_cygwin; then
     TMPDIR="$(cygpath -w "${TEMP}")"
     export TMPDIR
 elif on_wsl; then
-    TMPDIR="$(_convert_path "${TEMP}")"
+    TMPDIR="$(wslpath "${TEMP}")"
     export TMPDIR
 fi
 
