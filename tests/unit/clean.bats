@@ -28,11 +28,12 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
+    assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
 
     run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
-    assert_file_not_exist "${FILE}.dec"
     assert_output --partial "${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_PREFIX" {
@@ -59,10 +60,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_SUFFIX" {
-    if on_windows; then
-        skip
-    fi
-
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DEC_SUFFIX=.test
@@ -103,9 +100,10 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
+    assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
 
     run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
-    assert_file_not_exist "${FILE}.dec"
     assert_output --partial "${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
 }
