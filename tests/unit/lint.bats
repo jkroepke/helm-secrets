@@ -139,7 +139,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set "service.type=NodePort" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -152,7 +152,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets lint -f "${FILE}" --set service.type=NodePort -- "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets lint -f "${FILE}" --set "service.type=NodePort" -- "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -303,7 +303,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 
@@ -321,7 +321,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + -a (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 

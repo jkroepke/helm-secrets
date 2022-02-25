@@ -297,7 +297,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + --driver-args (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl ||  ! is_driver "sops"; then
         skip
     fi
 
@@ -312,7 +312,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + -a (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 

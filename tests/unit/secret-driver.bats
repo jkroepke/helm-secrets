@@ -126,6 +126,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets --driver envsubst" {
+    if command -v envsubst > /dev/null 2>&1; then
+        skip
+    fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/envsubst/secrets.yaml"
 
     run "${HELM_BIN}" secrets --driver "envsubst" view "${FILE}"
@@ -135,6 +139,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=envsubst" {
+    if command -v envsubst > /dev/null 2>&1; then
+        skip
+    fi
+
     HELM_SECRETS_DRIVER="envsubst"
     export HELM_SECRETS_DRIVER
     export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
