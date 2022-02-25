@@ -71,18 +71,18 @@ _mktemp() {
 }
 
 _convert_path() {
-    if ! on_wsl; then
+    if on_wsl; then
+        case "${1}" in
+        /mnt/*)
+            printf '%s' "$(wslpath "${1}")"
+            ;;
+        *)
+            printf '%s' "${1}"
+            ;;
+        esac
+    else
         printf '%s' "${1}"
     fi
-
-    case "${1}" in
-    /mnt/*)
-        printf '%s' "$(wslpath "${1}")"
-        ;;
-    *)
-        printf '%s' "${1}"
-        ;;
-    esac
 }
 
 # MacOS syntax is different for in-place
