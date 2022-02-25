@@ -28,11 +28,11 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
-    assert_output "${FILE}.dexxxc"
+    assert_output "${FILE}.dec"
     assert_file_exist "${FILE}.dec"
 
     run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
-    assert_output "${FILE}.dexxxc"
+    assert_output "${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
 
@@ -46,8 +46,11 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
+
     HELM_SECRETS_DEC_SUFFIX=
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -64,6 +67,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -81,9 +85,11 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
 
     HELM_SECRETS_DEC_SUFFIX=.foo
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success

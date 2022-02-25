@@ -15,8 +15,6 @@ EOF
 }
 
 clean() {
-    set -x
-
     if is_help "$1"; then
         clean_usage
         return
