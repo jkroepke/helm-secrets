@@ -31,7 +31,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_exist "${FILE}.dec"
 
     run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
-    assert_output --partial "${FILE}.dec"
+    assert_output "${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
 
