@@ -50,6 +50,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_QUIET=true
     export HELM_SECRETS_QUIET
+    export WSLENV="HELM_SECRETS_QUIET:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -75,6 +76,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH=true
     export HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH
+    export WSLENV="HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -145,8 +147,10 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -161,6 +165,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -176,8 +181,10 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=.foo
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -192,6 +199,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_DIR="$(_mktemp -d)"
     export HELM_SECRETS_DEC_DIR
+    export WSLENV="HELM_SECRETS_DEC_DIR:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -278,6 +286,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
@@ -328,6 +337,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
     # shellcheck disable=SC2090
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
