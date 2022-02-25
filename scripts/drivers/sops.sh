@@ -3,9 +3,11 @@
 _SOPS="${HELM_SECRETS_SOPS_PATH:-${HELM_SECRETS_SOPS_BIN:-sops}}"
 
 _sops() {
+    set -x
     # shellcheck disable=SC2086
     set -- ${SECRET_DRIVER_ARGS} "$@"
     $_SOPS "$@"
+    set +x
 }
 
 driver_is_file_encrypted() {
