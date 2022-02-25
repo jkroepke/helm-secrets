@@ -59,7 +59,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_SUFFIX" {
-    if on_wsl; then
+    if on_windows; then
         skip
     fi
 
@@ -79,10 +79,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_PREFIX + HELM_SECRETS_DEC_SUFFIX" {
-    if on_wsl; then
-        skip
-    fi
-
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     DIR="$(dirname "${FILE}")"
 

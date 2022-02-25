@@ -129,7 +129,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_SUFFIX" {
-    if ! is_driver "sops" || on_wsl; then
+    if ! is_driver "sops"; then
         skip
     fi
 
