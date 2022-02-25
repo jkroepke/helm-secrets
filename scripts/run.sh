@@ -129,7 +129,7 @@ while true; do
         break
         ;;
     dir)
-        dirname "${SCRIPT_DIR}"
+        _convert_path "$(dirname "${SCRIPT_DIR}")"
         break
         ;;
     downloader)

@@ -411,7 +411,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + secrets+gpg-import://" {
-    if ! on_linux || ! on_wsl || ! is_driver "sops"; then
+    if ! on_linux || on_wsl || ! is_driver "sops"; then
         skip
     fi
 
@@ -575,7 +575,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if ! is_driver "sops"; then
+    if is_wsl || ! is_driver "sops"; then
         skip
     fi
 
@@ -642,7 +642,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Values file '${FILE}' is a symlink. Symlinks are not allowed."
     assert_file_not_exist "${FILE}.dec"
@@ -657,7 +657,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_VALUES_ALLOW_SYMLINKS=true helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_VALUES_ALLOW_SYMLINKS=true "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -674,7 +674,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Values filepath '${FILE}' is an absolute path. Absolute paths are not allowed."
     assert_file_not_exist "${FILE}.dec"
@@ -689,7 +689,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
@@ -706,7 +706,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Values filepath '${FILE}' contains '..'. Path traversal is not allowed."
     assert_file_not_exist "${FILE}.dec"
@@ -721,7 +721,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=true helm secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=true "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
