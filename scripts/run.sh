@@ -65,7 +65,7 @@ DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 trap _trap EXIT
 
 load_secret_driver "$SECRET_DRIVER"
-set -x
+
 while true; do
     case "${1:-}" in
     enc)
