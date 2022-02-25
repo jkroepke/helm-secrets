@@ -129,7 +129,6 @@ while true; do
         break
         ;;
     dir)
-        set -x
         _convert_path "$(dirname "${SCRIPT_DIR}")"
         break
         ;;

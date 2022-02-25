@@ -9,6 +9,7 @@ _file_http_exists() {
 }
 
 _file_http_get() {
+    set -x
     _tmp_file=$(_mktemp)
 
     if [ "${URL_VARIABLE_EXPANSION}" = "true" ]; then

@@ -111,8 +111,10 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=""
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     echo "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml" >&2
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
@@ -137,6 +139,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
     cp "${FILE}" "${FILE}${HELM_SECRETS_DEC_SUFFIX}"
 
     run "${HELM_BIN}" secrets enc "${FILE}"
@@ -160,8 +163,10 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=.foo
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
 
     run "${HELM_BIN}" secrets enc "${FILE}"

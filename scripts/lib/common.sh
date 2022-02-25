@@ -74,7 +74,7 @@ _convert_path() {
     if on_wsl; then
         case "${1}" in
         /mnt/*)
-            printf '%s' "$(wslpath "${1}")"
+            printf '%s' "$(wslpath -w "${1}")"
             ;;
         *)
             printf '%s' "${1}"
