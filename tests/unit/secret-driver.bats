@@ -126,7 +126,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets --driver envsubst" {
-    if command -v envsubst > /dev/null 2>&1; then
+    if ! command -v envsubst > /dev/null 2>&1; then
         skip
     fi
 
@@ -139,7 +139,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=envsubst" {
-    if command -v envsubst > /dev/null 2>&1; then
+    if ! command -v envsubst > /dev/null 2>&1; then
         skip
     fi
 
