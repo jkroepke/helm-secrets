@@ -20,6 +20,7 @@ EOF
 }
 
 decrypt_helper() {
+    set -x
     encrypted_file_path="${1}"
 
     if ! driver_is_file_encrypted "${encrypted_file_path}"; then
