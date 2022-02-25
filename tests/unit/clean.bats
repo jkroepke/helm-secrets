@@ -28,6 +28,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
+    assert_output "${FILE}.dexxxc"
     assert_file_exist "${FILE}.dec"
 
     run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
