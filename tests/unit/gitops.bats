@@ -7,6 +7,10 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "gitops: Be silent inside ArgoCD" {
+    if ! on_linux; then
+        skip
+    fi
+
     export ARGOCD_APP_NAME=helm-secrets
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"

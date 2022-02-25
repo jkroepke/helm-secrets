@@ -24,6 +24,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER" {
     HELM_SECRETS_DRIVER=nonexists
     export HELM_SECRETS_DRIVER
+    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
 
     FILE="${TEST_TEMP_DIR}/assets/values/noop/secrets.yaml"
 
@@ -75,6 +76,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER=sops
     export HELM_SECRETS_DRIVER
+    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
 
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
@@ -102,6 +104,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=noop" {
     HELM_SECRETS_DRIVER=noop
     export HELM_SECRETS_DRIVER
+    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
 
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
@@ -113,6 +116,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-driver: helm secrets + prefer cli arg -d noop over env" {
     HELM_SECRETS_DRIVER=sops
     export HELM_SECRETS_DRIVER
+    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
 
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
@@ -133,6 +137,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=envsubst" {
     HELM_SECRETS_DRIVER="envsubst"
     export HELM_SECRETS_DRIVER
+    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
 
     FILE="${TEST_TEMP_DIR}/assets/values/envsubst/secrets.yaml"
 
@@ -154,6 +159,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=assets/custom-driver.sh" {
     HELM_SECRETS_DRIVER="${TEST_TEMP_DIR}/assets/custom-driver.sh"
     export HELM_SECRETS_DRIVER
+    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
 
     FILE="${TEST_TEMP_DIR}/assets/values/vault/secrets.yaml"
 

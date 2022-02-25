@@ -100,6 +100,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
@@ -147,6 +148,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
     # shellcheck disable=SC2090
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success

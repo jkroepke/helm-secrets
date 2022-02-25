@@ -291,6 +291,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
@@ -350,6 +351,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
     # shellcheck disable=SC2090
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
