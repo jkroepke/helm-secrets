@@ -584,7 +584,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if is_wsl || ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 

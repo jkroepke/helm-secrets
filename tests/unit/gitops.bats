@@ -17,6 +17,11 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run diff <("${HELM_BIN}" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1) <("${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1)
+    "${HELM_BIN}" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" > "${TEST_TEMP_DIR}/output.helm.txt" 2>&1
+    "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" > "${TEST_TEMP_DIR}/output.secrets.txt" 2>&1
+
+    run diff output.helm.txt output.secrets.txt
     assert_success
+
+    rm -rf "${TEST_TEMP_DIR}/output.*.txt"
 }
