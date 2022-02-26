@@ -35,6 +35,8 @@ driver_encrypt_file() {
 }
 
 driver_decrypt_file() {
+    set -x
+
     type="${1}"
     input="${2}"
     # if omit then output to stdout
