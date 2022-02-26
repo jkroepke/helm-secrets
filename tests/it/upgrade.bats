@@ -243,7 +243,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
+    run "${HELM_BIN}" upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
 
@@ -295,7 +295,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -314,7 +314,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]

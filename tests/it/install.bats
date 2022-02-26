@@ -244,7 +244,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
 
@@ -296,7 +296,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -315,7 +315,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -335,7 +335,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -356,7 +356,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
     kubectl create secret generic gpg-key --from-file=private2.gpg="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" >&2
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://gpg-key#private2.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://gpg-key#private2.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -377,7 +377,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
     kubectl -n kube-system create secret generic gpg-key --from-file=private3.gpg="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" >&2
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -412,7 +412,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/non-exists#private3.gpg?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/non-exists#private3.gpg?${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Couldn't get kubernetes secret kube-system/non-exists"
 }
@@ -427,7 +427,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -448,7 +448,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
     kubectl create secret generic age-key --from-file=key.txt="${TEST_TEMP_DIR}/assets/age/key.txt" >&2
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://age-key#key.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://age-key#key.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -469,7 +469,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
     kubectl -n kube-system create secret generic age-key --from-file=keys.txt="${TEST_TEMP_DIR}/assets/age/key.txt" >&2
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
     assert_success
     assert_output --partial "STATUS: deployed"
     assert [ ! -f "${FILE}.dec" ]
@@ -505,7 +505,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}"install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/non-exists#keys.txt?${FILE}" 2>&1
+    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/non-exists#keys.txt?${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Couldn't get kubernetes secret kube-system/non-exists"
 }
