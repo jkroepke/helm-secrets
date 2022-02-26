@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 load '../lib/binaries.bash'
+export WSLENV="${WSLENV:-}"
 
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]

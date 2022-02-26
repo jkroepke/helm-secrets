@@ -676,7 +676,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false" {
-    if ! is_driver "sops"; then
+    if on_windows || ! is_driver "sops"; then
         skip
     fi
 
@@ -691,9 +691,9 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true" {
-    if ! is_driver "sops"; then
-        skip
-    fi
+   if on_windows || ! is_driver "sops"; then
+       skip
+   fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
@@ -708,7 +708,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false" {
-    if ! is_driver "sops"; then
+    if on_windows || ! is_driver "sops"; then
         skip
     fi
 
@@ -723,7 +723,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=true" {
-    if ! is_driver "sops"; then
+    if on_windows || ! is_driver "sops"; then
         skip
     fi
 
