@@ -19,11 +19,11 @@ driver_encrypt_file() {
     input="${2}"
     output="${3}"
 
-    if windows_path_required "${input}"; then
+    if _sops_windows_path_required "${input}"; then
         input="$(_convert_path "${input}")"
     fi
 
-    if windows_path_required "${output}"; then
+    if _sops_windows_path_required "${output}"; then
         output="$(_convert_path "${output}")"
     fi
 
@@ -35,18 +35,16 @@ driver_encrypt_file() {
 }
 
 driver_decrypt_file() {
-    set -x
-
     type="${1}"
     input="${2}"
     # if omit then output to stdout
     output="${3:-}"
 
-    if windows_path_required "${input}"; then
+    if _sops_windows_path_required "${input}"; then
         input="$(_convert_path "${input}")"
     fi
 
-    if windows_path_required "${output}"; then
+    if _sops_windows_path_required "${output}"; then
         output="$(_convert_path "${output}")"
     fi
 
@@ -61,14 +59,14 @@ driver_edit_file() {
     type="${1}"
     input="${2}"
 
-    if windows_path_required "${input}"; then
+    if _sops_windows_path_required "${input}"; then
         input="$(_convert_path "${input}")"
     fi
 
     _sops --input-type yaml --output-type yaml "${input}"
 }
 
-windows_path_required() {
+_sops_windows_path_required() {
     if ! on_wsl; then
         return 1
     fi
