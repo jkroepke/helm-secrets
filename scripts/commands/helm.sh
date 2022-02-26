@@ -78,14 +78,22 @@ helm_wrapper() {
 
                 file_dec="$(_file_dec_name "${real_file}")"
                 if [ -f "${file_dec}" ]; then
-                    set -- "$@" "$file_dec"
+                    if _helm_windows_path_required "${file_dec}"; then
+                        set -- "$@" "$(_convert_path "${file_dec}")"
+                    else
+                        set -- "$@" "$file_dec"
+                    fi
 
                     if [ "${QUIET}" = "false" ]; then
                         printf '[helm-secrets] Decrypt skipped: %s\n' "${file}" >&2
                     fi
                 else
                     if decrypt_helper "${real_file}"; then
-                        set -- "$@" "$file_dec"
+                        if _helm_windows_path_required "${file_dec}"; then
+                            set -- "$@" "$(_convert_path "${file_dec}")"
+                        else
+                            set -- "$@" "$file_dec"
+                        fi
                         printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                         if [ "${QUIET}" = "false" ]; then
@@ -116,4 +124,19 @@ helm_command() {
     fi
 
     helm_wrapper "$@"
+}
+
+_helm_windows_path_required() {
+    if ! on_wsl; then
+        return 1
+    fi
+
+    case "${HELM_BIN}" in
+    *.exe)
+        return 0
+        ;;
+    *)
+        return 1
+        ;;
+    esac
 }

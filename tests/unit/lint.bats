@@ -7,13 +7,13 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "lint: helm lint" {
-    run helm secrets lint
+    run "${HELM_BIN}" secrets lint
     assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] lint'
 }
 
 @test "lint: helm lint --help" {
-    run helm secrets lint --help
+    run "${HELM_BIN}" secrets lint --help
     assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] lint'
 }
@@ -21,7 +21,7 @@ load '../bats/extensions/bats-file/load'
 @test "lint: helm lint w/ chart" {
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial '1 chart(s) linted, 0 chart(s) failed'
 }
@@ -31,7 +31,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -44,7 +44,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -57,7 +57,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -74,7 +74,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -87,7 +87,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -100,7 +100,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -113,7 +113,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -126,7 +126,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -135,11 +135,15 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + helm flag" {
+    if on_wsl; then
+        skip
+    fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set "service.type=NodePort" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -148,11 +152,15 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + helm flag + --" {
+    if on_wsl; then
+        skip
+    fi
+
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint -f "${FILE}" --set service.type=NodePort -- "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets lint -f "${FILE}" --set "service.type=NodePort" -- "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -167,7 +175,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -179,7 +187,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -q lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets -q lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -192,7 +200,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --quiet lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets --quiet lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -209,7 +217,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${SPECIAL_CHAR_DIR}"
 
-    run helm secrets lint "${SPECIAL_CHAR_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${SPECIAL_CHAR_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
@@ -224,7 +232,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "Error: 1 chart(s) linted, 1 chart(s) failed"
@@ -239,7 +247,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
 }
@@ -253,7 +261,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -271,7 +279,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -a "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets -a "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -291,8 +299,9 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -302,7 +311,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 
@@ -310,7 +319,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets --driver-args "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets --driver-args "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -320,7 +329,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + -a (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 
@@ -328,7 +337,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run helm secrets -a "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets -a "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -350,8 +359,9 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
     # shellcheck disable=SC2090
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
-    run helm secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"

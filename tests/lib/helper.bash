@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+load '../lib/binaries.bash'
+export WSLENV="${WSLENV:-}"
+
 is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
@@ -12,16 +15,6 @@ is_curl_installed() {
     command -v curl >/dev/null
 }
 
-on_windows() {
-    _uname="$(uname)"
-    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]]
-}
-
-on_linux() {
-    _uname="$(uname)"
-    [[ "${_uname}" == "Linux" ]]
-}
-
 _sed_i() {
     # MacOS syntax is different for in-place
     if [ "$(uname)" = "Darwin" ]; then
@@ -31,22 +24,18 @@ _sed_i() {
     fi
 }
 
-_shasum() {
-    # MacOS have shasum, others have sha1sum
-    if command -v shasum >/dev/null; then
-        shasum "$@"
-    else
-        sha1sum "$@"
-    fi
+on_windows() {
+    _uname="$(uname)"
+    ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]] || on_wsl
 }
 
-_gpg() {
-    # cygwin does not have an alias
-    if command -v gpg2 >/dev/null; then
-        gpg2 "$@"
-    else
-        gpg "$@"
-    fi
+on_linux() {
+    _uname="$(uname)"
+    [[ "${_uname}" == "Linux" ]]
+}
+
+on_wsl() {
+    [[ -f /proc/version ]] && grep -qi microsoft /proc/version
 }
 
 _mktemp() {
@@ -72,10 +61,24 @@ _copy() {
 initiate() {
     {
         mkdir -p "${HELM_CACHE}/home"
-        _gpg --batch --import "${TEST_DIR}/assets/gpg/private.gpg"
+
+        GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
+
+        if on_wsl; then
+            GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
+        fi
+
+        "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
-            helm create "${HELM_CACHE}/chart"
+            mkdir -p "${HELM_CACHE}/chart"
+            if on_wsl; then
+                echo "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
+                ls -lah "${HELM_CACHE}/chart"
+                "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
+            else
+                "${HELM_BIN}" create "${HELM_CACHE}/chart"
+            fi
         fi
 
         helm_plugin_install "secrets"
@@ -94,7 +97,13 @@ setup() {
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
-    GIT_ROOT="$(git rev-parse --show-toplevel)"
+    define_binaries
+
+    GIT_ROOT="$("${GIT_BIN}" rev-parse --show-toplevel)"
+    if on_wsl; then
+        GIT_ROOT="$(wslpath "${GIT_ROOT}")"
+    fi
+
     TEST_DIR="${GIT_ROOT}/tests"
 
     # shellcheck disable=SC2164
@@ -112,6 +121,8 @@ setup() {
     # Windows TMPDIR behavior
     if [[ "$(uname -s)" == CYGWIN* ]]; then
         TMPDIR="$(cygpath -m "${TEMP}")"
+    elif on_wsl; then
+        TMPDIR="$(wslpath "${TEMP}")"
     elif [ -n "${W_TEMP+x}" ]; then
         TMPDIR="${W_TEMP}"
     fi
@@ -193,12 +204,12 @@ EzAA
 teardown() {
     # https://stackoverflow.com/a/13864829/8087167
     if [ -n "${RELEASE+x}" ]; then
-        helm del "${RELEASE}" >&2
+        "${HELM_BIN}" del "${RELEASE}" >&2
     fi
 
     # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
     if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        gpgconf --kill gpg-agent >&2
+        "${GPGCONF_BIN}" --kill gpg-agent >&2
         temp_del "$(_home_dir)"
     fi
 
@@ -216,7 +227,7 @@ create_chart() {
 
 helm_plugin_install() {
     {
-        if helm plugin list | grep -q "${1}"; then
+        if "${HELM_BIN}" plugin list | grep -q "${1}"; then
             return
         fi
 
@@ -232,6 +243,6 @@ helm_plugin_install() {
             ;;
         esac
 
-        helm plugin install "${URL}" "${@:2}"
+        "${HELM_BIN}" plugin install "${URL}" "${@:2}"
     } >&2
 }

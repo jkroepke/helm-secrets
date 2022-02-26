@@ -70,6 +70,22 @@ _mktemp() {
     mktemp "$@" "${TMPDIR}/XXXXXX"
 }
 
+_convert_path() {
+    if on_wsl; then
+        touch "${1}"
+        case "${1}" in
+        /mnt/*)
+            printf '%s' "$(wslpath -w "${1}")"
+            ;;
+        *)
+            printf '%s' "${1}"
+            ;;
+        esac
+    else
+        printf '%s' "${1}"
+    fi
+}
+
 # MacOS syntax is different for in-place
 # https://unix.stackexchange.com/a/92907/433641
 case $(sed --help 2>&1) in
@@ -82,3 +98,9 @@ on_cygwin() { false; }
 case "$(uname -s)" in
 CYGWIN*) on_cygwin() { true; } ;;
 esac
+
+if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
+    on_wsl() { true; }
+else
+    on_wsl() { false; }
+fi

@@ -33,6 +33,9 @@ if on_cygwin; then
 
     TMPDIR="$(cygpath -w "${TEMP}")"
     export TMPDIR
+elif on_wsl; then
+    TMPDIR="$(wslpath "${TEMP}")"
+    export TMPDIR
 fi
 
 # Create a base temporary directory
@@ -126,7 +129,7 @@ while true; do
         break
         ;;
     dir)
-        dirname "${SCRIPT_DIR}"
+        _convert_path "$(dirname "${SCRIPT_DIR}")"
         break
         ;;
     downloader)

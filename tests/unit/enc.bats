@@ -6,19 +6,19 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "enc: helm enc" {
-    run helm secrets enc
+    run "${HELM_BIN}" secrets enc
     assert_failure
     assert_output --partial 'Error: secrets file required.'
 }
 
 @test "enc: helm enc --help" {
-    run helm secrets enc --help
+    run "${HELM_BIN}" secrets enc --help
     assert_success
     assert_output --partial 'Encrypt secrets'
 }
 
 @test "enc: File not exits" {
-    run helm secrets enc nonexists
+    run "${HELM_BIN}" secrets enc nonexists
     assert_failure
     assert_output --partial '[helm-secrets] File does not exist: nonexists'
 }
@@ -30,12 +30,12 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
 
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted secrets.dec.yaml"
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
@@ -48,12 +48,12 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.dec.yaml"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
 
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted some-secrets.dec.yaml"
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
@@ -68,12 +68,12 @@ load '../bats/extensions/bats-file/load'
 
     cp "${FILE}" "${FILE}.dec"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
 
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted secrets.dec.yaml.dec to secrets.dec.yaml"
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
@@ -90,12 +90,12 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
 
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted secrets.dec.yaml"
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
@@ -111,18 +111,20 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=""
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
     echo "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml" >&2
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml to secrets.dec.yaml"
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
@@ -137,14 +139,15 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
     cp "${FILE}" "${FILE}${HELM_SECRETS_DEC_SUFFIX}"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
@@ -160,16 +163,18 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=.foo
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
     cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
     assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
 
-    run helm secrets view "${FILE}"
+    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
@@ -185,11 +190,11 @@ load '../bats/extensions/bats-file/load'
     YAML="hello: world"
     echo "${YAML}" > "${FILE}"
 
-    run helm secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${FILE}"
     assert_success
     assert_output --partial "Encrypting ${FILE}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_file_exist "${FILE}.dec"
     assert_file_contains "${FILE}.dec" 'hello: world'

@@ -12,7 +12,7 @@ load '../bats/extensions/bats-file/load'
         DS="/"
     fi
 
-    run helm secrets dir
+    run "${HELM_BIN}" secrets dir
     assert_success
-    assert_output "$(helm env HELM_PLUGINS)${DS}helm-secrets"
+    assert_output "$("${HELM_BIN}" env HELM_PLUGINS)${DS}helm-secrets"
 }

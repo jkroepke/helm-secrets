@@ -6,19 +6,19 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "dec: helm dec" {
-    run helm secrets dec
+    run "${HELM_BIN}" secrets dec
     assert_failure
     assert_output --partial 'Error: secrets file required.'
 }
 
 @test "dec: helm dec --help" {
-    run helm secrets dec --help
+    run "${HELM_BIN}" secrets dec --help
     assert_success
     assert_output --partial 'Decrypt secrets'
 }
 
 @test "dec: File not exits" {
-    run helm secrets dec nonexists
+    run "${HELM_BIN}" secrets dec nonexists
     assert_failure
     assert_output --partial '[helm-secrets] File does not exist: nonexists'
 }
@@ -26,7 +26,7 @@ load '../bats/extensions/bats-file/load'
 @test "dec: Decrypt secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
@@ -37,7 +37,7 @@ load '../bats/extensions/bats-file/load'
 @test "dec: Decrypt secrets.yaml + quiet flag" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets --quiet dec "${FILE}"
+    run "${HELM_BIN}" secrets --quiet dec "${FILE}"
     assert_success
     refute_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
@@ -50,8 +50,9 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_QUIET=true
     export HELM_SECRETS_QUIET
+    export WSLENV="HELM_SECRETS_QUIET:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     refute_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
@@ -62,7 +63,7 @@ load '../bats/extensions/bats-file/load'
 @test "dec: Decrypt secrets.yaml + --output-decrypt-file-path" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets --output-decrypt-file-path dec "${FILE}"
+    run "${HELM_BIN}" secrets --output-decrypt-file-path dec "${FILE}"
     assert_success
     assert_output "${FILE}.dec"
     assert_file_exist "${FILE}.dec"
@@ -75,8 +76,9 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH=true
     export HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH
+    export WSLENV="HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "${FILE}.dec"
     assert_file_exist "${FILE}.dec"
@@ -91,7 +93,7 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml.gotpl"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
@@ -102,7 +104,7 @@ load '../bats/extensions/bats-file/load'
 @test "dec: Decrypt some-secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
@@ -113,7 +115,7 @@ load '../bats/extensions/bats-file/load'
 @test "dec: Decrypt values.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/values.yaml"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
 
     assert_failure
     assert_output --partial "[helm-secrets] Decrypting ${FILE}"
@@ -127,7 +129,7 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}.dec"
@@ -145,10 +147,12 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
@@ -161,8 +165,9 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_SUFFIX=.test
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}${HELM_SECRETS_DEC_SUFFIX}"
@@ -176,10 +181,12 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_PREFIX=prefix.
     export HELM_SECRETS_DEC_PREFIX
+    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=.foo
     export HELM_SECRETS_DEC_SUFFIX
+    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
@@ -192,8 +199,9 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DEC_DIR="$(_mktemp -d)"
     export HELM_SECRETS_DEC_DIR
+    export WSLENV="HELM_SECRETS_DEC_DIR:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${HELM_SECRETS_DEC_DIR}/secrets.yaml.dec"
@@ -210,7 +218,7 @@ load '../bats/extensions/bats-file/load'
 
     FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
 }
@@ -222,7 +230,7 @@ load '../bats/extensions/bats-file/load'
 
     FILE="http://example.com/404.yaml"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_failure
     assert_output --partial "[helm-secrets] File does not exist: ${FILE}"
 }
@@ -234,7 +242,7 @@ load '../bats/extensions/bats-file/load'
 
     FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
 }
@@ -246,7 +254,7 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets --driver-args "--verbose" dec "${FILE}"
+    run "${HELM_BIN}" secrets --driver-args "--verbose" dec "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_file_exist "${FILE}.dec"
@@ -261,7 +269,7 @@ load '../bats/extensions/bats-file/load'
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets -a "--verbose" dec "${FILE}"
+    run "${HELM_BIN}" secrets -a "--verbose" dec "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_file_exist "${FILE}.dec"
@@ -278,8 +286,9 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_file_exist "${FILE}.dec"
@@ -288,13 +297,13 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + --driver-args (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl ||  ! is_driver "sops"; then
         skip
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets --driver-args "--verbose --output-type \"yaml\"" dec "${FILE}"
+    run "${HELM_BIN}" secrets --driver-args "--verbose --output-type \"yaml\"" dec "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_file_exist "${FILE}.dec"
@@ -303,13 +312,13 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + -a (complex)" {
-    if ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run helm secrets -a "--verbose --output-type \"yaml\"" dec "${FILE}"
+    run "${HELM_BIN}" secrets -a "--verbose --output-type \"yaml\"" dec "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_file_exist "${FILE}.dec"
@@ -328,8 +337,9 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
     # shellcheck disable=SC2090
     export HELM_SECRETS_DRIVER_ARGS
+    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
-    run helm secrets dec "${FILE}"
+    run "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_file_exist "${FILE}.dec"
