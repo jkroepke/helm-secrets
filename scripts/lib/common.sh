@@ -72,6 +72,7 @@ _mktemp() {
 
 _convert_path() {
     if on_wsl; then
+        touch "${1}"
         case "${1}" in
         /mnt/*)
             printf '%s' "$(wslpath -w "${1}")"
