@@ -22,7 +22,6 @@ _file_http_get() {
         exit 1
     fi
 
-    set +x
     printf '%s' "${_tmp_file}"
 }
 
