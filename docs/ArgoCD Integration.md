@@ -8,7 +8,7 @@ to prevent users from reading files outside the own directory.
 
 # Prerequisites
 
-- ArgoCD 2.3.0+, 2.2.6+, 2.1.11+
+- ArgoCD 2.3.0+, 2.2.6+, 2.1.11+ (ArgoCD 2.1.9, 2.1.10, 2.2.4, 2.2.5 is [NOT compatible with helm-secrets](https://github.com/argoproj/argo-cd/issues/8397))
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
 - age encrypted values requires at least [3.10.0](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0) and sops [3.7.0](https://github.com/mozilla/sops/releases/tag/v3.7.0)
 
