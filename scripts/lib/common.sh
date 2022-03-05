@@ -61,7 +61,11 @@ _trap() {
         _trap_hook
     fi
 
-    rm -rf "${TMPDIR}"
+    if command -v _trap_kill_gpg_agent >/dev/null; then
+        _trap_kill_gpg_agent
+    fi
+
+    #rm -rf "${TMPDIR}"
 }
 
 # MacOS syntax and behavior is different for mktemp

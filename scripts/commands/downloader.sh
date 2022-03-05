@@ -12,7 +12,7 @@ KEY_LOCATION_PREFIX="${HELM_SECRETS_KEY_LOCATION_PREFIX:-""}"
 # shellcheck source=scripts/commands/view.sh
 . "${SCRIPT_DIR}/commands/view.sh"
 
-_trap_hook() {
+_trap_kill_gpg_agent() {
     if [ -n "${_GNUPGHOME+x}" ]; then
         if [ -f "${_GNUPGHOME}/.helm-secrets" ]; then
             # On CentOS 7, there is no kill option
