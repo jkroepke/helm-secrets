@@ -55,16 +55,6 @@ Helm will call helm-secrets because helm-secrets is [registered](https://github.
 Before using helm secrets, we are required to install helm-secrets and sops on the ArgoCD Repo Server.
 There are two methods to do this. Either create your custom ArgoCD Docker Image or install them via init container.
 
-## Note about tini
-Tini is required as zombie reaper here.
-
-> It protects you from software that accidentally creates zombie processes, which can (over time!) starve your entire system for PIDs (and make it unusable).
-
-The `gpg-agent` will start as daemon by the `gpg` process. helm-secrets will kill the `gpg-agent` on termination, but it will be continued as zombie process.
-tini's job is to reap all the zombie processes. Otherwise, the container will stop working after some time.
-
-See [#200](https://github.com/jkroepke/helm-secrets/issues/200) and [argoproj/argo-cd#8689](https://github.com/argoproj/argo-cd/issues/8689) for more information.
-
 ## Option 1: Custom Docker Image
 Integrating `helm-secrets` with Argo CD can be achieved by building a custom Argo CD Server image.
 
@@ -75,7 +65,6 @@ FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.1"
 ARG HELM_SECRETS_VERSION="3.12.0"
 ARG KUBECTL_VERSION="1.22.0"
-ARG TINI_VERSION="0.19.0"
 # In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
 ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
     HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
@@ -93,10 +82,6 @@ RUN curl -fSSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 RUN curl -fSSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
-RUN curl -fSSL https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini \
-    -o /usr/local/bin/tini && chmod +x /usr/local/bin/tini
-
-ENTRYPOINT ["/usr/local/bin/tini", "--"]
 
 USER argocd
 
@@ -155,8 +140,6 @@ repoServer:
           value: "3.7.1"
         - name: KUBECTL_VERSION
           value: "1.22.0"
-        - name: TINI_VERSION
-          value: "0.19.0"
       args:
         - |
           mkdir -p /custom-tools/helm-plugins
@@ -164,11 +147,8 @@ repoServer:
 
           wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
-          wget -qO /custom-tools/tini https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini
 
-          printf '#/usr/bin/env sh\necho exec /custom-tools/tini -- /usr/local/bin/argocd-repo-server "$@"' > /usr/local/sbin/argocd-repo-server
-
-          chmod +x /custom-tools/* /usr/local/sbin/argocd-repo-server
+          chmod +x /custom-tools/*
       volumeMounts:
         - mountPath: /custom-tools
           name: custom-tools
