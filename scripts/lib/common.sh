@@ -65,7 +65,7 @@ _trap() {
         _trap_kill_gpg_agent
     fi
 
-    #rm -rf "${TMPDIR}"
+    rm -rf "${TMPDIR}"
 }
 
 # MacOS syntax and behavior is different for mktemp

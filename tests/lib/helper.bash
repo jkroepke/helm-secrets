@@ -164,8 +164,6 @@ setup() {
             export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
         fi
 
-        vault login token=test
-
         _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/assets/values/vault/seed.sh' "${TEST_TEMP_DIR}")"
 
         _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${TEST_TEMP_DIR}")"
