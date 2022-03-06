@@ -35,12 +35,6 @@ helm secrets upgrade name . -f secrets.yaml
 
 ## ArgoCD support
 
-> **⚠ WARNING: ArgoCD incompatibility**
-> 
-> Due [CVE-2022-24348](https://www.tenable.com/cve/CVE-2022-24348), ArgoCD restricts the protocols in helm value files. The [fix](https://github.com/argoproj/argo-cd/commit/78c2084f0febd159039ff785ddc2bd4ba1cecf88) is introduced in ArgoCD 2.1.9 and 2.2.4.
-> If you depend on helm-secrets integration, please stay below ArgoCD 2.1.9 and 2.2.4 until the problem fixed upstream.
-> See https://github.com/argoproj/argo-cd/issues/8397 and https://github.com/jkroepke/helm-secrets/issues/185 for more information.
-
 For running helm-secrets with ArgoCD, see [ArgoCD Integration](https://github.com/jkroepke/helm-secrets/wiki/ArgoCD-Integration) for more information.
 
 ## Terraform support
