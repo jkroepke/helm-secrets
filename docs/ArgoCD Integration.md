@@ -97,12 +97,13 @@ install sops or vals and helm-secret through an init container.
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 
 ```yaml
-configs:
-  helm.valuesFileSchemes: >-
-    secrets+gpg-import, secrets+gpg-import-kubernetes,
-    secrets+age-import, secrets+age-import-kubernetes,
-    secrets,
-    https
+server:
+  config:
+    helm.valuesFileSchemes: >-
+      secrets+gpg-import, secrets+gpg-import-kubernetes,
+      secrets+age-import, secrets+age-import-kubernetes,
+      secrets,
+      https
 
 repoServer:
   env:
