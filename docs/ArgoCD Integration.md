@@ -18,7 +18,7 @@ An Argo CD Application can use the downloader plugin syntax to use encrypted val
 There are three methods how to use an encrypted value file.
 - Method 1: Mount the private key from a kubernetes secret as volume
 - Method 2: Fetch the private key directly from a kubernetes secret
-- Method 3: Using GCP KMS (no keys provided)
+- Method 3: Using cloud provider (GCP KMS is used here)
 
 Please refer to the configuration section of the corresponding method for further instructions.
 
@@ -52,11 +52,13 @@ Helm will call helm-secrets because helm-secrets is [registered](https://github.
 
 # Installation on Argo CD
 
-Before using helm secrets, we are required to install helm-secrets and sops on the ArgoCD Repo Server.
+Before using helm secrets, we are required to install `helm-secrets` and `sops` on the `argocd-repo-server`.
 There are two methods to do this. Either create your custom ArgoCD Docker Image or install them via init container.
 
 ## Option 1: Custom Docker Image
 Integrating `helm-secrets` with Argo CD can be achieved by building a custom Argo CD Server image.
+
+Only `argocd-repo-server` needs this customized image. Other ArgoCD components can use the customized or upstream variant.
 
 Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` into the Argo CD image:
 ```Dockerfile
@@ -92,9 +94,9 @@ Make sure to specify your custom image when deploying Argo CD.
 
 ## Option 2: Init Container
 
-install sops or vals and helm-secret through an init container.
+Install sops or vals and helm-secret through an init container on the `argocd-repo-server` Deployment.
 
-This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
+This is an example values file for the [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd).
 
 ```yaml
 server:
