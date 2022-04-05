@@ -258,7 +258,7 @@ jobs:
           HELM_SECRETS_DRIVER: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@v2.1.0
+      - uses: codecov/codecov-action@v3
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -274,7 +274,7 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
 
-      - uses: codecov/codecov-action@v2.1.0
+      - uses: codecov/codecov-action@v3
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
