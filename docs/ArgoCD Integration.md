@@ -153,9 +153,9 @@ repoServer:
 
 ## Step 2: Allow helm-secrets schemes in argocd-cm ConfigMap
 
-By default, ArgoCD only allows `http://` and `https://` remote value schemes.
+By default, ArgoCD only allows `http://` and `https://` as remote value schemes.
 
-To allow helm-secrets, the helm-secrets schemes needs to be added inside the [argocd-cm ConfigMap](https://github.com/argoproj/argo-cd/blob/af5f234bdbc8fd9d6dcc90d12e462316d9af32cf/docs/operator-manual/argocd-cm.yaml#L225-L227):
+The helm-secrets schemes need to be added to the [argocd-cm ConfigMap](https://github.com/argoproj/argo-cd/blob/af5f234bdbc8fd9d6dcc90d12e462316d9af32cf/docs/operator-manual/argocd-cm.yaml#L225-L227):
 
 ```yaml
 ---
@@ -172,7 +172,7 @@ data:
     https
 ```
 
-The [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd) supports to define `argocd-cm` settings through [values.yaml](https://github.com/argoproj/argo-helm/blob/6ff050f6f57edda1e6912ef0bb17d085684e103e/charts/argo-cd/values.yaml#L1155-L1157):
+The [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd) supports defining `argocd-cm` settings through [values.yaml](https://github.com/argoproj/argo-helm/blob/6ff050f6f57edda1e6912ef0bb17d085684e103e/charts/argo-cd/values.yaml#L1155-L1157):
 
 ```yaml
 server:
