@@ -55,7 +55,9 @@ Helm will call helm-secrets because helm-secrets is [registered](https://github.
 Before using helm secrets, we are required to install `helm-secrets` and `sops` on the `argocd-repo-server`.
 There are two methods to do this. Either create your custom ArgoCD Docker Image or install them via init container.
 
-## Option 1: Custom Docker Image
+## Step 1: Customize argocd-repo-server
+
+### Option 1: Custom Docker Image
 Integrating `helm-secrets` with Argo CD can be achieved by building a custom Argo CD Server image.
 
 Only `argocd-repo-server` needs this customized image. Other ArgoCD components can use the customized or upstream variant.
@@ -92,21 +94,13 @@ RUN helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkr
 
 Make sure to specify your custom image when deploying Argo CD.
 
-## Option 2: Init Container
+### Option 2: Init Container
 
 Install sops or vals and helm-secret through an init container on the `argocd-repo-server` Deployment.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd).
 
 ```yaml
-server:
-  config:
-    helm.valuesFileSchemes: >-
-      secrets+gpg-import, secrets+gpg-import-kubernetes,
-      secrets+age-import, secrets+age-import-kubernetes,
-      secrets,
-      https
-
 repoServer:
   env:
     - name: HELM_PLUGINS
@@ -157,6 +151,39 @@ repoServer:
           name: custom-tools
 ```
 
+## Step 2: Allow helm-secrets schemes in argocd-cm ConfigMap
+
+By default, ArgoCD only allows `http://` and `https://` as remote value schemes.
+
+The helm-secrets schemes need to be added to the [argocd-cm ConfigMap](https://github.com/argoproj/argo-cd/blob/af5f234bdbc8fd9d6dcc90d12e462316d9af32cf/docs/operator-manual/argocd-cm.yaml#L225-L227):
+
+```yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  ...
+  name: argocd-cm
+data:
+  helm.valuesFileSchemes: >-
+    secrets+gpg-import, secrets+gpg-import-kubernetes,
+    secrets+age-import, secrets+age-import-kubernetes,
+    secrets,
+    https
+```
+
+The [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd) supports defining `argocd-cm` settings through [values.yaml](https://github.com/argoproj/argo-helm/blob/6ff050f6f57edda1e6912ef0bb17d085684e103e/charts/argo-cd/values.yaml#L1155-L1157):
+
+```yaml
+server:
+  config:
+    helm.valuesFileSchemes: >-
+      secrets+gpg-import, secrets+gpg-import-kubernetes,
+      secrets+age-import, secrets+age-import-kubernetes,
+      secrets,
+      https
+```
+
 # Configuration of ArgoCD
 
 When using private key encryption it is required to configure ArgoCD repo server so that it has access 
@@ -174,7 +201,7 @@ Both methods depend on a Kubernetes secret holding the key in plain-text format 
 ### Using GPG
 #### Generating the key and export it as ASCII armored file.
 
-```shell
+```bash
 gpg --full-generate-key --rfc4880
 ```
 
@@ -184,7 +211,7 @@ Please also note that currently it is recommended to use the --rfc4880.
 This prevents you from running into a compatibility issue between gpg 2.2 and gpg 2.3
 (Related Issue: [Encryption with GnuPG 2.3 (RFC4880bis) causes compatibility issues with GnuPG 2.2](https://github.com/mozilla/sops/issues/896))
 
-```shell
+```bash
 gpg --armor --export-secret-keys <key-id> > key.asc
 ```
 The key-id can be found in the output of the generate-key command.
@@ -196,7 +223,7 @@ gpg: key 1234567890987654321 marked as ultimately trusted
 ### Using age
 #### Generating the key
 
-```shell
+```bash
 age-keygen -o key.txt
 ```
 
@@ -209,7 +236,7 @@ Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://g
 before running sops. Define `SOPS_AGE_RECIPIENTS` is only required on initial encryption of a plain file.
 
 ### Creating the kubernetes secret holding the exported private key
-```shell
+```bash
 kubectl create secret generic helm-secrets-private-keys --from-file=key.asc
 ```
 
