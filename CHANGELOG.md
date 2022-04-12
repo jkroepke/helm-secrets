@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.13.0] - 2022-04-12
 
 ### Added
 - Support for WSL on Windows
@@ -204,7 +204,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.12.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.13.0...HEAD
+[3.13.0]: https://github.com/jkroepke/helm-secrets/compare/v3.12.0...v3.13.0
 [3.12.0]: https://github.com/jkroepke/helm-secrets/compare/v3.11.0...v3.12.0
 [3.11.0]: https://github.com/jkroepke/helm-secrets/compare/v3.10.0...v3.11.0
 [3.10.0]: https://github.com/jkroepke/helm-secrets/compare/v3.9.1...v3.10.0
