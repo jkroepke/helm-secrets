@@ -2,9 +2,9 @@
 name: CI
 
 env:
-  VERSION_HELM: v3.7.0
-  VERSION_SOPS: v3.7.1
-  VERSION_VALS: v0.14.0
+  VERSION_HELM: v3.8.2
+  VERSION_SOPS: v3.7.2
+  VERSION_VALS: v0.16.0
 
 on:
   pull_request:
