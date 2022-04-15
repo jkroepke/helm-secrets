@@ -11,7 +11,7 @@ _sops() {
 driver_is_file_encrypted() {
     input="${1}"
 
-    grep -q 'sops' "${input}" && grep -q 'gcp_kms' "${input}"
+    grep -q 'sops' "${input}" && grep -q 'mac' "${input}" && grep -q 'version' "${input}"
 }
 
 driver_encrypt_file() {
