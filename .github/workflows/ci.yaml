@@ -94,7 +94,7 @@ jobs:
 
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
-        if: "contains(matrix.os, 'alpine')"
+        if: "contains(matrix.container, 'alpine')"
 
       - uses: actions/checkout@v3
         with:
