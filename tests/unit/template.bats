@@ -535,7 +535,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --driver-args "--verbose" template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    assert_output --partial "port: 83"
+    assert_output --partial "port: 80"
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --driver-args (simple)" {
