@@ -252,9 +252,9 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 80"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
 
@@ -535,7 +535,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --driver-args "--verbose" template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    assert_output --partial 'RELEASE-NAME-'
+    assert_output --partial "port: 83"
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --driver-args (simple)" {
