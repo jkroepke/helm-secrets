@@ -97,6 +97,10 @@ setup() {
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
+    if [ -f "${REAL_HOME}/.gitconfig" ]; then
+        cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
+    fi
+
     define_binaries
 
     GIT_ROOT="$("${GIT_BIN}" rev-parse --show-toplevel)"
@@ -137,10 +141,6 @@ setup() {
     # copy .kube from real home
     if [ -d "${REAL_HOME}/.kube" ]; then
         ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
-    fi
-
-    if [ -f "${REAL_HOME}/.gitconfig" ]; then
-        cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
     fi
 
     if on_windows; then
