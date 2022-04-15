@@ -60,6 +60,7 @@ _copy() {
 
 initiate() {
     {
+        # BATS_SUITE_TMPDIR
         mkdir -p "${HELM_CACHE}/home"
 
         GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
@@ -97,8 +98,10 @@ setup() {
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
+    cat "${REAL_HOME}/.gitconfig"
     if [ -f "${REAL_HOME}/.gitconfig" ]; then
         cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
+        cat "${HOME}/.gitconfig"
     fi
 
     define_binaries
