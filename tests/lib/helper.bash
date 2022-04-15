@@ -139,6 +139,10 @@ setup() {
         ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
     fi
 
+    if [ -f "${REAL_HOME}/.gitconfig" ]; then
+        cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
+    fi
+
     if on_windows; then
         # remove symlink, since its not supported on windows
         find "${TEST_DIR}" -name secrets.symlink.yaml -delete

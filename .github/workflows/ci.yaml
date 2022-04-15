@@ -140,10 +140,6 @@ jobs:
           gpg --version
           vault --version
 
-      # this is to fix https://github.com/actions/checkout/issues/760
-      - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
-        if: "contains(matrix.container, 'alpine')"
-
       - name: Run helm-secrets w/o bats
         run: |-
           helm plugin install "${{ github.event_name == 'pull_request'
