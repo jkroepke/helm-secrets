@@ -23,7 +23,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    assert_output --partial 'RELEASE-NAME-'
+    assert_output --partial "port: 80"
 }
 
 @test "template: helm template w/ chart + secrets.yaml" {
@@ -242,6 +242,19 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "Error: YAML parse error"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exist "${FILE}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.empty.yaml" {
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.empty.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    assert_success
+    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "port: 80"
+    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exist "${FILE}.dec"
 }
 
@@ -522,7 +535,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --driver-args "--verbose" template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    assert_output --partial 'RELEASE-NAME-'
+    assert_output --partial "port: 80"
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --driver-args (simple)" {

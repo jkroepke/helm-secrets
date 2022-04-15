@@ -2,9 +2,9 @@
 name: CI
 
 env:
-  VERSION_HELM: v3.7.0
-  VERSION_SOPS: v3.7.1
-  VERSION_VALS: v0.14.0
+  VERSION_HELM: v3.8.2
+  VERSION_SOPS: v3.7.2
+  VERSION_VALS: v0.15.0
 
 on:
   pull_request:
@@ -91,6 +91,10 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.eol lf
         if: "contains(matrix.os, 'windows-latest')"
+
+      # this is to fix https://github.com/actions/checkout/issues/760
+      - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
+        if: "contains(matrix.container, 'alpine')"
 
       - uses: actions/checkout@v3
         with:
