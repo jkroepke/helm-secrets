@@ -23,7 +23,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    assert_output --partial 'RELEASE-NAME-'
+    assert_output --partial "port: 80"
 }
 
 @test "template: helm template w/ chart + secrets.yaml" {
