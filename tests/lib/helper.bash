@@ -98,12 +98,8 @@ setup() {
     [ -d "${HOME}" ] || mkdir -p "${HOME}"
     export HOME
 
-    git config --list --show-origin
-
-    cat "${REAL_HOME}/.gitconfig"
     if [ -f "${REAL_HOME}/.gitconfig" ]; then
         cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
-        cat "${HOME}/.gitconfig"
     fi
 
     define_binaries
