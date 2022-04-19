@@ -112,6 +112,8 @@ repoServer:
       value: /custom-tools/sops
     - name: HELM_SECRETS_KUBECTL_PATH
       value: /custom-tools/kubectl
+    - name: HELM_SECRETS_CURL_PATH
+      value: /custom-tools/curl
     # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
     - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
       value: "false"
@@ -144,12 +146,15 @@ repoServer:
 
           wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+          wget -qO /custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 \
 
           chmod +x /custom-tools/*
       volumeMounts:
         - mountPath: /custom-tools
           name: custom-tools
 ```
+
+Instead, downloading all external files on container start, consider to build an own docker image which contains all required binaries. See [Dockerfile](https://github.com/jkroepke/helm-secrets/blob/main/Dockerfile) in repository root.
 
 ## Step 2: Allow helm-secrets schemes in argocd-cm ConfigMap
 

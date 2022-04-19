@@ -27,7 +27,7 @@ edit_helper() {
     file=$(basename "$1")
 
     if [ ! -d "${dir}" ]; then
-        error 'Directory does not exist: %s' "${dir}"
+        fatal 'Directory does not exist: %s' "${dir}"
     fi
 
     cd "$dir"

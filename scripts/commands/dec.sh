@@ -30,7 +30,7 @@ decrypt_helper() {
 
     if ! driver_decrypt_file "yaml" "${encrypted_file_path}" "${encrypted_file_dec}"; then
         rm -rf "${encrypted_file_dec}"
-        error 'Error while decrypting file: %s' "${file}"
+        fatal 'Error while decrypting file: %s' "${file}"
     fi
 }
 
@@ -47,11 +47,11 @@ dec() {
     fi
 
     if ! encrypted_file_path=$(_file_get "${file}"); then
-        error 'File does not exist: %s' "${file}"
+        fatal 'File does not exist: %s' "${file}"
     fi
 
     if ! decrypt_helper "${encrypted_file_path}"; then
-        error 'File is not encrypted: %s' "${file}"
+        fatal 'File is not encrypted: %s' "${file}"
     fi
 
     if [ "${OUTPUT_DECRYPTED_FILE_PATH}" = "true" ]; then

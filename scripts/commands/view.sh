@@ -18,7 +18,7 @@ view_helper() {
     file="$1"
 
     if ! _file_exists "$file"; then
-        error 'File does not exist: %s' "${file}"
+        fatal 'File does not exist: %s' "${file}"
     fi
 
     real_file=$(_file_get "${file}")

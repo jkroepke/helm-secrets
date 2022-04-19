@@ -20,11 +20,11 @@ _custom_driver_get_secret() {
     _SECRET_FIELD="${2#*#}"
 
     if [ "${_type}" != "yaml" ]; then
-        error "Only decryption of yaml files are allowed!"
+        fatal 'Only decryption of yaml files are allowed!'
     fi
 
     if ! _vault kv get -format="${_type}" -field="${_SECRET_FIELD}" "${_SECRET_PATH}"; then
-        echo "Error while get secret from vault!" >&2
+        echo 'Error while get secret from vault!' >&2
         echo vault kv get -format="${_type}" -field="${_SECRET_FIELD}" "${_SECRET_PATH}" "${SECRET_DRIVER_ARGS}" >&2
         exit 1
     fi

@@ -33,7 +33,7 @@ downloader() {
     case "${_file_url}" in
     secrets+gpg-import://*)
         if [ "${ALLOW_GPG_IMPORT}" != "true" ]; then
-            error "secrets+gpg-import:// is not allowed in this context!"
+            fatal 'secrets+gpg-import:// is not allowed in this context!'
         fi
 
         _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import://!!')
@@ -41,14 +41,14 @@ downloader() {
         file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
 
         if ! _key_location_allowed "${_gpg_key_path}"; then
-            error "Key location '%s' is not allowed" "${_gpg_key_path}"
+            fatal "Key location '%s' is not allowed" "${_gpg_key_path}"
         fi
 
         _gpg_init "${_gpg_key_path}"
         ;;
     secrets+gpg-import-kubernetes://*)
         if [ "${ALLOW_GPG_IMPORT_KUBERNETES}" != "true" ]; then
-            error "secrets+gpg-import-kubernetes:// is not allowed in this context!"
+            fatal 'secrets+gpg-import-kubernetes:// is not allowed in this context!'
         fi
 
         _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import-kubernetes://!!')
@@ -58,7 +58,7 @@ downloader() {
         ;;
     secrets+age-import://*)
         if [ "${ALLOW_AGE_IMPORT}" != "true" ]; then
-            error "secrets+age-import:// is not allowed in this context!"
+            fatal 'secrets+age-import:// is not allowed in this context!'
         fi
 
         _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import://!!')
@@ -66,14 +66,14 @@ downloader() {
         file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
 
         if ! _key_location_allowed "${_age_key_path}"; then
-            error "Key location '%s' is not allowed" "${_age_key_path}"
+            fatal "Key location '%s' is not allowed" "${_age_key_path}"
         fi
 
         _age_init "${_age_key_path}"
         ;;
     secrets+age-import-kubernetes://*)
         if [ "${ALLOW_AGE_IMPORT_KUBERNETES}" != "true" ]; then
-            error "secrets+age-import-kubernetes:// is not allowed in this context!"
+            fatal 'secrets+age-import-kubernetes:// is not allowed in this context!'
         fi
 
         _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import-kubernetes://!!')
@@ -93,7 +93,7 @@ downloader() {
         file=$(printf '%s' "${_file_url}" | sed -E -e 's!secrets://!!')
         ;;
     *)
-        error "Unknown protocol '${_file_url}'!"
+        fatal "Unknown protocol '%s'!" "${_file_url}"
         ;;
     esac
 
@@ -128,11 +128,11 @@ _gpg_init_kubernetes() {
 
     if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
         -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_gpg_key_path}.base64"; then
-        error "Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
+        fatal "Couldn't get kubernetes secret %s%s" "${_kubernetes_namespace+${_kubernetes_namespace}/}" "${_kubernetes_secret_name}"
     fi
 
     if ! base64 --decode <"${_gpg_key_path}.base64" >"${_gpg_key_path}"; then
-        error "Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
+        fatal "Couldn't find key %s in secret %s" "${_secret_key}" "${_kubernetes_secret_name}"
     fi
 
     _gpg_init "${_gpg_key_path}"
@@ -160,11 +160,11 @@ _age_init_kubernetes() {
 
     if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
         -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_age_key_path}.base64"; then
-        error "Couldn't get kubernetes secret ${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
+        fatal "Couldn't get kubernetes secret %s" "${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
     fi
 
     if ! base64 --decode <"${_age_key_path}.base64" >"${_age_key_path}"; then
-        error "Couldn't find key ${_secret_key} in secret ${_kubernetes_secret_name}"
+        fatal "Couldn't find key %s in kubernetes secret %s" "${_secret_key}" "${_kubernetes_secret_name}"
     fi
 
     _age_init "${_age_key_path}"

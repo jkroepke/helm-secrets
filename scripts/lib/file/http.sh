@@ -18,13 +18,12 @@ _file_http_get() {
     fi
 
     if ! download "${_url}" >"${_tmp_file}"; then
-        exit 1
+        fatal "Unable to download url %s" "${1}"
     fi
 
     printf '%s' "${_tmp_file}"
 }
 
 _file_http_put() {
-    echo "Can't write to remote files!"
-    exit 1
+    fatal "Can't write to remote files!"
 }

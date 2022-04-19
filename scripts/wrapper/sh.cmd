@@ -125,6 +125,13 @@ IF NOT DEFINED HELM_SECRETS_SOPS_PATH (
     )
 )
 
+IF NOT DEFINED HELM_SECRETS_CURL_PATH (
+    where /q curl.exe
+    IF %ERRORLEVEL% EQU 0 (
+        SET HELM_SECRETS_CURL_PATH=curl.exe
+    )
+)
+
 :: https://devblogs.microsoft.com/commandline/share-environment-vars-between-wsl-and-windows/
 SET WSLENV=TEMP:%WSLENV%
 IF DEFINED HELM_SECRETS_DEC_SUFFIX (
@@ -159,6 +166,12 @@ if not "x%HELM_SECRETS_SOPS_PATH:\=%"=="x%HELM_SECRETS_SOPS_PATH%" (
     SET WSLENV=HELM_SECRETS_SOPS_PATH/p:%WSLENV%
 ) else (
     SET WSLENV=HELM_SECRETS_SOPS_PATH:%WSLENV%
+)
+
+if not "x%HELM_SECRETS_CURL_PATH:\=%"=="x%HELM_SECRETS_CURL_PATH%" (
+    SET WSLENV=HELM_SECRETS_CURL_PATH/p:%WSLENV%
+) else (
+    SET WSLENV=HELM_SECRETS_CURL_PATH:%WSLENV%
 )
 
 wsl bash %ARGS%
