@@ -23,7 +23,7 @@ clean() {
     basedir="$1"
 
     if [ ! -d "${basedir}" ]; then
-        error 'Directory does not exist: %s' "${basedir}"
+        fatal 'Directory does not exist: %s' "${basedir}"
     fi
 
     if [ "${DEC_PREFIX}" != "" ] && [ "${DEC_SUFFIX}" != "" ]; then

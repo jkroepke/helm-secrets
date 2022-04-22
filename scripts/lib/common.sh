@@ -27,6 +27,10 @@ log() {
 
 error() {
     log "$@" >&2
+}
+
+fatal() {
+    error "$@"
 
     exit 1
 }
@@ -39,7 +43,7 @@ load_secret_driver() {
     else
         # Allow to load out of tree drivers.
         if [ ! -f "${driver}" ]; then
-            error "Can't find secret driver: ${driver}"
+            fatal "Can't find secret driver: %s" "${driver}"
         fi
 
         # shellcheck disable=SC2034

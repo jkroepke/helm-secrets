@@ -73,7 +73,7 @@ helm_wrapper() {
                 esac
 
                 if ! real_file=$(_file_get "${file}"); then
-                    error 'File does not exist: %s' "${file}"
+                    fatal 'File does not exist: %s' "${file}"
                 fi
 
                 file_dec="$(_file_dec_name "${real_file}")"

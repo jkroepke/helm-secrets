@@ -40,21 +40,21 @@ _file_get() {
 
     if [ "${file_type}" = "local" ]; then
         if [ "${VALUES_ALLOW_SYMLINKS}" = "false" ] && [ -L "${1}" ]; then
-            error "Values file '%s' is a symlink. Symlinks are not allowed." "${1}"
+            fatal "Values file '%s' is a symlink. Symlinks are not allowed." "${1}"
         fi
 
         if [ "${VALUES_ALLOW_ABSOLUTE_PATH}" = "false" ]; then
             case "${1}" in
-            /*) error "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
-            \\*) error "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
-            *:*) error "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
+            /*) fatal "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
+            \\*) fatal "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
+            *:*) fatal "Values filepath '%s' is an absolute path. Absolute paths are not allowed." "${1}" ;;
             esac
         fi
 
         if [ "${VALUES_ALLOW_PATH_TRAVERSAL}" = "false" ]; then
             case "${1}" in
-            *../*) error "Values filepath '%s' contains '..'. Path traversal is not allowed." "${1}" ;;
-            */..*) error "Values filepath '%s' contains '..'. Path traversal is not allowed." "${1}" ;;
+            *../*) fatal "Values filepath '%s' contains '..'. Path traversal is not allowed." "${1}" ;;
+            */..*) fatal "Values filepath '%s' contains '..'. Path traversal is not allowed." "${1}" ;;
             esac
         fi
     fi

@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added error handling in case `curl` or `wget` is not installed.
+
 ### Changes
-- Check detection of sops files
+- Check detection of sops encrypted files
 
 ## [3.13.0] - 2022-04-12
 
@@ -133,12 +136,12 @@ The default sops installation is removed, since helm-secrets could use with hash
 - Handling `--` inside command line arguments
 - Fix handling errors with remote files
 - Strip yaml doc separator if vault driver is used (https://github.com/jkroepke/helm-secrets/pull/70)
-- Incompatibilities if sed links to gnu sed on Mac OS (https://github.com/jkroepke/helm-secrets/pull/72)
+- Incompatibilities if sed links to gnu sed on MacOS (https://github.com/jkroepke/helm-secrets/pull/72)
 
 ## [3.4.0] - 2020-12-26
 
 From this version, the installation on Helm 2 requires additional steps.
-Check [README.md](README.md#installation-on-helm-2) 
+Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 
 ### Added
 - Implement alternate syntax (https://github.com/jkroepke/helm-secrets/pull/52)
