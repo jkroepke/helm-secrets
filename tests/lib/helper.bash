@@ -116,7 +116,7 @@ setup() {
 
     HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 
-    CACHE_DIR="${TEST_DIR}/.tmp/cache"
+    CACHE_DIR="${TEST_DIR}/.tmp/helm cache"
     HELM_CACHE="${CACHE_DIR}/$(uname)/helm"
     HELM_DATA_HOME="${HELM_CACHE}"
     export HELM_DATA_HOME
@@ -153,7 +153,7 @@ setup() {
     cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if ! on_windows; then
         # shellcheck disable=SC2016
-        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
+        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e \f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
         cp -a "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
