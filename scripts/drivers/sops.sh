@@ -44,11 +44,11 @@ driver_decrypt_file() {
         input="$(_convert_path "${input}")"
     fi
 
-    if _sops_windows_path_required "${output}"; then
-        output="$(_convert_path "${output}")"
-    fi
-
     if [ "${output}" != "" ]; then
+        if _sops_windows_path_required "${output}"; then
+            output="$(_convert_path "${output}")"
+        fi
+
         _sops --decrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
     else
         _sops --decrypt --input-type "${type}" --output-type "${type}" "${input}"

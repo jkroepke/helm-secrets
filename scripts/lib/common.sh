@@ -96,15 +96,20 @@ _convert_path() {
 
 # MacOS syntax is different for in-place
 # https://unix.stackexchange.com/a/92907/433641
-case $(sed --help 2>&1) in
-*BusyBox* | *GNU*) _sed_i() { sed -i "$@"; } ;;
-*) _sed_i() { sed -i '' "$@"; } ;;
-esac
+_sed_i() { sed -i "$@"; }
 
 on_cygwin() { false; }
 
 case "$(uname -s)" in
-CYGWIN*) on_cygwin() { true; } ;;
+CYGWIN*)
+    on_cygwin() { true; }
+    ;;
+Darwin)
+    case $(sed --help 2>&1) in
+    *BusyBox* | *GNU*) ;;
+    *) _sed_i() { sed -i '' "$@"; } ;;
+    esac
+    ;;
 esac
 
 if [ -f /proc/version ] && grep -qi microsoft /proc/version; then

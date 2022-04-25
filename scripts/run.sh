@@ -2,7 +2,7 @@
 
 set -euf
 
-if [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
+if [ -n "${HELM_DEBUG+x}" ] && [ "${HELM_DEBUG}" = "1" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
     set -x
 fi
 
@@ -137,6 +137,13 @@ while true; do
         . "${SCRIPT_DIR}/commands/downloader.sh"
 
         downloader "$2" "$3" "$4" "$5"
+        break
+        ;;
+    patch)
+        # shellcheck source=scripts/commands/patch.sh
+        . "${SCRIPT_DIR}/commands/patch.sh"
+
+        patch "$2"
         break
         ;;
     terraform)

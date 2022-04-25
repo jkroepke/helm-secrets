@@ -17,7 +17,7 @@ See [Installation](https://github.com/jkroepke/helm-secrets/wiki/Installation) f
 
 ### Decrypt secrets via protocol handler
 
-Run decrypted command on specific value files. This is method is preferred over the plugin command below.
+Run decrypted command on specific value files. This is method is preferred over the plugin command below. On Windows, the command `helm secrets patch windows` needs to be run first.
 
 ```bash
 helm upgrade name . -f secrets://secrets.yaml

@@ -32,6 +32,7 @@ encrypt_helper() {
     if [ ! -f "${file}" ]; then
         fatal 'File does not exist: %s' "${dir}/${file}"
     fi
+
     file_dec="$(_file_dec_name "${file}")"
 
     if [ ! -f "${file_dec}" ]; then

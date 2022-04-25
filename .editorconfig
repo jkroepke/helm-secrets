@@ -4,7 +4,7 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 
-[*.cmd]
+[sh.cmd]
 end_of_line = crlf
 
 [*.{sh,bats,bash}]

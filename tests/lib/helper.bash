@@ -87,6 +87,12 @@ initiate() {
         if [[ "${BATS_TEST_FILENAME}" = *"/it/"* ]]; then
             helm_plugin_install "diff" --version 3.1.3
         fi
+
+        if on_windows || on_wsl; then
+            "${HELM_BIN}" secrets patch windows
+        else
+            "${HELM_BIN}" secrets patch unix
+        fi
     } >&2
 }
 
@@ -153,7 +159,7 @@ setup() {
     cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
     if ! on_windows; then
         # shellcheck disable=SC2016
-        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e\f(g)h=i^j😀')"
+        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e \f(g)h=i^j😀')"
         mkdir "${SPECIAL_CHAR_DIR}"
         cp -a "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
     fi
