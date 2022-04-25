@@ -307,10 +307,6 @@ load '../bats/extensions/bats-file/load'
 
 
 @test "template: helm template w/ chart + secrets.yaml + sops://" {
-    if on_windows ; then
-        skip
-    fi
-
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -321,10 +317,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secret://" {
-    if on_windows ; then
-        skip
-    fi
-
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -335,10 +327,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://" {
-    if on_windows ; then
-        skip
-    fi
-
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -349,7 +337,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://" {
-    if on_windows || ! is_driver "sops"; then
+    if ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -371,13 +359,16 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_URL_VARIABLE_EXPANSION=true GH_OWNER=jkroepke GH_REPO=helm-secrets helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    # shellcheck disable=SC2030 disable=SC2031
+    export WSLENV="HELM_SECRETS_URL_VARIABLE_EXPANSION:GH_OWNER:GH_REPO:${WSLENV}"
+
+    run env HELM_SECRETS_URL_VARIABLE_EXPANSION=true GH_OWNER=jkroepke GH_REPO=helm-secrets "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http:// + HELM_SECRETS_URL_VARIABLE_EXPANSION=false" {
-    if on_windows || ! is_driver "sops"; then
+    if ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -385,12 +376,15 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_URL_VARIABLE_EXPANSION=false helm template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    # shellcheck disable=SC2030 disable=SC2031
+    export WSLENV="HELM_SECRETS_URL_VARIABLE_EXPANSION:GH_OWNER:GH_REPO:${WSLENV}"
+
+    run env HELM_SECRETS_URL_VARIABLE_EXPANSION=false "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://example.com/404.yaml" {
-    if on_windows || ! is_driver "sops"; then
+    if ! is_driver "sops"; then
         # For vault its pretty hard to have a committed files with temporary seed of this test run
         skip
     fi
@@ -463,7 +457,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import:// + HELM_SECRETS_ALLOW_GPG_IMPORT" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows ||  ! is_driver "sops"; then
         skip
     fi
 
@@ -471,7 +465,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_ALLOW_GPG_IMPORT=false helm template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
+    run env HELM_SECRETS_ALLOW_GPG_IMPORT=false "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] secrets+gpg-import:// is not allowed in this context!"
 }
@@ -521,7 +515,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_ALLOW_AGE_IMPORT=false helm template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
+    run env HELM_SECRETS_ALLOW_AGE_IMPORT=false "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
     assert_failure
     assert_output --partial "[helm-secrets] secrets+age-import:// is not allowed in this context!"
 }
@@ -585,6 +579,8 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
+
+    # shellcheck disable=SC2031 disable=SC2030
     export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
@@ -645,6 +641,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
     # shellcheck disable=SC2090
     export HELM_SECRETS_DRIVER_ARGS
+    # shellcheck disable=SC2031
     export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
@@ -704,9 +701,9 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true" {
-   if on_windows || ! is_driver "sops"; then
-       skip
-   fi
+    if on_windows || ! is_driver "sops"; then
+        skip
+    fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 

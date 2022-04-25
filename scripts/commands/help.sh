@@ -22,6 +22,7 @@ Available Commands:
   edit    Edit secrets file and encrypt afterwards
   clean   Remove all decrypted files in specified directory (recursively)
   dir     Get plugin directory
+  patch   Enables windows specific adjustments
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
 Available Options:

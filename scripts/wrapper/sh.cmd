@@ -1,5 +1,10 @@
 @setlocal enableextensions enabledelayedexpansion
 @echo off
+IF DEFINED HELM_DEBUG (
+    IF HELM_DEBUG EQU 1 (
+        @echo on
+    )
+)
 
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
 if not [%HELM_SECRETS_WINDOWS_SHELL%]==[] GOTO :ENVSH
@@ -98,11 +103,11 @@ if "%1"=="" goto ENDLOOP
 SET STR1="%1"
 if not "x%STR1:\=%"=="x%STR1%" (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
-    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath "%1"`) DO (
+    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath "%STR1:\=/%"`) DO (
       SET WSLPATH="%%F"
     )
 ) else (
-    SET WSLPATH=%1
+    SET WSLPATH=%STR1%
 )
 SET ARGS=%ARGS% %WSLPATH%
 
@@ -133,7 +138,7 @@ IF NOT DEFINED HELM_SECRETS_CURL_PATH (
 )
 
 :: https://devblogs.microsoft.com/commandline/share-environment-vars-between-wsl-and-windows/
-SET WSLENV=TEMP:%WSLENV%
+SET WSLENV=SOPS_AGE_KEY:SOPS_AGE_KEY_FILE:TEMP:%WSLENV%
 IF DEFINED HELM_SECRETS_DEC_SUFFIX (
     SET WSLENV=HELM_SECRETS_DEC_SUFFIX:%WSLENV%
 )
@@ -154,6 +159,18 @@ IF DEFINED HELM_SECRETS_DEC_DIR (
 )
 IF DEFINED HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH (
     SET WSLENV=HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH:%WSLENV%
+)
+IF DEFINED HELM_SECRETS_URL_VARIABLE_EXPANSION (
+    SET WSLENV=HELM_SECRETS_URL_VARIABLE_EXPANSION:%WSLENV%
+)
+IF DEFINED HELM_DEBUG (
+    SET WSLENV=HELM_DEBUG:%WSLENV%
+)
+
+if not "x%HELM_PLUGIN_DIR:\=%"=="x%HELM_PLUGIN_DIR%" (
+    SET WSLENV=HELM_PLUGIN_DIR/p:%WSLENV%
+) else (
+    SET WSLENV=HELM_PLUGIN_DIR:%WSLENV%
 )
 
 if not "x%HELM_SECRETS_HELM_PATH:\=%"=="x%HELM_SECRETS_HELM_PATH%" (

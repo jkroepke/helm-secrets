@@ -1,0 +1,13 @@
+version: '3'
+services:
+  helm-secrets:
+    image: ubuntu:20.04
+    working_dir: /opt
+    volumes:
+      - ./:/work/helm-secrets
+      - ./tests/.tmp/.bin/:/usr/local/sbin/
+    command:
+      - bash
+      - -c
+      - apt update && apt install git gnupg ruby -y && cp -r /work/helm-secrets/ /opt && sleep inf
+
