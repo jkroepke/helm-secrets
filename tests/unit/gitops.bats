@@ -11,14 +11,12 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    export ARGOCD_APP_NAME=helm-secrets
-
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    "${HELM_BIN}" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" > "${TEST_TEMP_DIR}/output.helm.txt" 2>&1
-    "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" > "${TEST_TEMP_DIR}/output.secrets.txt" 2>&1
+    env ARGOCD_APP_NAME=helm-secrets "${HELM_BIN}" lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" > "${TEST_TEMP_DIR}/output.helm.txt" 2>&1
+    env ARGOCD_APP_NAME=helm-secrets "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" > "${TEST_TEMP_DIR}/output.secrets.txt" 2>&1
 
     run diff "${TEST_TEMP_DIR}/output.helm.txt" "${TEST_TEMP_DIR}/output.secrets.txt"
     assert_success

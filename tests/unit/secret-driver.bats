@@ -22,13 +22,9 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER" {
-    HELM_SECRETS_DRIVER=nonexists
-    export HELM_SECRETS_DRIVER
-    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
-
     FILE="${TEST_TEMP_DIR}/assets/values/noop/secrets.yaml"
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_DRIVER=nonexists WSLENV="HELM_SECRETS_DRIVER:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
     assert_failure
     assert_output --partial "Can't find secret driver: nonexists"
 }
@@ -74,13 +70,9 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    HELM_SECRETS_DRIVER=sops
-    export HELM_SECRETS_DRIVER
-    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
-
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_DRIVER=sops WSLENV="HELM_SECRETS_DRIVER:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'global_secret: global_bar'
 }
@@ -102,25 +94,17 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=noop" {
-    HELM_SECRETS_DRIVER=noop
-    export HELM_SECRETS_DRIVER
-    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
-
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_DRIVER=noop WSLENV="HELM_SECRETS_DRIVER:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output --partial 'sops:'
 }
 
 @test "secret-driver: helm secrets + prefer cli arg -d noop over env" {
-    HELM_SECRETS_DRIVER=sops
-    export HELM_SECRETS_DRIVER
-    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
-
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets -d noop view "${FILE}"
+    run env HELM_SECRETS_DRIVER=sops WSLENV="HELM_SECRETS_DRIVER:${WSLENV}" "${HELM_BIN}" secrets -d noop view "${FILE}"
     assert_success
     assert_output --partial 'sops:'
 }
@@ -143,13 +127,9 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    HELM_SECRETS_DRIVER="envsubst"
-    export HELM_SECRETS_DRIVER
-    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
-
     FILE="${TEST_TEMP_DIR}/assets/values/envsubst/secrets.yaml"
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_DRIVER="envsubst" WSLENV="HELM_SECRETS_DRIVER:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     refute_output --partial "\${global_bar}"
     assert_output --partial 'key: "-----BEGIN PGP MESSAGE-----'
@@ -165,13 +145,9 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "secret-driver: helm secrets + env HELM_SECRETS_DRIVER=assets/custom-driver.sh" {
-    HELM_SECRETS_DRIVER="${TEST_TEMP_DIR}/assets/custom-driver.sh"
-    export HELM_SECRETS_DRIVER
-    export WSLENV="HELM_SECRETS_DRIVER:${WSLENV}"
-
     FILE="${TEST_TEMP_DIR}/assets/values/vault/secrets.yaml"
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_DRIVER="${TEST_TEMP_DIR}/assets/custom-driver.sh" WSLENV="HELM_SECRETS_DRIVER:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     refute_output --partial '!vault'
     assert_output --partial 'production#global_secret'

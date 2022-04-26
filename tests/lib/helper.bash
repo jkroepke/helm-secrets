@@ -203,29 +203,36 @@ EzAA
 }
 
 teardown() {
-    # https://stackoverflow.com/a/13864829/8087167
-    if [ -n "${RELEASE+x}" ]; then
-        "${HELM_BIN}" del "${RELEASE}" >&2
-    fi
+    {
+        # https://stackoverflow.com/a/13864829/8087167
+        if [ -n "${RELEASE+x}" ]; then
+            "${HELM_BIN}" del "${RELEASE}" >&2
+        fi
 
-    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-    if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        "${GPGCONF_BIN}" --kill gpg-agent >&2
+        # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+        if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
+            "${GPGCONF_BIN}" --kill gpg-agent >&2
 
-        case "${HELM_SECRETS_DRIVER:-sops}" in
-        vault)
-            kill -9 "$(cat "$(_home_dir)/vault.pid")"
-            ;;
-        esac
+            echo "$HOME" >> /tmp/foo
+            echo "$HELM_SECRETS_DRIVER" >> /tmp/foo
+            echo "$(_home_dir)/vault.pid" >> /tmp/foo
+            cat "$(_home_dir)/vault.pid" >> /tmp/foo
 
-        temp_del "$(_home_dir)"
-    fi
+            case "${HELM_SECRETS_DRIVER:-sops}" in
+            vault)
+                kill -9 "$(cat "$(_home_dir)/vault.pid")"
+                ;;
+            esac
 
-    if [ -n "${TEST_TEMP_DIR+x}" ]; then
-        # https://github.com/bats-core/bats-file/pull/29
-        chmod -R 777 "${TEST_TEMP_DIR}" >&2
-        temp_del "${TEST_TEMP_DIR}"
-    fi
+            temp_del "$(_home_dir)"
+        fi
+
+        if [ -n "${TEST_TEMP_DIR+x}" ]; then
+            # https://github.com/bats-core/bats-file/pull/29
+            chmod -R 777 "${TEST_TEMP_DIR}"
+            temp_del "${TEST_TEMP_DIR}"
+        fi
+    } >&2
 }
 
 create_chart() {
