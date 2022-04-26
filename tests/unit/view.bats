@@ -100,6 +100,7 @@ load '../bats/extensions/bats-file/load'
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
     export HELM_SECRETS_DRIVER_ARGS
+    # shellcheck disable=SC2030 disable=SC2031
     export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets view "${FILE}"
