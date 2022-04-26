@@ -162,12 +162,9 @@ jobs:
 
       - name: HELM_SECRETS_DRIVER=vault bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
-        run: |
-          vault server -dev -dev-root-token-id=test &>/dev/null &
-          bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: vault
-          VAULT_ADDR: 'http://127.0.0.1:8200'
 
       - name: HELM_SECRETS_DRIVER=envsubst bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
@@ -243,9 +240,7 @@ jobs:
           BASHCOV_COMMAND_NAME: helm-secrets:sops
 
       - name: bashcov bats --tap -r tests/unit
-        run: |
-          vault server -dev -dev-root-token-id=test &>/dev/null &
-          bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
+        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: vault
           BASHCOV_COMMAND_NAME: helm-secrets:vault

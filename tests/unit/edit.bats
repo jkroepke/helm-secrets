@@ -33,14 +33,13 @@ load '../bats/extensions/bats-file/load'
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
-    export EDITOR
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/nonexists.yaml"
 
-    run "${HELM_BIN}" secrets edit "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -51,14 +50,13 @@ load '../bats/extensions/bats-file/load'
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
-    export EDITOR
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run "${HELM_BIN}" secrets edit "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -69,14 +67,13 @@ load '../bats/extensions/bats-file/load'
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
-    export EDITOR
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
 
-    run "${HELM_BIN}" secrets edit "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -88,14 +85,13 @@ load '../bats/extensions/bats-file/load'
     fi
 
     EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
-    export EDITOR
 
     FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    run "${HELM_BIN}" secrets edit "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets view "${FILE}"
     assert_success
     assert_output "hello: world"
 }

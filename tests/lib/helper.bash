@@ -63,14 +63,6 @@ initiate() {
         # BATS_SUITE_TMPDIR
         mkdir -p "${HELM_CACHE}/home"
 
-        GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
-
-        if on_wsl; then
-            GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
-        fi
-
-        "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
-
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             mkdir -p "${HELM_CACHE}/chart"
             if on_wsl; then
@@ -93,6 +85,25 @@ initiate() {
         else
             "${HELM_BIN}" secrets patch unix
         fi
+
+        case "${HELM_SECRETS_DRIVER:-sops}" in
+        vault)
+            vault server -dev -dev-root-token-id=test &>/dev/null &
+            echo "$!" > "${HOME}/vault.pid"
+            sleep 0.5
+            vault login token=test
+            sh "${TEST_DIR}/assets/values/vault/seed.sh"
+            ;;
+        *)
+            GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
+
+            if on_wsl; then
+                GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
+            fi
+
+            "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
+            ;;
+        esac
     } >&2
 }
 
@@ -127,6 +138,9 @@ setup() {
     HELM_DATA_HOME="${HELM_CACHE}"
     export HELM_DATA_HOME
 
+    export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
+
+    # shellcheck disable=SC2034
     SEED="${RANDOM}"
 
     # Windows TMPDIR behavior
@@ -165,30 +179,6 @@ setup() {
     fi
 
     _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
-
-    case "${HELM_SECRETS_DRIVER:-sops}" in
-    vault)
-        if [ -f .dockerenv ]; then
-            # If we run inside docker, we expect vault on this location
-            export VAULT_ADDR=${VAULT_ADDR:-'http://vault:8200'}
-        else
-            export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
-        fi
-
-        vault login token=test
-
-        _sed_i "s!put secret/!put secret/${SEED}/!g" "$(printf '%s/assets/values/vault/seed.sh' "${TEST_TEMP_DIR}")"
-
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${TEST_TEMP_DIR}")"
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/secrets.yaml' "${SPECIAL_CHAR_DIR}")"
-
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${TEST_TEMP_DIR}")"
-        _sed_i "s!vault secret/!vault secret/${SEED}/!g" "$(printf '%s/assets/values/vault/some-secrets.yaml' "${SPECIAL_CHAR_DIR}")"
-
-        sh "${TEST_TEMP_DIR}/assets/values/vault/seed.sh"
-        ;;
-    esac
-
     export _TEST_KEY="-----BEGIN PGP MESSAGE-----
 
 wcFMAxYpv4YXKfBAARAAVzE7/FMD7+UWwMls23zKKLoTs+5w9GMvugn0wi5KOJ8P
@@ -213,21 +203,36 @@ EzAA
 }
 
 teardown() {
-    # https://stackoverflow.com/a/13864829/8087167
-    if [ -n "${RELEASE+x}" ]; then
-        "${HELM_BIN}" del "${RELEASE}" >&2
-    fi
+    {
+        # https://stackoverflow.com/a/13864829/8087167
+        if [ -n "${RELEASE+x}" ]; then
+            "${HELM_BIN}" del "${RELEASE}" >&2
+        fi
 
-    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-    if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-        "${GPGCONF_BIN}" --kill gpg-agent >&2
-        temp_del "$(_home_dir)"
-    fi
+        # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
+        if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
+            "${GPGCONF_BIN}" --kill gpg-agent >&2
 
-    # https://github.com/bats-core/bats-file/pull/29
-    chmod -R 777 "${TEST_TEMP_DIR}" >&2
+            echo "$HOME" >> /tmp/foo
+            echo "$HELM_SECRETS_DRIVER" >> /tmp/foo
+            echo "$(_home_dir)/vault.pid" >> /tmp/foo
+            cat "$(_home_dir)/vault.pid" >> /tmp/foo
 
-    temp_del "${TEST_TEMP_DIR}"
+            case "${HELM_SECRETS_DRIVER:-sops}" in
+            vault)
+                kill -9 "$(cat "$(_home_dir)/vault.pid")"
+                ;;
+            esac
+
+            temp_del "$(_home_dir)"
+        fi
+
+        if [ -n "${TEST_TEMP_DIR+x}" ]; then
+            # https://github.com/bats-core/bats-file/pull/29
+            chmod -R 777 "${TEST_TEMP_DIR}"
+            temp_del "${TEST_TEMP_DIR}"
+        fi
+    } >&2
 }
 
 create_chart() {

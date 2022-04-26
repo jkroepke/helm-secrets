@@ -1,13 +1,22 @@
-version: '3'
+version: '3.7'
 services:
   helm-secrets:
     image: ubuntu:20.04
-    working_dir: /opt
+    working_dir: /work/helm-secrets
+    init: true
+    stop_grace_period: 0s
     volumes:
       - ./:/work/helm-secrets
-      - ./tests/.tmp/.bin/:/usr/local/sbin/
     command:
       - bash
       - -c
-      - apt update && apt install git gnupg ruby -y && cp -r /work/helm-secrets/ /opt && sleep inf
+      - >-
+        apt-get update 
+        && apt-get install git gnupg ruby curl -y
+        && curl -sSfL https://github.com/mozilla/sops/releases/download/v3.7.2/sops-v3.7.2.linux -o /usr/local/bin/sops
+        && curl -sSfL https://releases.hashicorp.com/vault/1.10.1/vault_1.10.1_linux_amd64.zip -o /tmp/vault.zip && unzip /tmp/vault.zip && mv vault /usr/local/bin
+        && curl -sSfL https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz | tar zxf - -C /usr/local/bin/ --strip-components 1 linux-amd64/helm
+        && chmod +x /usr/local/bin/*
+        && echo Done
+        && sleep inf
 
