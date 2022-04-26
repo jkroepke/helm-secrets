@@ -6,12 +6,8 @@ if [ -n "${HELM_DEBUG+x}" ] && [ "${HELM_DEBUG}" = "1" ] || [ -n "${HELM_SECRETS
     set -x
 fi
 
-if [ -n "${ARGOCD_APP_NAME+x}" ]; then
-    HELM_SECRETS_QUIET="${HELM_SECRETS_QUIET:-true}"
-fi
-
 # Path to current directory
-SCRIPT_DIR="$(dirname "$0")"
+SCRIPT_DIR="${HELM_PLUGIN_DIR}/scripts"
 
 # shellcheck source=scripts/lib/common.sh
 . "${SCRIPT_DIR}/lib/common.sh"
@@ -46,11 +42,15 @@ mkdir -p "${TMPDIR}"
 OUTPUT_DECRYPTED_FILE_PATH="${HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH:-false}"
 
 # Output debug infos
-QUIET="${HELM_SECRETS_QUIET:-"${OUTPUT_DECRYPTED_FILE_PATH}"}"
+if [ -n "${ARGOCD_APP_NAME+x}" ]; then
+    QUIET="${HELM_SECRETS_QUIET:-true}"
+else
+    QUIET="${HELM_SECRETS_QUIET:-"${OUTPUT_DECRYPTED_FILE_PATH}"}"
+fi
 
 # Define the secret driver engine
 SECRET_DRIVER="${HELM_SECRETS_DRIVER:-sops}"
-# Define the secret driver engine
+# Define the secret driver engine args
 SECRET_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS:-}"
 
 # The suffix to use for decrypted files. The default can be overridden using
