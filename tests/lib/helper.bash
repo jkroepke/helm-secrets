@@ -25,12 +25,10 @@ _sed_i() {
 }
 
 on_windows() {
-    _uname="$(uname)"
     ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]] || on_wsl
 }
 
 on_linux() {
-    _uname="$(uname)"
     [[ "${_uname}" == "Linux" ]]
 }
 
@@ -58,8 +56,44 @@ _copy() {
     fi
 }
 
-initiate() {
+setup_file() {
     {
+        REAL_HOME="${HOME}"
+        # shellcheck disable=SC2153
+        HOME="$(_home_dir)"
+
+        [ -d "${HOME}" ] || mkdir -p "${HOME}"
+
+        if [ -f "${REAL_HOME}/.gitconfig" ]; then
+            cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
+        fi
+
+        # copy .kube from real home
+        if [ -d "${REAL_HOME}/.kube" ]; then
+            ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
+        fi
+
+        define_binaries
+
+        GIT_ROOT="$("${GIT_BIN}" rev-parse --show-toplevel)"
+        if on_wsl; then
+            GIT_ROOT="$(wslpath "${GIT_ROOT}")"
+        fi
+
+        _uname="$(uname)"
+        export _uname
+        export HOME
+        export GIT_ROOT
+        export TEST_DIR="${GIT_ROOT}/tests"
+
+        export HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
+
+        export CACHE_DIR="${TEST_DIR}/.tmp/cache"
+        HELM_CACHE="${CACHE_DIR}/${_uname}/helm"
+        export HELM_CACHE
+        export HELM_DATA_HOME="${HELM_CACHE}"
+        export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
+
         # BATS_SUITE_TMPDIR
         mkdir -p "${HELM_CACHE}/home"
 
@@ -104,83 +138,23 @@ initiate() {
             "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
             ;;
         esac
-    } >&2
-}
 
-setup() {
-    REAL_HOME="${HOME}"
-    # shellcheck disable=SC2153
-    HOME="$(_home_dir)"
+        # Windows TMPDIR behavior
+        if [[ "$(uname -s)" == CYGWIN* ]]; then
+            TMPDIR="$(cygpath -m "${TEMP}")"
+        elif on_wsl; then
+            TMPDIR="$(wslpath "${TEMP}")"
+        elif [ -n "${W_TEMP+x}" ]; then
+            TMPDIR="${W_TEMP}"
+        fi
+        export TMPDIR
 
-    [ -d "${HOME}" ] || mkdir -p "${HOME}"
-    export HOME
+        if on_windows; then
+            # remove symlink, since its not supported on windows
+            find "${TEST_DIR}" -name secrets.symlink.yaml -delete
+        fi
 
-    if [ -f "${REAL_HOME}/.gitconfig" ]; then
-        cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
-    fi
-
-    define_binaries
-
-    GIT_ROOT="$("${GIT_BIN}" rev-parse --show-toplevel)"
-    if on_wsl; then
-        GIT_ROOT="$(wslpath "${GIT_ROOT}")"
-    fi
-
-    TEST_DIR="${GIT_ROOT}/tests"
-
-    # shellcheck disable=SC2164
-    cd "${TEST_DIR}"
-
-    HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
-
-    CACHE_DIR="${TEST_DIR}/.tmp/cache"
-    HELM_CACHE="${CACHE_DIR}/$(uname)/helm"
-    HELM_DATA_HOME="${HELM_CACHE}"
-    export HELM_DATA_HOME
-
-    export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
-
-    # shellcheck disable=SC2034
-    SEED="${RANDOM}"
-
-    # Windows TMPDIR behavior
-    if [[ "$(uname -s)" == CYGWIN* ]]; then
-        TMPDIR="$(cygpath -m "${TEMP}")"
-    elif on_wsl; then
-        TMPDIR="$(wslpath "${TEMP}")"
-    elif [ -n "${W_TEMP+x}" ]; then
-        TMPDIR="${W_TEMP}"
-    fi
-
-    # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-    if [[ "$BATS_TEST_NUMBER" -eq 1 ]]; then
-        initiate
-    fi
-
-    TEST_TEMP_DIR="$(_mktemp -d)"
-
-    # copy .kube from real home
-    if [ -d "${REAL_HOME}/.kube" ]; then
-        ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
-    fi
-
-    if on_windows; then
-        # remove symlink, since its not supported on windows
-        find "${TEST_DIR}" -name secrets.symlink.yaml -delete
-    fi
-
-    # copy assets
-    cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
-    if ! on_windows; then
-        # shellcheck disable=SC2016
-        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e \f(g)h=i^j😀')"
-        mkdir "${SPECIAL_CHAR_DIR}"
-        cp -a "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
-    fi
-
-    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
-    export _TEST_KEY="-----BEGIN PGP MESSAGE-----
-
+        export _TEST_KEY="-----BEGIN PGP MESSAGE-----
 wcFMAxYpv4YXKfBAARAAVzE7/FMD7+UWwMls23zKKLoTs+5w9GMvugn0wi5KOJ8P
 PSrRY4r27VhwQH38gWDrzo3RCmO9414xZ0JW0HaN2Pgd3ml6mYCY/5RE7apgGZQI
 3Im0fv8bhIwaP2UWPp74EXLzA3mh1dUtwxmuWOeoSq+Vm5NtbjkfUt/4MIcF5IAY
@@ -197,9 +171,30 @@ EmU8gQoUsAHKYro0hPfzBZyJlL+TqCPgHeRPANVgm4Ww6RlVrNFpTy9H4m4s5y/h
 EzAA
 =jf7D
 -----END PGP MESSAGE-----"
-    export _TEST_global_secret=global_bar
-    export _TEST_SERVICE_PORT=81
-    export _TEST_SOME_SERVICE_PORT=83
+        export _TEST_global_secret=global_bar
+        export _TEST_SERVICE_PORT=81
+        export _TEST_SOME_SERVICE_PORT=83
+    } >&2
+}
+
+setup() {
+    # shellcheck disable=SC2164
+    cd "${TEST_DIR}"
+    # shellcheck disable=SC2034
+    SEED="${RANDOM}"
+
+    TEST_TEMP_DIR="$(_mktemp -d)"
+    export TEST_TEMP_DIR
+    # copy assets
+    cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
+    if ! on_windows; then
+        # shellcheck disable=SC2016
+        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e \f(g)h=i^j😀')"
+        mkdir "${SPECIAL_CHAR_DIR}"
+        cp -a "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
+    fi
+
+    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
 }
 
 teardown() {
@@ -209,29 +204,25 @@ teardown() {
             "${HELM_BIN}" del "${RELEASE}" >&2
         fi
 
-        # https://github.com/bats-core/bats-core/issues/39#issuecomment-377015447
-        if [[ "${#BATS_TEST_NAMES[@]}" -eq "$BATS_TEST_NUMBER" ]]; then
-            "${GPGCONF_BIN}" --kill gpg-agent >&2
-
-            echo "$HOME" >> /tmp/foo
-            echo "$HELM_SECRETS_DRIVER" >> /tmp/foo
-            echo "$(_home_dir)/vault.pid" >> /tmp/foo
-            cat "$(_home_dir)/vault.pid" >> /tmp/foo
-
-            case "${HELM_SECRETS_DRIVER:-sops}" in
-            vault)
-                kill -9 "$(cat "$(_home_dir)/vault.pid")"
-                ;;
-            esac
-
-            temp_del "$(_home_dir)"
-        fi
-
         if [ -n "${TEST_TEMP_DIR+x}" ]; then
             # https://github.com/bats-core/bats-file/pull/29
             chmod -R 777 "${TEST_TEMP_DIR}"
             temp_del "${TEST_TEMP_DIR}"
         fi
+    } >&2
+}
+
+teardown_file() {
+    {
+        "${GPGCONF_BIN}" --kill gpg-agent >&2
+
+        case "${HELM_SECRETS_DRIVER:-sops}" in
+        vault)
+            kill -9 "$(cat "$(_home_dir)/vault.pid")"
+            ;;
+        esac
+
+        temp_del "$(_home_dir)"
     } >&2
 }
 

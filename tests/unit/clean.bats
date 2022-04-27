@@ -45,19 +45,20 @@ load '../bats/extensions/bats-file/load'
     DIR="$(dirname "${FILE}")"
 
     HELM_SECRETS_DEC_PREFIX=prefix.
-    export HELM_SECRETS_DEC_PREFIX
-    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
-
     HELM_SECRETS_DEC_SUFFIX=
-    export HELM_SECRETS_DEC_SUFFIX
-    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
+    # shellcheck disable=SC2030
+    WSLENV="HELM_SECRETS_DEC_PREFIX:HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
-    run "${HELM_BIN}" secrets dec "${FILE}"
+    run env HELM_SECRETS_DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX}" HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+            "${HELM_BIN}" secrets dec "${FILE}"
+
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
 
-    run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
+    run env HELM_SECRETS_DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX}" HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+            "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
+
     assert_output --partial "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
     assert_file_not_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml"
 }
@@ -66,15 +67,17 @@ load '../bats/extensions/bats-file/load'
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
     HELM_SECRETS_DEC_SUFFIX=.test
-    export HELM_SECRETS_DEC_SUFFIX
-    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
+    # shellcheck disable=SC2030
+    WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
-    run "${HELM_BIN}" secrets dec "${FILE}"
+    run env HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+             "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${FILE}${HELM_SECRETS_DEC_SUFFIX}"
 
-    run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
+    run env HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+             "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
     assert_output --partial "${FILE}${HELM_SECRETS_DEC_SUFFIX}"
     assert_file_not_exist "${FILE}${HELM_SECRETS_DEC_SUFFIX}"
 }
@@ -84,19 +87,18 @@ load '../bats/extensions/bats-file/load'
     DIR="$(dirname "${FILE}")"
 
     HELM_SECRETS_DEC_PREFIX=prefix.
-    export HELM_SECRETS_DEC_PREFIX
-    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
-
     HELM_SECRETS_DEC_SUFFIX=.foo
-    export HELM_SECRETS_DEC_SUFFIX
-    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
+    WSLENV="HELM_SECRETS_DEC_PREFIX:HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
 
-    run "${HELM_BIN}" secrets dec "${FILE}"
+    run env HELM_SECRETS_DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX}" HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+             "${HELM_BIN}" secrets dec "${FILE}"
     assert_success
     assert_output "[helm-secrets] Decrypting ${FILE}"
     assert_file_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
 
-    run "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
+    run env HELM_SECRETS_DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX}" HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+             "${HELM_BIN}" secrets clean "$(dirname "${FILE}")"
+
     assert_output --partial "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
     assert_file_not_exist "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.yaml${HELM_SECRETS_DEC_SUFFIX}"
 }

@@ -298,10 +298,8 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     HELM_SECRETS_DRIVER_ARGS=--verbose
-    export HELM_SECRETS_DRIVER_ARGS
-    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
 
-    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS}" WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}" "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
@@ -355,13 +353,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    # shellcheck disable=SC2089
-    HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
-    # shellcheck disable=SC2090
-    export HELM_SECRETS_DRIVER_ARGS
-    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
-
-    run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
+    run env HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\"" WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}" "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
