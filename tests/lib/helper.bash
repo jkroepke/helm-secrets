@@ -173,12 +173,6 @@ teardown() {
         if [ -n "${RELEASE+x}" ]; then
             "${HELM_BIN}" del "${RELEASE}" >&2
         fi
-
-        if [ -n "${TEST_TEMP_DIR+x}" ]; then
-            # https://github.com/bats-core/bats-file/pull/29
-            chmod -R 777 "${TEST_TEMP_DIR}"
-            temp_del "${TEST_TEMP_DIR}"
-        fi
     } >&2
 }
 
