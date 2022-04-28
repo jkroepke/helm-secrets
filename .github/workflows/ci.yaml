@@ -53,17 +53,20 @@ jobs:
           - os: macos-latest
             shell: bash 3.2 with coreutils
           - os: ubuntu-latest
-            container: alpine
-            shell: ash
+            container: ubuntu:22.04
+            shell: bash 5.1
           - os: ubuntu-latest
             container: centos:7
             shell: bash 4.2
           - os: ubuntu-latest
+            container: registry.access.redhat.com/ubi8/ubi-minimal
+            shell: bash 4.4
+          - os: ubuntu-latest
             container: alpine
             shell: zsh
           - os: ubuntu-latest
-            container: registry.access.redhat.com/ubi8/ubi-minimal
-            shell: bash
+            container: alpine
+            shell: ash
     steps:
       - name: Install dependencies
         if: "matrix.container"
@@ -72,7 +75,7 @@ jobs:
             apk add --no-cache bash git gnupg gettext
           elif command -v apt-get > /dev/null; then
             apt-get update -qqy
-            apt-get install -qqy git-core unzip gnupg
+            apt-get install -qqy git-core unzip gnupg curl gettext
           elif command -v yum > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
@@ -80,7 +83,10 @@ jobs:
             fi
             yum install -y git-core unzip gettext
           elif command -v microdnf > /dev/null; then
-            microdnf install --nodocs --noplugins git-core unzip gettext tar findutils diffutils
+            if [ "$(rpm -E %{rhel})" == "7" ]; then
+              echo -e '[copr:copr.fedorainfracloud.org:jkroepke:git]\nname=Copr repo for git owned by jkroepke\nbaseurl=https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-7-$basearch/\ntype=rpm-md\nenabled=0\ngpgcheck=1\ngpgkey=https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg\nrepo_gpgcheck=0\nenabled=1\nenabled_metadata=1' > /etc/yum.repos.d/jkroepke-git.repo
+            fi
+            microdnf install --nodocs git-core unzip gettext tar findutils diffutils
           fi
 
       - name: Install zsh
