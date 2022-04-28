@@ -180,7 +180,7 @@ teardown() {
     {
         # https://stackoverflow.com/a/13864829/8087167
         if [ -n "${RELEASE+x}" ]; then
-            "${HELM_BIN}" del "${RELEASE}" >&2
+            "${HELM_BIN}" del "${RELEASE}" || true
         fi
     } >&2
 }
