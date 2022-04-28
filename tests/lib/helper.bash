@@ -44,10 +44,6 @@ _mktemp() {
     fi
 }
 
-_home_dir() {
-    printf '%s' "/tmp/helm-secrets-test.${BATS_ROOT_PID}/$(basename "${BATS_TEST_FILENAME}")/home"
-}
-
 _copy() {
     if on_windows; then
         cp -r "$@"
@@ -60,7 +56,7 @@ setup_file() {
     {
         REAL_HOME="${HOME}"
         # shellcheck disable=SC2153
-        HOME="$(_home_dir)"
+        HOME="${BATS_FILE_TMPDIR}/home"
 
         [ -d "${HOME}" ] || mkdir -p "${HOME}"
 
@@ -218,11 +214,9 @@ teardown_file() {
 
         case "${HELM_SECRETS_DRIVER:-sops}" in
         vault)
-            kill -9 "$(cat "$(_home_dir)/vault.pid")"
+            kill -9 "$(cat "${HOME}/vault.pid")"
             ;;
         esac
-
-        temp_del "$(_home_dir)"
     } >&2
 }
 
