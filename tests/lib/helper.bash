@@ -19,6 +19,14 @@ on_wsl() {
     [[ -f /proc/version ]] && grep -qi microsoft /proc/version
 }
 
+_mktemp() {
+    if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
+        TMPDIR="${TMPDIR}" mktemp "$@"
+    else
+        mktemp "$@"
+    fi
+}
+
 _copy() {
     if on_windows; then
         cp -r "$@"
@@ -108,14 +116,14 @@ setup_file() {
         esac
 
         # Windows TMPDIR behavior
-        # if [[ "${_uname}" == CYGWIN* ]]; then
-        #     TMPDIR="$(cygpath -m "${TEMP}")"
-        # elif on_wsl; then
-        #     TMPDIR="$(wslpath "${TEMP}")"
-        # elif [ -n "${W_TEMP+x}" ]; then
-        #     TMPDIR="${W_TEMP}"
-        # fi
-        # export TMPDIR
+        if [[ "${_uname}" == CYGWIN* ]]; then
+            TMPDIR="$(cygpath -m "${TEMP}")"
+        elif on_wsl; then
+            TMPDIR="$(wslpath "${TEMP}")"
+        elif [ -n "${W_TEMP+x}" ]; then
+            TMPDIR="${W_TEMP}"
+        fi
+        export TMPDIR
 
         if on_windows; then
             # remove symlink, since its not supported on windows
@@ -152,8 +160,9 @@ setup() {
         # shellcheck disable=SC2034
         SEED="${RANDOM}"
 
-        TEST_TEMP_DIR="${BATS_TEST_TMPDIR}"
+        TEST_TEMP_DIR="$(_mktemp -d)"
         export TEST_TEMP_DIR
+
         # copy assets
         cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
         if ! on_windows; then
