@@ -129,7 +129,7 @@ setup_file() {
                 GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
             fi
 
-            "${GPG_BIN}" --homedir "${HOME}/.gnupg/" --batch --import "${GPG_PRIVATE_KEY}"
+            "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
             ;;
         esac
 
