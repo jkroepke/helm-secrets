@@ -108,14 +108,14 @@ setup_file() {
         esac
 
         # Windows TMPDIR behavior
-        if [[ "${_uname}" == CYGWIN* ]]; then
-            TMPDIR="$(cygpath -m "${TEMP}")"
-        elif on_wsl; then
-            TMPDIR="$(wslpath "${TEMP}")"
-        elif [ -n "${W_TEMP+x}" ]; then
-            TMPDIR="${W_TEMP}"
-        fi
-        export TMPDIR
+        # if [[ "${_uname}" == CYGWIN* ]]; then
+        #     TMPDIR="$(cygpath -m "${TEMP}")"
+        # elif on_wsl; then
+        #     TMPDIR="$(wslpath "${TEMP}")"
+        # elif [ -n "${W_TEMP+x}" ]; then
+        #     TMPDIR="${W_TEMP}"
+        # fi
+        # export TMPDIR
 
         if on_windows; then
             # remove symlink, since its not supported on windows
