@@ -55,7 +55,7 @@ _copy() {
 setup_file() {
     {
         REAL_HOME="${HOME}"
-        HOME="${BATS_FILE_TMPDIR}/h"
+        HOME="${BATS_FILE_TMPDIR}"
         [ -d "${HOME}" ] || mkdir -p "${HOME}"
 
         if [ -f "${REAL_HOME}/.gitconfig" ]; then
@@ -83,8 +83,7 @@ setup_file() {
         export HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
 
         export CACHE_DIR="${TEST_DIR}/.tmp/cache"
-        HELM_CACHE="${CACHE_DIR}/${_uname}/helm"
-        export HELM_CACHE
+        export HELM_CACHE="${CACHE_DIR}/${_uname}/helm"
         export HELM_DATA_HOME="${HELM_CACHE}"
         export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
 

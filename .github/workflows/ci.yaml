@@ -56,7 +56,7 @@ jobs:
             container: ubuntu:22.04
             shell: bash 5.1
           - os: ubuntu-latest
-            container: registry.access.redhat.com/ubi7/ubi-minimal
+            container: centos:7
             shell: bash 4.2
           - os: ubuntu-latest
             container: registry.access.redhat.com/ubi8/ubi-minimal
