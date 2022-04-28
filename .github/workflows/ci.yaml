@@ -83,6 +83,9 @@ jobs:
             fi
             yum install -y git-core unzip gettext
           elif command -v microdnf > /dev/null; then
+            if [ "$(rpm -E %{rhel})" == "7" ]; then
+              echo -e '[copr:copr.fedorainfracloud.org:jkroepke:git]\nname=Copr repo for git owned by jkroepke\nbaseurl=https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-8-$basearch/\ntype=rpm-md\nenabled=0\ngpgcheck=1\ngpgkey=https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg\nrepo_gpgcheck=0\nenabled=1\nenabled_metadata=1' > /etc/yum.repos.d/jkroepke-git.repo
+            fi
             microdnf install --nodocs git-core unzip gettext tar findutils diffutils
           fi
 
