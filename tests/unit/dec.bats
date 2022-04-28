@@ -197,7 +197,7 @@ load '../bats/extensions/bats-file/load'
 @test "dec: Decrypt secrets.yaml + HELM_SECRETS_DEC_DIR" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
 
-    HELM_SECRETS_DEC_DIR="$(_mktemp -d)"
+    HELM_SECRETS_DEC_DIR="${BATS_TEST_TMPDIR}"
     export HELM_SECRETS_DEC_DIR
     export WSLENV="HELM_SECRETS_DEC_DIR:${WSLENV}"
 

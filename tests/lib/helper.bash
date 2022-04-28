@@ -7,23 +7,6 @@ is_driver() {
     [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
 }
 
-is_coverage() {
-    [ -n "${BASHCOV_COMMAND_NAME+x}" ]
-}
-
-is_curl_installed() {
-    command -v curl >/dev/null
-}
-
-_sed_i() {
-    # MacOS syntax is different for in-place
-    if [ "$(uname)" = "Darwin" ]; then
-        sed -i "" "$@"
-    else
-        sed -i "$@"
-    fi
-}
-
 on_windows() {
     ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]] || on_wsl
 }
@@ -34,14 +17,6 @@ on_linux() {
 
 on_wsl() {
     [[ -f /proc/version ]] && grep -qi microsoft /proc/version
-}
-
-_mktemp() {
-    if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
-        TMPDIR="${TMPDIR}" mktemp "$@"
-    else
-        mktemp "$@"
-    fi
 }
 
 _copy() {
@@ -171,23 +146,25 @@ EzAA
 }
 
 setup() {
-    # shellcheck disable=SC2164
-    cd "${TEST_DIR}"
-    # shellcheck disable=SC2034
-    SEED="${RANDOM}"
+    {
+        # shellcheck disable=SC2164
+        cd "${TEST_DIR}"
+        # shellcheck disable=SC2034
+        SEED="${RANDOM}"
 
-    TEST_TEMP_DIR="$(_mktemp -d)"
-    export TEST_TEMP_DIR
-    # copy assets
-    cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
-    if ! on_windows; then
-        # shellcheck disable=SC2016
-        SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e \f(g)h=i^j😀')"
-        mkdir "${SPECIAL_CHAR_DIR}"
-        cp -a "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
-    fi
+        TEST_TEMP_DIR="${BATS_TEST_TMPDIR}"
+        export TEST_TEMP_DIR
+        # copy assets
+        cp -a "${TEST_DIR}/assets" "${TEST_TEMP_DIR}/"
+        if ! on_windows; then
+            # shellcheck disable=SC2016
+            SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a@b§c!d\$e \f(g)h=i^j😀')"
+            mkdir "${SPECIAL_CHAR_DIR}"
+            cp -a "${TEST_DIR}/assets" "${SPECIAL_CHAR_DIR}/"
+        fi
 
-    _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
+        _copy "${TEST_DIR}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
+    } >&2
 }
 
 teardown() {
