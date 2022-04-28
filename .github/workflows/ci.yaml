@@ -75,7 +75,7 @@ jobs:
             apk add --no-cache bash git gnupg gettext
           elif command -v apt-get > /dev/null; then
             apt-get update -qqy
-            apt-get install -qqy git-core unzip gnupg
+            apt-get install -qqy git-core unzip gnupg curl
           elif command -v yum > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
@@ -83,7 +83,7 @@ jobs:
             fi
             yum install -y git-core unzip gettext
           elif command -v microdnf > /dev/null; then
-            microdnf install --nodocs --noplugins git-core unzip gettext tar findutils diffutils
+            microdnf install --nodocs git-core unzip gettext tar findutils diffutils
           fi
 
       - name: Install zsh

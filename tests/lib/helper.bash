@@ -56,8 +56,7 @@ setup_file() {
     {
         REAL_HOME="${HOME}"
         # shellcheck disable=SC2153
-        HOME="${BATS_FILE_TMPDIR}/home"
-
+        HOME="${BATS_FILE_TMPDIR//\/\//\/}/home"
         [ -d "${HOME}" ] || mkdir -p "${HOME}"
 
         if [ -f "${REAL_HOME}/.gitconfig" ]; then
@@ -136,7 +135,7 @@ setup_file() {
         esac
 
         # Windows TMPDIR behavior
-        if [[ "$(uname -s)" == CYGWIN* ]]; then
+        if [[ "${_uname}" == CYGWIN* ]]; then
             TMPDIR="$(cygpath -m "${TEMP}")"
         elif on_wsl; then
             TMPDIR="$(wslpath "${TEMP}")"
@@ -210,7 +209,7 @@ teardown() {
 
 teardown_file() {
     {
-        "${GPGCONF_BIN}" --kill gpg-agent >&2
+        "${GPGCONF_BIN}" --kill gpg-agent >&2 || true
 
         case "${HELM_SECRETS_DRIVER:-sops}" in
         vault)
