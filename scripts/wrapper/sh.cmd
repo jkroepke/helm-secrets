@@ -7,7 +7,7 @@ IF DEFINED HELM_DEBUG (
 )
 
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
-if not [%HELM_SECRETS_WINDOWS_SHELL%]==[] GOTO :ENVSH
+if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 
 :: check for wsl
@@ -45,7 +45,7 @@ GOTO :NOSHELL
 
 
 :ENVSH
-IF [%HELM_SECRETS_WINDOWS_SHELL%]==[wsl] GOTO :WSL
+IF "%HELM_SECRETS_WINDOWS_SHELL%"=="wsl" GOTO :WSL
 
 "%HELM_SECRETS_WINDOWS_SHELL%" %*
 exit /b %errorlevel%
@@ -78,7 +78,7 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`where.exe git.exe`) DO (
   SET GIT_FILEPATH=%%F
 )
 
-IF [%GIT_FILEPATH%]==[] GOTO :RETURN_GITBASH
+IF "%GIT_FILEPATH%"=="" GOTO :RETURN_GITBASH
 
 FOR %%F in ("%GIT_FILEPATH%") DO SET GIT_DIRPATH=%%~dpF
 

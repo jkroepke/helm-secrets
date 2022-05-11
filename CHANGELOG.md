@@ -8,10 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added error handling in case `curl` or `wget` is not installed.
+- Added vals support on Windows
 - Enable protocol handling on Windows. Requires the command `helm secrets patch windows` once.
 
 ### Changes
 - Check detection of sops encrypted files
+
+### Fixed
+- Error, if HELM_SECRETS_WINDOWS_SHELL contains spaces
 
 ## [3.13.0] - 2022-04-12
 
