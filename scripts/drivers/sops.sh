@@ -44,6 +44,9 @@ driver_decrypt_file() {
         input="$(_convert_path "${input}")"
     fi
 
+    # remove `aws_profile: my_profile` from the input file
+    perl -i -pe 's/aws_profile: (.*)//g' "$input"
+
     if [ "${output}" != "" ]; then
         if _sops_windows_path_required "${output}"; then
             output="$(_convert_path "${output}")"
