@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 - Check detection of sops encrypted files
+- Prefer gpg4win, if available. Use `SOPS_GPG_EXEC=gpg` as environment variable to restore the old behavior.
 
 ### Fixed
 - Error, if HELM_SECRETS_WINDOWS_SHELL contains spaces

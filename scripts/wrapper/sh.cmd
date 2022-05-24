@@ -6,6 +6,15 @@ IF DEFINED HELM_DEBUG (
     )
 )
 
+IF NOT DEFINED SOPS_GPG_EXEC (
+    where /q gpg.exe
+    IF %ERRORLEVEL% EQU 0 (
+        FOR /F "tokens=* USEBACKQ" %%F IN (`where gpg.exe`) DO (
+            SET SOPS_GPG_EXEC=%%F
+        )
+    )
+)
+
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
@@ -96,15 +105,15 @@ exit /b %errorlevel%
 SET ARGS=
 
 :: Loop through all parameters - https://stackoverflow.com/a/34019557/8087167
-:LOOP
-if "%1"=="" goto ENDLOOP
+:WSLPATHLOOP
+if "%1"=="" goto WSLPATHENDLOOP
 
 :: IF string contains string - https://stackoverflow.com/a/7006016/8087167
 SET STR1="%1"
 if not "x%STR1:\=%"=="x%STR1%" (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
     FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath "%STR1:\=/%"`) DO (
-      SET WSLPATH="%%F"
+        SET WSLPATH="%%F"
     )
 ) else (
     SET WSLPATH=%STR1%
@@ -112,8 +121,8 @@ if not "x%STR1:\=%"=="x%STR1%" (
 SET ARGS=%ARGS% %WSLPATH%
 
 shift
-goto LOOP
-:ENDLOOP
+goto WSLPATHLOOP
+:WSLPATHENDLOOP
 
 :: WSL needs .exe suffix for windows binary. Define path only if exists in windows PATH
 IF NOT DEFINED HELM_SECRETS_HELM_PATH (
