@@ -54,6 +54,11 @@ driver_decrypt_file() {
                 printf '.%s: &%s\n' "${YAML_ANCHOR}" "${YAML_ANCHOR}"
                 printf '%s\n\n' "${SECRET}" | sed -e 's/^/  /g'
             } >>"${output_yaml_anchors}"
+        elif _contains_newline "${SECRET}"; then
+            {
+                printf '.%s: &%s |-\n' "${YAML_ANCHOR}" "${YAML_ANCHOR}"
+                printf '%s\n\n' "${SECRET}" | sed -e 's/^/  /g'
+            } >>"${output_yaml_anchors}"
         else
             {
                 printf '.%s: &%s ' "${YAML_ANCHOR}" "${YAML_ANCHOR}"
@@ -75,4 +80,13 @@ driver_decrypt_file() {
 driver_edit_file() {
     echo "Editing files is not supported!"
     exit 1
+}
+
+_contains_newline() {
+    nl='
+'
+    case "$1" in
+    *$nl*) true ;;
+    *) false ;;
+    esac
 }
