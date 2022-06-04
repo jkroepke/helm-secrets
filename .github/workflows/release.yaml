@@ -21,27 +21,13 @@ jobs:
         run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, 'rc') }}
+          files: helm-secrets.tar.gz
           body: |-
             # CHANGELOG
 
-            * https://github.com/jkroepke/helm-secrets/blob/${{ steps.get_version.outputs.VERSION }}/CHANGELOG.md
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./helm-secrets.tar.gz
-          asset_name: helm-secrets.tar.gz
-          asset_content_type: application/tar+gzip
+            * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md
