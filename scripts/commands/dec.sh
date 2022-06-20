@@ -32,6 +32,8 @@ decrypt_helper() {
         rm -rf "${encrypted_file_dec}"
         fatal 'Error while decrypting file: %s' "${file}"
     fi
+
+    return 0
 }
 
 dec() {

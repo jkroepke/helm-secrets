@@ -19,11 +19,19 @@ on_wsl() {
     [[ -f /proc/version ]] && grep -qi microsoft /proc/version
 }
 
-_mktemp() {
-    if [[ -n "${TMPDIR+x}" && "${TMPDIR}" != "" ]]; then
-        TMPDIR="${TMPDIR}" mktemp "$@"
+on_cygwin() {
+    [[ "${_uname}" == "CYGWIN"* ]]
+}
+
+_winpath() {
+    if on_wsl; then
+        touch "${1}"
+        printf '%s' "$(wslpath -w "${1}")"
+    elif on_cygwin; then
+        touch "${1}"
+        printf '%s' "$(cygpath -w -l "${1}")"
     else
-        mktemp "$@"
+        printf '%s' "${1}"
     fi
 }
 
@@ -52,10 +60,7 @@ setup_file() {
 
         define_binaries
 
-        GIT_ROOT="$("${GIT_BIN}" rev-parse --show-toplevel)"
-        if on_wsl; then
-            GIT_ROOT="$(wslpath "${GIT_ROOT}")"
-        fi
+        GIT_ROOT="${BATS_TEST_DIRNAME}/../.."
 
         _uname="$(uname)"
         export _uname
@@ -67,7 +72,7 @@ setup_file() {
 
         export CACHE_DIR="${TEST_DIR}/.tmp/cache"
         export HELM_CACHE="${CACHE_DIR}/${_uname}/helm"
-        export HELM_DATA_HOME="${HELM_CACHE}"
+        export HELM_DATA_HOME="$(_winpath "${HELM_CACHE}")"
         export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
 
         # BATS_SUITE_TMPDIR
@@ -75,10 +80,8 @@ setup_file() {
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             mkdir -p "${HELM_CACHE}/chart"
-            if on_wsl; then
-                echo "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
-                ls -lah "${HELM_CACHE}/chart"
-                "${HELM_BIN}" create "$(wslpath -w "${HELM_CACHE}/chart")"
+            if [[ "${HELM_BIN}" == *"helm.exe" ]]; then
+                "${HELM_BIN}" create "$(_winpath "${HELM_CACHE}/chart")"
             else
                 "${HELM_BIN}" create "${HELM_CACHE}/chart"
             fi
@@ -106,24 +109,12 @@ setup_file() {
             ;;
         *)
             GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
-
             if on_wsl; then
                 GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
             fi
-
             "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
             ;;
         esac
-
-        # Windows TMPDIR behavior
-        if [[ "${_uname}" == CYGWIN* ]]; then
-            TMPDIR="$(cygpath -m "${TEMP}")"
-        elif on_wsl; then
-            TMPDIR="$(wslpath "${TEMP}")"
-        elif [ -n "${W_TEMP+x}" ]; then
-            TMPDIR="${W_TEMP}"
-        fi
-        export TMPDIR
 
         if on_windows; then
             # remove symlink, since its not supported on windows
@@ -160,7 +151,7 @@ setup() {
         # shellcheck disable=SC2034
         SEED="${RANDOM}"
 
-        TEST_TEMP_DIR="$(_mktemp -d)"
+        TEST_TEMP_DIR="$(mktemp -d)"
         export TEST_TEMP_DIR
 
         # copy assets
@@ -217,7 +208,7 @@ helm_plugin_install() {
             URL="https://github.com/aslafy-z/helm-git"
             ;;
         secrets)
-            URL="${GIT_ROOT}"
+            URL="$(_winpath "${GIT_ROOT}")"
             ;;
         esac
 

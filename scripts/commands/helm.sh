@@ -49,7 +49,6 @@ helm_wrapper() {
         if [ "${SKIP_ARG_PARSE}" = "true" ]; then
             set -- "$@" "$1"
         else
-
             case "$1" in
             --)
                 # skip --, and what remains are the cmd args
@@ -78,34 +77,30 @@ helm_wrapper() {
 
                 file_dec="$(_file_dec_name "${real_file}")"
                 if [ -f "${file_dec}" ]; then
-                    if _helm_windows_path_required "${file_dec}"; then
-                        set -- "$@" "$(_convert_path "${file_dec}")"
-                    else
-                        set -- "$@" "$file_dec"
-                    fi
+                    set -- "$@" "$(_helm_winpath "${file_dec}")"
 
                     if [ "${QUIET}" = "false" ]; then
                         printf '[helm-secrets] Decrypt skipped: %s\n' "${file}" >&2
                     fi
                 else
                     if decrypt_helper "${real_file}"; then
-                        if _helm_windows_path_required "${file_dec}"; then
-                            set -- "$@" "$(_convert_path "${file_dec}")"
-                        else
-                            set -- "$@" "$file_dec"
-                        fi
+                        set -- "$@" "$(_helm_winpath "${file_dec}")"
                         printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                         if [ "${QUIET}" = "false" ]; then
                             printf '[helm-secrets] Decrypt: %s\n' "${file}" >&2
                         fi
                     else
-                        set -- "$@" "$real_file"
+                        set -- "$@" "$(_helm_winpath "${real_file}")"
                     fi
                 fi
                 ;;
             *)
-                set -- "$@" "$1"
+                if [ -d "$1" ]; then
+                    set -- "$@" "$(_helm_winpath "${1}")"
+                else
+                    set -- "$@" "$1"
+                fi
                 ;;
             esac
         fi
@@ -124,19 +119,4 @@ helm_command() {
     fi
 
     helm_wrapper "$@"
-}
-
-_helm_windows_path_required() {
-    if ! on_wsl; then
-        return 1
-    fi
-
-    case "${HELM_BIN}" in
-    *.exe)
-        return 0
-        ;;
-    *)
-        return 1
-        ;;
-    esac
 }

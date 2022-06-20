@@ -9,6 +9,6 @@ download() {
         "${HELM_SECRETS_WGET_PATH:-wget}" -q -O- "$1"
     else
         error "Unable to detect 'curl' or 'wget'."
-        return 1
+        false
     fi
 }

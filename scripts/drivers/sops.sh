@@ -19,18 +19,10 @@ driver_encrypt_file() {
     input="${2}"
     output="${3}"
 
-    if _sops_windows_path_required "${input}"; then
-        input="$(_convert_path "${input}")"
-    fi
-
-    if _sops_windows_path_required "${output}"; then
-        output="$(_convert_path "${output}")"
-    fi
-
     if [ "${input}" = "${output}" ]; then
-        _sops --encrypt --input-type "${type}" --output-type "${type}" --in-place "${input}"
+        _sops --encrypt --input-type "${type}" --output-type "${type}" --in-place "$(_sops_winpath "${input}")"
     else
-        _sops --encrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
+        _sops --encrypt --input-type "${type}" --output-type "${type}" --output "$(_sops_winpath "${output}")" "$(_sops_winpath "${input}")"
     fi
 }
 
@@ -40,18 +32,10 @@ driver_decrypt_file() {
     # if omit then output to stdout
     output="${3:-}"
 
-    if _sops_windows_path_required "${input}"; then
-        input="$(_convert_path "${input}")"
-    fi
-
     if [ "${output}" != "" ]; then
-        if _sops_windows_path_required "${output}"; then
-            output="$(_convert_path "${output}")"
-        fi
-
-        _sops --decrypt --input-type "${type}" --output-type "${type}" --output "${output}" "${input}"
+        _sops --decrypt --input-type "${type}" --output-type "${type}" --output "$(_sops_winpath "${output}")" "$(_sops_winpath "${input}")"
     else
-        _sops --decrypt --input-type "${type}" --output-type "${type}" "${input}"
+        _sops --decrypt --input-type "${type}" --output-type "${type}" "$(_sops_winpath "${input}")"
     fi
 }
 
@@ -59,24 +43,18 @@ driver_edit_file() {
     type="${1}"
     input="${2}"
 
-    if _sops_windows_path_required "${input}"; then
-        input="$(_convert_path "${input}")"
-    fi
-
-    _sops --input-type yaml --output-type yaml "${input}"
+    _sops --input-type yaml --output-type yaml "$(_sops_winpath "${input}")"
 }
 
-_sops_windows_path_required() {
-    if ! on_wsl; then
-        return 1
+_sops_winpath() {
+    if on_cygwin; then
+        _winpath "$@"
+    elif on_wsl; then
+        case "${_SOPS}" in
+        *.exe) _winpath "$@" ;;
+        *) printf '%s' "$@" ;;
+        esac
+    else
+        printf '%s' "$@"
     fi
-
-    case "${_SOPS}" in
-    *.exe)
-        return 0
-        ;;
-    *)
-        return 1
-        ;;
-    esac
 }

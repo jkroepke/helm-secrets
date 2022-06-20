@@ -173,10 +173,10 @@ _age_init_kubernetes() {
 _key_location_allowed() {
     case "${1}" in
     "${KEY_LOCATION_PREFIX}"*)
-        return 0
+        true
         ;;
     *)
-        return 1
+        false
         ;;
     esac
 }

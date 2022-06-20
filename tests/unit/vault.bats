@@ -21,7 +21,7 @@ load '../bats/extensions/bats-file/load'
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_output --partial "Error: plugin \"secrets\" exited with error"
-    assert_file_not_exist "${FILE}.dec"
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "vault: cleanup temporary files" {
@@ -40,7 +40,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert_file_not_exist "${FILE}.dec"
+    assert_file_not_exists "${FILE}.dec"
 
     assert_dir_not_exist "${HELM_SECRETS_DEC_TMP_DIR}"
 }
