@@ -155,7 +155,7 @@ load '../bats/extensions/bats-file/load'
 @test "upgrade: helm upgrade w/ chart + pre decrypted secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="upgrade-$(date +%s)-${SEED}"
-    printf 'service:\n  port: 82' > "${FILE}.dec"
+    printf 'service:\n  port: 82' >"${FILE}.dec"
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1

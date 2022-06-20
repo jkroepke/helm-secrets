@@ -197,7 +197,7 @@ load '../bats/extensions/bats-file/load'
     VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    printf 'service:\n  port: 82' > "${VALUES_PATH}.dec"
+    printf 'service:\n  port: 82' >"${VALUES_PATH}.dec"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -347,7 +347,6 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Removed: "
     assert_success
 }
-
 
 @test "template: helm template w/ chart + secrets.yaml + sops://" {
     VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
@@ -500,7 +499,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_HELM_PATH="$(command -v "${HELM_BIN}")"
 
     create_chart "${TEST_TEMP_DIR}"
-    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" > "${TEST_TEMP_DIR}/helm"
+    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"${TEST_TEMP_DIR}/helm"
     chmod +x "${TEST_TEMP_DIR}/helm"
 
     run env HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" \

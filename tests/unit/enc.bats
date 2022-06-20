@@ -215,7 +215,7 @@ load '../bats/extensions/bats-file/load'
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     YAML="hello: world"
-    echo "${YAML}" > "${VALUES_PATH}"
+    echo "${YAML}" >"${VALUES_PATH}"
 
     run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
 

@@ -72,8 +72,9 @@ setup_file() {
 
         export CACHE_DIR="${TEST_DIR}/.tmp/cache"
         export HELM_CACHE="${CACHE_DIR}/${_uname}/helm"
-        export HELM_DATA_HOME="$(_winpath "${HELM_CACHE}")"
         export VAULT_ADDR=${VAULT_ADDR:-'http://127.0.0.1:8200'}
+        HELM_DATA_HOME="$(_winpath "${HELM_CACHE}")"
+        export HELM_DATA_HOME
 
         # BATS_SUITE_TMPDIR
         mkdir -p "${HELM_CACHE}/home"
@@ -102,7 +103,7 @@ setup_file() {
         case "${HELM_SECRETS_DRIVER:-sops}" in
         vault)
             vault server -dev -dev-root-token-id=test &>/dev/null &
-            echo "$!" > "${HOME}/vault.pid"
+            echo "$!" >"${HOME}/vault.pid"
             sleep 0.5
             vault login token=test
             sh "${TEST_DIR}/assets/values/vault/seed.sh"

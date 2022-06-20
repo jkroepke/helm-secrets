@@ -78,7 +78,6 @@ load '../bats/extensions/bats-file/load'
     assert_output "hello: world"
 }
 
-
 @test "edit: secrets.yaml + special path" {
     if ! is_driver "sops" || on_windows; then
         skip

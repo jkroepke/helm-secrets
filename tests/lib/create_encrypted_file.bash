@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 create_encrypted_file() {
     {
         file="${2:-secrets.yaml}"
@@ -24,7 +26,7 @@ create_encrypted_file() {
             ;;
         vals)
             # shellcheck disable=SC2059
-            printf "$1" > "${TEST_TEMP_DIR}/vals.${file}"
+            printf "$1" >"${TEST_TEMP_DIR}/vals.${file}"
             cat "${TEST_TEMP_DIR}/vals.${file}"
 
             yaml_key="$(echo "$1" | cut -d: -f1)"

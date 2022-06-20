@@ -315,7 +315,7 @@ load '../bats/extensions/bats-file/load'
     WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV:-}"
 
     run env HELM_SECRETS_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS}" WSLENV="${WSLENV}" \
-            "${HELM_BIN}" secrets dec "${VALUES_PATH}"
+        "${HELM_BIN}" secrets dec "${VALUES_PATH}"
 
     assert_output --partial "Data key recovered successfully"
     assert_success
@@ -325,7 +325,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "dec: secrets.yaml + --driver-args (complex)" {
-    if on_wsl ||  ! is_driver "sops"; then
+    if on_wsl || ! is_driver "sops"; then
         skip
     fi
 

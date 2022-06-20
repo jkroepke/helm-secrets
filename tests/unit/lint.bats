@@ -194,7 +194,7 @@ load '../bats/extensions/bats-file/load'
     VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    printf 'service:\n  port: 82' > "${VALUES_PATH}.dec"
+    printf 'service:\n  port: 82' >"${VALUES_PATH}.dec"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -339,7 +339,6 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS}" WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}" \
         "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
 
     assert_output --partial "Data key recovered successfully"
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
