@@ -133,7 +133,7 @@ load '../bats/extensions/bats-file/load'
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"
 
-    printf 'service:\n  port: 82' > "${FILE}.dec"
+    printf 'service:\n  port: 82' >"${FILE}.dec"
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1

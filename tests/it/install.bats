@@ -155,7 +155,7 @@ load '../bats/extensions/bats-file/load'
 @test "install: helm install w/ chart + pre decrypted secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
-    printf 'service:\n  port: 82' > "${FILE}.dec"
+    printf 'service:\n  port: 82' >"${FILE}.dec"
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
@@ -493,7 +493,6 @@ load '../bats/extensions/bats-file/load'
     assert_failure
     assert_output --partial "[helm-secrets] secrets+age-import-kubernetes:// is not allowed in this context!"
 }
-
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/non-exists#key" {
     if on_windows || ! is_driver "sops"; then

@@ -5,6 +5,7 @@ env:
   VERSION_HELM: v3.9.0
   VERSION_SOPS: v3.7.3
   VERSION_VALS: v0.16.2
+  VERSION_VAULT: 1.10.4
 
 on:
   pull_request:
@@ -27,7 +28,7 @@ jobs:
           SHELLCHECK_OPTS: -x
         with:
           sh_checker_comment: true
-          sh_checker_exclude: "tests"
+          sh_checker_exclude: "tests/assets tests/bats"
           sh_checker_checkbashisms_enable: true
 
   unit-tests:
@@ -117,7 +118,9 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup Vault
-        uses: innovationnorway/setup-vault@v1.0.3
+        uses: eLco/setup-vault@v1
+        with:
+          vault_version: ${{ env.VERSION_VAULT }}
 
       - name: Setup vals
         uses: jkroepke/setup-vals@v1
@@ -160,9 +163,9 @@ jobs:
             || github.ref
           }}"
           helm secrets -v
+
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
-        if: "!contains(matrix.os, 'windows-latest')"
-        run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: sops
 
@@ -183,13 +186,6 @@ jobs:
         run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
           HELM_SECRETS_DRIVER: vals
-
-      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit (on windows)
-        if: "contains(matrix.os, 'windows-latest')"
-        run: |
-          $env:W_TEMP=$env:TEMP;${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap -r tests/unit
-        env:
-          HELM_SECRETS_DRIVER: sops
 
   coverage:
     runs-on: ubuntu-latest
@@ -224,7 +220,9 @@ jobs:
           version: ${{ env.VERSION_VALS }}
 
       - name: Setup Vault
-        uses: innovationnorway/setup-vault@v1.0.3
+        uses: eLco/setup-vault@v1
+        with:
+          vault_version: ${{ env.VERSION_VAULT }}
 
       - name: Install bashcov
         run: gem install bashcov:'< 2' simplecov-cobertura:'< 2'
@@ -315,7 +313,9 @@ jobs:
           version: ${{ env.VERSION_VALS }}
 
       - name: Setup Vault
-        uses: innovationnorway/setup-vault@v1.0.3
+        uses: eLco/setup-vault@v1
+        with:
+          vault_version: ${{ env.VERSION_VAULT }}
 
       - name: Print Environment
         run: |-

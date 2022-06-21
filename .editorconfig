@@ -19,5 +19,8 @@ shell_variant = posix
 [*.yaml]
 indent_size = 2
 
-[*.{bash,bats}]
+[*.bash]
 shell_variant = bash
+
+[*.bats]
+shell_variant = bats

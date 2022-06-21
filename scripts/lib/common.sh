@@ -5,10 +5,10 @@ set -euf
 is_help() {
     case "$1" in
     -h | --help | help)
-        return 0
+        true
         ;;
     *)
-        return 1
+        false
         ;;
     esac
 }
@@ -78,31 +78,17 @@ _mktemp() {
     mktemp "$@" "${TMPDIR}/XXXXXX"
 }
 
-_convert_path() {
-    if on_wsl; then
-        touch "${1}"
-        case "${1}" in
-        /mnt/*)
-            printf '%s' "$(wslpath -w "${1}")"
-            ;;
-        *)
-            printf '%s' "${1}"
-            ;;
-        esac
-    else
-        printf '%s' "${1}"
-    fi
-}
-
-# MacOS syntax is different for in-place
-# https://unix.stackexchange.com/a/92907/433641
-_sed_i() { sed -i "$@"; }
-
+on_wsl() { false; }
 on_cygwin() { false; }
+_sed_i() { sed -i "$@"; }
+_winpath() { printf '%s' "${1}"; }
+_helm_winpath() { printf '%s' "${1}"; }
 
 case "$(uname -s)" in
 CYGWIN*)
     on_cygwin() { true; }
+    _winpath() { printf '%s' "${1}" | cygpath -w -l -f -; }
+    _helm_winpath() { _winpath "$@"; }
     ;;
 Darwin)
     case $(sed --help 2>&1) in
@@ -110,10 +96,18 @@ Darwin)
     *) _sed_i() { sed -i '' "$@"; } ;;
     esac
     ;;
-esac
+*)
+    # Check of WSL
+    if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
+        on_wsl() { true; }
+        _winpath() {
+            touch "${1}"
+            printf '%s' "$(wslpath -w "${1}")"
+        }
 
-if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
-    on_wsl() { true; }
-else
-    on_wsl() { false; }
-fi
+        case "${HELM_BIN}" in
+        *.exe) _helm_winpath() { _winpath "$@"; } ;;
+        esac
+    fi
+    ;;
+esac

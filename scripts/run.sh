@@ -26,12 +26,6 @@ HELM_BIN="${HELM_SECRETS_HELM_PATH:-"${HELM_BIN:-helm}"}"
 
 if on_cygwin; then
     HELM_BIN="$(cygpath -u "${HELM_BIN}")"
-
-    TMPDIR="$(cygpath -w "${TEMP}")"
-    export TMPDIR
-elif on_wsl; then
-    TMPDIR="$(wslpath "${TEMP:-$(wslvar TEMP)}")"
-    export TMPDIR
 fi
 
 # Create a base temporary directory
@@ -59,6 +53,7 @@ SECRET_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS:-}"
 DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX-}"
 # shellcheck disable=SC2034
 DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX-.dec}"
+
 # shellcheck disable=SC2034
 DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 
@@ -129,7 +124,7 @@ while true; do
         break
         ;;
     dir)
-        _convert_path "$(dirname "${SCRIPT_DIR}")"
+        _helm_winpath "$(dirname "${SCRIPT_DIR}")"
         break
         ;;
     downloader)

@@ -28,17 +28,20 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
 
-    assert_output --partial "Encrypting ${FILE}"
+    assert_output -e "Encrypting.*${VALUES}"
     assert_output --partial "Encrypted secrets.dec.yaml"
-
-    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
+
+    run "${HELM_BIN}" secrets view "${VALUES_PATH}"
+
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+    assert_success
 }
 
 @test "enc: Encrypt some-secrets.yaml" {
@@ -46,17 +49,20 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.dec.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
 
-    assert_output --partial "Encrypting ${FILE}"
+    assert_output -e "Encrypting.*${VALUES}"
     assert_output --partial "Encrypted some-secrets.dec.yaml"
-
-    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
+
+    run "${HELM_BIN}" secrets view "${VALUES_PATH}"
+
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+    assert_success
 }
 
 @test "enc: Encrypt secrets.yaml.dec" {
@@ -64,19 +70,22 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    cp "${FILE}" "${FILE}.dec"
+    cp "${VALUES_PATH}" "${VALUES_PATH}.dec"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
 
-    assert_output --partial "Encrypting ${FILE}"
+    assert_output -e "Encrypting.*${VALUES}"
     assert_output --partial "Encrypted secrets.dec.yaml.dec to secrets.dec.yaml"
-
-    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
+
+    run "${HELM_BIN}" secrets view "${VALUES_PATH}"
+
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+    assert_success
 }
 
 @test "enc: Encrypt secrets.yaml + special char directory name" {
@@ -88,46 +97,51 @@ load '../bats/extensions/bats-file/load'
         skip "Skip on Windows"
     fi
 
-    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
+    run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
 
-    assert_output --partial "Encrypting ${FILE}"
+    assert_output -e "Encrypting.*${VALUES}"
     assert_output --partial "Encrypted secrets.dec.yaml"
-
-    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
+
+    run "${HELM_BIN}" secrets view "${VALUES_PATH}"
+
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+    assert_success
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX" {
-    if ! is_driver "sops" || on_windows; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
-    DIR="$(dirname "${FILE}")"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    DIR="$(dirname "${VALUES_PATH}")"
 
     HELM_SECRETS_DEC_PREFIX=prefix.
-    export HELM_SECRETS_DEC_PREFIX
-    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
-    HELM_SECRETS_DEC_SUFFIX=""
-    export HELM_SECRETS_DEC_SUFFIX
-    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
+    HELM_SECRETS_DEC_SUFFIX=.dec
 
-    echo "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml" >&2
-    cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml"
+    # shellcheck disable=SC2030 disable=SC2031
+    WSLENV="HELM_SECRETS_DEC_PREFIX:HELM_SECRETS_DEC_SUFFIX:${WSLENV:-}"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
+    cp "${VALUES_PATH}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
+
+    run env HELM_SECRETS_DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX}" HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+        "${HELM_BIN}" secrets enc "${VALUES_PATH}"
+
+    assert_output -e "Encrypting.*${VALUES}"
+    assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
     assert_success
-    assert_output --partial "Encrypting ${FILE}"
-    assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml to secrets.dec.yaml"
 
-    run "${HELM_BIN}" secrets view "${FILE}"
-    assert_success
+    run "${HELM_BIN}" secrets view "${VALUES_PATH}"
+
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+    assert_success
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_SUFFIX" {
@@ -135,49 +149,61 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    DIR="$(dirname "${VALUES_PATH}")"
 
+    HELM_SECRETS_DEC_PREFIX=""
     HELM_SECRETS_DEC_SUFFIX=.test
-    export HELM_SECRETS_DEC_SUFFIX
-    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
-    cp "${FILE}" "${FILE}${HELM_SECRETS_DEC_SUFFIX}"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
-    assert_success
-    assert_output --partial "Encrypting ${FILE}"
-    assert_output --partial "Encrypted secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
+    # shellcheck disable=SC2030 disable=SC2031
+    WSLENV="HELM_SECRETS_DEC_PREFIX:HELM_SECRETS_DEC_SUFFIX:${WSLENV:-}"
 
-    run "${HELM_BIN}" secrets view "${FILE}"
+    cp "${VALUES_PATH}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
+
+    run env HELM_SECRETS_DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX}" HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+        "${HELM_BIN}" secrets enc "${VALUES_PATH}"
+
+    assert_output -e "Encrypting.*${VALUES}"
+    assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
     assert_success
+
+    run "${HELM_BIN}" secrets view "${VALUES_PATH}"
+
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+    assert_success
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX + HELM_SECRETS_DEC_SUFFIX" {
-    if ! is_driver "sops" || on_windows; then
+    if ! is_driver "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
-    DIR="$(dirname "${FILE}")"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    DIR="$(dirname "${VALUES_PATH}")"
 
     HELM_SECRETS_DEC_PREFIX=prefix.
-    export HELM_SECRETS_DEC_PREFIX
-    export WSLENV="HELM_SECRETS_DEC_PREFIX:${WSLENV}"
     HELM_SECRETS_DEC_SUFFIX=.foo
-    export HELM_SECRETS_DEC_SUFFIX
-    export WSLENV="HELM_SECRETS_DEC_SUFFIX:${WSLENV}"
-    cp "${FILE}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
-    assert_success
-    assert_output --partial "Encrypting ${FILE}"
+    # shellcheck disable=SC2030 disable=SC2031
+    WSLENV="HELM_SECRETS_DEC_PREFIX:HELM_SECRETS_DEC_SUFFIX:${WSLENV:-}"
+
+    cp "${VALUES_PATH}" "${DIR}/${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX}"
+
+    run env HELM_SECRETS_DEC_PREFIX="${HELM_SECRETS_DEC_PREFIX}" HELM_SECRETS_DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX}" WSLENV="${WSLENV}" \
+        "${HELM_BIN}" secrets enc "${VALUES_PATH}"
+
+    assert_output -e "Encrypting.*${VALUES}"
     assert_output --partial "Encrypted ${HELM_SECRETS_DEC_PREFIX}secrets.dec.yaml${HELM_SECRETS_DEC_SUFFIX} to secrets.dec.yaml"
-
-    run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
+
+    run "${HELM_BIN}" secrets view "${VALUES_PATH}"
+
     assert_output --partial 'global_secret: '
     assert_output --partial 'global_bar'
+    assert_success
 }
 
 @test "enc: Encrypt secrets.tmp.yaml" {
@@ -185,17 +211,20 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.tmp.yaml"
+    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.tmp.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     YAML="hello: world"
-    echo "${YAML}" > "${FILE}"
+    echo "${YAML}" >"${VALUES_PATH}"
 
-    run "${HELM_BIN}" secrets enc "${FILE}"
-    assert_success
-    assert_output --partial "Encrypting ${FILE}"
+    run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
 
-    run "${HELM_BIN}" secrets dec "${FILE}"
+    assert_output -e "Encrypting.*${VALUES}"
     assert_success
-    assert_file_exist "${FILE}.dec"
-    assert_file_contains "${FILE}.dec" 'hello: world'
+
+    run "${HELM_BIN}" secrets dec "${VALUES_PATH}"
+
+    assert_file_exists "${VALUES_PATH}.dec"
+    assert_file_contains "${VALUES_PATH}.dec" 'hello: world'
+    assert_success
 }
