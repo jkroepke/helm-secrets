@@ -21,7 +21,7 @@ log() {
         shift
 
         # shellcheck disable=SC2059
-        printf "[helm-secrets] $format\n" "$@"
+        printf "[helm-secrets] $format\\n" "$@"
     fi
 }
 
