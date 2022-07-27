@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - Handing of /tmp file in windows environments. Fixes performance issues in native WSL environments
 
+### Fixed
+- Win32 Console error, if gpg.exe does not exists
+- Debug output, if `helm --debug` is set.
+
 ## [3.14.0] - 2022-06-06
 
 ### Added

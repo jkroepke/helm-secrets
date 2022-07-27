@@ -2,7 +2,7 @@
 
 set -euf
 
-if [ -n "${HELM_DEBUG+x}" ] && [ "${HELM_DEBUG}" = "1" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
+if [ "${HELM_DEBUG:-}" = "1" ] || [ "${HELM_DEBUG:-}" = "true" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
     set -x
 fi
 
