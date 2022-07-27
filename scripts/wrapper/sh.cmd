@@ -1,14 +1,17 @@
 @setlocal enableextensions enabledelayedexpansion
-@echo off
+@echo on
 IF DEFINED HELM_DEBUG (
-    IF HELM_DEBUG EQU 1 (
+    IF "%HELM_DEBUG%"=="1" (
+        @echo on
+    )
+    IF "%HELM_DEBUG%"=="true" (
         @echo on
     )
 )
 
 IF NOT DEFINED SOPS_GPG_EXEC (
     where /q gpg.exe
-    IF %ERRORLEVEL% EQU 0 (
+    IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
         FOR /F "tokens=* USEBACKQ" %%F IN (`where gpg.exe`) DO (
             SET SOPS_GPG_EXEC=%%F
         )
@@ -21,32 +24,32 @@ if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 :: check for wsl
 wsl bash -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :WSL
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :WSL
 
 
 :: check for cygwin installation or git for windows is inside %PATH%
 "sh" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :SH
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SH
 
 
 :: check for cygwin installation or git for windows is inside %PATH%
 "bash" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :BASH
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :BASH
 
 
 :: check for git-bash
 "%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH
 
 
 :: check for git-bash (32-bit)
 "%programfiles(x86)%\Git\bin\bash.exe" -c exit  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH32
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH32
 
 
 :: check git for windows
 where.exe git.exe  >nul 2>&1
-IF %ERRORLEVEL% EQU 0 GOTO :GITBASH_CUSTOM
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH_CUSTOM
 :RETURN_GITBASH
 
 GOTO :NOSHELL
@@ -97,7 +100,7 @@ FOR %%F in ("%GIT_FILEPATH%") DO SET GIT_DIRPATH=%%~dpF
 IF ERRORLEVEL 1 GOTO :RETURN_GITBASH
 
 "%GIT_DIRPATH%..\bin\bash.exe" %*
-exit /b %errorlevel%
+exit /b %ERRORLEVEL%
 
 
 :WSL
@@ -110,9 +113,9 @@ if "%1"=="" goto WSLPATHENDLOOP
 
 :: IF string contains string - https://stackoverflow.com/a/7006016/8087167
 SET STR1="%1"
-if not "x%STR1:\=%"=="x%STR1%" (
+if not [x%STR1:\=%]==[x%STR1%] (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
-    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath "%STR1:\=/%"`) DO (
+    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %STR1:\=/%`) DO (
         SET WSLPATH="%%F"
     )
 ) else (
@@ -125,30 +128,32 @@ goto WSLPATHLOOP
 :WSLPATHENDLOOP
 
 :: WSL needs .exe suffix for windows binary. Define path only if exists in windows PATH
-IF NOT DEFINED HELM_SECRETS_HELM_PATH (
-    where /q helm.exe
-    IF %ERRORLEVEL% EQU 0 (
-        SET HELM_SECRETS_HELM_PATH=helm.exe
+IF NOT DEFINED HELM_BIN (
+    IF NOT DEFINED HELM_SECRETS_HELM_PATH (
+        where /q helm.exe
+        IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
+            SET HELM_SECRETS_HELM_PATH=helm.exe
+        )
     )
 )
 
 IF NOT DEFINED HELM_SECRETS_SOPS_PATH (
     where /q sops.exe
-    IF %ERRORLEVEL% EQU 0 (
+    IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
         SET HELM_SECRETS_SOPS_PATH=sops.exe
     )
 )
 
 IF NOT DEFINED HELM_SECRETS_VALS_PATH (
     where /q vals.exe
-    IF %ERRORLEVEL% EQU 0 (
+    IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
         SET HELM_SECRETS_VALS_PATH=vals.exe
     )
 )
 
 IF NOT DEFINED HELM_SECRETS_CURL_PATH (
     where /q curl.exe
-    IF %ERRORLEVEL% EQU 0 (
+    IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
         SET HELM_SECRETS_CURL_PATH=curl.exe
     )
 )
@@ -195,6 +200,8 @@ if not "x%HELM_PLUGIN_DIR:\=%"=="x%HELM_PLUGIN_DIR%" (
     SET WSLENV=HELM_PLUGIN_DIR:%WSLENV%
 )
 
+SET
+
 if not "x%HELM_SECRETS_HELM_PATH:\=%"=="x%HELM_SECRETS_HELM_PATH%" (
     SET WSLENV=HELM_SECRETS_HELM_PATH/p:%WSLENV%
 ) else (
@@ -220,10 +227,10 @@ if not "x%HELM_SECRETS_CURL_PATH:\=%"=="x%HELM_SECRETS_CURL_PATH%" (
 )
 
 wsl bash %ARGS%
-exit /b %errorlevel%
+exit /b %ERRORLEVEL%
 
 
 :NOSHELL
 :: If no *nix shell found, raise an error.
 echo helm-secrets needs a unix shell. Please install WSL, cygwin or Git for Windows.
-exit /b %errorlevel% 1
+exit /b %ERRORLEVEL% 1
