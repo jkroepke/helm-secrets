@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [3.14.1] - 2022-07-27
 
 ### Changes
 - Handing of /tmp file in windows environments. Fixes performance issues in native WSL environments
@@ -227,7 +227,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.14.0...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.14.1...HEAD
+[3.14.1]: https://github.com/jkroepke/helm-secrets/compare/v3.14.0...v3.14.1
 [3.14.0]: https://github.com/jkroepke/helm-secrets/compare/v3.13.0...v3.14.0
 [3.13.0]: https://github.com/jkroepke/helm-secrets/compare/v3.12.0...v3.13.0
 [3.12.0]: https://github.com/jkroepke/helm-secrets/compare/v3.11.0...v3.12.0
