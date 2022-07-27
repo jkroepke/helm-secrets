@@ -1,12 +1,12 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.14.1] - 2022-07-27
-
-### Changes
+## [Unreleased]
+### Changed
 - Handing of /tmp file in windows environments. Fixes performance issues in native WSL environments
 
 ### Fixed
@@ -14,13 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Debug output, if `helm --debug` is set.
 
 ## [3.14.0] - 2022-06-06
-
 ### Added
 - Added error handling in case `curl` or `wget` is not installed.
 - Added vals support on Windows
 - Enable protocol handling on Windows. Requires the command `helm secrets patch windows` once.
 
-### Changes
+### Changed
 - Check detection of sops encrypted files
 - Prefer gpg4win, if available. Use `SOPS_GPG_EXEC=gpg` as environment variable to restore the old behavior.
 
@@ -28,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error, if HELM_SECRETS_WINDOWS_SHELL contains spaces
 
 ## [3.13.0] - 2022-04-12
-
 ### Added
 - Support for WSL on Windows
 
@@ -36,7 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Strip newlines on helm secrets terraform command
 
 ## [3.12.0] - 2022-02-03
-
 ### Added
 - [Terraform Integration](https://github.com/jkroepke/helm-secrets/blob/5feb8cd38f6e89e680cab9c428d0a97e0143e703/examples/terraform/helm.tf). Can be used together with [external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source)
 - Enable parsing of [.netrc](https://everything.curl.dev/usingcurl/netrc) for http based values. The location of the .netrc can be overridden by `NETRC` environment variable.
@@ -45,30 +42,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Environment variable `HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL` to allow or deny `dot-dot-slash` values file paths.
 
 ## [3.11.0] - 2021-11-25
-
 ### Added
 - Add environment variable expansion for value files like `secrets://https://${GITHUB_TOKEN}@raw.githubusercontent.com/org/repo/ref/pathtofile.yml`.
   This feature is disabled by default and can be enabled by set the env var `HELM_SECRETS_URL_VARIABLE_EXPANSION=true`
 
-### Changes
-
+### Changed
 - Add more strict behavior around the downloader syntax to avoid infinite loops
 
 ## [3.10.0] - 2021-11-05
-
 ### Added
 - Add [age](https://github.com/mozilla/sops#encrypting-using-age) support for downloader plugin syntax.
 
-### Changes
+### Changed
 - Improvements to the ArgoCD integration documentation.
 
 ## [3.9.1] - 2021-10-09
-
 ### Fixed
 - Wrong format on CHANGELOG.md
 
 ## [3.9.0] - 2021-10-09
-
 ### Added
 - A better ArgoCD Integration. helm-secrets can load now gpg keys for you by using the uri `secrets+gpg-import://path/key.asc?path/secrets.yaml` as value file.
   As alternative, you can use `secrets+gpg-import-kubernetes://` to import a gpg key from an existing kubernetes secret, but it requires the kubectl command.
@@ -76,85 +68,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [vals](https://github.com/variantdev/vals) driver. vals supporting Vault, AWS SSM, GCP, sops, terraform states or other files.
 
 ## [3.8.3] - 2021-08-06
-
-### Changes
+### Changed
 - Allow dot, asterisk and underscore for vault path
 
 ## [3.8.2] - 2021-07-14
-
 ### Fixed
 - Decrypt partially encrypted sops files correctly
 
 ## [3.8.1] - 2021-06-12
-
 ### Fixed
 - OUTPUT_DECRYPTED_FILE_PATH: parameter not set
 
 ## [3.8.0] - 2021-06-12
-
 ### Added
 - New parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
 - `HELM_SECRETS_DEC_PREFIX` variable in addition to `HELM_SECRETS_DEC_SUFFIX`
 - New parameter `--version`
 - cygwin compatibility
 
-### Changes
+### Changed
 - `HELM_SECRETS_DEC_SUFFIX` has been changed from `.yaml.dec` to `.dec`. Additionally, while append the suffix, the file extension `.yaml` is not stripped anymore.
 - The detection of encrypted sops files has been changed. Instead, looking for `sops:` and `version:`, the string `unencrypted_suffix` is used now.
 
 ## [3.7.0] - 2021-05-22
-
 ### Added
 - envsubst driver
 
-### Changes
+### Changed
 - Output errors on stderr
 
 ## [3.6.1] - 2021-03-30
-
-### Fixes
+### Fixed
 - `mktemp: too few X's in template` error on Mac OS if gnu coreutils preferred over builtin bsd tools.
 
 ## [3.6.0] - 2021-03-29
-
-### Breaking
-The default sops installation is removed, since helm-secrets could use with hashicorp vault which does not require sops.
-
 ### Added
 - Detect ArgoCD environment by `ARGOCD_APP_NAME` environment variable and set `HELM_SECRETS_QUIET=true` by default. (https://github.com/jkroepke/helm-secrets/pull/83)
 
-### Fixes
+### Removed
+- **The default sops installation is removed, since helm-secrets could use with hashicorp vault which does not require sops.**
+
+### Fixed
 - Cleanup all temporary files.
 
-### Removed
-- Sops installation
-
 ## [3.5.0] - 2021-02-20
-
 ### Added
 - Added `--driver-args` to pass additional argument to underlying commands (https://github.com/jkroepke/helm-secrets/pull/82)
 
-### Fixes
+### Fixed
 - "grep: Invalid range end" if locale is not C (https://github.com/jkroepke/helm-secrets/pull/81)
 
 ## [3.4.2] - 2021-02-19
-
 ### Changed
 - Dev: Rename `master` branch to `main`
 
-### Fixes
+### Fixed
 - "grep: Invalid range end" if locale is not C (https://github.com/jkroepke/helm-secrets/pull/79)
 
 ## [3.4.1] - 2021-01-23
-
-### Fixes
+### Fixed
 - Handling `--` inside command line arguments
 - Fix handling errors with remote files
 - Strip yaml doc separator if vault driver is used (https://github.com/jkroepke/helm-secrets/pull/70)
 - Incompatibilities if sed links to gnu sed on MacOS (https://github.com/jkroepke/helm-secrets/pull/72)
 
 ## [3.4.0] - 2020-12-26
-
 From this version, the installation on Helm 2 requires additional steps.
 Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 
@@ -166,22 +144,19 @@ Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 - Dev: Implement code coverage
 - Dev: Test zsh compatibility
 
-### Fixes
+### Fixed
 - Vault driver: If vault command failed, the script execution was not terminated. (https://github.com/jkroepke/helm-secrets/pull/61)
 
 ## [3.3.5] - 2020-10-16
-
 ### Added
 - Better lookup for unix shells on Windows (https://github.com/jkroepke/helm-secrets/pull/42)
 
 ## [3.3.4] - 2020-09-09
-
 ### Added
 - Allow overriding SOPS version on installation (https://github.com/jkroepke/helm-secrets/pull/40)
 - Add separat download artefact on github release
 
 ## [3.3.0] - 2020-08-28
-
 ### Added
 - Don't check if file exists on edit (https://github.com/jkroepke/helm-secrets/pull/31)
 - Better Windows support (https://github.com/jkroepke/helm-secrets/pull/28)
@@ -189,7 +164,6 @@ Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 - Added CentOS 7 as supported OS system (https://github.com/jkroepke/helm-secrets/pull/35)
 
 ## [3.2.0] - 2020-05-08
-
 ### Added
 - Add Vault support (https://github.com/jkroepke/helm-secrets/pull/22)
 - Secret driver to gain secrets from other sources then sops. (https://github.com/jkroepke/helm-secrets/pull/16)
@@ -199,19 +173,15 @@ Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 - Run unit tests on bash, dash and ash (busybox), too.
 
 ## [3.1.0] - 2020-04-27
-
 ### Added
-
 - completion.yaml for helm shell auto completion
 - Tests for all `helm secrets` commands
 - Added quiet flag for helm secrets (https://github.com/jkroepke/helm-secrets/pull/8)
 
 ### Changed
-
 - Escape special chars in paths correctly (https://github.com/jkroepke/helm-secrets/pull/9)
 
 ## [3.0.0] - 2020-04-26
-
 Started a fork of https://github.com/zendesk/helm-secrets
 
 ### Added
@@ -226,9 +196,7 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v3.14.1...HEAD
-[3.14.1]: https://github.com/jkroepke/helm-secrets/compare/v3.14.0...v3.14.1
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v3.14.0...HEAD
 [3.14.0]: https://github.com/jkroepke/helm-secrets/compare/v3.13.0...v3.14.0
 [3.13.0]: https://github.com/jkroepke/helm-secrets/compare/v3.12.0...v3.13.0
 [3.12.0]: https://github.com/jkroepke/helm-secrets/compare/v3.11.0...v3.12.0
@@ -252,4 +220,4 @@ Started a fork of https://github.com/zendesk/helm-secrets
 [3.3.0]: https://github.com/jkroepke/helm-secrets/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/jkroepke/helm-secrets/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/jkroepke/helm-secrets/compare/v3.0.0...v3.1.0
-[3.0.0]: https://github.com/jkroepke/helm-secrets/compare/5f91bdf...v3.0.0
+[3.0.0]: https://github.com/jkroepke/helm-secrets/releases/tag/v3.0.0
