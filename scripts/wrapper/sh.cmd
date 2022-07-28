@@ -22,21 +22,6 @@ IF NOT DEFINED SOPS_GPG_EXEC (
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 
-:: check for wsl
-wsl bash -c exit  >nul 2>&1
-IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :WSL
-
-
-:: check for cygwin installation or git for windows is inside %PATH%
-"sh" -c exit  >nul 2>&1
-IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SH
-
-
-:: check for cygwin installation or git for windows is inside %PATH%
-"bash" -c exit  >nul 2>&1
-IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :BASH
-
-
 :: check for git-bash
 "%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH
@@ -51,6 +36,21 @@ IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH32
 where.exe git.exe  >nul 2>&1
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH_CUSTOM
 :RETURN_GITBASH
+
+
+:: check for wsl
+wsl bash -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :WSL
+
+
+:: check for cygwin installation or git for windows is inside %PATH%
+"sh" -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SH
+
+
+:: check for cygwin installation or git for windows is inside %PATH%
+"bash" -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :BASH
 
 GOTO :NOSHELL
 
