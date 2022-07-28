@@ -159,7 +159,7 @@ jobs:
         if: "contains(matrix.os, 'windows-latest')"
         run: |-
           scripts/wrapper/sh.cmd --version
-          scripts/wrapper/sh.cmd -c uname -a
+          scripts/wrapper/sh.cmd -c "uname -a"
 
       - name: Run helm-secrets w/o bats
         run: |-
