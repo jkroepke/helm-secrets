@@ -107,8 +107,8 @@ exit /b %ERRORLEVEL%
 SET argCount=0
 for %%x in (%*) do (
     SET /A argCount+=1
-    SET STR1=%%x
-    IF NOT [%STR1:\=%]==[%STR1%] (
+    SET "STR1=%%x"
+    IF NOT [!STR1:\=!]==[!STR1!] (
         :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
         FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %STR1:\=/%`) DO (
             SET "argVec[!argCount!]=%%~F"
