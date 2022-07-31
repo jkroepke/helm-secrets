@@ -109,10 +109,10 @@ SET ARGS=
 
 :: Loop through all parameters - https://stackoverflow.com/a/34019557/8087167
 :WSLPATHLOOP
-if "%1"=="" goto WSLPATHENDLOOP
+if [%1]==[] goto WSLPATHENDLOOP
 
 :: IF string contains string - https://stackoverflow.com/a/7006016/8087167
-SET STR1="%1"
+SET STR1=%1
 if not [x%STR1:\=%]==[x%STR1%] (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
     FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %STR1:\=/%`) DO (
