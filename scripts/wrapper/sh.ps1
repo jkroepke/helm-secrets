@@ -1,9 +1,24 @@
+Param(
+    [parameter(ValueFromRemainingArguments = $true)]
+    [string[]]$
+)
+
+function startShell() {
+    Param(
+        [string] $shell,
+        [parameter(ValueFromRemainingArguments = $true)]
+        [string[]]$shellArguments
+    )
+
+    $proc = Start-Process -FilePath $shell -NoNewWindow -PassThru -Wait -Argumentlist @shellArguments
+    exit $p.ExitCode
+}
 
 function shellFromEnvironment() {
     if ("wsl" -eq $env:HELM_SECRETS_WINDOWS_SHELL) {
-        shellWsl
+        shellWsl @Args
     } else {
-
+        startShell $env:HELM_SECRETS_WINDOWS_SHELL @Args
     }
 }
 
@@ -12,5 +27,5 @@ if ($null -eq $env:SOPS_GPG_EXEC) {
 }
 
 if ($null -eq $env:HELM_SECRETS_WINDOWS_SHELL) {
-    shellFromEnvironment
+    shellFromEnvironment @Args
 }
