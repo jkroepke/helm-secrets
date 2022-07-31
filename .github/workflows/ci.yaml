@@ -160,7 +160,7 @@ jobs:
         run: |-
           scripts/wrapper/sh.cmd --version
           scripts/wrapper/sh.cmd -c -- "uname -a"
-          scripts/wrapper/sh.cmd -c -- "echo --driver-args \"--verbose --output-type \\\"yaml\\\"\" view"
+          scripts/wrapper/sh.cmd -c -- "echo --driver-args --verbose --output-type """yaml""" view"
         env:
           HELM_DEBUG: "true"
 
