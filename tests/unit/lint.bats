@@ -153,10 +153,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + helm flag" {
-    if on_wsl; then
-        skip
-    fi
-
     VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
@@ -172,7 +168,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + helm flag + --" {
-    if on_wsl || on_cygwin; then
+    if on_cygwin; then
         skip
     fi
 
@@ -349,7 +345,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if on_wsl || ! is_driver "sops"; then
+    if ! is_driver "sops"; then
         skip
     fi
 
@@ -369,7 +365,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + -a (complex)" {
-    if on_wsl || ! is_driver "sops"; then
+    if ! is_driver "sops"; then
         skip
     fi
 
