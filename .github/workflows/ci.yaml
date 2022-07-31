@@ -160,6 +160,8 @@ jobs:
         run: |-
           scripts/wrapper/sh.cmd --version
           scripts/wrapper/sh.cmd -c "uname -a"
+        env:
+          HELM_DEBUG: "true"
 
       - name: Run helm-secrets w/o bats
         run: |-
