@@ -154,6 +154,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + helm flag" {
+    if on_wsl; then
+        skip
+    fi
+
     VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
