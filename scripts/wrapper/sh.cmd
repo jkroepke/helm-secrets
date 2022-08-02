@@ -9,6 +9,19 @@ IF DEFINED HELM_DEBUG (
     )
 )
 
+:: https://stackoverflow.com/a/19837690
+
+set argCount=0
+for %%x in (%*) do (
+   set /A argCount+=1
+   set "argVec[!argCount!]=%%~x"
+)
+
+echo Number of processed arguments: %argCount%
+
+for /L %%i in (1,1,%argCount%) do echo %%i- "!argVec[%%i]!"
+
+
 IF NOT DEFINED SOPS_GPG_EXEC (
     where /q gpg.exe
     IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
