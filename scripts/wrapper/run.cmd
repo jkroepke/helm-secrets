@@ -1,5 +1,5 @@
 :<<BATCH
-    @echo off
+    @echo on
     "%~dp0\sh.cmd" "%HELM_PLUGIN_DIR%"/%*
     exit /b %errorlevel%
 BATCH
