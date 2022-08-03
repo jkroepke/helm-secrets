@@ -14,13 +14,13 @@ helm plugin install https://github.com/jkroepke/helm-secrets
 
 Find the latest version here: https://github.com/jkroepke/helm-secrets/releases/latest
 
-See [Secret Driver manual](https://github.com/jkroepke/helm-secrets/wiki/Secret-Driver#list-of-implemented-secret-drivers) for additional installaton tasks.
+See [Secret Driver manual](https://github.com/jkroepke/helm-secrets/wiki/Secret-Driver#list-of-implemented-secret-drivers) for additional installation tasks.
 
 # Manual installation
 
 ## Latest version
 
-Windows (inside cmd, needs to be verified)
+Windows (inside cmd, need to be verified)
 ```bash
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
 ```
@@ -31,7 +31,7 @@ curl -LsSf https://github.com/jkroepke/helm-secrets/releases/latest/download/hel
 
 ## Specific version
 
-Windows (inside cmd, needs to be verified)
+Windows (inside cmd, need to be verified)
 ```bash
 curl -LsSf https://github.com/jkroepke/helm-secrets/releases/download/v3.12.0/helm-secrets.tar.gz | tar -C "%APPDATA%\helm\plugins" -xzf-
 ```
@@ -54,11 +54,11 @@ Error: yaml: unmarshal errors:
 
 ## Installation on Helm 2
 
-1. Install helm-secrets via [manual installation](README.md#manual-installation), but extract inside helm2 plugin directory e.g.: `$(helm home)/plugins/`
+1. Install helm-secrets via [manual installation](#manual-installation) but extract inside helm2 plugin directory e.g.: `$(helm home)/plugins/`
 2. Strip `platformCommand` from `plugin.yaml` like:
    ```
    sed -i '/platformCommand:/,+2 d' "${HELM_HOME:-"${HOME}/.helm"}/plugins/helm-secrets*/plugin.yaml"
    ```
 3. Done
 
-Client [here](https://github.com/adorsys-containers/ci-helm/blob/f9a8a5bf8953ab876266ca39ccbdb49228e9f117/images/2.17/Dockerfile#L91) for an example!
+Click [here](https://github.com/adorsys-containers/ci-helm/blob/f9a8a5bf8953ab876266ca39ccbdb49228e9f117/images/2.17/Dockerfile#L91), for an example!
