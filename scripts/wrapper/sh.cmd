@@ -112,12 +112,14 @@ SET ARGS=
 if [%1]==[] goto WSLPATHENDLOOP
 
 SET ARG=%1
+
+:: WINDOWS BATCH REMOVES "=" on arguments
 if [x%ARG:--set=%]==[x%ARG%] (
     if [%3]==[] (
-        SET ARGS=%ARGS% "!ARG!" "%2"
+        SET ARGS=%ARGS% %ARG% "%2"
         shift
     ) else (
-        SET ARGS=%ARGS% "!ARG!" "%2=%3"
+        SET ARGS=%ARGS% %ARG% "%2=%3"
         shift
         shift
     )
