@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Prefer bash from "Git for Windows" over "WSL" shell to avoid WSL interop incompatibilities
+
+### Fixed
+- Error with --set arguments, if WSL backend is used. 
+
 ## [3.14.1] - 2022-07-27
 ### Changed
-- Handing of /tmp file in windows environments. Fixes performance issues in native WSL environments
+- Handing of /tmp file in Windows environments. Fixes performance issues in native WSL environments
 
 ### Fixed
 - Win32 Console error, if gpg.exe does not exists

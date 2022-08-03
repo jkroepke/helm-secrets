@@ -61,6 +61,26 @@ trap _trap EXIT
 
 load_secret_driver "$SECRET_DRIVER"
 
+if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
+    shift
+    argc=$#
+    j=0
+
+    while [ $j -lt $argc ]; do
+        case "$1" in
+        *\\*)
+            set -- "$@" "$(wslpath "$(printf '%s' "$1" | tr "\\" '/')")"
+            ;;
+        *)
+            set -- "$@" "$1"
+            ;;
+        esac
+
+        shift
+        j=$((j + 1))
+    done
+fi
+
 while true; do
     case "${1:-}" in
     enc)

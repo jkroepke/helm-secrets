@@ -22,21 +22,6 @@ IF NOT DEFINED SOPS_GPG_EXEC (
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
 
-:: check for wsl
-wsl bash -c exit  >nul 2>&1
-IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :WSL
-
-
-:: check for cygwin installation or git for windows is inside %PATH%
-"sh" -c exit  >nul 2>&1
-IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SH
-
-
-:: check for cygwin installation or git for windows is inside %PATH%
-"bash" -c exit  >nul 2>&1
-IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :BASH
-
-
 :: check for git-bash
 "%programfiles%\Git\bin\bash.exe" -c exit  >nul 2>&1
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH
@@ -51,6 +36,21 @@ IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH32
 where.exe git.exe  >nul 2>&1
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH_CUSTOM
 :RETURN_GITBASH
+
+
+:: check for wsl
+wsl bash -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :WSL
+
+
+:: check for cygwin installation or git for windows is inside %PATH%
+"sh" -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SH
+
+
+:: check for cygwin installation or git for windows is inside %PATH%
+"bash" -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :BASH
 
 GOTO :NOSHELL
 
@@ -104,28 +104,6 @@ exit /b %ERRORLEVEL%
 
 
 :WSL
-:: Use WSL, but convert all paths (script + arguments) to wsl paths
-SET ARGS=
-
-:: Loop through all parameters - https://stackoverflow.com/a/34019557/8087167
-:WSLPATHLOOP
-if "%1"=="" goto WSLPATHENDLOOP
-
-:: IF string contains string - https://stackoverflow.com/a/7006016/8087167
-SET STR1="%1"
-if not [x%STR1:\=%]==[x%STR1%] (
-    :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
-    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %STR1:\=/%`) DO (
-        SET WSLPATH="%%F"
-    )
-) else (
-    SET WSLPATH=%STR1%
-)
-SET ARGS=%ARGS% %WSLPATH%
-
-shift
-goto WSLPATHLOOP
-:WSLPATHENDLOOP
 
 :: WSL needs .exe suffix for windows binary. Define path only if exists in windows PATH
 IF NOT DEFINED HELM_BIN (
@@ -236,11 +214,22 @@ IF DEFINED HELM_SECRETS_CURL_PATH (
     )
 )
 
-wsl bash %ARGS%
+SET HELM_SECRET_WSL_INTEROP=1
+SET WSLENV=HELM_SECRET_WSL_INTEROP:%WSLENV%
+
+SET SCRIPT="%1"
+if not [x%SCRIPT:\=%]==[x%SCRIPT%] (
+    :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
+    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %SCRIPT:\=/%`) DO (
+        SET SCRIPT="%%F"
+    )
+)
+
+wsl bash %SCRIPT% %*
 exit /b %ERRORLEVEL%
 
 
 :NOSHELL
 :: If no *nix shell found, raise an error.
 echo helm-secrets needs a unix shell. Please install WSL, cygwin or Git for Windows.
-exit /b %ERRORLEVEL% 1
+exit /b 1

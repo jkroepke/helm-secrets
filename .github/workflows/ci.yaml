@@ -34,6 +34,8 @@ jobs:
   unit-tests:
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
+    env:
+      HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     timeout-minutes: 20
     strategy:
@@ -152,6 +154,12 @@ jobs:
           sops --version
           gpg --version
           vault --version
+
+      - name: Print Environment (Windows)
+        if: "contains(matrix.os, 'windows-latest')"
+        run: |-
+          scripts/wrapper/sh.cmd --version
+          scripts/wrapper/sh.cmd -c -- "uname -a"
 
       - name: Run helm-secrets w/o bats
         run: |-
