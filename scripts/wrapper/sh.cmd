@@ -117,11 +117,10 @@ SET ARG=%1
 if [x%ARG:--set=%]==[x%ARG%] (
     if [%3]==[] (
         SET ARGS=%ARGS% %ARG% "%2"
-        shift
+        goto WSLPATHLOOPSHIFT1
     ) else (
         SET ARGS=%ARGS% %ARG% "%2=%3"
-        shift
-        shift
+        goto WSLPATHLOOPSHIFT2
     )
 
     goto WSLPATHLOOP
@@ -140,6 +139,16 @@ SET ARGS=%ARGS% %WSLPATH%
 
 shift
 goto WSLPATHLOOP
+
+:WSLPATHLOOPSHIFT1
+shift
+goto WSLPATHLOOP
+
+:WSLPATHLOOPSHIFT2
+shift
+shift
+goto WSLPATHLOOP
+
 :WSLPATHENDLOOP
 
 :: WSL needs .exe suffix for windows binary. Define path only if exists in windows PATH
