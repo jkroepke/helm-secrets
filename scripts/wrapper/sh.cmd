@@ -215,6 +215,7 @@ IF DEFINED HELM_SECRETS_CURL_PATH (
 )
 
 SET HELM_SECRET_WSL_INTEROP=1
+SET WSLENV=HELM_SECRET_WSL_INTEROP:%WSLENV%
 
 SET SCRIPT="%1"
 if not [x%SCRIPT:\=%]==[x%SCRIPT%] (
@@ -224,7 +225,7 @@ if not [x%SCRIPT:\=%]==[x%SCRIPT%] (
     )
 )
 
-wsl bash "%SCRIPT%" %*
+wsl bash %SCRIPT% %*
 exit /b %ERRORLEVEL%
 
 
