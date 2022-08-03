@@ -112,7 +112,7 @@ SET ARGS=
 if [%1]==[] goto WSLPATHENDLOOP
 
 SET ARG=%1
-if [x%ARG:\-\-set%]==[x%ARG%] (
+if [x%ARG:--set=%]==[x%ARG%] (
     if [%3]==[] (
         SET ARGS=%ARGS% "!ARG!" "%2"
         shift
