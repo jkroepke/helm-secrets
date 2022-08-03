@@ -345,7 +345,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if on_wsl || ! is_driver "sops"; then
+    if ! is_driver "sops"; then
         skip
     fi
 
@@ -365,7 +365,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + -a (complex)" {
-    if on_wsl || ! is_driver "sops"; then
+    if ! is_driver "sops"; then
         skip
     fi
 

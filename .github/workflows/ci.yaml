@@ -170,7 +170,7 @@ jobs:
             && github.head_ref
             || github.ref
           }}"
-          helm --debug secrets -v
+          helm secrets -v
 
       - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap -r tests/unit
