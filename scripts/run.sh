@@ -62,6 +62,7 @@ trap _trap EXIT
 load_secret_driver "$SECRET_DRIVER"
 
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
+    shift
     argc=$#
     j=0
 
