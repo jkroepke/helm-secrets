@@ -9,19 +9,6 @@ IF DEFINED HELM_DEBUG (
     )
 )
 
-:: https://stackoverflow.com/a/19837690
-
-set argCount=0
-for %%x in (%*) do (
-   set /A argCount+=1
-   set "argVec[!argCount!]=%%~x"
-)
-
-echo Number of processed arguments: %argCount%
-
-for /L %%i in (1,1,%argCount%) do echo %%i- "!argVec[%%i]!"
-
-
 IF NOT DEFINED SOPS_GPG_EXEC (
     where /q gpg.exe
     IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
@@ -124,13 +111,13 @@ SET ARGS=
 :WSLPATHLOOP
 if [%1]==[] goto WSLPATHENDLOOP
 
-SET STR1=%1
-if [x%STR1:--set%]==[x%STR1%] (
+SET ARG=%1
+if [x%ARG:\-\-set%]==[x%ARG%] (
     if [%3]==[] (
-        SET ARGS=%ARGS% %STR1% "%2"
+        SET ARGS=%ARGS% "!ARG!" "%2"
         shift
     ) else (
-        SET ARGS=%ARGS% %STR1% "%2=%3"
+        SET ARGS=%ARGS% "!ARG!" "%2=%3"
         shift
         shift
     )
@@ -139,13 +126,13 @@ if [x%STR1:--set%]==[x%STR1%] (
 )
 
 :: IF string contains string - https://stackoverflow.com/a/7006016/8087167
-if not [x%STR1:\=%]==[x%STR1%] (
+if not [x%ARG:\=%]==[x%ARG%] (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
-    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %STR1:\=/%`) DO (
+    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %ARG:\=/%`) DO (
         SET WSLPATH="%%F"
     )
 ) else (
-    SET WSLPATH=%STR1%
+    SET WSLPATH=%ARG%
 )
 SET ARGS=%ARGS% %WSLPATH%
 
