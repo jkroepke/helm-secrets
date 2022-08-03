@@ -3,7 +3,8 @@
 Before starting to integrate helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
 [It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
 
-Since ArgoCD is a shared environment, consider to read [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
+Since ArgoCD is a shared environment,
+consider reading [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
 to prevent users from reading files outside the own directory.
 
 # Prerequisites
@@ -48,12 +49,14 @@ spec:
         - secrets://secrets.yaml
 ```
 
-Helm will call helm-secrets because helm-secrets is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
+Helm will call helm-secrets
+because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
 
 # Installation on Argo CD
 
 Before using helm secrets, we are required to install `helm-secrets` and `sops` on the `argocd-repo-server`.
-There are two methods to do this. Either create your custom ArgoCD Docker Image or install them via init container.
+There are two methods to do this.
+Either create your custom ArgoCD Docker Image or install them via an init container.
 
 ## Step 1: Customize argocd-repo-server
 
@@ -154,7 +157,7 @@ repoServer:
           name: custom-tools
 ```
 
-Instead, downloading all external files on container start, consider to build an own docker image which contains all required binaries. See [Dockerfile](https://github.com/jkroepke/helm-secrets/blob/main/Dockerfile) in repository root.
+Instead, downloading all external files on container start, consider building an own docker image which contains all required binaries. See [Dockerfile](https://github.com/jkroepke/helm-secrets/blob/main/Dockerfile) in repository root.
 
 ## Step 2: Allow helm-secrets schemes in argocd-cm ConfigMap
 
@@ -167,7 +170,6 @@ The helm-secrets schemes need to be added to the [argocd-cm ConfigMap](https://g
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  ...
   name: argocd-cm
 data:
   helm.valuesFileSchemes: >-
@@ -191,7 +193,7 @@ server:
 
 # Configuration of ArgoCD
 
-When using private key encryption it is required to configure ArgoCD repo server so that it has access 
+When using private key encryption, it is required to configure ArgoCD repo server so that it has access 
 to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s)
 can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
 
@@ -210,7 +212,7 @@ Both methods depend on a Kubernetes secret holding the key in plain-text format 
 gpg --full-generate-key --rfc4880
 ```
 
-When asked to enter a password you need to omit it.
+When asked to enter a password, you need to omit it.
 
 Please also note that currently it is recommended to use the --rfc4880.
 This prevents you from running into a compatibility issue between gpg 2.2 and gpg 2.3
@@ -248,7 +250,7 @@ kubectl create secret generic helm-secrets-private-keys --from-file=key.asc
 ### Making the key accessible within ArgoCD
 #### Method 1: Mount the private key from a kubernetes secret as volume on the argocd-repo-server
 
-To use the *secrets+gpg-import / secrets+age-import* syntax, the keys needs to be mounted on the **argocd-repo-server**.
+To use the *secrets+gpg-import / secrets+age-import* syntax, the keys need to be mounted on the **argocd-repo-server**.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 ```yaml
@@ -284,11 +286,11 @@ spec:
 #### Method 2: Fetch the gpg key directly from a kubernetes secret
 
 To use the *secrets+gpg-import-kubernetes / secrets+age-import-kubernetes* syntax, we need Argo CD's service account to be able to access the secret.
-To achieve this we use the RBAC Permissions.
+To achieve this, we use the RBAC Permissions.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 ```yaml
-# This allows to read secrets in the same namespace
+# This allows reading secrets in the same namespace
 repoServer:
   serviceAccount:
     create: true

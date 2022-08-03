@@ -4,7 +4,7 @@ name: CI
 env:
   VERSION_HELM: v3.9.0
   VERSION_SOPS: v3.7.3
-  VERSION_VALS: v0.16.2
+  VERSION_VALS: v0.18.0
   VERSION_VAULT: 1.10.4
 
 on:

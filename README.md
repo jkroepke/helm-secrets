@@ -33,6 +33,12 @@ Wraps the whole helm command. Slow on multiple value files.
 helm secrets upgrade name . -f secrets.yaml
 ```
 
+## Cloud support
+
+Use AWS Secrets Manager or Azure KeyVault for storing secrets securely and reference them inside values.yaml
+
+See [Cloud Integration](https://github.com/jkroepke/helm-secrets/wiki/Cloud-Integration) for more information.
+
 ## ArgoCD support
 
 For running helm-secrets with ArgoCD, see [ArgoCD Integration](https://github.com/jkroepke/helm-secrets/wiki/ArgoCD-Integration) for more information.

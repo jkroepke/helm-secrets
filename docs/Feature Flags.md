@@ -10,4 +10,4 @@ If the environment variable `HELM_SECRETS_URL_VARIABLE_EXPANSION` is set to `tru
 
 - `secrets://https://${GITHUB_TOKEN}@raw.githubusercontent.com/org/repo/ref/pathtofile.yml`
 
-In this case, GITHUB_TOKEN will be substituted with an environment variable named GITHUB_TOKEN. Only `${}` syntax is supported.
+In this case, `GITHUB_TOKEN` will be substituted with an environment variable named GITHUB_TOKEN. Only `${}` syntax is supported.
