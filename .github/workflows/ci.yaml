@@ -159,9 +159,12 @@ jobs:
         if: "contains(matrix.os, 'windows-latest')"
         run: |-
           echo 'echo $@' > ${{ github.workspace }}/echo.sh
+          scripts/wrapper/sh.cmd ${{ github.workspace }}/echo.sh --set "service.type=NodePort"
+          
+          exit 1
+          
           scripts/wrapper/sh.cmd --version
           scripts/wrapper/sh.cmd -c -- "uname -a"
-          scripts/wrapper/sh.cmd ${{ github.workspace }}/echo.sh --set "service.type=NodePort"
         env:
           HELM_DEBUG: "true"
 
