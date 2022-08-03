@@ -215,11 +215,13 @@ IF DEFINED HELM_SECRETS_CURL_PATH (
 )
 
 SET HELM_SECRET_WSL_INTEROP=1
-SET SCRIPT=%1
-shift
 
-FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %SCRIPT:\=/%`) DO (
-    SET SCRIPT="%%F"
+SET SCRIPT="%1"
+if not [x%SCRIPT:\=%]==[x%SCRIPT%] (
+    :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
+    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %SCRIPT:\=/%`) DO (
+        SET SCRIPT="%%F"
+    )
 )
 
 wsl bash "%SCRIPT%" %*
