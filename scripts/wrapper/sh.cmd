@@ -124,8 +124,21 @@ SET ARGS=
 :WSLPATHLOOP
 if [%1]==[] goto WSLPATHENDLOOP
 
-:: IF string contains string - https://stackoverflow.com/a/7006016/8087167
 SET STR1=%1
+if [x%STR1:--set%]==[x%STR1%] (
+    if [%3]==[] (
+        SET ARGS=%ARGS% %STR1% "%2"
+        shift
+    ) else (
+        SET ARGS=%ARGS% %STR1% "%2=%3"
+        shift
+        shift
+    )
+
+    goto WSLPATHLOOP
+)
+
+:: IF string contains string - https://stackoverflow.com/a/7006016/8087167
 if not [x%STR1:\=%]==[x%STR1%] (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
     FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %STR1:\=/%`) DO (
