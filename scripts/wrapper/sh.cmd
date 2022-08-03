@@ -215,8 +215,14 @@ IF DEFINED HELM_SECRETS_CURL_PATH (
 )
 
 SET HELM_SECRET_WSL_INTEROP=1
+SET SCRIPT=%1
+shift
 
-wsl bash %*
+FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %SCRIPT:\=/%`) DO (
+    SET SCRIPT="%%F"
+)
+
+wsl bash "%SCRIPT%" %*
 exit /b %ERRORLEVEL%
 
 
