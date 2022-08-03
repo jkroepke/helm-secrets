@@ -104,52 +104,6 @@ exit /b %ERRORLEVEL%
 
 
 :WSL
-:: Use WSL, but convert all paths (script + arguments) to wsl paths
-SET ARGS=
-
-:: Loop through all parameters - https://stackoverflow.com/a/34019557/8087167
-:WSLPATHLOOP
-if [%1]==[] goto WSLPATHENDLOOP
-
-SET ARG=%1
-
-:: WINDOWS BATCH REMOVES "=" on arguments
-if [x%ARG:--set=%]==[x%ARG%] (
-    if [%3]==[] (
-        SET ARGS=%ARGS% %ARG% "%2"
-        goto WSLPATHLOOPSHIFT1
-    ) else (
-        SET ARGS=%ARGS% %ARG% "%2=%3"
-        goto WSLPATHLOOPSHIFT2
-    )
-
-    goto WSLPATHLOOP
-)
-
-:: IF string contains string - https://stackoverflow.com/a/7006016/8087167
-if not [x%ARG:\=%]==[x%ARG%] (
-    :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
-    FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %ARG:\=/%`) DO (
-        SET WSLPATH="%%F"
-    )
-) else (
-    SET WSLPATH=%ARG%
-)
-SET ARGS=%ARGS% %WSLPATH%
-
-shift
-goto WSLPATHLOOP
-
-:WSLPATHLOOPSHIFT1
-shift
-goto WSLPATHLOOP
-
-:WSLPATHLOOPSHIFT2
-shift
-shift
-goto WSLPATHLOOP
-
-:WSLPATHENDLOOP
 
 :: WSL needs .exe suffix for windows binary. Define path only if exists in windows PATH
 IF NOT DEFINED HELM_BIN (
@@ -260,11 +214,13 @@ IF DEFINED HELM_SECRETS_CURL_PATH (
     )
 )
 
-wsl bash %ARGS%
+SET HELM_SECRET_WSL_INTEROP=1
+
+wsl bash %*
 exit /b %ERRORLEVEL%
 
 
 :NOSHELL
 :: If no *nix shell found, raise an error.
 echo helm-secrets needs a unix shell. Please install WSL, cygwin or Git for Windows.
-exit /b %ERRORLEVEL% 1
+exit /b 1
