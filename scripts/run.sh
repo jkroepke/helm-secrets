@@ -66,25 +66,15 @@ if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
     argc=$#
     j=0
 
-    SKIP_ARG_PARSE=false
     while [ $j -lt $argc ]; do
-        if [ "${SKIP_ARG_PARSE}" = "true" ]; then
+        case "$1" in
+        *\\*)
+            set -- "$@" "$(wslpath "$(printf '%s' "$1" | tr "\\" '/')")"
+            ;;
+        *)
             set -- "$@" "$1"
-        else
-            case "$1" in
-            *\\*)
-                set -- "$@" "$(wslpath "$(printf '%s' "$1" | tr "\\" '/')")"
-                ;;
-            --)
-                # skip --, and what remains are the cmd args
-                SKIP_ARG_PARSE=true
-                set -- "$@" "$1"
-                ;;
-            *)
-                set -- "$@" "$1"
-                ;;
-            esac
-        fi
+            ;;
+        esac
 
         shift
         j=$((j + 1))
