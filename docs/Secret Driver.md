@@ -98,7 +98,7 @@ If you use Vault with helm-secrets, the vault CLI tool is needed.
 
 Download: https://www.vaultproject.io/downloads
 
-The vault secret driver can be enabled by define `HELM_SECRETS_DRIVER=vals`.
+The vault secret driver can be enabled by define `HELM_SECRETS_DRIVER=vault`.
 
 Example file: [examples/vault/secrets.yaml](https://github.com/jkroepke/helm-secrets/blob/main/examples/vault/secrets.yaml) 
 
