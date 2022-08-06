@@ -28,7 +28,7 @@ jobs:
           SHELLCHECK_OPTS: -x
         with:
           sh_checker_comment: true
-          sh_checker_exclude: "tests/"
+          sh_checker_exclude: "tests/assets tests/bats"
 
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@v0.5.0
@@ -37,7 +37,7 @@ jobs:
           SHELLCHECK_OPTS: -x
         with:
           sh_checker_comment: true
-          sh_checker_exclude: "tests/assets tests/bats"
+          sh_checker_exclude: "tests/"
           sh_checker_shfmt_disable: false
           sh_checker_shellcheck_disable: false
           sh_checker_checkbashisms_enable: true
