@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+if [ "${QUIET}" = "false" ]; then
+    log 'DEPRECATED: Envsubst driver is going to be remove in the next major version. Use vals driver instead.'
+fi
+
 _envsubst() {
     # shellcheck disable=SC2086
     set -- ${SECRET_DRIVER_ARGS} "$@"

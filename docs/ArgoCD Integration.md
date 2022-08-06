@@ -54,8 +54,9 @@ because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c55
 
 # Installation on Argo CD
 
-Before using helm secrets, we are required to install `helm-secrets` and `sops` on the `argocd-repo-server`.
-There are two methods to do this.
+Before using helm secrets, we are required to install `helm-secrets` on the `argocd-repo-server`. 
+Depends on the secret driver, `sops` or `vals` is required on the `argocd-repo-server`, too.
+There are two methods to do this. 
 Either create your custom ArgoCD Docker Image or install them via an init container.
 
 ## Step 1: Customize argocd-repo-server
@@ -67,11 +68,12 @@ Only `argocd-repo-server` needs this customized image. Other ArgoCD components c
 
 Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` into the Argo CD image:
 ```Dockerfile
-ARG ARGOCD_VERSION="v2.3.0"
+ARG ARGOCD_VERSION="v2.4.8"
 FROM argoproj/argocd:$ARGOCD_VERSION
-ARG SOPS_VERSION="3.7.1"
-ARG HELM_SECRETS_VERSION="3.12.0"
-ARG KUBECTL_VERSION="1.22.0"
+ARG SOPS_VERSION="3.7.3"
+ARG VALS_VERSION="0.18.0"
+ARG HELM_SECRETS_VERSION="3.14.1"
+ARG KUBECTL_VERSION="1.24.3"
 # In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
 ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
     HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
@@ -85,10 +87,18 @@ RUN apt-get update && \
       curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN curl -fSSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
-    -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
-RUN curl -fSSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
+
+RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
+
+# sops driver installation
+RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
+    -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
+
+# vals driver installation
+RUN curl -fsSL https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
+    | tar xzf - -C /usr/local/bin/ vals \
+    && chmod +x /usr/local/bin/vals
 
 USER argocd
 
@@ -113,6 +123,8 @@ repoServer:
       value: /usr/local/bin/helm
     - name: HELM_SECRETS_SOPS_PATH
       value: /custom-tools/sops
+    - name: HELM_SECRETS_VALS_PATH
+      value: /custom-tools/vals
     - name: HELM_SECRETS_KUBECTL_PATH
       value: /custom-tools/kubectl
     - name: HELM_SECRETS_CURL_PATH
@@ -138,10 +150,12 @@ repoServer:
       env:
         - name: HELM_SECRETS_VERSION
           value: "3.12.0"
-        - name: SOPS_VERSION
-          value: "3.7.1"
         - name: KUBECTL_VERSION
-          value: "1.22.0"
+          value: "1.24.3"
+        - name: VALS_VERSION
+          value: "0.18.0"
+        - name: SOPS_VERSION
+          value: "3.7.3"
       args:
         - |
           mkdir -p /custom-tools/helm-plugins
@@ -149,8 +163,8 @@ repoServer:
 
           wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
-          wget -qO /custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 \
 
+          wget -qO- https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
           chmod +x /custom-tools/*
       volumeMounts:
         - mountPath: /custom-tools
@@ -197,7 +211,7 @@ When using private key encryption, it is required to configure ArgoCD repo serve
 to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s)
 can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
 
-## Private key encryption
+## Private key encryption (sops driver only)
 There are two ways to configure ArgoCD to have access to your private key:
 
 - mount the PGP/age key secret as a volume in the argocd-repo-server; or
@@ -332,11 +346,51 @@ spec:
 
 ## External key location
 
-sops is supporting multiple cloud providers.
+sops and vals are supporting multiple cloud providers.
+
+### AWS 
+
+The argocd-repo-server need access to cloud services. If ArgoCD is deployed on an EKS, 
+[AWS IRSA](https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html) can be used here.
+
+This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm):
+```yaml
+repoServer:
+  serviceAccount:
+    create: true
+    name: "argocd-repo-server"
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/iam-role-name
+    automountServiceAccountToken: true
+```
+
+If IRSA is not available, move forward with static credentials.
+
+1. Create a secret contain the `AWS_DEFAULT_REGION`, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+   Example: 
+   ```bash
+   kubectl create secret generic argocd-aws-credentials \
+     --from-literal=AWS_DEFAULT_REGION=eu-central-1 \
+     --from-literal=AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE \
+     --from-literal=AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+   ```
+
+2. Configure the secrets inside ArgoCD Helm Chart:
+   Example:
+   ```yaml
+   repoServer:
+     envFrom:
+     - secretRef:
+         name: argocd-aws-credentials
+   ```
 
 ### GCP KMS
 
-To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD, but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission. There are various ways to achieve this, but the recommended way is to use [GKE Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity). Please read Google's documentation to link your Kubernetes ServiceAccount and a Google Service Account.
+To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD, 
+but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission. 
+There are various ways to achieve this,
+but the recommended way is to use [GKE Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity).
+Please read Google's documentation to link your Kubernetes ServiceAccount and a Google Service Account.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm):
 ```yaml
@@ -361,7 +415,6 @@ spec:
   source:
     helm:
       valueFiles:
-
         # ### Method 3: No keys provided
         # Example Method 3: (Assumptions: kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml

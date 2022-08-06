@@ -24,7 +24,7 @@ The driver option is a global one. A file level switch isn't supported yet.
 Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/main/scripts/drivers/sops.sh) and adjust to your own needs.
 The custom driver can be load via `HELM_SECRETS_DRIVER` parameter or `-d` option (higher preference).
 
-## Pass additional arguments to secret driver
+## Pass additional arguments to a secret driver
 
 ```bash
 helm secrets -a "--verbose" view ./tests/assets/helm_vars/secrets.yaml
@@ -45,9 +45,9 @@ results into:
 [helm-secrets] Removed: tests/assets/values/sops/secrets.yaml.dec
 ```
 
-## Explicitly specify binary path
+## Explicitly specify a binary path
 
-If e.g. sops is installed at the non-default location or if you have multiple versions of sops on your system, you can use `HELM_SECRETS_$DRIVER_PATH` to explicitly specify the sops binary to be used.
+If e.g. `sops` is installed at the non-default location or if you have multiple versions of sops on your system, you can use `HELM_SECRETS_$DRIVER_PATH` to explicitly specify the sops binary to be used.
 
 ```bash
 # Example for in-tree drivers via environment variable
@@ -60,11 +60,11 @@ HELM_SECRETS_VALS_PATH=/custom/location/vals helm secrets view ./tests/assets/he
 ## sops
 
 If you use sops with helm-secrets, the sops CLI tool is needed. 
-sops 3.2.0 is required at minimum.
+sops 3.2.0 is required at a minimum.
 
 Download: https://github.com/mozilla/sops/releases/latest
 
-Before start to use sops with gpg, consider start to use [age](https://github.com/mozilla/sops#encrypting-using-age).
+Before start to use sops with gpg, consider starting to use [age](https://github.com/mozilla/sops#encrypting-using-age).
 
 The sops secret store is enabled by default.
 
@@ -72,7 +72,7 @@ The sops secret store is enabled by default.
 
 [vals](https://github.com/variantdev/vals) is a tool for managing configuration values and secrets form various sources.
 
-It supports various backends including:
+It supports various backends:
 
 * [Vault](https://github.com/variantdev/vals#vault)
 * [AWS SSM Parameter Store](https://github.com/variantdev/vals#aws-ssm-parameter-store)
@@ -94,6 +94,8 @@ Example file: [examples/vals/secrets.yaml](https://github.com/jkroepke/helm-secr
 
 ## Hashicorp Vault
 
+**DEPRECATED: Use vals driver instead!**
+
 If you use Vault with helm-secrets, the vault CLI tool is needed.
 
 Download: https://www.vaultproject.io/downloads
@@ -104,7 +106,9 @@ Example file: [examples/vault/secrets.yaml](https://github.com/jkroepke/helm-sec
 
 ## envsubst
 
-If you have stored you secret inside environment variables, you could use the envsubst driver.
+**DEPRECATED: Use vals driver instead!**
+
+If you have stored your secret inside the environment variables, you could use the envsubst driver.
 
 ### Installation
 
@@ -121,6 +125,8 @@ apt-get install gettext
 ```
 
 ## Doppler
+
+**DEPRECATED**
 
 If you use [Doppler](https://doppler.com) with helm-secrets, the doppler CLI tool is needed.
 
