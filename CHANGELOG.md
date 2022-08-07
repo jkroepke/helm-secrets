@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Prefer bash from "Git for Windows" over "WSL" shell to avoid WSL interop incompatibilities
+- Prefer bash from `Git for Windows` over `WSL` shell to avoid WSL interop incompatibilities
+- Deprecate `vault` driver. The `vals` driver supports vault as backend, too.
+- Deprecate `envsubst` driver. The `vals` driver supports envsubst as backend, too.
+- Deprecate `droppler` driver. 
 
 ### Fixed
 - Error with --set arguments, if WSL backend is used. 

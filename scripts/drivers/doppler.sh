@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+if [ "${QUIET}" = "false" ]; then
+    log 'DEPRECATED: doppler driver is going to be removed in the next major version.'
+fi
+
 _DOPPLER="${HELM_SECRETS_VAULT_PATH:-doppler}"
 
 # shellcheck disable=SC2034

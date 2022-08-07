@@ -30,9 +30,9 @@ driver_decrypt_file() {
     output="${3:-}"
 
     if [ "${output}" != "" ]; then
-        _vals eval -f "${input}" -o yaml >"${output}"
+        _vals eval -o yaml <"${input}" >"${output}"
     else
-        _vals eval -f "${input}" -o yaml
+        _vals eval -o yaml <"${input}"
     fi
 }
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+if [ "${QUIET}" = "false" ]; then
+    log 'DEPRECATED: Vault driver is going to be remove in the next major version. Use vals driver instead.'
+fi
+
 _VAULT="${HELM_SECRETS_VAULT_PATH:-vault}"
 
 # shellcheck disable=SC2034

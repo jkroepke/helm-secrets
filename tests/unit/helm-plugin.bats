@@ -28,7 +28,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets -v
     assert_success
-    assert_output "${VERSION}"
+    assert_output --partial "${VERSION}"
 }
 
 @test "helm-plugin: helm secrets --version" {
@@ -36,7 +36,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --version
     assert_success
-    assert_output "${VERSION}"
+    assert_output --partial "${VERSION}"
 }
 
 @test "helm-plugin: helm secrets version" {
@@ -44,5 +44,5 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets version
     assert_success
-    assert_output "${VERSION}"
+    assert_output --partial "${VERSION}"
 }
