@@ -31,7 +31,7 @@ edit_helper() {
     fi
 
     cd "$dir"
-    driver_edit_file "yaml" "${file}"
+    backend_edit_file "yaml" "${file}"
 }
 
 edit() {

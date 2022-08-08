@@ -42,10 +42,23 @@ else
     QUIET="${HELM_SECRETS_QUIET:-"${OUTPUT_DECRYPTED_FILE_PATH}"}"
 fi
 
-# Define the secret driver engine
-SECRET_DRIVER="${HELM_SECRETS_DRIVER:-sops}"
-# Define the secret driver engine args
-SECRET_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS:-}"
+# Define the secret backend
+SECRET_BACKEND="${HELM_SECRETS_BACKEND:-sops}"
+# Define the secret backend custom args
+SECRET_BACKEND_ARGS="${HELM_SECRETS_BACKEND_ARGS:-}"
+
+if [ -n "${HELM_SECRETS_DRIVER+x}" ]; then
+    if [ "${QUIET}" = "false" ]; then
+        log 'The env var HELM_SECRETS_DRIVER is deprecated! Use HELM_SECRETS_BACKEND instead!'
+    fi
+    SECRET_BACKEND="${HELM_SECRETS_DRIVER}"
+fi
+if [ -n "${HELM_SECRETS_DRIVER_ARGS+x}" ]; then
+    if [ "${QUIET}" = "false" ]; then
+        log 'The env var HELM_SECRETS_DRIVER_ARGS is deprecated! Use HELM_SECRETS_BACKEND_ARGS instead!'
+    fi
+    SECRET_BACKEND_ARGS="${HELM_SECRETS_DRIVER_ARGS}"
+fi
 
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
@@ -59,7 +72,7 @@ DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 
 trap _trap EXIT
 
-load_secret_driver "$SECRET_DRIVER"
+load_secret_backend "$SECRET_BACKEND"
 
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
     shift
@@ -180,8 +193,15 @@ while true; do
         version
         break
         ;;
+    --backend | -b)
+        load_secret_backend "$2"
+        shift
+        ;;
     --driver | -d)
-        load_secret_driver "$2"
+        if [ "${QUIET}" = "false" ]; then
+            log 'The CLI arg '"$1"' is deprecated! --backend instead!'
+        fi
+        load_secret_backend "$2"
         shift
         ;;
     --output-decrypt-file-path)
@@ -193,9 +213,18 @@ while true; do
         # shellcheck disable=SC2034
         QUIET=true
         ;;
-    --driver-args | -a)
+    --backend-args | -a)
         # shellcheck disable=SC2034
-        SECRET_DRIVER_ARGS="$2"
+        SECRET_BACKEND_ARGS="$2"
+        shift
+        ;;
+    --driver-args)
+        if [ "${QUIET}" = "false" ]; then
+            log 'The CLI arg '"$1"' is deprecated! --backend-args instead!'
+        fi
+
+        # shellcheck disable=SC2034
+        SECRET_BACKEND_ARGS="$2"
         shift
         ;;
     "")

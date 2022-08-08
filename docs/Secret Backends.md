@@ -1,30 +1,30 @@
-# Secret Driver
+# Secret Backends
 
-It's possible to use another secret driver then sops, e.g. Hasicorp Vault.
+It's possible to use another secret backend then sops, e.g. vals.
 
-Example for in-tree drivers via option
+Example for in-tree backends via an CLI option
 ```bash
-helm secrets -d sops view ./tests/assets/helm_vars/secrets.yaml
+helm secrets -b sops view ./tests/assets/helm_vars/secrets.yaml
 ```
 
-Example for in-tree drivers via environment variable
+Example for in-tree backends via environment variable
 ```bash
-HELM_SECRETS_DRIVER=vault helm secrets view ./tests/assets/helm_vars/secrets.yaml
+HELM_SECRETS_BACKEND=vals helm secrets view ./tests/assets/helm_vars/secrets.yaml
 ```
 
-Example for out-of-tree drivers
+Example for out-of-tree backends
 ```bash
-helm secrets -d ./path/to/driver.sh view ./tests/assets/helm_vars/secrets.yaml
+helm secrets -b ./path/to/backend.sh view ./tests/assets/helm_vars/secrets.yaml
 ```
 
-The driver option is a global one. A file level switch isn't supported yet.
+The backend option is a global one. A file level switch isn't supported yet.
 
-## Implement an own secret driver
+## Implement an own secret backend
 
-Start by a copy of [sops driver](https://github.com/jkroepke/helm-secrets/blob/main/scripts/drivers/sops.sh) and adjust to your own needs.
-The custom driver can be load via `HELM_SECRETS_DRIVER` parameter or `-d` option (higher preference).
+Start by a copy of [sops backend](https://github.com/jkroepke/helm-secrets/blob/main/scripts/backends/sops.sh) and adjust to your own needs.
+The custom backend can be load via `HELM_SECRETS_BACKEND` parameter or `-d` option (higher preference).
 
-## Pass additional arguments to a secret driver
+## Pass additional arguments to a secret backend
 
 ```bash
 helm secrets -a "--verbose" view ./tests/assets/helm_vars/secrets.yaml
@@ -47,15 +47,16 @@ results into:
 
 ## Explicitly specify a binary path
 
-If e.g. `sops` is installed at the non-default location or if you have multiple versions of sops on your system, you can use `HELM_SECRETS_$DRIVER_PATH` to explicitly specify the sops binary to be used.
+If e.g. `sops` is installed at the non-default location or if you have multiple versions of sops on your system, 
+you can use `HELM_SECRETS_$BACKEND_PATH` to explicitly specify the sops binary to be used.
 
 ```bash
-# Example for in-tree drivers via environment variable
+# Example for in-tree backends via environment variable
 HELM_SECRETS_SOPS_PATH=/custom/location/sops helm secrets view ./tests/assets/helm_vars/secrets.yaml
 HELM_SECRETS_VALS_PATH=/custom/location/vals helm secrets view ./tests/assets/helm_vars/secrets.yaml
 ```
 
-# List of implemented secret drivers
+# List of implemented secret backends
 
 ## sops
 
@@ -64,7 +65,7 @@ sops 3.2.0 is required at a minimum.
 
 Download: https://github.com/mozilla/sops/releases/latest
 
-Before start to use sops with gpg, consider starting to use [age](https://github.com/mozilla/sops#encrypting-using-age).
+Before starting using sops with gpg, consider starting to use [age](https://github.com/mozilla/sops#encrypting-using-age).
 
 The sops secret store is enabled by default.
 
@@ -88,27 +89,27 @@ All clients are integrated into vals, no additional tools required.
 
 Download: https://github.com/variantdev/vals/releases/latest
 
-The vals secret driver can be enabled by define `HELM_SECRETS_DRIVER=vals`.
+The vals secret backend can be enabled by define `HELM_SECRETS_BACKEND=vals`.
 
 Example file: [examples/vals/secrets.yaml](https://github.com/jkroepke/helm-secrets/blob/main/examples/vals/secrets.yaml)
 
 ## Hashicorp Vault
 
-**DEPRECATED: Use vals driver instead!**
+**DEPRECATED: Use vals backend instead!**
 
 If you use Vault with helm-secrets, the vault CLI tool is needed.
 
 Download: https://www.vaultproject.io/downloads
 
-The vault secret driver can be enabled by define `HELM_SECRETS_DRIVER=vault`.
+The vault secret backend can be enabled by define `HELM_SECRETS_BACKEND=vault`.
 
 Example file: [examples/vault/secrets.yaml](https://github.com/jkroepke/helm-secrets/blob/main/examples/vault/secrets.yaml) 
 
 ## envsubst
 
-**DEPRECATED: Use vals driver instead!**
+**DEPRECATED: Use vals backend instead!**
 
-If you have stored your secret inside the environment variables, you could use the envsubst driver.
+If you have stored your secret inside the environment variables, you could use the envsubst backend.
 
 ### Installation
 
@@ -132,6 +133,6 @@ If you use [Doppler](https://doppler.com) with helm-secrets, the doppler CLI too
 
 Installation: https://docs.doppler.com/docs/enclave-installation
 
-You need to make sure chart folder or parent one is in correct CLI's scope with enough access to project.
+You need to make sure chart folder or parent one is in correct CLI's scope with enough access to a project.
 
 Example file: [examples/doppler/secrets.yaml](https://github.com/jkroepke/helm-secrets/blob/main/examples/doppler/secrets.yaml) 

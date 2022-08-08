@@ -183,28 +183,28 @@ jobs:
           }}"
           helm secrets -v
 
-      - name: HELM_SECRETS_DRIVER=sops bats --tap -r tests/unit
+      - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
-          HELM_SECRETS_DRIVER: sops
+          HELM_SECRETS_BACKEND: sops
 
-      - name: HELM_SECRETS_DRIVER=vault bats --tap -r tests/unit
+      - name: HELM_SECRETS_BACKEND=vault bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
-          HELM_SECRETS_DRIVER: vault
+          HELM_SECRETS_BACKEND: vault
 
-      - name: HELM_SECRETS_DRIVER=envsubst bats --tap -r tests/unit
+      - name: HELM_SECRETS_BACKEND=envsubst bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
-          HELM_SECRETS_DRIVER: envsubst
+          HELM_SECRETS_BACKEND: envsubst
 
-      - name: HELM_SECRETS_DRIVER=vals bats --tap -r tests/unit
+      - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
         run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
         env:
-          HELM_SECRETS_DRIVER: vals
+          HELM_SECRETS_BACKEND: vals
 
   coverage:
     runs-on: ubuntu-latest
@@ -265,19 +265,19 @@ jobs:
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
-          HELM_SECRETS_DRIVER: vault
+          HELM_SECRETS_BACKEND: vault
           BASHCOV_COMMAND_NAME: helm-secrets:vault
 
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
-          HELM_SECRETS_DRIVER: envsubst
+          HELM_SECRETS_BACKEND: envsubst
           BASHCOV_COMMAND_NAME: helm-secrets:envsubst
 
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
-          HELM_SECRETS_DRIVER: vals
+          HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
       - uses: codecov/codecov-action@v3

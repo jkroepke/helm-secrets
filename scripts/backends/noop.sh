@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
-driver_is_file_encrypted() {
+backend_is_file_encrypted() {
     true
 }
 
-driver_encrypt_file() {
+backend_encrypt_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"
@@ -18,7 +18,7 @@ driver_encrypt_file() {
     fi
 }
 
-driver_decrypt_file() {
+backend_decrypt_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"
@@ -32,7 +32,7 @@ driver_decrypt_file() {
     fi
 }
 
-driver_edit_file() {
+backend_edit_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"

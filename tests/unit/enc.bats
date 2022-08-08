@@ -24,11 +24,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.dec.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
@@ -45,11 +45,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt some-secrets.yaml" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.dec.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
@@ -66,11 +66,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml.dec" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.dec.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     cp "${VALUES_PATH}" "${VALUES_PATH}.dec"
@@ -89,7 +89,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml + special char directory name" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
@@ -97,7 +97,7 @@ load '../bats/extensions/bats-file/load'
         skip "Skip on Windows"
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.dec.yaml"
     VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
 
     run "${HELM_BIN}" secrets enc "${VALUES_PATH}"
@@ -114,11 +114,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.dec.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     DIR="$(dirname "${VALUES_PATH}")"
 
@@ -145,11 +145,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_SUFFIX" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.dec.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     DIR="$(dirname "${VALUES_PATH}")"
 
@@ -176,11 +176,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.yaml with HELM_SECRETS_DEC_PREFIX + HELM_SECRETS_DEC_SUFFIX" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.dec.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.dec.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     DIR="$(dirname "${VALUES_PATH}")"
 
@@ -207,11 +207,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "enc: Encrypt secrets.tmp.yaml" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.tmp.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.tmp.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     YAML="hello: world"

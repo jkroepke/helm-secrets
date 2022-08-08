@@ -7,11 +7,11 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "vault: fail on error" {
-    if [ "${HELM_SECRETS_DRIVER}" != "vault" ]; then
+    if [ "${HELM_SECRETS_BACKEND}" != "vault" ]; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -25,13 +25,13 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "vault: cleanup temporary files" {
-    if [ "${HELM_SECRETS_DRIVER}" != "vault" ]; then
+    if [ "${HELM_SECRETS_BACKEND}" != "vault" ]; then
         skip
     fi
 
     export HELM_SECRETS_DEC_TMP_DIR="${TMPDIR:-"/tmp/"}helm-secrets.$$"
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 

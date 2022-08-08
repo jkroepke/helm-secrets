@@ -23,8 +23,8 @@ view_helper() {
 
     real_file=$(_file_get "${file}")
 
-    if driver_is_file_encrypted "${real_file}"; then
-        driver_decrypt_file "yaml" "${real_file}"
+    if backend_is_file_encrypted "${real_file}"; then
+        backend_decrypt_file "yaml" "${real_file}"
     else
         cat "${real_file}"
     fi

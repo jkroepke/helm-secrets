@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     run "${HELM_BIN}" secrets dec "${VALUES_PATH}"
@@ -40,7 +40,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_PREFIX" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     DIR="$(dirname "${VALUES_PATH}")"
 
@@ -64,7 +64,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_SUFFIX" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     DIR="$(dirname "${VALUES_PATH}")"
 
@@ -88,7 +88,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with HELM_SECRETS_DEC_PREFIX + HELM_SECRETS_DEC_SUFFIX" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     DIR="$(dirname "${VALUES_PATH}")"
 
@@ -112,7 +112,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "clean: Cleanup with custom name" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     run "${HELM_BIN}" secrets dec "${VALUES_PATH}"

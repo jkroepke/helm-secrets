@@ -3,7 +3,7 @@
 create_encrypted_file() {
     {
         file="${2:-secrets.yaml}"
-        case "${3:-${HELM_SECRETS_DRIVER}}" in
+        case "${3:-${HELM_SECRETS_BACKEND}}" in
         sops)
             # shellcheck disable=SC2059
             printf "$1" >"${TEST_TEMP_DIR}/${file}"
@@ -63,7 +63,7 @@ create_encrypted_file() {
             printf "$1" >"${TEST_TEMP_DIR}/${file}"
             ;;
         *)
-            echo "Unknown driver ${HELM_SECRETS_DRIVER}"
+            echo "Unknown backend ${HELM_SECRETS_BACKEND}"
             exit 1
             ;;
         esac

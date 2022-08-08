@@ -39,11 +39,11 @@ encrypt_helper() {
         file_dec="${file}"
     fi
 
-    if driver_is_file_encrypted "${file_dec}"; then
+    if backend_is_file_encrypted "${file_dec}"; then
         fatal 'Already encrypted: %s' "${file_dec}"
     fi
 
-    driver_encrypt_file "yaml" "${file_dec}" "${file}"
+    backend_encrypt_file "yaml" "${file_dec}" "${file}"
 
     if [ "${file}" = "${file_dec}" ]; then
         printf 'Encrypted %s\n' "${file_dec}"

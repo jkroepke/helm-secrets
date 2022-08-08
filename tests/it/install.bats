@@ -33,7 +33,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -50,7 +50,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + --values" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -67,7 +67,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + --values=" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -84,7 +84,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -101,7 +101,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml + --values" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -118,7 +118,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml + --values=" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -135,7 +135,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + helm flag" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -153,7 +153,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + pre decrypted secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     printf 'service:\n  port: 82' >"${FILE}.dec"
     create_chart "${TEST_TEMP_DIR}"
@@ -173,7 +173,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + q flag" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -190,7 +190,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + quiet flag" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -207,7 +207,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + special path" {
-    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"
 
@@ -240,7 +240,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + sops://" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -254,7 +254,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + http://" {
-    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -275,7 +275,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
+    FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml?ref=main"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -292,7 +292,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + secrets://http://" {
-    FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -311,7 +311,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml?ref=main"
+    FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml?ref=main"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -326,11 +326,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -346,11 +346,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://name#key" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -367,11 +367,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/name#key" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -388,11 +388,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/name#key + HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -403,11 +403,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/non-exists#key" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.gpg_key.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -418,11 +418,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import://" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -438,11 +438,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://name#key" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -459,11 +459,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/name#key" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -480,11 +480,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/name#key + HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -495,11 +495,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/non-exists#key" {
-    if on_windows || ! is_driver "sops"; then
+    if on_windows || ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.age.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"

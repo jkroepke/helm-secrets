@@ -45,7 +45,7 @@ brew install sops
 More information's here: https://github.com/mozilla/sops
 
 ### gpg
-sops only non public cloud encryption method based on gpg.
+sops only non-public cloud encryption method based on gpg.
 
 Alternately available via [homebrew](https://brew.sh/):
 ```bash
@@ -55,7 +55,7 @@ brew info gnupg
 On Linux use your package manager to install gpg if it's not already installed.
 
 ### vault-cli (optional)
-The vault cli is only required to run the tests with the `HELM_SECRETS_DRIVER=vault` environment variable.
+The vault cli is only required to run the tests with the `HELM_SECRETS_BACKEND=vault` environment variable.
 
 You could download vault here: https://www.vaultproject.io/downloads
 
@@ -90,15 +90,15 @@ This method is described as "Run bats from source" inside the bats-core document
 
 More information about running single tests or filtering tests can be found here: https://github.com/bats-core/bats-core#usage
 
-By default, the sops driver is selected for tests. If you want to test an other secrets driver like
-[vault](../scripts/drivers/vault.sh) you could do it by env variable `HELM_SECRETS_DRIVER=vault`.
+By default, the sops backend is selected for tests. 
+If you want to test another secret backend like [vals](../scripts/backends/vals.sh), you could do it by env variable `HELM_SECRETS_BACKEND=vals`.
 
 ```bash
 # Unit Tests
-HELM_SECRETS_DRIVER=vault bats -r tests/unit
+HELM_SECRETS_BACKEND=vault bats -r tests/unit
 
 # IT Tests
-HELM_SECRETS_DRIVER=vault bats -r tests/it
+HELM_SECRETS_BACKEND=vault bats -r tests/it
 ```
 
 The vault tests require a reachable vault server. Start one on you local machine by run:

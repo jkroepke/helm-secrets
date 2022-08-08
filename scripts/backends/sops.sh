@@ -4,17 +4,17 @@ _SOPS="${HELM_SECRETS_SOPS_PATH:-${HELM_SECRETS_SOPS_BIN:-sops}}"
 
 _sops() {
     # shellcheck disable=SC2086
-    set -- ${SECRET_DRIVER_ARGS} "$@"
+    set -- ${SECRET_BACKEND_ARGS} "$@"
     $_SOPS "$@"
 }
 
-driver_is_file_encrypted() {
+backend_is_file_encrypted() {
     input="${1}"
 
     grep -q 'sops' "${input}" && grep -q 'mac' "${input}" && grep -q 'version' "${input}"
 }
 
-driver_encrypt_file() {
+backend_encrypt_file() {
     type="${1}"
     input="${2}"
     output="${3}"
@@ -26,7 +26,7 @@ driver_encrypt_file() {
     fi
 }
 
-driver_decrypt_file() {
+backend_decrypt_file() {
     type="${1}"
     input="${2}"
     # if omit then output to stdout
@@ -39,7 +39,7 @@ driver_decrypt_file() {
     fi
 }
 
-driver_edit_file() {
+backend_edit_file() {
     type="${1}"
     input="${2}"
 

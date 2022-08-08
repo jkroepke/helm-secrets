@@ -27,8 +27,8 @@ Available Commands:
 
 Available Options:
   --quiet                    -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
-  --driver                   -d  Secret driver to use for decryption or encryption (env: $HELM_SECRETS_DRIVER)
-  --driver-args              -a  Additional args for secret driver (env: $HELM_SECRETS_DRIVER_ARGS)
+  --backend                  -b  Secret backend to use for decryption or encryption (env: $HELM_SECRETS_BACKEND)
+  --backend-args             -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
   --help                     -h  Show help
   --version                  -v  Display version of helm-secrets
   --output-decrypt-file-path     Output the path of decrypted file

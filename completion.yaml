@@ -1,7 +1,7 @@
 name: secrets
 flags:
   - help
-  - driver
+  - backend
   - quiet
 commands:
   - name: dec
