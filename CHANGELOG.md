@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.15.0] - 2022-08-08
+
 ### Changed
 - Prefer bash from `Git for Windows` over `WSL` shell to avoid WSL interop incompatibilities
 - Deprecate `vault` driver. The `vals` driver supports vault as backend, too.
@@ -207,7 +209,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v3.14.1...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v3.15.0...HEAD
+[3.15.0]: https://github.com/jkroepke/helm-secrets/compare/v3.14.1...v3.15.0
 [3.14.1]: https://github.com/jkroepke/helm-secrets/compare/v3.14.0...v3.14.1
 [3.14.0]: https://github.com/jkroepke/helm-secrets/compare/v3.13.0...v3.14.0
 [3.13.0]: https://github.com/jkroepke/helm-secrets/compare/v3.12.0...v3.13.0
