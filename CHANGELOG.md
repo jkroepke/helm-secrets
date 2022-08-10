@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- commandline flag --jsonsops <file.json> that uses sops to decrypte the file e.g. chart/files/config.json.
+  The decrypted file can then be imported into Secret or ConfigMap with Files.get file.json.dec
+
 ### Changed
 - Prefer bash from "Git for Windows" over "WSL" shell to avoid WSL interop incompatibilities
 
