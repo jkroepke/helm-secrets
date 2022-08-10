@@ -46,17 +46,28 @@ helm_wrapper() {
 
     while [ $j -lt $argc ]; do
         case "$1" in
-        -f | --values | --values=?*)
+        -f | --values | --values=?* | --sopsjson | --sopsjson=?*)
+            case "$1" in
+            --sopsjson | --sopsjson=?*)
+                hide=true
+                type=json
+                ;;
+            *)
+                hide=false
+                type=yaml
+                ;;
+            esac
+
             case "$1" in
             *=*)
                 file="${1#*=}"
 
-                set -- "$@" "${1%%=*}"
+                [ "${hide}" = false ] && set -- "$@" "${1%%=*}"
                 ;;
             *)
                 file="${2}"
 
-                set -- "$@" "$1"
+                [ "${hide}" = false ] && set -- "$@" "$1"
                 shift
                 j=$((j + 1))
                 ;;
@@ -68,21 +79,21 @@ helm_wrapper() {
 
             file_dec="$(_file_dec_name "${real_file}")"
             if [ -f "${file_dec}" ]; then
-                set -- "$@" "$(_helm_winpath "${file_dec}")"
+                [ "${hide}" = false ] && set -- "$@" "$(_helm_winpath "${file_dec}")"
 
                 if [ "${QUIET}" = "false" ]; then
                     printf '[helm-secrets] Decrypt skipped: %s\n' "${file}" >&2
                 fi
             else
-                if decrypt_helper "${real_file}"; then
-                    set -- "$@" "$(_helm_winpath "${file_dec}")"
+                if decrypt_helper "${real_file}" "${type}"; then
+                    [ "${hide}" = false ] && set -- "$@" "$(_helm_winpath "${file_dec}")"
                     printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                     if [ "${QUIET}" = "false" ]; then
                         printf '[helm-secrets] Decrypt: %s\n' "${file}" >&2
                     fi
                 else
-                    set -- "$@" "$(_helm_winpath "${real_file}")"
+                    [ "${hide}" = false ] && set -- "$@" "$(_helm_winpath "${real_file}")"
                 fi
             fi
             ;;
