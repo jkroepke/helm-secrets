@@ -7,7 +7,7 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "gitops: Be silent inside ArgoCD" {
-    if on_wsl || ! on_linux; then
+    if on_windows || on_wsl; then
         skip
     fi
 

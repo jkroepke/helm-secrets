@@ -87,7 +87,13 @@ _helm_winpath() { printf '%s' "${1}"; }
 case "$(uname -s)" in
 CYGWIN*)
     on_cygwin() { true; }
-    _winpath() { printf '%s' "${1}" | cygpath -w -l -f -; }
+    _winpath() {
+        if [ "${2:-0}" = "1" ]; then
+            printf '%s' "${1}" | cygpath -w -l -f - | sed -e 's!\\!\\\\!g'
+        else
+            printf '%s' "${1}" | cygpath -w -l -f -
+        fi
+    }
     _helm_winpath() { _winpath "$@"; }
     ;;
 Darwin)
@@ -102,7 +108,11 @@ Darwin)
         on_wsl() { true; }
         _winpath() {
             touch "${1}"
-            printf '%s' "$(wslpath -w "${1}")"
+            if [ "${2:-0}" = "1" ]; then
+                wslpath -w "${1}" | sed -e 's!\\!\\\\!g'
+            else
+                wslpath -w "${1}"
+            fi
         }
 
         case "${HELM_BIN}" in
