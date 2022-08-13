@@ -4,7 +4,7 @@ load '../lib/binaries.bash'
 export WSLENV="${WSLENV:-}"
 
 is_backend() {
-    [ "${HELM_SECRETS_BACKEND}" == "${1}" ]
+    [[ "${HELM_SECRETS_BACKEND}" == "${1}" ]]
 }
 
 on_windows() {
@@ -101,28 +101,15 @@ setup_file() {
         fi
 
         case "${HELM_SECRETS_BACKEND:-sops}" in
-        vault)
-            vault server -dev -dev-root-token-id=test &>/dev/null &
-            echo "$!" >"${HOME}/vault.pid"
-            sleep 0.5
-            vault login token=test
-            sh "${TEST_DIR}/assets/values/vault/seed.sh"
-            ;;
-        *)
+        sops)
             GPG_PRIVATE_KEY="${TEST_DIR}/assets/gpg/private.gpg"
             if on_wsl; then
                 GPG_PRIVATE_KEY="$(wslpath -w "${GPG_PRIVATE_KEY}")"
             fi
             "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
             ;;
-        esac
-
-        if on_windows; then
-            # remove symlink, since its not supported on windows
-            find "${TEST_DIR}" -name secrets.symlink.yaml -delete
-        fi
-
-        export _TEST_KEY="-----BEGIN PGP MESSAGE-----
+        vals)
+            export _TEST_KEY="-----BEGIN PGP MESSAGE-----
 wcFMAxYpv4YXKfBAARAAVzE7/FMD7+UWwMls23zKKLoTs+5w9GMvugn0wi5KOJ8P
 PSrRY4r27VhwQH38gWDrzo3RCmO9414xZ0JW0HaN2Pgd3ml6mYCY/5RE7apgGZQI
 3Im0fv8bhIwaP2UWPp74EXLzA3mh1dUtwxmuWOeoSq+Vm5NtbjkfUt/4MIcF5IAY
@@ -139,9 +126,16 @@ EmU8gQoUsAHKYro0hPfzBZyJlL+TqCPgHeRPANVgm4Ww6RlVrNFpTy9H4m4s5y/h
 EzAA
 =jf7D
 -----END PGP MESSAGE-----"
-        export _TEST_global_secret=global_bar
-        export _TEST_SERVICE_PORT=81
-        export _TEST_SOME_SERVICE_PORT=83
+            export _TEST_global_secret=global_bar
+            export _TEST_SERVICE_PORT=81
+            export _TEST_SOME_SERVICE_PORT=83
+            ;;
+        esac
+
+        if on_windows; then
+            # remove symlink, since its not supported on windows
+            find "${TEST_DIR}" -name secrets.symlink.yaml -delete
+        fi
     } >&2
 }
 
@@ -179,11 +173,9 @@ teardown() {
 
 teardown_file() {
     {
-        "${GPGCONF_BIN}" --kill gpg-agent >&2 || true
-
         case "${HELM_SECRETS_BACKEND:-sops}" in
-        vault)
-            kill -9 "$(cat "${HOME}/vault.pid")"
+        sops)
+            "${GPGCONF_BIN}" --kill gpg-agent >&2 || true
             ;;
         esac
     } >&2

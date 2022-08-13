@@ -55,7 +55,7 @@ data "external" "helm-secrets" {
 }
 
 resource "helm_release" "example" {
-  ...
+  
 
   values = [
     file("../../examples/sops/values.yaml"),
@@ -67,32 +67,12 @@ An example of how to use helm-secrets with terraform could be found in [examples
 
 ## Secret backends
 
-helm-secrets support multiple secret backends like [sops](https://github.com/mozilla/sops) and [vals](https://github.com/variantdev/vals/).
+helm-secrets support multiple secret backends.
+Currently, [sops](https://github.com/mozilla/sops) and [vals](https://github.com/variantdev/vals/) are supported.
 
 See [Secret-Backends](https://github.com/jkroepke/helm-secrets/wiki/Secret-Backends) how to use them.
 
-## Main features
-
-The current version of this plugin using [mozilla/sops](https://github.com/mozilla/sops/) by default as backend.
-
-[Hashicorp Vault](http://vaultproject.io/) is supported as secret source since v3.2.0, too. In addition, [sops support vault since v3.6.0 natively](https://github.com/mozilla/sops#encrypting-using-hashicorp-vault).
-
-What kind of problems this plugin solves:
-
-- Simple replaceable layer integrated with helm command for encrypting, decrypting, view secrets files stored in any place.
-- On the fly decryption and cleanup for helm install/upgrade with a helm command wrapper
-
-If you are using sops (used by default), you have some additional features:
-
-- [Support for YAML/JSON structures encryption - Helm YAML secrets files](https://github.com/mozilla/sops#important-information-on-types)
-- [Encryption per value where visual Diff should work even on encrypted files](https://github.com/mozilla/sops/blob/master/example.yaml)
-- [On the fly decryption for git diff](https://github.com/mozilla/sops#showing-diffs-in-cleartext-in-git)
-- [Multiple key management solutions like PGP, AWS KMS and GCP KMS at same time](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
-- [Simple adding/removing keys](https://github.com/mozilla/sops#adding-and-removing-keys)
-- [With AWS KMS permissions management for keys](https://aws.amazon.com/kms/)
-- [Secrets files directory tree separation with recursive .sops.yaml files search](https://github.com/mozilla/sops#using-sops-yaml-conf-to-select-kms-pgp-for-new-files)
-- [Extracting sub-elements from encrypted file structure](https://github.com/mozilla/sops#extract-a-sub-part-of-a-document-tree)
-- [Encrypt only part of a file if needed](https://github.com/mozilla/sops#encrypting-only-parts-of-a-file). [Example encrypted file](https://github.com/mozilla/sops/blob/master/example.yaml)
+## Documentation
 
 An additional documentation, resources and examples can be found [here](https://github.com/jkroepke/helm-secrets/wiki/Usage).
 
@@ -108,7 +88,7 @@ An additional documentation, resources and examples can be found [here](https://
 
 ## Copyright and license
 
-© 2020-2021 [Jan-Otto Kröpke (jkroepke)](https://github.com/jkroepke/helm-secrets)
+© 2020-2022 [Jan-Otto Kröpke (jkroepke)](https://github.com/jkroepke/helm-secrets)
 
 © 2017-2020 [Zendesk](https://github.com/zendesk/helm-secrets)
 
