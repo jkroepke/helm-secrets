@@ -30,7 +30,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -45,7 +45,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + --values" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -60,7 +60,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + --values=" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -74,11 +74,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml.gotpl" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml.gotpl"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml.gotpl"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -93,7 +93,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -108,7 +108,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + values.yaml" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/values.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/values.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -123,7 +123,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + --values" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -138,7 +138,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + --values=" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -153,7 +153,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + helm flag" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -172,7 +172,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -187,7 +187,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + pre decrypted secrets.yaml" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     printf 'service:\n  port: 82' >"${VALUES_PATH}.dec"
@@ -203,7 +203,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + q flag" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -218,7 +218,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + quiet flag" {
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -237,7 +237,7 @@ load '../bats/extensions/bats-file/load'
         skip "Skip on Windows"
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
 
     create_chart "${SPECIAL_CHAR_DIR}"
@@ -268,30 +268,30 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "lint: helm lint w/ chart + --driver-args (simple)" {
-    if ! is_driver "sops"; then
+@test "lint: helm lint w/ chart + --backend-args (simple)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets --backend-args "--verbose" lint "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
     assert_success
 }
 
-@test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (simple)" {
-    if ! is_driver "sops"; then
+@test "lint: helm lint w/ chart + some-secrets.yaml + --backend-args (simple)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --driver-args "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    run "${HELM_BIN}" secrets --backend-args "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
@@ -302,11 +302,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + -a (simple)" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -321,19 +321,19 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "lint: helm lint w/ chart + some-secrets.yaml + HELM_SECRETS_DRIVER_ARGS (simple)" {
-    if ! is_driver "sops"; then
+@test "lint: helm lint w/ chart + some-secrets.yaml + HELM_SECRETS_BACKEND_ARGS (simple)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    HELM_SECRETS_DRIVER_ARGS=--verbose
+    HELM_SECRETS_BACKEND_ARGS=--verbose
 
-    run env HELM_SECRETS_DRIVER_ARGS="${HELM_SECRETS_DRIVER_ARGS}" WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}" \
+    run env HELM_SECRETS_BACKEND_ARGS="${HELM_SECRETS_BACKEND_ARGS}" WSLENV="HELM_SECRETS_BACKEND_ARGS:${WSLENV}" \
         "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
@@ -344,17 +344,17 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "lint: helm lint w/ chart + some-secrets.yaml + --driver-args (complex)" {
-    if ! is_driver "sops"; then
+@test "lint: helm lint w/ chart + some-secrets.yaml + --backend-args (complex)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --driver-args "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    run "${HELM_BIN}" secrets --backend-args "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
@@ -365,11 +365,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + some-secrets.yaml + -a (complex)" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -384,17 +384,17 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "lint: helm lint w/ chart + some-secrets.yaml + HELM_SECRETS_DRIVER_ARGS (complex)" {
-    if ! is_driver "sops"; then
+@test "lint: helm lint w/ chart + some-secrets.yaml + HELM_SECRETS_BACKEND_ARGS (complex)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    VALUES="assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\"" WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}" \
+    run env HELM_SECRETS_BACKEND_ARGS="--verbose --output-type \"yaml\"" WSLENV="HELM_SECRETS_BACKEND_ARGS:${WSLENV}" \
         "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"

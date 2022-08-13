@@ -1,24 +1,24 @@
 #!/usr/bin/env sh
 
 if [ "${QUIET}" = "false" ]; then
-    log 'DEPRECATED: doppler driver is going to be removed in the next major version.'
+    log 'DEPRECATED: doppler backend is going to be removed in the next major version.'
 fi
 
 _DOPPLER="${HELM_SECRETS_VAULT_PATH:-doppler}"
 
 # shellcheck disable=SC2034
-_DRIVER_REGEX='!doppler [a-z0-9_-]*\#.*\#[A-Z0-9_]*'
+_BACKEND_REGEX='!doppler [a-z0-9_-]*\#.*\#[A-Z0-9_]*'
 
-# shellcheck source=scripts//drivers/_custom.sh
-. "${SCRIPT_DIR}/drivers/_custom.sh"
+# shellcheck source=scripts/backends/_custom.sh
+. "${SCRIPT_DIR}/backends/_custom.sh"
 
 _doppler() {
     # shellcheck disable=SC2086
-    set -- ${SECRET_DRIVER_ARGS} "$@"
+    set -- ${SECRET_BACKEND_ARGS} "$@"
     $_DOPPLER "$@"
 }
 
-_custom_driver_get_secret() {
+_custom_backend_get_secret() {
     _SECRET=$2
 
     # Tokenize

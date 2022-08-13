@@ -7,7 +7,7 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "terraform: read valid file" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     run "${HELM_BIN}" secrets terraform "${FILE}"
     assert_success
@@ -17,7 +17,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "terraform: read invalid file" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/non-exists.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/non-exists.yaml"
 
     run "${HELM_BIN}" secrets terraform "${FILE}"
     assert_failure

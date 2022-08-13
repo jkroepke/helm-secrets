@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
@@ -33,7 +33,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: some-secrets.yaml" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/some-secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
@@ -42,7 +42,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: values.yaml" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/values.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/values.yaml"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
@@ -55,7 +55,7 @@ load '../bats/extensions/bats-file/load'
         skip "Skip on Windows"
     fi
 
-    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
@@ -63,14 +63,14 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_bar'
 }
 
-@test "view: secrets.yaml + --driver-args (simple)" {
-    if ! is_driver "sops"; then
+@test "view: secrets.yaml + --backend-args (simple)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
-    run "${HELM_BIN}" secrets --driver-args "--verbose" view "${FILE}"
+    run "${HELM_BIN}" secrets --backend-args "--verbose" view "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial 'global_secret: '
@@ -78,11 +78,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + -a (simple)" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     run "${HELM_BIN}" secrets -a "--verbose" view "${FILE}"
     assert_success
@@ -91,17 +91,17 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_bar'
 }
 
-@test "view: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (simple)" {
-    if ! is_driver "sops"; then
+@test "view: secrets.yaml + HELM_SECRETS_BACKEND_ARGS (simple)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
-    HELM_SECRETS_DRIVER_ARGS=--verbose
-    export HELM_SECRETS_DRIVER_ARGS
+    HELM_SECRETS_BACKEND_ARGS=--verbose
+    export HELM_SECRETS_BACKEND_ARGS
     # shellcheck disable=SC2030 disable=SC2031
-    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
+    export WSLENV="HELM_SECRETS_BACKEND_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success
@@ -110,14 +110,14 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_bar'
 }
 
-@test "view: secrets.yaml + --driver-args (complex)" {
-    if ! is_driver "sops"; then
+@test "view: secrets.yaml + --backend-args (complex)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
-    run "${HELM_BIN}" secrets --driver-args "--verbose --output-type \"yaml\"" view "${FILE}"
+    run "${HELM_BIN}" secrets --backend-args "--verbose --output-type \"yaml\"" view "${FILE}"
     assert_success
     assert_output --partial "Data key recovered successfully"
     assert_output --partial 'global_secret: '
@@ -125,11 +125,11 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "view: secrets.yaml + -a (complex)" {
-    if ! is_driver "sops"; then
+    if ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     run "${HELM_BIN}" secrets -a "--verbose --output-type \"yaml\"" view "${FILE}"
     assert_success
@@ -138,19 +138,19 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_bar'
 }
 
-@test "view: secrets.yaml + HELM_SECRETS_DRIVER_ARGS (complex)" {
-    if ! is_driver "sops"; then
+@test "view: secrets.yaml + HELM_SECRETS_BACKEND_ARGS (complex)" {
+    if ! is_backend "sops"; then
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     # shellcheck disable=SC2089
-    HELM_SECRETS_DRIVER_ARGS="--verbose --output-type \"yaml\""
+    HELM_SECRETS_BACKEND_ARGS="--verbose --output-type \"yaml\""
     # shellcheck disable=SC2090
-    export HELM_SECRETS_DRIVER_ARGS
+    export HELM_SECRETS_BACKEND_ARGS
     # shellcheck disable=SC2030 disable=SC2031
-    export WSLENV="HELM_SECRETS_DRIVER_ARGS:${WSLENV}"
+    export WSLENV="HELM_SECRETS_BACKEND_ARGS:${WSLENV}"
 
     run "${HELM_BIN}" secrets view "${FILE}"
     assert_success

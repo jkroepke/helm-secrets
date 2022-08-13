@@ -63,13 +63,13 @@ resource "helm_release" "example" {
   ]
 }
 ```
-An example how to use helm-secrets with terraform could be found in [examples/terraform](examples/terraform/helm.tf).
+An example of how to use helm-secrets with terraform could be found in [examples/terraform](examples/terraform/helm.tf).
 
-## Secret drivers
+## Secret backends
 
-helm-secrets supports multiplie secret drivers like [sops](https://github.com/mozilla/sops), [Hashicorp Vault](https://www.vaultproject.io/), [vals](https://github.com/variantdev/vals/) and more.
+helm-secrets support multiple secret backends like [sops](https://github.com/mozilla/sops) and [vals](https://github.com/variantdev/vals/).
 
-See [Secret-Driver](https://github.com/jkroepke/helm-secrets/wiki/Secret-Driver) how to use them.
+See [Secret-Backends](https://github.com/jkroepke/helm-secrets/wiki/Secret-Backends) how to use them.
 
 ## Main features
 
@@ -82,7 +82,7 @@ What kind of problems this plugin solves:
 - Simple replaceable layer integrated with helm command for encrypting, decrypting, view secrets files stored in any place.
 - On the fly decryption and cleanup for helm install/upgrade with a helm command wrapper
 
-If you are using sops (used by default) you have some additional features:
+If you are using sops (used by default), you have some additional features:
 
 - [Support for YAML/JSON structures encryption - Helm YAML secrets files](https://github.com/mozilla/sops#important-information-on-types)
 - [Encryption per value where visual Diff should work even on encrypted files](https://github.com/mozilla/sops/blob/master/example.yaml)
@@ -99,7 +99,7 @@ An additional documentation, resources and examples can be found [here](https://
 ## Moving parts of project
 
 - [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
-- [`scripts/drivers`](scripts/drivers) - Location of the in-tree secrets drivers
+- [`scripts/backends`](scripts/backends) - Location of the in-tree secrets backends
 - [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
 - [`scripts/lib`](scripts/lib) - Common functions used by `helm secrets`.
 - [`scripts/wrapper`](scripts/wrapper) - Wrapper scripts for Windows systems.

@@ -3,8 +3,8 @@
 load '../lib/binaries.bash'
 export WSLENV="${WSLENV:-}"
 
-is_driver() {
-    [ "${HELM_SECRETS_DRIVER}" == "${1}" ]
+is_backend() {
+    [ "${HELM_SECRETS_BACKEND}" == "${1}" ]
 }
 
 on_windows() {
@@ -68,7 +68,7 @@ setup_file() {
         export GIT_ROOT
         export TEST_DIR="${GIT_ROOT}/tests"
 
-        export HELM_SECRETS_DRIVER="${HELM_SECRETS_DRIVER:-"sops"}"
+        export HELM_SECRETS_BACKEND="${HELM_SECRETS_BACKEND:-"sops"}"
 
         export CACHE_DIR="${TEST_DIR}/.tmp/cache"
         export HELM_CACHE="${CACHE_DIR}/${_uname}/helm"
@@ -100,7 +100,7 @@ setup_file() {
             "${HELM_BIN}" secrets patch unix
         fi
 
-        case "${HELM_SECRETS_DRIVER:-sops}" in
+        case "${HELM_SECRETS_BACKEND:-sops}" in
         vault)
             vault server -dev -dev-root-token-id=test &>/dev/null &
             echo "$!" >"${HOME}/vault.pid"
@@ -181,7 +181,7 @@ teardown_file() {
     {
         "${GPGCONF_BIN}" --kill gpg-agent >&2 || true
 
-        case "${HELM_SECRETS_DRIVER:-sops}" in
+        case "${HELM_SECRETS_BACKEND:-sops}" in
         vault)
             kill -9 "$(cat "${HOME}/vault.pid")"
             ;;

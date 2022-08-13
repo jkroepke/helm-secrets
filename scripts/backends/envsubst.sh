@@ -1,27 +1,27 @@
 #!/usr/bin/env sh
 
 if [ "${QUIET}" = "false" ]; then
-    log 'DEPRECATED: Envsubst driver is going to be remove in the next major version. Use vals driver instead.'
+    log 'DEPRECATED: Envsubst backend is going to be remove in the next major version. Use vals backend instead.'
 fi
 
 _envsubst() {
     # shellcheck disable=SC2086
-    set -- ${SECRET_DRIVER_ARGS} "$@"
+    set -- ${SECRET_BACKEND_ARGS} "$@"
     envsubst "$@"
 }
 
-driver_is_file_encrypted() {
+backend_is_file_encrypted() {
     input="${1}"
 
     grep -q '\$' "${input}"
 }
 
-driver_encrypt_file() {
-    echo "Encrypting files with envsubst driver is not supported!"
+backend_encrypt_file() {
+    echo "Encrypting files with envsubst backend is not supported!"
     exit 1
 }
 
-driver_decrypt_file() {
+backend_decrypt_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"
@@ -35,7 +35,7 @@ driver_decrypt_file() {
     fi
 }
 
-driver_edit_file() {
-    echo "Editing files with envsubst driver is not supported!"
+backend_edit_file() {
+    echo "Editing files with envsubst backend is not supported!"
     exit 1
 }

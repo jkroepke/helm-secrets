@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Secret drivers are renamed to secret backends
+  - This is **breaking** custom integrations. All shell functions contains the name `driver` are renamed to `backend`, e.g.: `driver_encrypt_file` -> `backend_encrypt_file`
+  - The CLI Arguments `--driver`, `-d` and `--driver-args` has been renamed to `--backend`, `-b` and `--backend-args`
+  - The environment variables `HELM_SECRETS_DRIVER` and `HELM_SECRETS_DRIVER_ARGS` has been renamed to `HELM_SECRETS_BACKEND` and `HELM_SECRETS_BACKEND_ARGS`
+
 ## [3.15.0] - 2022-08-08
 
 ### Changed

@@ -4,7 +4,7 @@ _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
 _vals() {
     # shellcheck disable=SC2086
-    set -- ${SECRET_DRIVER_ARGS} "$@"
+    set -- ${SECRET_BACKEND_ARGS} "$@"
 
     # In case of an error, give us stderr
     # https://github.com/variantdev/vals/issues/60
@@ -13,18 +13,18 @@ _vals() {
     fi
 }
 
-driver_is_file_encrypted() {
+backend_is_file_encrypted() {
     input="${1}"
 
     grep -q 'ref+' "${input}"
 }
 
-driver_encrypt_file() {
+backend_encrypt_file() {
     echo "Encrypting files is not supported!"
     exit 1
 }
 
-driver_decrypt_file() {
+backend_decrypt_file() {
     input="${2}"
     # if omit then output to stdout
     output="${3:-}"
@@ -36,7 +36,7 @@ driver_decrypt_file() {
     fi
 }
 
-driver_edit_file() {
+backend_edit_file() {
     echo "Editing files is not supported!"
     exit 1
 }

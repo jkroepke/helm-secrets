@@ -11,7 +11,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_DRIVER}/secrets.yaml"
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
     create_chart "${TEST_TEMP_DIR}"
 

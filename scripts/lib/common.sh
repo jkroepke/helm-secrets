@@ -35,22 +35,22 @@ fatal() {
     exit 1
 }
 
-load_secret_driver() {
-    driver="${1}"
-    if [ -f "${SCRIPT_DIR}/drivers/${driver}.sh" ]; then
-        # shellcheck source=scripts/drivers/sops.sh
-        . "${SCRIPT_DIR}/drivers/${driver}.sh"
+load_secret_backend() {
+    backend="${1}"
+    if [ -f "${SCRIPT_DIR}/backends/${backend}.sh" ]; then
+        # shellcheck source=scripts/backends/sops.sh
+        . "${SCRIPT_DIR}/backends/${backend}.sh"
     else
-        # Allow to load out of tree drivers.
-        if [ ! -f "${driver}" ]; then
-            fatal "Can't find secret driver: %s" "${driver}"
+        # Allow to load out of tree backends.
+        if [ ! -f "${backend}" ]; then
+            fatal "Can't find secret backend: %s" "${backend}"
         fi
 
         # shellcheck disable=SC2034
         HELM_SECRETS_SCRIPT_DIR="${SCRIPT_DIR}"
 
-        # shellcheck source=tests/assets/custom-driver.sh
-        . "${driver}"
+        # shellcheck source=tests/assets/custom-backend.sh
+        . "${backend}"
     fi
 }
 

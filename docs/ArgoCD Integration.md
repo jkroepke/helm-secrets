@@ -55,7 +55,7 @@ because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c55
 # Installation on Argo CD
 
 Before using helm secrets, we are required to install `helm-secrets` on the `argocd-repo-server`. 
-Depends on the secret driver, `sops` or `vals` is required on the `argocd-repo-server`, too.
+Depends on the secret backend, `sops` or `vals` is required on the `argocd-repo-server`, too.
 There are two methods to do this. 
 Either create your custom ArgoCD Docker Image or install them via an init container.
 
@@ -91,11 +91,11 @@ RUN apt-get update && \
 RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-# sops driver installation
+# sops backend installation
 RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 
-# vals driver installation
+# vals backend installation
 RUN curl -fsSL https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar xzf - -C /usr/local/bin/ vals \
     && chmod +x /usr/local/bin/vals
@@ -211,7 +211,7 @@ When using private key encryption, it is required to configure ArgoCD repo serve
 to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s)
 can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
 
-## Private key encryption (sops driver only)
+## Private key encryption (sops backend only)
 There are two ways to configure ArgoCD to have access to your private key:
 
 - mount the PGP/age key secret as a volume in the argocd-repo-server; or

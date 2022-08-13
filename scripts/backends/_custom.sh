@@ -1,26 +1,26 @@
 #!/usr/bin/env sh
 
-_custom_driver_is_yaml() {
+_custom_backend_is_yaml() {
     false
 }
 
-_custom_driver_get_secret() {
-    echo "Please override function '_custom_driver_get_secret' in your driver!" >&2
+_custom_backend_get_secret() {
+    echo "Please override function '_custom_backend_get_secret' in your backend!" >&2
     exit 1
 }
 
-driver_is_file_encrypted() {
+backend_is_file_encrypted() {
     input="${1}"
 
-    LC_ALL=C.UTF-8 grep -q -e "${_DRIVER_REGEX}" "${input}"
+    LC_ALL=C.UTF-8 grep -q -e "${_BACKEND_REGEX}" "${input}"
 }
 
-driver_encrypt_file() {
+backend_encrypt_file() {
     echo "Encrypting files is not supported!"
     exit 1
 }
 
-driver_decrypt_file() {
+backend_decrypt_file() {
     type="${1}"
     input="${2}"
     # if omit then output to stdout
@@ -34,11 +34,11 @@ driver_decrypt_file() {
 
     # Grab all patterns, deduplicate and pass it to loop
     # https://github.com/koalaman/shellcheck/wiki/SC2013
-    if ! LC_ALL=C.UTF-8 grep -o -e "${_DRIVER_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
+    if ! LC_ALL=C.UTF-8 grep -o -e "${_BACKEND_REGEX}" "${input}" | sort | uniq | while IFS= read -r EXPRESSION; do
         # remove prefix
         _SECRET="${EXPRESSION#* }"
 
-        if ! SECRET=$(_custom_driver_get_secret "${type}" "${_SECRET}"); then
+        if ! SECRET=$(_custom_backend_get_secret "${type}" "${_SECRET}"); then
             exit 1
         fi
 
@@ -49,7 +49,7 @@ driver_decrypt_file() {
         EXPRESSION="$(echo "${EXPRESSION}" | _regex_escape)"
         _sed_i "s/${EXPRESSION}/*${YAML_ANCHOR}/g" "${output_yaml}"
 
-        if _custom_driver_is_yaml "${type}" "${_SECRET}"; then
+        if _custom_backend_is_yaml "${type}" "${_SECRET}"; then
             {
                 printf '.%s: &%s\n' "${YAML_ANCHOR}" "${YAML_ANCHOR}"
                 printf '%s\n\n' "${SECRET}" | sed -e 's/^/  /g'
@@ -72,7 +72,7 @@ driver_decrypt_file() {
     fi
 }
 
-driver_edit_file() {
+backend_edit_file() {
     echo "Editing files is not supported!"
     exit 1
 }

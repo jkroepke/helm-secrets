@@ -9,7 +9,7 @@ This integration is also supported inside [ArgoCD](https://github.com/jkroepke/h
 # Prerequisites
 
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
-- [vals](https://github.com/variantdev/vals) driver usage
+- [vals](https://github.com/variantdev/vals) backend usage
 
 ## Setup
 
@@ -61,7 +61,7 @@ Azure supports a multiple mechanism for authentication through environment varia
 
 # Usage
 
-Before running helm, the environment variable `HELM_SECRETS_DRIVER=vals` needs to be set.
+Before running helm, the environment variable `HELM_SECRETS_BACKEND=vals` needs to be set.
 This enables the vals integration in helm secrets.
 Vals needs cloud prover credentials to fetch secrets from the secret services.
 
