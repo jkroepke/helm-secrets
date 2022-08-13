@@ -269,7 +269,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "dec: secrets.yaml + --backend-args (simple)" {
+@test "dec: Decrypt secrets.yaml + --backend-args (simple)" {
     if ! is_backend "sops"; then
         skip
     fi
@@ -285,7 +285,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
 }
 
-@test "dec: secrets.yaml + -a (simple)" {
+@test "dec: Decrypt secrets.yaml + -a (simple)" {
     if ! is_backend "sops"; then
         skip
     fi
@@ -301,7 +301,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
 }
 
-@test "dec: secrets.yaml + HELM_SECRETS_BACKEND_ARGS (simple)" {
+@test "dec: Decrypt secrets.yaml + HELM_SECRETS_BACKEND_ARGS (simple)" {
     if ! is_backend "sops"; then
         skip
     fi
@@ -324,7 +324,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
 }
 
-@test "dec: secrets.yaml + --backend-args (complex)" {
+@test "dec: Decrypt secrets.yaml + --backend-args (complex)" {
     if ! is_backend "sops"; then
         skip
     fi
@@ -341,7 +341,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
 }
 
-@test "dec: secrets.yaml + -a (complex)" {
+@test "dec: Decrypt secrets.yaml + -a (complex)" {
     if ! is_backend "sops"; then
         skip
     fi
@@ -358,7 +358,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
 }
 
-@test "dec: secrets.yaml + HELM_SECRETS_BACKEND_ARGS (complex)" {
+@test "dec: Decrypt secrets.yaml + HELM_SECRETS_BACKEND_ARGS (complex)" {
     if ! is_backend "sops"; then
         skip
     fi

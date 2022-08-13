@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - The CLI Arguments `--driver`, `-d` and `--driver-args` has been renamed to `--backend`, `-b` and `--backend-args`
   - The environment variables `HELM_SECRETS_DRIVER` and `HELM_SECRETS_DRIVER_ARGS` has been renamed to `HELM_SECRETS_BACKEND` and `HELM_SECRETS_BACKEND_ARGS`
 
+### Removed
+- Removed `vault` driver. The `vals` driver supports vault as backend, too.
+- Removed `envsubst` driver. The `vals` driver supports envsubst as backend, too.
+- Removed `droppler` driver.
+
 ## [3.15.0] - 2022-08-08
 
 ### Changed
@@ -39,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enable protocol handling on Windows. Requires the command `helm secrets patch windows` once.
 
 ### Changed
-- Check detection of sops encrypted files
+- Check detection of a sops encrypted files
 - Prefer gpg4win, if available. Use `SOPS_GPG_EXEC=gpg` as environment variable to restore the old behavior.
 
 ### Fixed
@@ -88,7 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.8.3] - 2021-08-06
 ### Changed
-- Allow dot, asterisk and underscore for vault path
+- Allow dot, asterisk and underscore for the vault path
 
 ## [3.8.2] - 2021-07-14
 ### Fixed
@@ -118,14 +123,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.6.1] - 2021-03-30
 ### Fixed
-- `mktemp: too few X's in template` error on Mac OS if gnu coreutils preferred over builtin bsd tools.
+- `mktemp: too few X's in template` error on macOS if gnu coreutils preferred over builtin bsd tools.
 
 ## [3.6.0] - 2021-03-29
 ### Added
 - Detect ArgoCD environment by `ARGOCD_APP_NAME` environment variable and set `HELM_SECRETS_QUIET=true` by default. (https://github.com/jkroepke/helm-secrets/pull/83)
 
 ### Removed
-- **The default sops installation is removed, since helm-secrets could use with hashicorp vault which does not require sops.**
+- **The default sops installation is removed, since helm-secrets could be used with hashicorp vault which does not require sops.**
 
 ### Fixed
 - Cleanup all temporary files.
@@ -148,7 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Handling `--` inside command line arguments
 - Fix handling errors with remote files
-- Strip yaml doc separator if vault driver is used (https://github.com/jkroepke/helm-secrets/pull/70)
+- Strip yaml doc separator if the vault driver is used (https://github.com/jkroepke/helm-secrets/pull/70)
 - Incompatibilities if sed links to gnu sed on MacOS (https://github.com/jkroepke/helm-secrets/pull/72)
 
 ## [3.4.0] - 2020-12-26
@@ -158,7 +163,7 @@ Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 ### Added
 - Implement alternate syntax (https://github.com/jkroepke/helm-secrets/pull/52)
 - Remote values support (supporting http:// and helm downloader plugins) (https://github.com/jkroepke/helm-secrets/pull/54)
-- Let downloader plugin supports remote files and all secrets drivers (https://github.com/jkroepke/helm-secrets/pull/55)
+- Let downloader plugin support remote files and all secrets drivers (https://github.com/jkroepke/helm-secrets/pull/55)
 - Externalize custom vault driver logic. (https://github.com/jkroepke/helm-secrets/pull/63)
 - Dev: Implement code coverage
 - Dev: Test zsh compatibility
@@ -173,7 +178,7 @@ Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 ## [3.3.4] - 2020-09-09
 ### Added
 - Allow overriding SOPS version on installation (https://github.com/jkroepke/helm-secrets/pull/40)
-- Add separat download artefact on github release
+- Add separat download artefact on GitHub release
 
 ## [3.3.0] - 2020-08-28
 ### Added
@@ -193,7 +198,7 @@ Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 
 ## [3.1.0] - 2020-04-27
 ### Added
-- completion.yaml for helm shell auto completion
+- completion.yaml for helm shell auto-completion
 - Tests for all `helm secrets` commands
 - Added quiet flag for helm secrets (https://github.com/jkroepke/helm-secrets/pull/8)
 

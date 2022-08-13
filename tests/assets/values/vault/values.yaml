@@ -1,3 +1,0 @@
-global_secret: global_values
-service:
-    port: 85

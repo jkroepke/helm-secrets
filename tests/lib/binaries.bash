@@ -40,4 +40,10 @@ define_binaries() {
     else
         export SOPS_BIN=sops
     fi
+
+    if command -v vals.exe >/dev/null; then
+        export VALS_BIN=vals.exe
+    else
+        export VALS_BIN=vals
+    fi
 }
