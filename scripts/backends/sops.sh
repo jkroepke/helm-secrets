@@ -19,6 +19,10 @@ backend_encrypt_file() {
     input="${2}"
     output="${3}"
 
+    if [ "${type}" = "auto" ]; then
+        type=$(_sops_get_type "${input}")
+    fi
+
     if [ "${input}" = "${output}" ]; then
         _sops --encrypt --input-type "${type}" --output-type "${type}" --in-place "$(_sops_winpath "${input}")"
     else
@@ -31,6 +35,10 @@ backend_decrypt_file() {
     input="${2}"
     # if omit then output to stdout
     output="${3:-}"
+
+    if [ "${type}" = "auto" ]; then
+        type=$(_sops_get_type "${input}")
+    fi
 
     if [ "${output}" != "" ]; then
         _sops --decrypt --input-type "${type}" --output-type "${type}" --output "$(_sops_winpath "${output}")" "$(_sops_winpath "${input}")"
@@ -57,4 +65,18 @@ _sops_winpath() {
     else
         printf '%s' "$@"
     fi
+}
+
+_sops_get_type() {
+    case "${1}" in
+    *.yaml | *.yaml.*)
+        echo "yaml"
+        ;;
+    *.json | *.json.*)
+        echo "json"
+        ;;
+    *)
+        echo "binary"
+        ;;
+    esac
 }

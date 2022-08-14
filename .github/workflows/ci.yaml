@@ -267,7 +267,6 @@ jobs:
           fail_ci_if_error: true
 
   integration-tests:
-    needs: [unit-tests]
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:

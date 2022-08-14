@@ -46,12 +46,14 @@ helm_wrapper() {
 
     while [ $j -lt $argc ]; do
         case "$1" in
-        -f | --values | --values=?*)
-            case "$1" in
-            *=*)
-                file="${1#*=}"
+        -f | --values | --values=?* | --set-file | --set-file=?*)
+            _1="${1}"
 
-                set -- "$@" "${1%%=*}"
+            case "${_1}" in
+            --values=* | --set-file=*)
+                file="${_1#*=}"
+
+                set -- "$@" "${_1%%=*}"
                 ;;
             *)
                 file="${2}"
@@ -62,32 +64,46 @@ helm_wrapper() {
                 ;;
             esac
 
+            case "$_1" in
+            -f | --values | --values=?*)
+                double_escape_need=0
+                sops_type="yaml"
+                opt_prefix=""
+                ;;
+            --set-file | --set-file=?*)
+                double_escape_need=1
+                sops_type="auto"
+                opt_prefix="${file%%=*}="
+                file="${file#*=}"
+                ;;
+            esac
+
             if ! real_file=$(_file_get "${file}"); then
                 fatal 'File does not exist: %s' "${file}"
             fi
 
             file_dec="$(_file_dec_name "${real_file}")"
             if [ -f "${file_dec}" ]; then
-                set -- "$@" "$(_helm_winpath "${file_dec}")"
+                set -- "$@" "${opt_prefix}$(_helm_winpath "${file_dec}" "${double_escape_need}")"
 
                 if [ "${QUIET}" = "false" ]; then
-                    printf '[helm-secrets] Decrypt skipped: %s\n' "${file}" >&2
+                    log 'Decrypt skipped: %s' "${file}"
                 fi
             else
-                if decrypt_helper "${real_file}"; then
-                    set -- "$@" "$(_helm_winpath "${file_dec}")"
+                if decrypt_helper "${real_file}" "${sops_type}"; then
+                    set -- "$@" "${opt_prefix}$(_helm_winpath "${file_dec}" "${double_escape_need}")"
                     printf '%s\0' "${file_dec}" >>"${decrypted_files}"
 
                     if [ "${QUIET}" = "false" ]; then
-                        printf '[helm-secrets] Decrypt: %s\n' "${file}" >&2
+                        log 'Decrypt: %s' "${file}"
                     fi
                 else
-                    set -- "$@" "$(_helm_winpath "${real_file}")"
+                    set -- "$@" "${opt_prefix}$(_helm_winpath "${real_file}" "${double_escape_need}")"
                 fi
             fi
             ;;
         *)
-            if [ -d "$1" ]; then
+            if [ -d "$1" ] || [ -f "$1" ]; then
                 set -- "$@" "$(_helm_winpath "${1}")"
             else
                 set -- "$@" "$1"

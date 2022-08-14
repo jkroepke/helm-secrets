@@ -21,6 +21,7 @@ EOF
 
 decrypt_helper() {
     encrypted_file_path="${1}"
+    type="${2:-"yaml"}"
 
     if ! backend_is_file_encrypted "${encrypted_file_path}"; then
         return 1
@@ -28,7 +29,7 @@ decrypt_helper() {
 
     encrypted_file_dec="$(_file_dec_name "${encrypted_file_path}")"
 
-    if ! backend_decrypt_file "yaml" "${encrypted_file_path}" "${encrypted_file_dec}"; then
+    if ! backend_decrypt_file "${type}" "${encrypted_file_path}" "${encrypted_file_dec}"; then
         rm -rf "${encrypted_file_dec}"
         fatal 'Error while decrypting file: %s' "${file}"
     fi
