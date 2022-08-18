@@ -91,11 +91,14 @@ RUN apt-get update && \
 RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-# sops backend installation
+# helm secrets wrapper mode installation (optional)
+# RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/usr/local/sbin/helm"
+
+# sops backend installation (optional)
 RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 
-# vals backend installation
+# vals backend installation (optional)
 RUN curl -fsSL https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar xzf - -C /usr/local/bin/ vals \
     && chmod +x /usr/local/bin/vals
@@ -165,6 +168,9 @@ repoServer:
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
           wget -qO- https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
+          
+          # helm secrets wrapper mode installation (optional)
+          # RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
           chmod +x /custom-tools/*
       volumeMounts:
         - mountPath: /custom-tools
