@@ -323,7 +323,7 @@ RBAC permissions can be verified by executing the command below:
 
 ```bash
 export NAMESPACE=argo-cd
-kubectl auth can-i get secrets --namespace $NAMESPACE --as system:serviceaccount:$NAMESPACE:argocd-repo-server
+kubectl auth can-i get secrets --namespace "${NAMESPACE}" --as "system:serviceaccount:${NAMESPACE}:argocd-repo-server"
 ```
 
 Once granted access, your Argo CD Application should look similar to this:
