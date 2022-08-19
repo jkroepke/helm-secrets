@@ -1,0 +1,81 @@
+argo-cd:
+  server:
+    config:
+      helm.valuesFileSchemes: >-
+        secrets+gpg-import, secrets+gpg-import-kubernetes,
+        secrets+age-import, secrets+age-import-kubernetes,
+        secrets,
+        https
+  repoServer:
+    serviceAccount:
+      create: true
+      name: argocd-repo-server
+    rbac:
+      - apiGroups:
+          - ""
+        resources:
+          - secrets
+        verbs:
+          - get
+    env:
+      - name: HELM_PLUGINS
+        value: /custom-tools/helm-plugins/
+      - name: HELM_SECRETS_SOPS_PATH
+        value: /custom-tools/sops
+      - name: HELM_SECRETS_VALS_PATH
+        value: /custom-tools/vals
+      - name: HELM_SECRETS_KUBECTL_PATH
+        value: /custom-tools/kubectl
+      - name: HELM_SECRETS_CURL_PATH
+        value: /custom-tools/curl
+      # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
+      - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
+        value: "false"
+      - name: HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH
+        value: "false"
+      - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
+        value: "false"
+      # helm secrets wrapper mode installation (optional)
+      # - name: HELM_SECRETS_HELM_PATH
+      #   value: /usr/local/bin/helm
+    volumes:
+      - name: custom-tools
+        emptyDir: {}
+    volumeMounts:
+      - mountPath: /custom-tools
+        name: custom-tools
+    # helm secrets wrapper mode installation (optional)
+    #  - mountPath: /usr/local/sbin/helm
+    #    subPath: helm
+    #    name: custom-tools
+
+    initContainers:
+      - name: download-tools
+        image: alpine:latest
+        command: [ sh, -ec ]
+        env:
+          - name: HELM_SECRETS_VERSION
+            value: "3.15.0"
+          - name: KUBECTL_VERSION
+            value: "1.24.3"
+          - name: VALS_VERSION
+            value: "0.18.0"
+          - name: SOPS_VERSION
+            value: "3.7.3"
+        args:
+          - |
+            mkdir -p /custom-tools/helm-plugins
+            wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf-;
+
+            wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
+            wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+
+            wget -qO- https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
+
+            # helm secrets wrapper mode installation (optional)
+            # RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
+
+            chmod +x /custom-tools/*
+        volumeMounts:
+          - mountPath: /custom-tools
+            name: custom-tools

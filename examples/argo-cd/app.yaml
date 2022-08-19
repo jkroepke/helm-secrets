@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: examples/sops
+    repoURL: https://github.com/jkroepke/helm-secrets
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - 'secrets+gpg-import-kubernetes://helm-secrets-private-keys#key.asc?secrets.yaml'
+      fileParameters:
+        - name: podAnnotations.fromFile
+          path: 'secrets+gpg-import-kubernetes://helm-secrets-private-keys#key.asc?./files/file.properties'
