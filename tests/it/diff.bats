@@ -204,17 +204,6 @@ load '../bats/extensions/bats-file/load'
     assert [ ! -f "${FILE}.dec" ]
 }
 
-@test "diff: helm diff upgrade w/ chart + secrets.yaml + sops://" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    RELEASE="diff-$(date +%s)-${SEED}"
-
-    create_chart "${TEST_TEMP_DIR}"
-
-    run "${HELM_BIN}" diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "sops://${FILE}" 2>&1
-    assert_success
-    assert_output --partial "port: 81"
-}
-
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + http://" {
     FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="diff-$(date +%s)-${SEED}"

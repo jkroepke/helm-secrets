@@ -12,8 +12,6 @@ platformCommand:
 downloaders:
   - command: "scripts/run.sh downloader"
     protocols:
-      - "sops"
-      - "secret"
       - "secrets"
       - "secrets+gpg-import"
       - "secrets+gpg-import-kubernetes"

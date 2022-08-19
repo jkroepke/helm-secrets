@@ -239,20 +239,6 @@ load '../bats/extensions/bats-file/load'
     assert [ ! -f "${FILE}.dec" ]
 }
 
-@test "install: helm install w/ chart + secrets.yaml + sops://" {
-    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    RELEASE="install-$(date +%s)-${SEED}"
-    create_chart "${TEST_TEMP_DIR}"
-
-    run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "sops://${FILE}" 2>&1
-    assert_success
-    assert_output --partial "STATUS: deployed"
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
-    assert_output --partial "port: 81"
-}
-
 @test "install: helm install w/ chart + secrets.yaml + http://" {
     FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     RELEASE="install-$(date +%s)-${SEED}"
