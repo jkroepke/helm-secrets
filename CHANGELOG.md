@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `vault` driver. The `vals` driver supports vault as backend, too.
 - Removed `envsubst` driver. The `vals` driver supports envsubst as backend, too.
 - Removed `droppler` driver.
+- `sops://` protocol handler
+- `secret://` protocol handler
 
 ## [3.15.0] - 2022-08-08
 

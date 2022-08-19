@@ -419,30 +419,6 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "template: helm template w/ chart + secrets.yaml + sops://" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
-
-    create_chart "${TEST_TEMP_DIR}"
-
-    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "sops://${VALUES_PATH}" 2>&1
-
-    assert_output --partial "port: 81"
-    assert_success
-}
-
-@test "template: helm template w/ chart + secrets.yaml + secret://" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
-
-    create_chart "${TEST_TEMP_DIR}"
-
-    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secret://${VALUES_PATH}" 2>&1
-
-    assert_output --partial "port: 81"
-    assert_success
-}
-
 @test "template: helm template w/ chart + secrets.yaml + secrets://" {
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
