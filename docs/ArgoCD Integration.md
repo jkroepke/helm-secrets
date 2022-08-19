@@ -23,6 +23,10 @@ There are three methods how to use an encrypted value file.
 
 Please refer to the configuration section of the corresponding method for further instructions.
 
+<details>
+<summary>Example Application</summary>
+<p>
+
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -47,7 +51,14 @@ spec:
         # ### Method 3: No keys provided
         # Example Method 3: (Assumptions: kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
+      
+      # fileParameters (--set-file) are supported, too. 
+      fileParameters:
+        - name: config
+          path: secrets://secrets.yaml
 ```
+</p>
+</details>
 
 Helm will call helm-secrets
 because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
@@ -67,6 +78,11 @@ Integrating `helm-secrets` with Argo CD can be achieved by building a custom Arg
 Only `argocd-repo-server` needs this customized image. Other ArgoCD components can use the customized or upstream variant.
 
 Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` into the Argo CD image:
+
+<details>
+<summary>Dockerfile</summary>
+<p>
+
 ```Dockerfile
 ARG ARGOCD_VERSION="v2.4.8"
 FROM argoproj/argocd:$ARGOCD_VERSION
@@ -91,11 +107,14 @@ RUN apt-get update && \
 RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-# sops backend installation
+# helm secrets wrapper mode installation (optional)
+# RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/usr/local/sbin/helm"
+
+# sops backend installation (optional)
 RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 
-# vals backend installation
+# vals backend installation (optional)
 RUN curl -fsSL https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar xzf - -C /usr/local/bin/ vals \
     && chmod +x /usr/local/bin/vals
@@ -105,6 +124,8 @@ USER argocd
 RUN helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkroepke/helm-secrets
 ```
 
+</details>
+
 Make sure to specify your custom image when deploying Argo CD.
 
 ### Option 2: Init Container
@@ -113,14 +134,15 @@ Install sops or vals and helm-secret through an init container on the `argocd-re
 
 This is an example values file for the [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd).
 
+<details>
+<summary>values.yaml</summary>
+<p>
+
 ```yaml
 repoServer:
   env:
     - name: HELM_PLUGINS
       value: /custom-tools/helm-plugins/
-    # In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
-    - name: HELM_SECRETS_HELM_PATH
-      value: /usr/local/bin/helm
     - name: HELM_SECRETS_SOPS_PATH
       value: /custom-tools/sops
     - name: HELM_SECRETS_VALS_PATH
@@ -136,12 +158,19 @@ repoServer:
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
       value: "false"
+    # helm secrets wrapper mode installation (optional)
+    # - name: HELM_SECRETS_HELM_PATH
+    #   value: /usr/local/bin/helm
   volumes:
     - name: custom-tools
       emptyDir: {}
   volumeMounts:
     - mountPath: /custom-tools
       name: custom-tools
+  # helm secrets wrapper mode installation (optional)
+  #  - mountPath: /usr/local/sbin/helm
+  #    subPath: helm
+  #    name: custom-tools
 
   initContainers:
     - name: download-tools
@@ -165,11 +194,17 @@ repoServer:
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
           wget -qO- https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
+          
+          # helm secrets wrapper mode installation (optional)
+          # RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
+          
           chmod +x /custom-tools/*
       volumeMounts:
         - mountPath: /custom-tools
           name: custom-tools
 ```
+
+</details>
 
 Instead, downloading all external files on container start, consider building an own docker image which contains all required binaries. See [Dockerfile](https://github.com/jkroepke/helm-secrets/blob/main/Dockerfile) in repository root.
 

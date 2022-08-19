@@ -79,3 +79,21 @@ _file_dec_name() {
         printf '%s%s%s' "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
     fi
 }
+
+_file_get_extension() {
+    case "${1}" in
+    *.yaml | *.yaml*)
+        echo "yaml"
+        ;;
+    *.json | *.json*)
+        echo "json"
+        ;;
+    *)
+        if grep -Fxq -- "---" "${1}"; then
+            echo "yaml"
+        else
+            echo "other"
+        fi
+        ;;
+    esac
+}

@@ -49,12 +49,10 @@ backend_edit_file() {
 }
 
 _vals_get_type() {
-    case "${1}" in
-    *.json | *.json.*)
+    file_type=$(_file_get_extension "${1}")
+    if [ "${file_type}" = "json" ]; then
         echo "json"
-        ;;
-    *)
+    else
         echo "yaml"
-        ;;
-    esac
+    fi
 }

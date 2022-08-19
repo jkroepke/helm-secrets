@@ -89,7 +89,7 @@ downloader() {
         ;;
     esac
 
-    view_helper "${file}"
+    view_helper "${file}" "auto"
 }
 
 _gpg_init() {
