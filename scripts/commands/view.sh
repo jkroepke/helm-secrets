@@ -16,6 +16,7 @@ EOF
 
 view_helper() {
     file="$1"
+    type="${2:-"yaml"}"
 
     if ! _file_exists "$file"; then
         fatal 'File does not exist: %s' "${file}"
@@ -24,7 +25,7 @@ view_helper() {
     real_file=$(_file_get "${file}")
 
     if backend_is_file_encrypted "${real_file}"; then
-        backend_decrypt_file "yaml" "${real_file}"
+        backend_decrypt_file "${type}" "${real_file}"
     else
         cat "${real_file}"
     fi

@@ -20,7 +20,7 @@ backend_encrypt_file() {
     output="${3}"
 
     if [ "${type}" = "auto" ]; then
-        type=$(_sops_get_type "${input}")
+        type=$(_sops_enc_get_type "${input}")
     fi
 
     if [ "${input}" = "${output}" ]; then
@@ -37,7 +37,7 @@ backend_decrypt_file() {
     output="${3:-}"
 
     if [ "${type}" = "auto" ]; then
-        type=$(_sops_get_type "${input}")
+        type=$(_sops_dec_get_type "${input}")
     fi
 
     if [ "${output}" != "" ]; then
@@ -67,16 +67,21 @@ _sops_winpath() {
     fi
 }
 
-_sops_get_type() {
-    case "${1}" in
-    *.yaml | *.yaml.*)
-        echo "yaml"
-        ;;
-    *.json | *.json.*)
-        echo "json"
-        ;;
-    *)
-        echo "binary"
-        ;;
-    esac
+_sops_dec_get_type() {
+    if grep -Fxq 'sops:' "${1}"; then
+        echo 'yaml'
+    elif grep -q '"data": "ENC' "${1}"; then
+        echo 'binary'
+    else
+        echo 'json'
+    fi
+}
+
+_sops_enc_get_type() {
+    file_type=$(_file_get_extension "${1}")
+    if [ "${file_type}" = "other" ]; then
+        echo 'binary'
+    else
+        echo "${file_type}"
+    fi
 }

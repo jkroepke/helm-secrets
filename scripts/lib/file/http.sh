@@ -15,7 +15,7 @@ _file_http_get() {
         _url="${1}"
     fi
 
-    _tmp_file="$(_mktemp)${_url##*.}"
+    _tmp_file="$(_mktemp).${_url##*.}"
 
     if ! download "${_url}" >"${_tmp_file}"; then
         fatal "Error while download url %s" "${1}"
