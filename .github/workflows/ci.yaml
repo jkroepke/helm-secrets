@@ -343,3 +343,4 @@ jobs:
         uses: mikepenz/action-junit-report@v3
         with:
           report_paths: '**/TEST-*.xml'
+          detailed_summary: true
