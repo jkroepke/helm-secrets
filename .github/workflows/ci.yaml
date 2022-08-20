@@ -178,15 +178,24 @@ jobs:
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
-        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: sops
+          BATS_REPORT_FILENAME: TEST-sops.xml
 
       - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit
         if: "!contains(matrix.os, 'windows-latest')"
-        run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: bash tests/bats/core/bin/bats --timing --tap --report-formatter junit -r tests/unit 
         env:
           HELM_SECRETS_BACKEND: vals
+          BATS_REPORT_FILENAME: TEST-vals.xml
+      
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: 'TEST-*.xml'
+          detailed_summary: true
 
   coverage:
     runs-on: ubuntu-latest
