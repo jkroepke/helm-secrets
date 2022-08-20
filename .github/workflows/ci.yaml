@@ -190,11 +190,13 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BATS_REPORT_FILENAME: TEST-vals.xml
 
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v3
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
         if: always()
         with:
-          report_paths: 'TEST-*.xml'
+          name: junit-test-results-${{ strategy.job-index }}
+          path: 'TEST-*.xml'
+          retention-days: 1
 
   coverage:
     runs-on: ubuntu-latest
@@ -314,4 +316,30 @@ jobs:
       - name: helm plugin install
         run: helm plugin install .
 
-      - run: tests/bats/core/bin/bats --tap -r tests/it
+      - run: bash tests/bats/core/bin/bats --timing --tap --report-formatter junit -r tests/it
+        env:
+          BATS_REPORT_FILENAME: TEST-it.xml
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: junit-test-results-it
+          path: 'TEST-*.xml'
+          retention-days: 1
+          if-no-files-found: error
+
+  report:
+    needs:
+      - unit-tests
+      - integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: .
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        with:
+          report_paths: '**/TEST-*.xml'
