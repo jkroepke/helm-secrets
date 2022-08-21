@@ -146,7 +146,7 @@ setup() {
         # shellcheck disable=SC2034
         SEED="${RANDOM}"
 
-        TEST_TEMP_DIR="$(mktemp -d)"
+        TEST_TEMP_DIR="${BATS_TEST_TMPDIR}"
         export TEST_TEMP_DIR
 
         # copy assets

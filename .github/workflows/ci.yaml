@@ -86,21 +86,21 @@ jobs:
         if: "matrix.container"
         run: |-
           if command -v apk > /dev/null; then
-            apk add --no-cache bash git gnupg
+            apk add --no-cache bash git gnupg 
           elif command -v apt-get > /dev/null; then
             apt-get update -qqy
-            apt-get install -qqy git-core unzip gnupg curl
+            apt-get install -qqy git unzip gnupg curl parallel
           elif command -v yum > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
               rpm --import https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg
             fi
-            yum install -y git-core unzip
+            yum install -y git-core unzip parallel
           elif command -v microdnf > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               echo -e '[copr:copr.fedorainfracloud.org:jkroepke:git]\nname=Copr repo for git owned by jkroepke\nbaseurl=https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-7-$basearch/\ntype=rpm-md\nenabled=0\ngpgcheck=1\ngpgkey=https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg\nrepo_gpgcheck=0\nenabled=1\nenabled_metadata=1' > /etc/yum.repos.d/jkroepke-git.repo
             fi
-            microdnf install --nodocs git-core unzip tar findutils diffutils
+            microdnf install --nodocs git-core unzip tar findutils diffutils parallel
           fi
 
       - name: Install zsh
@@ -152,6 +152,10 @@ jobs:
           brew install coreutils
           echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
 
+      - name: Setup parallel
+        if: "contains(matrix.os, 'macos-latest')"
+        run: brew install parallel
+
       - name: Print Environment
         run: |-
           bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh || echo unknown)"'
@@ -178,15 +182,16 @@ jobs:
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
-        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs 4 --timing --tap -r tests/unit
         env:
           HELM_SECRETS_BACKEND: sops
+          BATS_TEST_NAME_PREFIX: "sops - "
 
       - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit
-        if: "!contains(matrix.os, 'windows-latest')"
-        run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs 4 --timing --tap -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals
+          BATS_TEST_NAME_PREFIX: "vals - "
 
   coverage:
     runs-on: ubuntu-latest
@@ -307,3 +312,5 @@ jobs:
         run: helm plugin install .
 
       - run: tests/bats/core/bin/bats --tap -r tests/it
+        env:
+          BATS_TEST_NAME_PREFIX: "sops - "
