@@ -37,7 +37,7 @@ _winpath() {
 
 _copy() {
     if on_windows; then
-        cp -r "$@"
+        ln -sf "$@"
     else
         ln -sf "$@"
     fi
