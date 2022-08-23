@@ -53,11 +53,7 @@ dec() {
         fatal 'File does not exist: %s' "${file}"
     fi
 
-    if ! decrypt_helper "${encrypted_file_path}"; then
+    if ! decrypt_helper "${encrypted_file_path}" "auto"; then
         fatal 'File is not encrypted: %s' "${file}"
-    fi
-
-    if [ "${OUTPUT_DECRYPTED_FILE_PATH}" = "true" ]; then
-        _file_dec_name "${encrypted_file_path}"
     fi
 }

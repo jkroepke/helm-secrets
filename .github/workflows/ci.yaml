@@ -2,6 +2,7 @@
 name: CI
 
 env:
+  WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   VERSION_HELM: v3.9.0
   VERSION_SOPS: v3.7.3
   VERSION_VALS: v0.18.0
@@ -55,52 +56,65 @@ jobs:
         os: [ubuntu-latest]
         container: [""]
         shell: [dash]
+        jobs: [4]
         include:
           - os: windows-latest
             shell: bash
+            jobs: 1
           - os: windows-latest
             shell: cygwin
+            jobs: 1
           - os: windows-latest
             shell: wsl
+            jobs: 4
           - os: macos-latest
             shell: bash 3.2
+            jobs: 4
           - os: macos-latest
             shell: bash 3.2 with coreutils
+            jobs: 4
           - os: ubuntu-latest
             container: ubuntu:22.04
             shell: bash 5.1
+            jobs: 4
           - os: ubuntu-latest
             container: centos:7
             shell: bash 4.2
+            jobs: 4
           - os: ubuntu-latest
             container: registry.access.redhat.com/ubi8/ubi-minimal
             shell: bash 4.4
+            jobs: 4
           - os: ubuntu-latest
             container: alpine
             shell: zsh
+            jobs: 4
           - os: ubuntu-latest
             container: alpine
             shell: ash
+            jobs: 4
     steps:
       - name: Install dependencies
         if: "matrix.container"
         run: |-
           if command -v apk > /dev/null; then
-            apk add --no-cache bash git gnupg
+            apk add --no-cache bash git gnupg parallel
           elif command -v apt-get > /dev/null; then
             apt-get update -qqy
-            apt-get install -qqy git-core unzip gnupg curl
+            apt-get install -qqy git unzip gnupg curl parallel
           elif command -v yum > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               yum-config-manager --add-repo='https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-$releasever-x86_64/'
               rpm --import https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg
             fi
-            yum install -y git-core unzip
+            echo -e '[epel]\nname=Extra Packages for Enterprise Linux $releasever - $basearch\nmetalink=https://mirrors.fedoraproject.org/metalink?repo=epel-$releasever&arch=$basearch&infra=$infra&content=$contentdir\nenabled=1\ngpgcheck=1\ngpgkey=https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7' > /etc/yum.repos.d/epel.repo
+            yum install -y git-core unzip parallel
           elif command -v microdnf > /dev/null; then
             if [ "$(rpm -E %{rhel})" == "7" ]; then
               echo -e '[copr:copr.fedorainfracloud.org:jkroepke:git]\nname=Copr repo for git owned by jkroepke\nbaseurl=https://download.copr.fedorainfracloud.org/results/jkroepke/git/epel-7-$basearch/\ntype=rpm-md\nenabled=0\ngpgcheck=1\ngpgkey=https://download.copr.fedorainfracloud.org/results/jkroepke/git/pubkey.gpg\nrepo_gpgcheck=0\nenabled=1\nenabled_metadata=1' > /etc/yum.repos.d/jkroepke-git.repo
             fi
-            microdnf install --nodocs git-core unzip tar findutils diffutils
+            echo -e '[epel]\nname=Extra Packages for Enterprise Linux $releasever - $basearch\nmetalink=https://mirrors.fedoraproject.org/metalink?repo=epel-$releasever&arch=$basearch&infra=$infra&content=$contentdir\nenabled=1\ngpgcheck=1\ngpgkey=https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8' > /etc/yum.repos.d/epel.repo
+            microdnf install --nodocs git-core unzip tar findutils diffutils parallel
           fi
 
       - name: Install zsh
@@ -152,6 +166,14 @@ jobs:
           brew install coreutils
           echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
 
+      - name: Setup parallel (mac OS)
+        if: "contains(matrix.os, 'macos-latest')"
+        run: brew install parallel
+
+      - name: Setup parallel (WSL)
+        if: "contains(matrix.shell, 'wsl')"
+        run: wsl bash -c 'apt-get update -qq && apt-get install -yqq parallel'
+
       - name: Print Environment
         run: |-
           bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh || echo unknown)"'
@@ -178,15 +200,26 @@ jobs:
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
-        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: sops
+          BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|sops] "
+          BATS_REPORT_FILENAME: TEST-sops.xml
 
       - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit
-        if: "!contains(matrix.os, 'windows-latest')"
-        run: bash tests/bats/core/bin/bats --timing --tap -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals
+          BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|vals] "
+          BATS_REPORT_FILENAME: TEST-vals.xml
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: junit-test-results-${{ strategy.job-index }}
+          path: 'TEST-*.xml'
+          retention-days: 1
 
   coverage:
     runs-on: ubuntu-latest
@@ -237,13 +270,18 @@ jobs:
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
+          HELM_SECRETS_BACKEND: sops
           BASHCOV_COMMAND_NAME: helm-secrets:sops
+          # https://github.com/bats-core/bats-core/issues/640
+          BATS_TEST_NAME: ""
 
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
+          # https://github.com/bats-core/bats-core/issues/640
+          BATS_TEST_NAME: ""
 
       - uses: codecov/codecov-action@v3
         with:
@@ -260,6 +298,8 @@ jobs:
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
+          # https://github.com/bats-core/bats-core/issues/640
+          BATS_TEST_NAME: ""
 
       - uses: codecov/codecov-action@v3
         with:
@@ -269,6 +309,13 @@ jobs:
   integration-tests:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        container: [""]
+        shell: [dash]
+        jobs: [4]
     steps:
       - uses: engineerd/setup-kind@v0.5.0
         with:
@@ -306,4 +353,33 @@ jobs:
       - name: helm plugin install
         run: helm plugin install .
 
-      - run: tests/bats/core/bin/bats --tap -r tests/it
+      - run: bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/it
+        env:
+          BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|sops] "
+          BATS_REPORT_FILENAME: TEST-sops.xml
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: junit-test-results-it-${{ strategy.job-index }}
+          path: 'TEST-*.xml'
+          retention-days: 1
+          if-no-files-found: error
+
+  report:
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - unit-tests
+      - integration-tests
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: .
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        with:
+          report_paths: '**/TEST-*.xml'
+          detailed_summary: true

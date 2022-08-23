@@ -30,7 +30,6 @@ Available Options:
   --backend-args             -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
   --help                     -h  Show help
   --version                  -v  Display version of helm-secrets
-  --output-decrypt-file-path     Output the path of decrypted file
 ```
 
 By convention, files containing secrets are named `secrets.yaml`, or anything beginning with "secrets" and ending with ".yaml". E.g. `secrets.test.yaml`, `secrets.prod.yaml` `secretsCOOL.yaml`.

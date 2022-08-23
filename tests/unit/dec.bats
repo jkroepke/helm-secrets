@@ -63,37 +63,6 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
 }
 
-@test "dec: Decrypt secrets.yaml + --output-decrypt-file-path" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
-
-    run "${HELM_BIN}" secrets --output-decrypt-file-path dec "${VALUES_PATH}"
-    assert_output --partial "${VALUES}.dec"
-    assert_success
-    assert_file_exists "${VALUES_PATH}.dec"
-    assert_file_contains "${VALUES_PATH}.dec" 'global_secret: '
-    assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
-}
-
-@test "dec: Decrypt secrets.yaml + HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
-
-    HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH=true
-
-    # shellcheck disable=SC2030 disable=SC2031
-    WSLENV="HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH:${WSLENV:-}"
-
-    run env HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH="${HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH}" WSLENV="${WSLENV:-}" \
-        "${HELM_BIN}" secrets dec "${VALUES_PATH}"
-
-    assert_output --partial "${VALUES}.dec"
-    assert_success
-    assert_file_exists "${VALUES_PATH}.dec"
-    assert_file_contains "${VALUES_PATH}.dec" 'global_secret: '
-    assert_file_contains "${VALUES_PATH}.dec" 'global_bar'
-}
-
 @test "dec: Decrypt secrets.yaml.gotpl" {
     if ! is_backend "sops"; then
         skip

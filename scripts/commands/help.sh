@@ -31,6 +31,5 @@ Available Options:
   --backend-args             -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
   --help                     -h  Show help
   --version                  -v  Display version of helm-secrets
-  --output-decrypt-file-path     Output the path of decrypted file
 EOF
 }

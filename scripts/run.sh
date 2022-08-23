@@ -33,13 +33,11 @@ TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-"$(mktemp -d)"}"
 export TMPDIR
 mkdir -p "${TMPDIR}"
 
-OUTPUT_DECRYPTED_FILE_PATH="${HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH:-false}"
-
 # Output debug infos
 if [ -n "${ARGOCD_APP_NAME+x}" ]; then
     QUIET="${HELM_SECRETS_QUIET:-true}"
 else
-    QUIET="${HELM_SECRETS_QUIET:-"${OUTPUT_DECRYPTED_FILE_PATH}"}"
+    QUIET="${HELM_SECRETS_QUIET:-false}"
 fi
 
 # Define the secret backend
@@ -203,11 +201,6 @@ while true; do
         fi
         load_secret_backend "$2"
         shift
-        ;;
-    --output-decrypt-file-path)
-        # shellcheck disable=SC2034
-        OUTPUT_DECRYPTED_FILE_PATH=true
-        QUIET=true
         ;;
     --quiet | -q)
         # shellcheck disable=SC2034

@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `droppler` driver.
 - `sops://` protocol handler
 - `secret://` protocol handler
+- New parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
 
 ## [3.15.0] - 2022-08-08
 
