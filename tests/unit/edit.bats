@@ -32,7 +32,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
+    EDITOR="${TEST_ROOT}/assets/mock-editor/editor.sh"
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/nonexists.yaml"
 
@@ -49,7 +49,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
+    EDITOR="${TEST_ROOT}/assets/mock-editor/editor.sh"
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
@@ -66,7 +66,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
+    EDITOR="${TEST_ROOT}/assets/mock-editor/editor.sh"
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
 
@@ -83,7 +83,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    EDITOR="${TEST_DIR}/assets/mock-editor/editor.sh"
+    EDITOR="${TEST_ROOT}/assets/mock-editor/editor.sh"
 
     FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 

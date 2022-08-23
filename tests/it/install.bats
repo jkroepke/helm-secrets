@@ -19,6 +19,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart" {
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -34,6 +35,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -51,6 +53,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + --values" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -68,6 +71,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + --values=" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -85,6 +89,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + some-secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -102,6 +107,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + some-secrets.yaml + --values" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -119,6 +125,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + some-secrets.yaml + --values=" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -136,6 +143,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + helm flag" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -154,6 +162,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + pre decrypted secrets.yaml" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     printf 'service:\n  port: 82' >"${FILE}.dec"
     create_chart "${TEST_TEMP_DIR}"
@@ -174,6 +183,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + q flag" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -191,6 +201,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + quiet flag" {
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -208,6 +219,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + special path" {
     FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"
 
@@ -225,6 +237,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + invalid yaml" {
     FILE="${TEST_TEMP_DIR}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_encrypted_file 'replicaCount: |\n  a:'
@@ -241,6 +254,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + http://" {
     FILE="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -262,6 +276,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml?ref=main"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -279,6 +294,7 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install w/ chart + secrets.yaml + secrets://http://" {
     FILE="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -298,6 +314,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml?ref=main"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
@@ -317,6 +334,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -337,6 +355,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -358,6 +377,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -379,6 +399,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -394,6 +415,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -409,6 +431,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -429,6 +452,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -450,6 +474,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -471,6 +496,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -486,6 +512,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml"
+    SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
 
     create_chart "${TEST_TEMP_DIR}"

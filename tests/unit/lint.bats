@@ -252,6 +252,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + invalid yaml" {
+    if [[ "${VALS_BIN}" = *".exe" ]]; then
+        skip "Unix path w/ vals.exe"
+    fi
+
     VALUES="secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 

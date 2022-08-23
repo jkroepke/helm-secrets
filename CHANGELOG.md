@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for decrypting files defined via `--set-file`
 
 ### Changed
+- `helm secrets dec` and `helm secrets enc` now encrypt files inline
 - Secret drivers are renamed to secret backends
   - This is **breaking** custom integrations. All shell functions contains the name `driver` are renamed to `backend`, e.g.: `driver_encrypt_file` -> `backend_encrypt_file`
   - The CLI Arguments `--driver`, `-d` and `--driver-args` has been renamed to `--backend`, `-b` and `--backend-args`
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `droppler` driver.
 - `sops://` protocol handler
 - `secret://` protocol handler
+- New parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
 
 ## [3.15.0] - 2022-08-08
 
