@@ -3,6 +3,7 @@
 # https://github.com/bats-core/bats-core/issues/637
 # shellcheck source=tests/lib/helper.bash
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)/../lib/helper.bash"
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)/../lib/binaries.bash"
 
 setup_suite() {
     {
@@ -105,54 +106,6 @@ teardown_suite() {
             ;;
         esac
     } >&2
-}
-
-define_binaries() {
-    # MacOS have shasum, others have sha1sum
-    if command -v shasum >/dev/null; then
-        export SHA1SUM_BIN=shasum
-    else
-        export SHA1SUM_BIN=sha1sum
-    fi
-
-    # cygwin does not have an alias
-    if command -v gpg2 >/dev/null; then
-        export GPG_BIN=gpg2
-    elif command -v gpg.exe >/dev/null; then
-        export GPG_BIN=gpg.exe
-    else
-        export GPG_BIN=gpg
-    fi
-
-    if command -v gpgconf.exe >/dev/null; then
-        export GPGCONF_BIN=gpgconf.exe
-    else
-        export GPGCONF_BIN=gpgconf
-    fi
-
-    if command -v git.exe >/dev/null; then
-        export GIT_BIN=git.exe
-    else
-        export GIT_BIN=git
-    fi
-
-    if command -v helm.exe >/dev/null; then
-        export HELM_BIN=helm.exe
-    else
-        export HELM_BIN=helm
-    fi
-
-    if command -v sops.exe >/dev/null; then
-        export SOPS_BIN=sops.exe
-    else
-        export SOPS_BIN=sops
-    fi
-
-    if command -v vals.exe >/dev/null; then
-        export VALS_BIN=vals.exe
-    else
-        export VALS_BIN=vals
-    fi
 }
 
 helm_plugin_install() {
