@@ -20,8 +20,6 @@ setup_suite() {
             ln -sf "${REAL_HOME}/.kube" "${HOME}/.kube"
         fi
 
-        define_binaries
-
         CURRENT_TEST_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
         GIT_ROOT="${CURRENT_TEST_DIR}/../.."
 
