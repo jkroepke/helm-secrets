@@ -7,9 +7,14 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)/../lib/b
 
 setup_suite() {
     {
+        export HELM_SECRETS_BACKEND="${HELM_SECRETS_BACKEND:-"sops"}"
+
         REAL_HOME="${HOME}"
-        HOME="${BATS_SUITE_TMPDIR}"
+        export HOME="${BATS_SUITE_TMPDIR}"
         [ -d "${HOME}" ] || mkdir -p "${HOME}"
+
+        _uname="$(uname)"
+        export _uname
 
         if [ -f "${REAL_HOME}/.gitconfig" ]; then
             cp "${REAL_HOME}/.gitconfig" "${HOME}/.gitconfig"
@@ -21,22 +26,16 @@ setup_suite() {
         fi
 
         CURRENT_TEST_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-        GIT_ROOT="${CURRENT_TEST_DIR}/../.."
-
-        _uname="$(uname)"
-        export _uname
-        export HOME
-        export GIT_ROOT
+        export GIT_ROOT="${CURRENT_TEST_DIR}/../.."
         export TEST_ROOT="${GIT_ROOT}/tests"
-
-        export HELM_SECRETS_BACKEND="${HELM_SECRETS_BACKEND:-"sops"}"
 
         export CACHE_DIR="${TEST_ROOT}/.tmp/cache"
         export HELM_CACHE="${CACHE_DIR}/${_uname}/helm"
+
+        mkdir -p "${HELM_CACHE}"
+
         HELM_DATA_HOME="$(_winpath "${HELM_CACHE}")"
         export HELM_DATA_HOME
-
-        mkdir -p "${HELM_CACHE}/home"
 
         if [ ! -d "${HELM_CACHE}/chart" ]; then
             mkdir -p "${HELM_CACHE}/chart"
