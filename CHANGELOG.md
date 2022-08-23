@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for decrypting files defined via `--set-file`
 
 ### Changed
-- `helm secrets dec` and `helm secrets enc` now encrypt files inline
 - Secret drivers are renamed to secret backends
   - This is **breaking** custom integrations. All shell functions contains the name `driver` are renamed to `backend`, e.g.: `driver_encrypt_file` -> `backend_encrypt_file`
   - The CLI Arguments `--driver`, `-d` and `--driver-args` has been renamed to `--backend`, `-b` and `--backend-args`
