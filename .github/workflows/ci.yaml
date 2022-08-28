@@ -9,6 +9,7 @@ env:
   VERSION_VAULT: 1.10.4
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -148,6 +149,14 @@ jobs:
         uses: jkroepke/setup-vals@v1.0.3
         with:
           version: ${{ env.VERSION_VALS }}
+
+      - name: Cache Cygwin
+        uses: actions/cache@v3
+        if: "contains(matrix.shell, 'cygwin')"
+        with:
+          path: 'C:\tools\cygwin\packages'
+          key: cygwin
+          restore-keys: cygwin
 
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
