@@ -47,8 +47,6 @@ jobs:
   unit-tests:
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
-    env:
-      HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     timeout-minutes: 20
     strategy:
@@ -150,20 +148,12 @@ jobs:
         with:
           version: ${{ env.VERSION_VALS }}
 
-      - name: Cache Cygwin
-        uses: actions/cache@v3
-        if: "contains(matrix.shell, 'cygwin')"
-        with:
-          path: 'C:\tools\cygwin\packages'
-          key: cygwin
-          restore-keys: cygwin
-
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
         uses: egor-tensin/setup-cygwin@v3
         with:
           platform: x64
-          packages: gnupg2
+          packages: gnupg2,perl
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
@@ -212,6 +202,7 @@ jobs:
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: sops
+          HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
           BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|sops] "
           BATS_REPORT_FILENAME: TEST-sops.xml
 
@@ -220,6 +211,7 @@ jobs:
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals
+          HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
           BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|vals] "
           BATS_REPORT_FILENAME: TEST-vals.xml
 
