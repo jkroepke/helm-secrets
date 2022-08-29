@@ -207,6 +207,7 @@ jobs:
           BATS_REPORT_FILENAME: TEST-sops.xml
 
       - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit
+        if: "!contains(matrix.shell, 'cygwin')"
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals
