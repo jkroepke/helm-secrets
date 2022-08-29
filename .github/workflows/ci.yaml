@@ -62,7 +62,7 @@ jobs:
             jobs: 1
           - os: windows-latest
             shell: cygwin
-            jobs: 1
+            jobs: 4
           - os: windows-latest
             shell: wsl
             jobs: 4
@@ -153,7 +153,7 @@ jobs:
         uses: egor-tensin/setup-cygwin@v3
         with:
           platform: x64
-          packages: gnupg2,perl
+          packages: gnupg2,perl,curl
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
@@ -172,6 +172,13 @@ jobs:
       - name: Setup parallel (WSL)
         if: "contains(matrix.shell, 'wsl')"
         run: wsl bash -c 'apt-get update -qq && apt-get install -yqq parallel'
+
+      - name: Setup parallel (cygwin)
+        if: "contains(matrix.shell, 'cygwin')"
+        run: |
+          curl -sSfLJo /usr/bin/parallel http://git.savannah.gnu.org/cgit/parallel.git/plain/src/parallel
+          chmod +x /usr/bin/parallel
+        shell: C:\tools\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
 
       - name: Print Environment
         run: |-
