@@ -273,16 +273,12 @@ jobs:
         env:
           HELM_SECRETS_BACKEND: sops
           BASHCOV_COMMAND_NAME: helm-secrets:sops
-          # https://github.com/bats-core/bats-core/issues/640
-          BATS_TEST_NAME: ""
 
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
-          # https://github.com/bats-core/bats-core/issues/640
-          BATS_TEST_NAME: ""
 
       - uses: codecov/codecov-action@v3
         with:
@@ -299,8 +295,6 @@ jobs:
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
-          # https://github.com/bats-core/bats-core/issues/640
-          BATS_TEST_NAME: ""
 
       - uses: codecov/codecov-action@v3
         with:

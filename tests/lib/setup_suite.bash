@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# https://github.com/bats-core/bats-core/issues/637
-# shellcheck source=tests/lib/helper.bash
-source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)/../lib/helper.bash"
-source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)/../lib/binaries.bash"
+load '../lib/helper'
+load '../lib/binaries'
 
 setup_suite() {
     {
