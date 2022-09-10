@@ -33,6 +33,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "decrypt: Decrypt inline secrets.yaml" {
+    if ! is_backend "sops"; then
+        skip
+    fi
+
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
