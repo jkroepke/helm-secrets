@@ -34,14 +34,17 @@ decrypt_helper() {
     if [ "${output}" = "stdout" ]; then
         encrypted_file_dec=""
     elif [ "${output}" != "" ]; then
-        encrypted_file_dec="${encrypted_file_path}"
+        encrypted_file_dec="${output}"
     else
         encrypted_file_dec="$(_file_dec_name "${encrypted_file_path}")"
     fi
 
     if ! backend_decrypt_file "${type}" "${encrypted_file_path}" "${encrypted_file_dec}"; then
-        rm -rf "${encrypted_file_dec}"
-        fatal 'Error while decrypting file: %s' "${filename}"
+        if [ "${output}" = "" ] && [ "${output}" != "stdout" ]; then
+            rm -rf "$(_file_dec_name "${encrypted_file_path}")"
+        fi
+
+        fatal 'Error while decrypting file: %s' "${encrypted_file_path}"
     fi
 
     return 0
