@@ -1,1 +1,1 @@
-{{- .Values | toYaml -}}
+{{- .Values.content }}

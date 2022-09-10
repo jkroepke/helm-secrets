@@ -644,7 +644,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    VALUES="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml?ref=main"
+    VALUES="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml?ref=main"
     VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -697,7 +697,7 @@ load '../bats/extensions/bats-file/load'
         skip
     fi
 
-    VALUES="secrets://git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml?ref=main"
+    VALUES="git+https://github.com/jkroepke/helm-secrets@tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.age.yaml?ref=main"
     VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"

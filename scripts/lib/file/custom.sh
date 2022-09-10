@@ -11,7 +11,7 @@ _file_custom_get() {
     GETTER_CHART_PATH="$(_helm_winpath "${SCRIPT_DIR}/lib/file/helm-values-getter")"
     VALUES="$(_helm_winpath "${1}")"
 
-    if ! "${HELM_BIN}" template "${GETTER_CHART_PATH}" -f "${VALUES}" >"${_tmp_file}"; then
+    if ! "${HELM_BIN}" template "${GETTER_CHART_PATH}" --set-file "content=${VALUES}" >"${_tmp_file}"; then
         exit 1
     fi
 

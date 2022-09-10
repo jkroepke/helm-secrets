@@ -89,7 +89,13 @@ downloader() {
         ;;
     esac
 
-    decrypt_helper "${file}" "auto" "stdout"
+    if ! encrypted_filepath=$(_file_get "${file}"); then
+        fatal 'File does not exist: %s' "${file}"
+    fi
+
+    if ! decrypt_helper "${encrypted_filepath}" "auto" "stdout"; then
+        cat "${encrypted_filepath}"
+    fi
 }
 
 _gpg_init() {

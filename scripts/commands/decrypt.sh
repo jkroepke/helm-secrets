@@ -23,13 +23,9 @@ EOF
 }
 
 decrypt_helper() {
-    filename="${1}"
+    encrypted_file_path="${1}"
     type="${2:-"yaml"}"
     output="${3:-""}"
-
-    if ! encrypted_file_path=$(_file_get "${filename}"); then
-        fatal 'File does not exist: %s' "${filename}"
-    fi
 
     if ! backend_is_file_encrypted "${encrypted_file_path}"; then
         return 1
@@ -82,14 +78,18 @@ decrypt() {
 
     filepath="$1"
 
-    if [ "${inline}" = "true" ]; then
-        output="${filepath}"
-    else
+    if [ "${terraform}" = "true" ] || [ "${inline}" = "false" ]; then
         output="stdout"
+    else
+        output="${filepath}"
     fi
 
-    if ! content=$(decrypt_helper "${filepath}" "auto" "${output}"); then
-        fatal 'File is not encrypted: %s' "${filepath}"
+    if ! encrypted_filepath=$(_file_get "${filepath}"); then
+        fatal 'File does not exist: %s' "${filepath}"
+    fi
+
+    if ! content=$(decrypt_helper "${encrypted_filepath}" "auto" "${output}"); then
+        fatal 'File is not encrypted: %s' "${encrypted_filepath}"
     fi
 
     if [ "${terraform}" = "true" ]; then
