@@ -39,7 +39,7 @@ load '../bats/extensions/bats-file/load'
     run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets dec "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets decrypt "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -56,7 +56,7 @@ load '../bats/extensions/bats-file/load'
     run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets dec "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets decrypt "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -73,7 +73,7 @@ load '../bats/extensions/bats-file/load'
     run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets dec "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets decrypt "${FILE}"
     assert_success
     assert_output "hello: world"
 }
@@ -90,7 +90,7 @@ load '../bats/extensions/bats-file/load'
     run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets edit "${FILE}"
     assert_success
 
-    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets dec "${FILE}"
+    run env EDITOR="${EDITOR}" "${HELM_BIN}" secrets decrypt "${FILE}"
     assert_success
     assert_output "hello: world"
 }

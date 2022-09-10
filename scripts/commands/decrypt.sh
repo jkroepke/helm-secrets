@@ -23,9 +23,13 @@ EOF
 }
 
 decrypt_helper() {
-    encrypted_file_path="${1}"
+    filename="${1}"
     type="${2:-"yaml"}"
     output="${3:-""}"
+
+    if ! encrypted_file_path=$(_file_get "${filename}"); then
+        fatal 'File does not exist: %s' "${filename}"
+    fi
 
     if ! backend_is_file_encrypted "${encrypted_file_path}"; then
         return 1
@@ -41,7 +45,7 @@ decrypt_helper() {
 
     if ! backend_decrypt_file "${type}" "${encrypted_file_path}" "${encrypted_file_dec}"; then
         rm -rf "${encrypted_file_dec}"
-        fatal 'Error while decrypting file: %s' "${file}"
+        fatal 'Error while decrypting file: %s' "${filename}"
     fi
 
     return 0
@@ -76,20 +80,16 @@ decrypt() {
         j=$((j + 1))
     done
 
-    file="$1"
-
-    if ! encrypted_file_path=$(_file_get "${file}"); then
-        fatal 'File does not exist: %s' "${file}"
-    fi
+    filepath="$1"
 
     if [ "${inline}" = "true" ]; then
-        output="${file}"
+        output="${filepath}"
     else
         output="stdout"
     fi
 
-    if ! content=$(decrypt_helper "${encrypted_file_path}" "auto" "${output}"); then
-        fatal 'File is not encrypted: %s' "${file}"
+    if ! content=$(decrypt_helper "${filepath}" "auto" "${output}"); then
+        fatal 'File is not encrypted: %s' "${filepath}"
     fi
 
     if [ "${terraform}" = "true" ]; then

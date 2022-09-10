@@ -9,8 +9,8 @@ ALLOW_AGE_IMPORT_KUBERNETES="${HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES:-"true"}
 
 KEY_LOCATION_PREFIX="${HELM_SECRETS_KEY_LOCATION_PREFIX:-""}"
 
-# shellcheck source=scripts/commands/view.sh
-. "${SCRIPT_DIR}/commands/view.sh"
+# shellcheck source=scripts/commands/decrypt.sh
+. "${SCRIPT_DIR}/commands/decrypt.sh"
 
 _trap_kill_gpg_agent() {
     if [ -n "${_GNUPGHOME+x}" ]; then
@@ -89,7 +89,7 @@ downloader() {
         ;;
     esac
 
-    view_helper "${file}" "auto"
+    decrypt_helper "${file}" "auto" "stdout"
 }
 
 _gpg_init() {

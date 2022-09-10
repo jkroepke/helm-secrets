@@ -25,26 +25,26 @@ EOF
 
 encrypt_helper() {
     dir=$(dirname "$1")
-    file=$(basename "$1")
+    filename=$(basename "$1")
     inline="$2"
 
     cd "$dir"
 
-    if [ ! -f "${file}" ]; then
-        fatal 'File does not exist: %s' "${dir}/${file}"
+    if [ ! -f "${filename}" ]; then
+        fatal 'File does not exist: %s' "${dir}/${filename}"
     fi
 
     if [ "${inline}" = "true" ]; then
-        output="${file}"
+        output="${filename}"
     else
         output=""
     fi
 
-    if backend_is_file_encrypted "${file}"; then
-        fatal 'Already encrypted: %s' "${file}"
+    if backend_is_file_encrypted "${filename}"; then
+        fatal 'Already encrypted: %s' "${filename}"
     fi
 
-    backend_encrypt_file "yaml" "${file}" "${output}"
+    backend_encrypt_file "yaml" "${filename}" "${output}"
 }
 
 encrypt() {
@@ -72,11 +72,11 @@ encrypt() {
         j=$((j + 1))
     done
 
-    file="$1"
+    filepath="$1"
 
-    if [ ! -f "${file}" ]; then
-        fatal 'File does not exist: %s' "${file}"
+    if [ ! -f "${filepath}" ]; then
+        fatal 'File does not exist: %s' "${filepath}"
     fi
 
-    encrypt_helper "${file}" "${inline}"
+    encrypt_helper "${filepath}" "${inline}"
 }

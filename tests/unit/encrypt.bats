@@ -49,8 +49,6 @@ load '../bats/extensions/bats-file/load'
     refute_output --regex '.+'
     assert_success
 
-    cat  "${VALUES_PATH}" >&2
-
     assert_file_contains "${VALUES_PATH}" 'global_secret: ENC'
 
     run "${HELM_BIN}" secrets decrypt "${VALUES_PATH}"
