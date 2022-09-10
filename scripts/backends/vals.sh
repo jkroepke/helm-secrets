@@ -36,16 +36,17 @@ backend_decrypt_file() {
         type=$(_vals_get_type "${input}")
     fi
 
-    if [ "${output}" != "" ]; then
-        _vals eval -o "${type}" <"${input}" >"${output}"
-    else
+    if [ "${input}" = "${output}" ]; then
+        fatal "vals: inline decryption is not supported!"
+    elif [ "${output}" = "" ]; then
         _vals eval -o "${type}" <"${input}"
+    else
+        _vals eval -o "${type}" <"${input}" >"${output}"
     fi
 }
 
 backend_edit_file() {
-    echo "Editing files is not supported!"
-    exit 1
+    fatal "vals: Editing files is not supported!"
 }
 
 _vals_get_type() {

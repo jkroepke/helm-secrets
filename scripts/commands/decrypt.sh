@@ -4,7 +4,7 @@ set -euf
 
 dec_usage() {
     cat <<EOF
-helm secrets [ OPTIONS ] dec <path to file>
+helm secrets [ OPTIONS ] dec [ -i ] <path to file>
 
 Decrypt secrets
 
@@ -14,7 +14,10 @@ You can use plain sops to decrypt specific files - https://github.com/mozilla/so
 
 Typical usage:
   $ helm secrets dec secrets/project/secrets.yaml
-  $ vim secrets/project/secrets.yaml.dec
+
+  # Decrypt file inline
+
+  $ helm secrets dec -i secrets/project/secrets.yaml
 
 EOF
 }
@@ -22,12 +25,19 @@ EOF
 decrypt_helper() {
     encrypted_file_path="${1}"
     type="${2:-"yaml"}"
+    output="${3:-""}"
 
     if ! backend_is_file_encrypted "${encrypted_file_path}"; then
         return 1
     fi
 
-    encrypted_file_dec="$(_file_dec_name "${encrypted_file_path}")"
+    if [ "${output}" = "stdout" ]; then
+        encrypted_file_dec=""
+    elif [ "${output}" != "" ]; then
+        encrypted_file_dec="${encrypted_file_path}"
+    else
+        encrypted_file_dec="$(_file_dec_name "${encrypted_file_path}")"
+    fi
 
     if ! backend_decrypt_file "${type}" "${encrypted_file_path}" "${encrypted_file_dec}"; then
         rm -rf "${encrypted_file_dec}"
@@ -37,23 +47,44 @@ decrypt_helper() {
     return 0
 }
 
-dec() {
+decrypt() {
     if is_help "$1"; then
         dec_usage
         return
     fi
 
-    file="$1"
+    inline=false
 
-    if [ "${QUIET}" = "false" ]; then
-        log 'Decrypting %s' "${file}"
-    fi
+    argc=$#
+    j=0
+
+    while [ $j -lt $argc ]; do
+        case "$1" in
+        -i)
+            inline=true
+            ;;
+        *)
+            set -- "$@" "$1"
+            ;;
+        esac
+
+        shift
+        j=$((j + 1))
+    done
+
+    file="$1"
 
     if ! encrypted_file_path=$(_file_get "${file}"); then
         fatal 'File does not exist: %s' "${file}"
     fi
 
-    if ! decrypt_helper "${encrypted_file_path}" "auto"; then
+    if [ "${inline}" = "true" ]; then
+        output="${file}"
+    else
+        output="stdout"
+    fi
+
+    if ! decrypt_helper "${encrypted_file_path}" "auto" "${output}"; then
         fatal 'File is not encrypted: %s' "${file}"
     fi
 }

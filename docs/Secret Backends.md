@@ -4,17 +4,17 @@ It's possible to use another secret backend then sops, e.g. vals.
 
 Example for in-tree backends via an CLI option
 ```bash
-helm secrets -b sops view ./tests/assets/helm_vars/secrets.yaml
+helm secrets -b sops decrypt ./tests/assets/helm_vars/secrets.yaml
 ```
 
 Example for in-tree backends via environment variable
 ```bash
-HELM_SECRETS_BACKEND=vals helm secrets view ./tests/assets/helm_vars/secrets.yaml
+HELM_SECRETS_BACKEND=vals helm secrets decrypt ./tests/assets/helm_vars/secrets.yaml
 ```
 
 Example for out-of-tree backends
 ```bash
-helm secrets -b ./path/to/backend.sh view ./tests/assets/helm_vars/secrets.yaml
+helm secrets -b ./path/to/backend.sh decrypt ./tests/assets/helm_vars/secrets.yaml
 ```
 
 The backend option is a global one. A file level switch isn't supported yet.
@@ -27,7 +27,7 @@ The custom backend can be load via `HELM_SECRETS_BACKEND` parameter or `-d` opti
 ## Pass additional arguments to a secret backend
 
 ```bash
-helm secrets -a "--verbose" view ./tests/assets/helm_vars/secrets.yaml
+helm secrets -a "--verbose" decrypt ./tests/assets/helm_vars/secrets.yaml
 ```
 
 results into:
@@ -52,8 +52,8 @@ you can use `HELM_SECRETS_$BACKEND_PATH` to explicitly specify the sops binary t
 
 ```bash
 # Example for in-tree backends via environment variable
-HELM_SECRETS_SOPS_PATH=/custom/location/sops helm secrets view ./tests/assets/helm_vars/secrets.yaml
-HELM_SECRETS_VALS_PATH=/custom/location/vals helm secrets view ./tests/assets/helm_vars/secrets.yaml
+HELM_SECRETS_SOPS_PATH=/custom/location/sops helm secrets decrypt ./tests/assets/helm_vars/secrets.yaml
+HELM_SECRETS_VALS_PATH=/custom/location/vals helm secrets decrypt ./tests/assets/helm_vars/secrets.yaml
 ```
 
 # List of implemented secret backends

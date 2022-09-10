@@ -25,6 +25,8 @@ backend_encrypt_file() {
 
     if [ "${input}" = "${output}" ]; then
         _sops --encrypt --input-type "${type}" --output-type "${type}" --in-place "$(_sops_winpath "${input}")"
+    elif [ "${output}" = "" ]; then
+        _sops --encrypt --input-type "${type}" --output-type "${type}" "$(_sops_winpath "${input}")"
     else
         _sops --encrypt --input-type "${type}" --output-type "${type}" --output "$(_sops_winpath "${output}")" "$(_sops_winpath "${input}")"
     fi
@@ -40,10 +42,12 @@ backend_decrypt_file() {
         type=$(_sops_dec_get_type "${input}")
     fi
 
-    if [ "${output}" != "" ]; then
-        _sops --decrypt --input-type "${type}" --output-type "${type}" --output "$(_sops_winpath "${output}")" "$(_sops_winpath "${input}")"
-    else
+    if [ "${input}" = "${output}" ]; then
+        _sops --decrypt --input-type "${type}" --output-type "${type}" --in-place "$(_sops_winpath "${input}")"
+    elif [ "${output}" = "" ]; then
         _sops --decrypt --input-type "${type}" --output-type "${type}" "$(_sops_winpath "${input}")"
+    else
+        _sops --decrypt --input-type "${type}" --output-type "${type}" --output "$(_sops_winpath "${output}")" "$(_sops_winpath "${input}")"
     fi
 }
 

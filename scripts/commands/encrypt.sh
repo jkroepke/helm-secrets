@@ -4,7 +4,7 @@ set -euf
 
 enc_usage() {
     cat <<EOF
-helm secrets [ OPTIONS ] enc <path to file>
+helm secrets [ OPTIONS ] enc [ -i ] <path to file>
 
 Encrypt secrets
 
@@ -26,6 +26,7 @@ EOF
 encrypt_helper() {
     dir=$(dirname "$1")
     file=$(basename "$1")
+    inline="$2"
 
     cd "$dir"
 
@@ -33,30 +34,43 @@ encrypt_helper() {
         fatal 'File does not exist: %s' "${dir}/${file}"
     fi
 
-    file_dec="$(_file_dec_name "${file}")"
-
-    if [ ! -f "${file_dec}" ]; then
-        file_dec="${file}"
-    fi
-
-    if backend_is_file_encrypted "${file_dec}"; then
-        fatal 'Already encrypted: %s' "${file_dec}"
-    fi
-
-    backend_encrypt_file "yaml" "${file_dec}" "${file}"
-
-    if [ "${file}" = "${file_dec}" ]; then
-        printf 'Encrypted %s\n' "${file_dec}"
+    if [ "${inline}" = "true" ]; then
+        output="${file}"
     else
-        printf 'Encrypted %s to %s\n' "${file_dec}" "${file}"
+        output=""
     fi
+
+    if backend_is_file_encrypted "${file}"; then
+        fatal 'Already encrypted: %s' "${file}"
+    fi
+
+    backend_encrypt_file "yaml" "${file}" "${output}"
 }
 
-enc() {
+encrypt() {
     if is_help "$1"; then
         enc_usage
         return
     fi
+
+    inline=false
+
+    argc=$#
+    j=0
+
+    while [ $j -lt $argc ]; do
+        case "$1" in
+        -i)
+            inline=true
+            ;;
+        *)
+            set -- "$@" "$1"
+            ;;
+        esac
+
+        shift
+        j=$((j + 1))
+    done
 
     file="$1"
 
@@ -64,6 +78,5 @@ enc() {
         fatal 'File does not exist: %s' "${file}"
     fi
 
-    printf 'Encrypting %s\n' "${file}"
-    encrypt_helper "${file}"
+    encrypt_helper "${file}" "${inline}"
 }
