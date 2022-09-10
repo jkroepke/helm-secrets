@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - `helm secret clean` command.
+- `helm secret terraform` command. The `helm secret decrypt --terraform` command is a drop-in replacement now.
 - `helm secret view` command. The `helm secret decrypt` command is a drop-in replacement now.
 - `vault` driver. The `vals` driver supports vault as backend, too.
 - `envsubst` driver. The `vals` driver supports envsubst as backend, too.

@@ -221,3 +221,14 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'global_secret: global_bar'
     assert_success
 }
+
+@test "decrypt: Decrypt secrets.yaml in terraform mode" {
+    FILE="${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+
+    run "${HELM_BIN}" secrets decrypt --terraform "${FILE}"
+
+    # assert that there are no new lines in the base64
+    assert_output --regexp '\{"content_base64":"([A-Za-z0-9=]*)"\}'
+
+    assert_success
+}

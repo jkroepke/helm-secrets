@@ -4,7 +4,7 @@ set -euf
 
 dec_usage() {
     cat <<EOF
-helm secrets [ OPTIONS ] dec [ -i ] <path to file>
+helm secrets [ OPTIONS ] dec [ -i ] [ --terraform ] <path to file>
 
 Decrypt secrets
 
@@ -54,6 +54,7 @@ decrypt() {
     fi
 
     inline=false
+    terraform=false
 
     argc=$#
     j=0
@@ -62,6 +63,9 @@ decrypt() {
         case "$1" in
         -i)
             inline=true
+            ;;
+        --terraform)
+            terraform=true
             ;;
         *)
             set -- "$@" "$1"
@@ -84,7 +88,13 @@ decrypt() {
         output="stdout"
     fi
 
-    if ! decrypt_helper "${encrypted_file_path}" "auto" "${output}"; then
+    if ! content=$(decrypt_helper "${encrypted_file_path}" "auto" "${output}"); then
         fatal 'File is not encrypted: %s' "${file}"
+    fi
+
+    if [ "${terraform}" = "true" ]; then
+        printf '{"content_base64":"%s"}' "$(printf '%s' "${content}" | base64 | tr -d \\n)"
+    else
+        printf '%s' "${content}"
     fi
 }

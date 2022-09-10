@@ -4,12 +4,9 @@ flags:
   - backend
   - quiet
 commands:
-  - name: dec
-  - name: enc
-  - name: view
-  - name: terraform
+  - name: decrypt
+  - name: encrypt
   - name: edit
-  - name: clean
   - name: lint
   - name: template
   - name: install
