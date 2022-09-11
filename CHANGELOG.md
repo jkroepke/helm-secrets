@@ -19,9 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - The environment variables `HELM_SECRETS_DRIVER` and `HELM_SECRETS_DRIVER_ARGS` has been renamed to `HELM_SECRETS_BACKEND` and `HELM_SECRETS_BACKEND_ARGS`
 
 ### Removed
+- `HELM_SECRETS_DRIVER` environment variable. `HELM_SECRETS_BACKEND`is a drop-in replacement.
 - `helm secret clean` command.
-- `helm secret terraform` command. The `helm secret decrypt --terraform` command is a drop-in replacement now.
-- `helm secret view` command. The `helm secret decrypt` command is a drop-in replacement now.
+- `helm secret terraform` command. The `helm secret decrypt --terraform` command is a drop-in replacement.
+- `helm secret view` command. The `helm secret decrypt` command is a drop-in replacement.
 - `vault` driver. The `vals` driver supports vault as backend, too.
 - `envsubst` driver. The `vals` driver supports envsubst as backend, too.
 - `droppler` driver.

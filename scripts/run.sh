@@ -45,19 +45,6 @@ SECRET_BACKEND="${HELM_SECRETS_BACKEND:-sops}"
 # Define the secret backend custom args
 SECRET_BACKEND_ARGS="${HELM_SECRETS_BACKEND_ARGS:-}"
 
-if [ -n "${HELM_SECRETS_DRIVER+x}" ]; then
-    if [ "${QUIET}" = "false" ]; then
-        log 'The env var HELM_SECRETS_DRIVER is deprecated! Use HELM_SECRETS_BACKEND instead!'
-    fi
-    SECRET_BACKEND="${HELM_SECRETS_DRIVER}"
-fi
-if [ -n "${HELM_SECRETS_DRIVER_ARGS+x}" ]; then
-    if [ "${QUIET}" = "false" ]; then
-        log 'The env var HELM_SECRETS_DRIVER_ARGS is deprecated! Use HELM_SECRETS_BACKEND_ARGS instead!'
-    fi
-    SECRET_BACKEND_ARGS="${HELM_SECRETS_DRIVER_ARGS}"
-fi
-
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
 # shellcheck disable=SC2034
@@ -168,27 +155,11 @@ while true; do
         load_secret_backend "$2"
         shift
         ;;
-    --driver | -d)
-        if [ "${QUIET}" = "false" ]; then
-            log 'The CLI arg '"$1"' is deprecated! --backend instead!'
-        fi
-        load_secret_backend "$2"
-        shift
-        ;;
     --quiet | -q)
         # shellcheck disable=SC2034
         QUIET=true
         ;;
     --backend-args | -a)
-        # shellcheck disable=SC2034
-        SECRET_BACKEND_ARGS="$2"
-        shift
-        ;;
-    --driver-args)
-        if [ "${QUIET}" = "false" ]; then
-            log 'The CLI arg '"$1"' is deprecated! --backend-args instead!'
-        fi
-
         # shellcheck disable=SC2034
         SECRET_BACKEND_ARGS="$2"
         shift
