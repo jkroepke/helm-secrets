@@ -177,7 +177,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --debug lint -f "${VALUES_PATH}" --set "service.type=NodePort" -- "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets lint -f "${VALUES_PATH}" --set "service.type=NodePort" -- "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"

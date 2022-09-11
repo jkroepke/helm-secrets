@@ -982,20 +982,29 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ remote chart + secrets.yaml + http://" {
-    if ! is_backend "sops"; then
-        # For vault its pretty hard to have a committed files with temporary seed of this test run
-        skip
-    fi
-
     VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --debug template --repo https://jkroepke.github.io/helm-charts/ --version 1.0.3 values -f "${VALUES_PATH}" 2>&1
+    run "${HELM_BIN}" secrets template --repo https://jkroepke.github.io/helm-charts/ --version 1.0.3 values -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
-    assert_output --partial "port: 81"
+    assert_output --partial "global_secret: global_bar"
+    assert_output --partial "[helm-secrets] Removed: "
+    assert_success
+}
+
+@test "template: helm template w/ remote chart + secrets.yaml + http:// + --set-file" {
+    VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template --repo https://jkroepke.github.io/helm-charts/ --version 1.0.3 values --set-file "content=${VALUES_PATH}" 2>&1
+
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output --partial "global_secret: global_bar"
     assert_output --partial "[helm-secrets] Removed: "
     assert_success
 }

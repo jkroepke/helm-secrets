@@ -45,7 +45,7 @@ load '../bats/extensions/bats-file/load'
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.dec.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    run "${HELM_BIN}" --debug secrets encrypt -i "${VALUES_PATH}"
+    run "${HELM_BIN}" secrets encrypt -i "${VALUES_PATH}"
     refute_output --regex '.+'
     assert_success
 
