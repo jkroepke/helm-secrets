@@ -15,11 +15,9 @@ To decrypt/encrypt/edit you need to initialize/first encrypt secrets with
 sops - https://github.com/mozilla/sops
 
 Available Commands:
-  enc     Encrypt secrets file
-  dec     Decrypt secrets file
-  view    Print secrets decrypted
+  encrypt Encrypt secrets file
+  decrypt Decrypt secrets file
   edit    Edit secrets file and encrypt afterwards
-  clean   Remove all decrypted files in specified directory (recursively)
   dir     Get plugin directory
   patch   Enables windows specific adjustments
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
@@ -41,11 +39,9 @@ Decrypted files have the suffix ".dec" by default. This can be changed using the
 ## Basic commands:
 
 ```
-  enc           Encrypt secrets file
-  dec           Decrypt secrets file
-  view          Print decrypted secrets file
-  edit          Edit secrets file (decrypt before and encrypt after)
-  clean         Delete *.yaml.dec files in directory (recursively)
+  encrypt Encrypt secrets file
+  decrypt Decrypt secrets file
+  edit    Edit secrets file and encrypt afterwards
 ```
 
 Each of these commands have their own help.
@@ -58,57 +54,37 @@ Note: You need to run `gpg --import tests/assets/gpg/private.gpg` in order to su
 
 ### Decrypt
 
-The decrypt operation decrypts a secrets.yaml file and saves the decrypted result in secrets.yaml.dec:
+The `decrypt` operation decrypts a secrets.yaml file:
 
 ```bash
-helm secrets dec examples/sops/secrets.yaml
+helm secrets decrypt examples/sops/secrets.yaml
 ```
 
-The secrets.yaml.dec file:
+Output
 
 ```
 podAnnotations:
     secret: value
 ```
 
-Note that if the secrets.yaml.dec file already exists and is newer than secrets.yaml, it will not be overwritten:
+Inline decryption is supported, too.
 
 ```
-$ helm secrets dec examples/sops/secrets.yaml
-Decrypting examples/sops/secrets.yaml
-examples/sops/secrets.yaml.dec is newer than examples/sops/secrets.yaml
+$ helm secrets decrypt -i examples/sops/secrets.yaml
 ```
 
 ### Encrypt
 
-The encrypt operation encrypts a secrets.yaml.dec file and saves the encrypted result in secrets.yaml:
-
-If you initially have an unencrypted secrets.yaml file, it will be used as input and will be overwritten:
+The `encrypt` operation encrypts a file and output the encrypted file:
 
 ```
-$ helm secrets enc examples/sops/secrets.yaml
-Encrypting examples/sops/secrets.yaml
-Encrypted examples/sops/secrets.yaml
+$ helm secrets encrypt examples/sops/secrets.yaml
 ```
 
-If you already have an encrypted secrets.yaml file and a decrypted secrets.yaml.dec file, encrypting will encrypt secrets.yaml.dec to secrets.yaml:
+Inline encryption is supported, too.
 
 ```
-$ helm secrets dec examples/sops/secrets.yaml
-Decrypting examples/sops/secrets.yaml
-$ helm secrets enc examples/sops/secrets.yaml
-Encrypting examples/sops/secrets.yaml
-Encrypted examples/sops/secrets.yaml.dec to examples/sops/secrets.yaml
-```
-
-### View
-
-The view operation decrypts secrets.yaml and prints it to stdout:
-
-```
-$ helm secrets view examples/sops/secrets.yaml
-podAnnotations:
-    secret: value
+$ helm secrets decrypt -i examples/sops/secrets.yaml
 ```
 
 ### Edit
@@ -190,7 +166,7 @@ Running helm to install/upgrade chart with our secrets files is simple with the 
 
 The wrapper enables you to call these helm commands with on-the-fly decryption of secrets files passed as `-f` or `--values` arguments. Instead of calling e.g. `helm install ...` you can call `helm secrets install ...` to get on-the-fly decryption.
 
-The diff command is a separate helm plugin, [helm-diff](https://github.com/databus23/helm-diff). Using it you can view the changes that would be deployed before deploying. In the same way as above, instead of calling e.g. `helm diff upgrade ...` you can call `helm secrets diff upgrade ...`, and so on.
+The diff command is a separate helm plugin, [helm-diff](https://github.com/databus23/helm-diff). Using it you can decrypt the changes that would be deployed before deploying. In the same way as above, instead of calling e.g. `helm diff upgrade ...` you can call `helm secrets diff upgrade ...`, and so on.
 
 Note that if a decrypted secrets.yaml.dec file exists and is newer then the secrets.yaml file, it will be used in the wrapped command rather than decrypting secrets.yaml.
 

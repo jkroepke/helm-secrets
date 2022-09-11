@@ -94,40 +94,32 @@ fi
 
 while true; do
     case "${1:-}" in
-    enc)
-        # shellcheck source=scripts/commands/enc.sh
-        . "${SCRIPT_DIR}/commands/enc.sh"
+    encrypt)
+        # shellcheck source=scripts/commands/encrypt.sh
+        . "${SCRIPT_DIR}/commands/encrypt.sh"
 
         if [ $# -lt 2 ]; then
             enc_usage
             echo "Error: secrets file required."
             exit 1
         fi
-        enc "$2"
+
+        shift
+        encrypt "$@"
         break
         ;;
-    dec)
-        # shellcheck source=scripts/commands/dec.sh
-        . "${SCRIPT_DIR}/commands/dec.sh"
+    decrypt)
+        # shellcheck source=scripts/commands/decrypt.sh
+        . "${SCRIPT_DIR}/commands/decrypt.sh"
 
         if [ $# -lt 2 ]; then
             dec_usage
             echo "Error: secrets file required."
             exit 1
         fi
-        dec "$2"
-        break
-        ;;
-    view)
-        # shellcheck source=scripts/commands/view.sh
-        . "${SCRIPT_DIR}/commands/view.sh"
 
-        if [ $# -lt 2 ]; then
-            view_usage
-            echo "Error: secrets file required."
-            exit 1
-        fi
-        view "$2"
+        shift
+        decrypt "$@"
         break
         ;;
     edit)
@@ -140,18 +132,6 @@ while true; do
             exit 1
         fi
         edit "$2"
-        break
-        ;;
-    clean)
-        # shellcheck source=scripts/commands/clean.sh
-        . "${SCRIPT_DIR}/commands/clean.sh"
-
-        if [ $# -lt 2 ]; then
-            clean_usage
-            echo "Error: Chart package required."
-            exit 1
-        fi
-        clean "$2"
         break
         ;;
     dir)
@@ -170,13 +150,6 @@ while true; do
         . "${SCRIPT_DIR}/commands/patch.sh"
 
         patch "$2"
-        break
-        ;;
-    terraform)
-        # shellcheck source=scripts/commands/downloader.sh
-        . "${SCRIPT_DIR}/commands/terraform.sh"
-
-        terraform "$2"
         break
         ;;
     --help | -h | help)

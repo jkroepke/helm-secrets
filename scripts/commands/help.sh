@@ -16,11 +16,9 @@ To decrypt/encrypt/edit you need to initialize/first encrypt secrets with
 sops - https://github.com/mozilla/sops
 
 Available Commands:
-  enc     Encrypt secrets file
-  dec     Decrypt secrets file
-  view    Print secrets decrypted
+  encrypt Encrypt secrets file
+  decrypt Decrypt secrets file
   edit    Edit secrets file and encrypt afterwards
-  clean   Remove all decrypted files in specified directory (recursively)
   dir     Get plugin directory
   patch   Enables windows specific adjustments
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>

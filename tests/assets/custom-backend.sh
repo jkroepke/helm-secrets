@@ -9,13 +9,7 @@ _custom_backend_get_secret() {
     _type=$1
     _SECRET=$2
 
-    if [ "${_type}" != "yaml" ]; then
-        echo "Only decryption of yaml files are allowed!"
-        exit 1
-    fi
-
     if ! echo "${_SECRET}"; then
-        echo "Error while get secret!" >&2
-        exit 1
+        fatal "Error while get secret!"
     fi
 }

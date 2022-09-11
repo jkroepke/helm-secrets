@@ -25,10 +25,12 @@ backend_decrypt_file() {
     # if omit then output to stdout
     output="${3:-}"
 
-    if [ "${output}" != "" ]; then
-        cat "${input}" >"${output}"
-    else
+    if [ "${input}" = "${output}" ]; then
+        :
+    elif [ "${output}" = "" ]; then
         cat "${input}"
+    else
+        cat "${input}" >"${output}"
     fi
 }
 

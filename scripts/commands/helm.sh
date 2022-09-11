@@ -2,8 +2,8 @@
 
 set -euf
 
-# shellcheck source=scripts/commands/dec.sh
-. "${SCRIPT_DIR}/commands/dec.sh"
+# shellcheck source=scripts/commands/decrypt.sh
+. "${SCRIPT_DIR}/commands/decrypt.sh"
 
 helm_command_usage() {
     cat <<EOF

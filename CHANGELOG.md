@@ -10,18 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for decrypting files defined via `--set-file`
 
 ### Changed
-- Secret drivers are renamed to secret backends
+- **Breaking**: Rename `helm secrets dec` to `helm secrets decrypt`
+- **Breaking**: Rename `helm secrets enc` to `helm secrets encrypt`
+- **Breaking**: The `encrypt` and `encrypt` command write the results to stdout now. Both commands support `-i` flag to en/decrypt file in-line. 
+- **Breaking**: Secret drivers are renamed to secret backends
   - This is **breaking** custom integrations. All shell functions contains the name `driver` are renamed to `backend`, e.g.: `driver_encrypt_file` -> `backend_encrypt_file`
   - The CLI Arguments `--driver`, `-d` and `--driver-args` has been renamed to `--backend`, `-b` and `--backend-args`
   - The environment variables `HELM_SECRETS_DRIVER` and `HELM_SECRETS_DRIVER_ARGS` has been renamed to `HELM_SECRETS_BACKEND` and `HELM_SECRETS_BACKEND_ARGS`
 
 ### Removed
-- Removed `vault` driver. The `vals` driver supports vault as backend, too.
-- Removed `envsubst` driver. The `vals` driver supports envsubst as backend, too.
-- Removed `droppler` driver.
+- `helm secret clean` command.
+- `helm secret terraform` command. The `helm secret decrypt --terraform` command is a drop-in replacement now.
+- `helm secret view` command. The `helm secret decrypt` command is a drop-in replacement now.
+- `vault` driver. The `vals` driver supports vault as backend, too.
+- `envsubst` driver. The `vals` driver supports envsubst as backend, too.
+- `droppler` driver.
 - `sops://` protocol handler
 - `secret://` protocol handler
-- New parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
+- Parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
 
 ## [3.15.0] - 2022-08-08
 

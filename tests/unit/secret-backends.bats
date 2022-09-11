@@ -8,7 +8,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets -b" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets -b nonexists view "${FILE}"
+    run "${HELM_BIN}" secrets -b nonexists decrypt "${FILE}"
     assert_output --partial "Can't find secret backend: nonexists"
     assert_failure
 }
@@ -16,7 +16,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets --backend" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets --backend nonexists view "${FILE}"
+    run "${HELM_BIN}" secrets --backend nonexists decrypt "${FILE}"
     assert_output --partial "Can't find secret backend: nonexists"
     assert_failure
 }
@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets + env HELM_SECRETS_BACKEND" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run env HELM_SECRETS_BACKEND=nonexists WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_BACKEND=nonexists WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets decrypt "${FILE}"
     assert_output --partial "Can't find secret backend: nonexists"
     assert_failure
 }
@@ -32,7 +32,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets -b noop" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets -b noop view "${FILE}"
+    run "${HELM_BIN}" secrets -b noop decrypt "${FILE}"
     assert_output --partial 'sops:'
     assert_success
 }
@@ -40,7 +40,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets --backend noop" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets --backend noop view "${FILE}"
+    run "${HELM_BIN}" secrets --backend noop decrypt "${FILE}"
     assert_output --partial 'sops:'
     assert_success
 }
@@ -48,7 +48,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets -b noop + q flag" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run "${HELM_BIN}" secrets -q -b noop view "${FILE}"
+    run "${HELM_BIN}" secrets -q -b noop decrypt "${FILE}"
     assert_output --partial 'sops:'
     assert_success
 }
@@ -56,7 +56,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets + env HELM_SECRETS_BACKEND=noop" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run env HELM_SECRETS_BACKEND=noop WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_BACKEND=noop WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets decrypt "${FILE}"
     assert_output --partial 'sops:'
     assert_success
 }
@@ -64,7 +64,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets + prefer cli arg -b noop over env" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
-    run env HELM_SECRETS_BACKEND=sops WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets -b noop view "${FILE}"
+    run env HELM_SECRETS_BACKEND=sops WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets -b noop decrypt "${FILE}"
     assert_output --partial 'sops:'
     assert_success
 }
@@ -72,7 +72,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets --backend assets/custom-backend.sh" {
     FILE="${TEST_TEMP_DIR}/assets/values/custom-backend/secrets.yaml"
 
-    run "${HELM_BIN}" secrets --backend "${TEST_TEMP_DIR}/assets/custom-backend.sh" view "${FILE}"
+    run "${HELM_BIN}" secrets --backend "${TEST_TEMP_DIR}/assets/custom-backend.sh" decrypt "${FILE}"
     refute_output --partial '!vault'
     assert_output --partial 'production#global_secret'
     assert_success
@@ -81,7 +81,7 @@ load '../bats/extensions/bats-file/load'
 @test "secret-backend: helm secrets + env HELM_SECRETS_BACKEND=assets/custom-backend.sh" {
     FILE="${TEST_TEMP_DIR}/assets/values/custom-backend/secrets.yaml"
 
-    run env HELM_SECRETS_BACKEND="${TEST_TEMP_DIR}/assets/custom-backend.sh" WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets view "${FILE}"
+    run env HELM_SECRETS_BACKEND="${TEST_TEMP_DIR}/assets/custom-backend.sh" WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets decrypt "${FILE}"
     refute_output --partial '!vault'
     assert_output --partial 'production#global_secret'
     assert_success

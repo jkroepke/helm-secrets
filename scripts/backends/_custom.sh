@@ -5,8 +5,7 @@ _custom_backend_is_yaml() {
 }
 
 _custom_backend_get_secret() {
-    echo "Please override function '_custom_backend_get_secret' in your backend!" >&2
-    exit 1
+    fatal "Please override function '_custom_backend_get_secret' in your backend!"
 }
 
 backend_is_file_encrypted() {
@@ -16,8 +15,7 @@ backend_is_file_encrypted() {
 }
 
 backend_encrypt_file() {
-    echo "Encrypting files is not supported!"
-    exit 1
+    fatal "Encrypting files is not supported!"
 }
 
 backend_decrypt_file() {
@@ -65,7 +63,9 @@ backend_decrypt_file() {
         exit 1
     fi
 
-    if [ "${output}" = "" ]; then
+    if [ "${input}" = "${output}" ]; then
+        cat "${output_yaml_anchors}" "${output_yaml}" >"${input}"
+    elif [ "${output}" = "" ]; then
         cat "${output_yaml_anchors}" "${output_yaml}"
     else
         cat "${output_yaml_anchors}" "${output_yaml}" >"${output}"
@@ -73,6 +73,5 @@ backend_decrypt_file() {
 }
 
 backend_edit_file() {
-    echo "Editing files is not supported!"
-    exit 1
+    fatal "custom: Editing files is not supported!"
 }
