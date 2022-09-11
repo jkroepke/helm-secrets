@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Breaking**: Rename `helm secrets dec` to `helm secrets decrypt`
 - **Breaking**: Rename `helm secrets enc` to `helm secrets encrypt`
-- **Breaking**: The `encrypt` and `encrypt` command write the results to stdout now. Both commands support `-i` flag to en/decrypt file in-line. 
+- **Breaking**: The `decrypt` and `encrypt` command write the results to stdout now. Both commands support `-i` flag to en/decrypt file in-line. 
 - **Breaking**: Secret drivers are renamed to secret backends
   - This is **breaking** custom integrations. All shell functions contains the name `driver` are renamed to `backend`, e.g.: `driver_encrypt_file` -> `backend_encrypt_file`
   - The CLI Arguments `--driver`, `-d` and `--driver-args` has been renamed to `--backend`, `-b` and `--backend-args`
