@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.0.0] - 2022-09-11
 ### Added
 - Support for decrypting files defined via `--set-file`
 
@@ -31,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameter `--output-decrypt-file-path` (`HELM_SECRETS_OUTPUT_DECRYPTED_FILE_PATH`) that outputs the path of decrypted files only.
 
 ## [3.15.0] - 2022-08-08
-
 ### Changed
 - Prefer bash from `Git for Windows` over `WSL` shell to avoid WSL interop incompatibilities
 - Deprecate `vault` driver. The `vals` driver supports vault as backend, too.
