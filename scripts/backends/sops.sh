@@ -9,9 +9,13 @@ _sops() {
 }
 
 backend_is_file_encrypted() {
-    input="${1}"
+    backend_is_encrypted <"${1}"
+}
 
-    grep -q 'sops' "${input}" && grep -q 'mac' "${input}" && grep -q 'version' "${input}"
+backend_is_encrypted() {
+    stdin=$(cat /dev/stdin)
+
+    [ "${stdin#*sops}" != "$stdin" ] && [ "${stdin#*mac}" != "$stdin" ] && [ "${stdin#*version}" != "$stdin" ]
 }
 
 backend_encrypt_file() {
@@ -48,6 +52,14 @@ backend_decrypt_file() {
         _sops --decrypt --input-type "${type}" --output-type "${type}" "$(_sops_winpath "${input}")"
     else
         _sops --decrypt --input-type "${type}" --output-type "${type}" --output "$(_sops_winpath "${output}")" "$(_sops_winpath "${input}")"
+    fi
+}
+
+backend_decrypt_literal() {
+    if printf '%s' "${1}" | backend_is_encrypted; then
+        printf '%s' "${1}" | _sops --decrypt --input-type 'json' --output-type 'json' /dev/stdin
+    else
+        printf '%s' "${1}"
     fi
 }
 

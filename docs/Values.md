@@ -24,7 +24,7 @@ Additionally, the authentication details can be provided by environment variable
 
 ### Via environment variables
 
-_Note: is feature is disabled by default and requires the environment variables `HELM_SECRETS_URL_VARIABLE_EXPANSION=true`._
+_Note: is feature is turned off by default and requires the environment variables `HELM_SECRETS_URL_VARIABLE_EXPANSION=true`._
 
 ```bash
 # can be also defined via kubernetes PodSpec or CI secrets
@@ -59,11 +59,34 @@ helm template -f secrets://https://raw.githubusercontent.com/jkroepke/helm-secre
 
 # Remote values from git
 
-helm-secrets supports [helm-git](https://github.com/aslafy-z/helm-git). With this combination, you can fetch secret from
-other git repositories.
+helm-secrets support [helm-git](https://github.com/aslafy-z/helm-git).
+With this combination, you can fetch secret from other git repositories.
 
 ```bash
 helm template -f secrets://git+https://[provider.com]/[user]/[repo]@[path/to/charts][?[ref=git-ref][&sparse=0][&depupdate=0]]
 ```
 
 Other plugins like [helm-s3, helm-gcs](https://helm.sh/docs/community/related/#helm-plugins) are supported as well.
+
+## Pass secrets through --set / --set-file
+
+helm-secrets support pass secrets' trough `--set` or `--set-file`. 
+
+Examples
+
+```bash
+helm secrets -b vals template bitnami/mysql --name-template mysql \
+  --set auth.rootPassword=ref+vault://secret/mysql#/rootPassword
+```
+
+```bash
+helm secrets template bitnami/mysql --name-template mysql \
+  --set-file auth.rootPassword=secret.yaml
+```
+
+or through downloader syntax (`--set-file` only);
+
+```bash
+helm template bitnami/mysql --name-template mysql \
+  --set-file auth.rootPassword=secrets://secret.yaml
+```

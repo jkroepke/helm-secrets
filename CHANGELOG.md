@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Support for literal `vals` values like `--set`, `--set-string` and `--set-json`, e.g. 
+  - `--set auth.rootPassword=ref+vault://secret/mysql#/rootPassword`
+- Support for literal `vals` values through downloader syntax `secrets+literal://`, e.g. 
+  - `--set-file secrets+literal://ref+vault://secret/mysql#/rootPassword`
+
 ## [4.0.0] - 2022-09-11
 ### Added
 - Support for decrypting files defined via `--set-file`

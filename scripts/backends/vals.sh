@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -euf
+
 _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
 _vals() {
@@ -16,14 +18,17 @@ _vals() {
 }
 
 backend_is_file_encrypted() {
-    input="${1}"
+    backend_is_encrypted <"${1}"
+}
 
-    grep -q 'ref+' "${input}"
+backend_is_encrypted() {
+    stdin=$(cat /dev/stdin)
+
+    [ "${stdin#*ref+}" != "$stdin" ]
 }
 
 backend_encrypt_file() {
-    echo "Encrypting files is not supported!"
-    exit 1
+    fatal "Encrypting files is not supported!"
 }
 
 backend_decrypt_file() {
@@ -42,6 +47,17 @@ backend_decrypt_file() {
         _vals eval -o "${type}" <"${input}"
     else
         _vals eval -o "${type}" <"${input}" >"${output}"
+    fi
+}
+
+backend_decrypt_literal() {
+    if printf '%s' "${1}" | backend_is_encrypted; then
+        if ! literal_value=$(printf '"": %s' "${1}" | _vals eval -o json); then
+            return 1
+        fi
+        printf '%s' "${literal_value}" | sed -e 's/^{"":"//' | sed -e 's/"}$//'
+    else
+        printf '%s' "${1}"
     fi
 }
 
