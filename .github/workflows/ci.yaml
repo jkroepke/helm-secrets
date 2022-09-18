@@ -6,7 +6,7 @@ env:
   VERSION_HELM: v3.9.0
   VERSION_SOPS: v3.7.3
   VERSION_VALS: v0.18.0
-  VERSION_VAULT: 1.10.4
+  VERSION_KIND: v0.15.0
 
 on:
   pull_request:
@@ -289,7 +289,7 @@ jobs:
 
       - uses: engineerd/setup-kind@v0.5.0
         with:
-          version: "v0.11.1"
+          version: ${{ env.VERSION_KIND }}
 
       - name: bashcov bats --tap -r tests/it
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
@@ -314,7 +314,7 @@ jobs:
     steps:
       - uses: engineerd/setup-kind@v0.5.0
         with:
-          version: "v0.11.1"
+          version: ${{ env.VERSION_KIND }}
 
       - run: kubectl cluster-info
 
