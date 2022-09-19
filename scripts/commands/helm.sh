@@ -46,6 +46,33 @@ helm_wrapper() {
 
     while [ $j -lt $argc ]; do
         case "$1" in
+        --set | --set=?* | --set-string | --set-string=?* | --set-json | --set-json=?*)
+            _1="${1}"
+
+            case "${_1}" in
+            --set=* | --set-string=* | --set-json=*)
+                literal="${_1#*=}"
+
+                set -- "$@" "${_1%%=*}"
+                ;;
+            *)
+                literal="${2}"
+
+                set -- "$@" "$1"
+                shift
+                j=$((j + 1))
+                ;;
+            esac
+
+            opt_prefix="${literal%%=*}="
+            literal="${literal#*=}"
+
+            if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
+                exit 1
+            fi
+
+            set -- "$@" "${opt_prefix}${decrypted_literal}"
+            ;;
         -f | --values | --values=?* | --set-file | --set-file=?*)
             _1="${1}"
 

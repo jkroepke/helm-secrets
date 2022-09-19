@@ -293,6 +293,138 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set service.port w/ error" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set 'service.port=ref+file://notexists' 2>&1
+
+    refute_output --partial "port: "
+    assert_failure
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set service.port" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set service.port=ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set=service.port" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set=service.port=ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set-string service.port" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set-string service.port=ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set-string=service.port" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set-string=service.port=ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + wrapper --set-file service.port=secrets+literal://" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        --set-file service.port=secrets+literal://ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+}
+
+@test "template: helm template w/ chart + wrapper --set-file=service.port=secrets+literal://" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        --set-file=service.port=secrets+literal://ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set-file service.port=secrets+literal:// w/ error" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        --set-file 'service.port=secrets+literal://ref+file://notexists' 2>&1
+
+    refute_output --partial "port: "
+    assert_failure
+}
+
 @test "template: helm template w/ chart + secrets://secrets.yaml + --set-file secrets://file.txt" {
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"

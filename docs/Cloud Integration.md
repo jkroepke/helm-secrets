@@ -8,7 +8,7 @@ This integration is also supported inside [ArgoCD](https://github.com/jkroepke/h
 
 # Prerequisites
 
-- helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
+- helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher. (literal values requires 4.1+)
 - [vals](https://github.com/variantdev/vals) backend usage
 
 ## Setup
@@ -97,4 +97,20 @@ sops: ref+sops://assets/values/vals/secrets.sops.yaml#/key
 file: ref+file:///absolute/path/to/file[#/path/to/the/value]
 service:
   port: ref+envsubst://$VAR1
+```
+
+# Example literal values
+
+```bash
+export HELM_SECRETS_BACKEND=vals
+helm secrets template bitnami/mysql --name-template mysql \
+  --set auth.rootPassword=ref+awsssm://foo/bar?mode=singleparam#/BAR
+```
+
+wrapper-less environment like ArgoCD through downloader syntax (`--set-file` only):
+
+```bash
+export HELM_SECRETS_BACKEND=vals
+helm template bitnami/mysql --name-template mysql \
+  --set-file auth.rootPassword=secrets://ref+azurekeyvault://my-vault/secret-a
 ```

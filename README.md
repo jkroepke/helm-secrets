@@ -17,7 +17,11 @@ See [Installation](https://github.com/jkroepke/helm-secrets/wiki/Installation) f
 
 ### Decrypt secrets via protocol handler
 
-Run decrypted command on specific value files. This is method is preferred over the plugin command below. On Windows, the command `helm secrets patch windows` needs to be run first.
+Run decrypted command on specific value files. 
+This is method is preferred over the plugin command below. 
+This mode is used in [ArgoCD](https://github.com/jkroepke/helm-secrets/wiki/ArgoCD-Integration) environments.
+
+On Windows, the command `helm secrets patch windows` needs to be run first.
 
 ```bash
 helm upgrade name . -f secrets://secrets.yaml
@@ -36,6 +40,11 @@ helm secrets upgrade name . -f secrets.yaml
 ## Cloud support
 
 Use AWS Secrets Manager or Azure KeyVault for storing secrets securely and reference them inside values.yaml
+
+```bash
+helm secrets --backend vals template bitnami/mysql --name-template mysql \
+  --set auth.rootPassword=ref+awsssm://foo/bar?mode=singleparam#/BAR
+```
 
 See [Cloud Integration](https://github.com/jkroepke/helm-secrets/wiki/Cloud-Integration) for more information.
 

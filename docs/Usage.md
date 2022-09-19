@@ -46,7 +46,7 @@ Decrypted files have the suffix ".dec" by default. This can be changed using the
 
 Each of these commands have their own help.
 
-# Use case and workflow
+# Use-case and workflow
 
 ## Usage examples
 
@@ -244,7 +244,7 @@ removed helm_vars/secrets.yaml.dec
 ### Using secret values in Helm chart secrets template
 
 We just need to create Kubernetes secrets template in chart templates dir.
-For example in your charts repo you have `stable/helloworld/`. Inside this chart you should have `stable/helloworld/templates/` dir and then create the `stable/helloworld/templates/secrets.yaml` file with content as specified bellow.
+For example in your charts, repo you have `stable/helloworld/`. Inside this chart you should have `stable/helloworld/templates/` dir and then create the `stable/helloworld/templates/secrets.yaml` file with content as specified bellow.
 
 ```yaml
 apiVersion: v1
@@ -321,4 +321,14 @@ Example:
 ```bash
 helm upgrade . -f 'secrets+gpg-import-kubernetes://default/gpg-key#examples/sops/secrets.yaml'
 helm upgrade . -f 'secrets+age-import-kubernetes://default/age-key.txt#examples/sops/secrets.yaml'
+```
+
+### --set / --set-file
+
+```bash
+helm upgrade . --set-file 'mysql=secrets://secrets.yaml'
+helm upgrade . --set-file 'mysql.rootPassword=secrets+literal://ref+vault://secret/mysql#/rootPassword'
+
+# --set requires helm secrets upgrade call
+helm secrets upgrade . --set 'mysql=secrets://secrets.yaml'
 ```

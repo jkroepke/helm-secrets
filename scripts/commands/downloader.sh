@@ -81,8 +81,17 @@ downloader() {
         file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
         _age_init_kubernetes "${_age_key_location}"
         ;;
+    secrets+literal://*)
+        literal="${_file_url#*secrets+literal://}"
+
+        if ! backend_decrypt_literal "${literal}"; then
+            exit 1
+        fi
+
+        return
+        ;;
     secrets://*)
-        file=$(printf '%s' "${_file_url}" | sed -E -e 's!secrets://!!')
+        file="${_file_url#*secrets://}"
         ;;
     *)
         fatal "Unknown protocol '%s'!" "${_file_url}"

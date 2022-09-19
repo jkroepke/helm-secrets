@@ -9,9 +9,11 @@ _custom_backend_get_secret() {
 }
 
 backend_is_file_encrypted() {
-    input="${1}"
+    backend_is_encrypted <"${1}"
+}
 
-    LC_ALL=C.UTF-8 grep -q -e "${_BACKEND_REGEX}" "${input}"
+backend_is_encrypted() {
+    LC_ALL=C.UTF-8 grep -q -e "${_BACKEND_REGEX}" /dev/stdin
 }
 
 backend_encrypt_file() {
@@ -70,6 +72,10 @@ backend_decrypt_file() {
     else
         cat "${output_yaml_anchors}" "${output_yaml}" >"${output}"
     fi
+}
+
+backend_decrypt_literal() {
+    _custom_backend_get_secret "${1}"
 }
 
 backend_edit_file() {

@@ -34,6 +34,10 @@ backend_decrypt_file() {
     fi
 }
 
+backend_decrypt_literal() {
+    printf '%s' "${1}"
+}
+
 backend_edit_file() {
     # shellcheck disable=SC2034
     type="${1}"

@@ -56,6 +56,8 @@ spec:
       fileParameters:
         - name: config
           path: secrets://secrets.yaml
+        - name: mysql.rootPassword
+          path: secrets+literal://ref+vault://secret/mysql#/rootPassword
 ```
 </p>
 </details>
@@ -224,7 +226,7 @@ data:
   helm.valuesFileSchemes: >-
     secrets+gpg-import, secrets+gpg-import-kubernetes,
     secrets+age-import, secrets+age-import-kubernetes,
-    secrets,
+    secrets,secrets+literal,
     https
 ```
 
@@ -236,7 +238,7 @@ server:
     helm.valuesFileSchemes: >-
       secrets+gpg-import, secrets+gpg-import-kubernetes,
       secrets+age-import, secrets+age-import-kubernetes,
-      secrets,
+      secrets,secrets+literal,
       https
 ```
 
