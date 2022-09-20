@@ -7,6 +7,9 @@ insert_final_newline = true
 [sh.cmd]
 end_of_line = crlf
 
+[password.txt]
+insert_final_newline = false
+
 [*.{sh,bats,bash}]
 indent_style = space
 indent_size = 4
