@@ -71,6 +71,8 @@ helm_wrapper() {
                 exit 1
             fi
 
+            decrypted_literal=$(printf '%s' "${decrypted_literal}" | sed -e 's/\\/\\\\/g' | sed -e 's/,/\\,/g')
+
             set -- "$@" "${opt_prefix}${decrypted_literal}"
             ;;
         -f | --values | --values=?* | --set-file | --set-file=?*)

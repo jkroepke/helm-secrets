@@ -52,10 +52,11 @@ backend_decrypt_file() {
 
 backend_decrypt_literal() {
     if printf '%s' "${1}" | backend_is_encrypted; then
-        if ! literal_value=$(printf '"": %s' "${1}" | _vals eval -o json); then
+        if ! literal_value=$(printf '"": %s' "${1}" | _vals env -f -); then
             return 1
         fi
-        printf '%s' "${literal_value}" | sed -e 's/^{"":"//' | sed -e 's/"}$//'
+
+        printf '%s' "${literal_value#*=}"
     else
         printf '%s' "${1}"
     fi
