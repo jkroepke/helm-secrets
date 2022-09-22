@@ -52,11 +52,36 @@ See [Cloud Integration](https://github.com/jkroepke/helm-secrets/wiki/Cloud-Inte
 
 For running helm-secrets with ArgoCD, see [ArgoCD Integration](https://github.com/jkroepke/helm-secrets/wiki/ArgoCD-Integration) for more information.
 
+### Example
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app
+spec:
+  source:
+    helm:
+      valueFiles:
+        - secrets+gpg-import:///helm-secrets-private-keys/key.asc?secrets.yaml
+        - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
+        - secrets://secrets.yaml
+      # fileParameters (--set-file) are supported, too. 
+      fileParameters:
+        - name: config
+          path: secrets://secrets.yaml
+        # directly reference values from Cloud Providers
+        - name: mysql.rootPassword
+          path: secrets+literal://ref+azurekeyvault://my-vault/secret-a
+```
+
 ## Terraform support
 
 The Terraform helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
 
 helm secrets can be used together with the [terraform external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source).
+
+### Example
 
 ```hcl
 data "external" "helm-secrets" {
