@@ -21,8 +21,6 @@ Run decrypted command on specific value files.
 This is method is preferred over the plugin command below. 
 This mode is used in [ArgoCD](https://github.com/jkroepke/helm-secrets/wiki/ArgoCD-Integration) environments.
 
-On Windows, the command `helm secrets patch windows` needs to be run first.
-
 ```bash
 helm upgrade name . -f secrets://secrets.yaml
 ```

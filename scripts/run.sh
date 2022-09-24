@@ -132,13 +132,6 @@ while true; do
         downloader "$2" "$3" "$4" "$5"
         break
         ;;
-    patch)
-        # shellcheck source=scripts/commands/patch.sh
-        . "${SCRIPT_DIR}/commands/patch.sh"
-
-        patch "$2"
-        break
-        ;;
     --help | -h | help)
         # shellcheck source=scripts/commands/help.sh
         . "${SCRIPT_DIR}/commands/help.sh"
