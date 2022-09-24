@@ -51,12 +51,6 @@ setup_suite() {
             helm_plugin_install "diff" --version 3.5.0
         fi
 
-        if on_windows || on_wsl; then
-            "${HELM_BIN}" secrets patch windows
-        else
-            "${HELM_BIN}" secrets patch unix
-        fi
-
         case "${HELM_SECRETS_BACKEND:-sops}" in
         sops)
             GPG_PRIVATE_KEY="$(_winpath "${TEST_ROOT}/assets/gpg/private.gpg")"
