@@ -7,9 +7,5 @@ shift
 exit $?
 
 :BOF
-@echo off
 "%~dp0\sh.cmd" "%HELM_PLUGIN_DIR%"/%*
-exit /b %errorlevel%
-
-:: .bat bash hybrid script
-:: https://stackoverflow.com/a/17510832/8087167
+exit /B %errorlevel%
