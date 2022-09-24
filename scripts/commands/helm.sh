@@ -51,12 +51,12 @@ helm_wrapper() {
 
             case "${_1}" in
             --set=* | --set-string=* | --set-json=*)
-                literal="${_1#*=}"
+                literals="${_1#*=}"
 
                 set -- "$@" "${_1%%=*}"
                 ;;
             *)
-                literal="${2}"
+                literals="${2}"
 
                 set -- "$@" "$1"
                 shift
@@ -64,16 +64,29 @@ helm_wrapper() {
                 ;;
             esac
 
-            opt_prefix="${literal%%=*}="
-            literal="${literal#*=}"
+            decrypted_literals=""
 
-            if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
-                exit 1
-            fi
+            IFS='
+'
 
-            decrypted_literal=$(printf '%s' "${decrypted_literal}" | sed -e 's/\\/\\\\/g' | sed -e 's/,/\\,/g')
+            for literal in $(printf '%s' "${literals}" | sed -E 's/([^\\]),/\1\n/g'); do
+                opt_prefix="${literal%%=*}="
+                literal="${literal#*=}"
 
-            set -- "$@" "${opt_prefix}${decrypted_literal}"
+                if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
+                    fatal 'Unable to decrypt literal value %s' "${literal}"
+                fi
+
+                if [ "${decrypted_literal}" = "${literal}" ]; then
+                    decrypted_literals="${decrypted_literals}${opt_prefix}${decrypted_literal},"
+                else
+                    decrypted_literals="${decrypted_literals}${opt_prefix}$(printf '%s' "${decrypted_literal}" | sed -e 's/\\/\\\\/g' | sed -e 's/,/\\,/g'),"
+                fi
+            done
+
+            unset IFS
+
+            set -- "$@" "${decrypted_literals%*,}"
             ;;
         -f | --values | --values=?* | --set-file | --set-file=?*)
             _1="${1}"

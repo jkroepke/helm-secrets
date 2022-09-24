@@ -329,7 +329,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "template: helm template w/ chart + secrets.yaml + wrapper --set=service.port" {
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set=service.port,podAnnotations.second" {
     if ! is_backend "vals"; then
         skip
     fi
@@ -343,6 +343,25 @@ load '../bats/extensions/bats-file/load'
         --set=service.port=ref+echo://87 2>&1
 
     assert_output --partial "port: 87"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set=service.port,podAnnotations.second + escape" {
+    if on_windows || ! is_backend "vals"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set=service.port=ref+echo://87,podAnnotations.second=va\\,lue 2>&1
+
+    assert_output --partial "port: 87"
+    assert_output --partial "second: va,lue"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -394,8 +413,29 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
-        --set-string="podAnnotations.quotes=ref+file://assets/values/vals/password.txt" 2>&1
+        --set-string='podAnnotations.quotes=ref+file://assets/values/vals/password.txt,service.port=ref+echo://87' 2>&1
 
+    assert_output --partial "port: 87"
+    assert_output --partial "quotes: 1234567!!\"§\$%&/(?=)(/&%\$§\"><;:_,;:_'''*'*\ndks"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set-string=service.port + quotes in value + escape" {
+    if on_windows || ! is_backend "vals"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set-string='podAnnotations.quotes=ref+file://assets/values/vals/password.txt,podAnnotations.escape=val\,ue,service.port=ref+echo://87' 2>&1
+
+    assert_output --partial "port: 87"
+    assert_output --partial "escape: val,ue"
     assert_output --partial "quotes: 1234567!!\"§\$%&/(?=)(/&%\$§\"><;:_,;:_'''*'*\ndks"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
@@ -437,8 +477,9 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
-        --set-file="podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt" 2>&1
+        --set-file='podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt,service.port=secrets+literal://ref+echo://88' 2>&1
 
+    assert_output --partial "port: 88"
     assert_output --partial "quotes: 1234567!!\"§\$%&/(?=)(/&%\$§\"><;:_,;:_'''*'*\ndks"
     assert_success
 }
