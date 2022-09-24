@@ -14,4 +14,4 @@
     printf ':BOF\r\n'
     printf '"%%~dp0\sh.cmd" "%%HELM_PLUGIN_DIR%%"/%%*\r\n'
     printf 'exit /B %%errorlevel%%\r\n'
-} > run.bat
+} >run.bat
