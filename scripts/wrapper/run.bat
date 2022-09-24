@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-@ 2>/dev/null # 2>nul & echo off & goto BOF
+#!/usr/bin/env -S sh # 2>nul & echo off & goto BOF
 :
 cmd="$1"
 shift
