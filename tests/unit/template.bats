@@ -169,6 +169,101 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "template: helm template w/ chart + not-exists.yaml" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + HELM_SECRETS_IGNORE_MISSING_VALUES=false" {
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_IGNORE_MISSING_VALUES=false WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
+        "${HELM_BIN}"  secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + HELM_SECRETS_IGNORE_MISSING_VALUES=true" {
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_IGNORE_MISSING_VALUES=true WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
+        "${HELM_BIN}"  secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    refute_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_output --partial "port: 80"
+    assert_success
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values false" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env "${HELM_BIN}" secrets --ignore-missing-values false template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values true" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env "${HELM_BIN}" secrets --ignore-missing-values true template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    refute_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_output --partial "port: 80"
+    assert_success
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values=false" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env "${HELM_BIN}" secrets --ignore-missing-values=false template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values=true" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env "${HELM_BIN}" secrets --ignore-missing-values=true template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    refute_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_output --partial "port: 80"
+    assert_success
+}
+
 @test "template: helm template w/ chart + secrets.yaml + helm flag + --" {
     if on_cygwin; then
         skip
@@ -658,10 +753,26 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set-file podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" --set-file podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
 
     assert_output --partial "[helm-secrets] File does not exist: ${SET_FILE_PATH}"
     assert_failure
+}
+
+@test "template: helm template w/ chart + secrets.yaml + --set-file=http://example.com/404.yaml + HELM_SECRETS_IGNORE_MISSING_VALUES" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="http://example.com/404.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_IGNORE_MISSING_VALUES=true WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" --set-file podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial 'fromFile: ""'
+    assert_success
 }
 
 @test "template: helm template w/ chart + secrets.yaml + http://" {
@@ -708,24 +819,48 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "template: helm template w/ chart + secrets.yaml + secrets://" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+@test "template: helm template w/ chart + not-exists.yaml + secrets://" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${VALUES_PATH}" 2>&1
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        -f "secrets://${VALUES_PATH}" 2>&1
 
-    assert_output --partial "port: 81"
+    assert_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + secrets:// + HELM_SECRETS_IGNORE_MISSING_VALUES=false" {
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_IGNORE_MISSING_VALUES=false WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
+        "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        -f "secrets://${VALUES_PATH}" 2>&1
+
+    assert_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + secrets:// + HELM_SECRETS_IGNORE_MISSING_VALUES=true" {
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_IGNORE_MISSING_VALUES=true WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
+        "${HELM_BIN}"  "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        -f "secrets://${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: 80"
     assert_success
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://" {
-    if ! is_backend "sops"; then
-        # For vault its pretty hard to have a committed files with temporary seed of this test run
-        skip
-    fi
-
     VALUES="secrets://https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${VALUES}"
 
@@ -738,8 +873,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http:// + HELM_SECRETS_URL_VARIABLE_EXPANSION=true" {
-    if on_windows || ! is_backend "sops"; then
-        # For vault its pretty hard to have a committed files with temporary seed of this test run
+    if on_windows; then
         skip
     fi
 
@@ -759,11 +893,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http:// + HELM_SECRETS_URL_VARIABLE_EXPANSION=false" {
-    if ! is_backend "sops"; then
-        # For vault its pretty hard to have a committed files with temporary seed of this test run
-        skip
-    fi
-
     VALUES="secrets://https://raw.githubusercontent.com/\${GH_OWNER}/\${GH_REPO}/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${VALUES}"
 
@@ -779,17 +908,24 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + secrets://http://example.com/404.yaml" {
-    if ! is_backend "sops"; then
-        # For vault its pretty hard to have a committed files with temporary seed of this test run
-        skip
-    fi
-
     VALUES="secrets://http://example.com/404.yaml"
     VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "${VALUES_PATH}" 2>&1
+    assert_failure
+}
+
+@test "template: helm template w/ chart + secrets.yaml + secrets://http://example.com/404.yaml + HELM_SECRETS_URL_VARIABLE_EXPANSION=true" {
+    VALUES="secrets://http://example.com/404.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_URL_VARIABLE_EXPANSION=true "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        -f "${VALUES_PATH}" 2>&1
+
     assert_failure
 }
 

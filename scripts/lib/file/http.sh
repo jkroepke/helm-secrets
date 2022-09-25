@@ -18,7 +18,11 @@ _file_http_get() {
     _tmp_file="$(_mktemp).${_url##*.}"
 
     if ! download "${_url}" >"${_tmp_file}"; then
-        fatal "Error while download url %s" "${1}"
+        if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
+            return 1
+        else
+            fatal "Error while download url %s" "${1}"
+        fi
     fi
 
     printf '%s' "${_tmp_file}"

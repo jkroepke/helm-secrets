@@ -24,10 +24,11 @@ Available Commands:
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
 Available Options:
-  --quiet                    -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
-  --backend                  -b  Secret backend to use for decryption or encryption (env: $HELM_SECRETS_BACKEND)
-  --backend-args             -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
-  --help                     -h  Show help
-  --version                  -v  Display version of helm-secrets
+  --quiet                               -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
+  --backend                             -b  Secret backend to use for decryption or encryption (env: $HELM_SECRETS_BACKEND)
+  --backend-args                        -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
+  --ignore-missing-values [true|false]      Ignore missing value files (env: $HELM_SECRETS_IGNORE_MISSING_VALUES)
+  --help                                -h  Show help
+  --version                             -v  Display version of helm-secrets
 EOF
 }

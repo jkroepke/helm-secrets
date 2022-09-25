@@ -121,7 +121,11 @@ helm_wrapper() {
             esac
 
             if ! real_file=$(_file_get "${file}"); then
-                fatal 'File does not exist: %s' "${file}"
+                if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
+                    real_file="$(_mktemp)"
+                else
+                    fatal 'File does not exist: %s' "${file}"
+                fi
             fi
 
             file_dec="$(_file_dec_name "${real_file}")"

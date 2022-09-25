@@ -23,11 +23,12 @@ Available Commands:
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
 Available Options:
-  --quiet                    -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
-  --backend                  -b  Secret backend to use for decryption or encryption (env: $HELM_SECRETS_BACKEND)
-  --backend-args             -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
-  --help                     -h  Show help
-  --version                  -v  Display version of helm-secrets
+  --quiet                               -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
+  --backend                             -b  Secret backend to use for decryption or encryption (env: $HELM_SECRETS_BACKEND)
+  --backend-args                        -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
+  --ignore-missing-values [true|false]      Ignore missing value files (env: $HELM_SECRETS_IGNORE_MISSING_VALUES)
+  --help                                -h  Show help
+  --version                             -v  Display version of helm-secrets
 ```
 
 By convention, files containing secrets are named `secrets.yaml`, or anything beginning with "secrets" and ending with ".yaml". E.g. `secrets.test.yaml`, `secrets.prod.yaml` `secretsCOOL.yaml`.
@@ -266,17 +267,25 @@ In this example you have a Kubernetes secret named "helloworld" and data inside 
 You can now use the "helloworld" secret in your deployment manifest (or any other manifest supporting secretKeyRef) in the env section like this:
 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
-...
-...
-        containers:
-        - env:
-            - name: my_new_secret_key
-              valueFrom:
-                secretKeyRef:
-                  name: helloworld
-                  key: my_secret_key
+spec:
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+        - name: container
+          env:
+          - name: my_new_secret_key
+            valueFrom:
+              secretKeyRef:
+                name: helloworld
+                key: my_secret_key
 ```
 
 ## Alternative: decrypt via downloader plugin

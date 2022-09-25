@@ -90,3 +90,7 @@ or through downloader syntax (`--set-file` only);
 helm template bitnami/mysql --name-template mysql \
   --set-file auth.rootPassword=secrets://secret.yaml
 ```
+
+## Ignore missing value files
+
+If `HELM_SECRETS_IGNORE_MISSING_VALUES=true` is set, helm-secrets ignore all not found errors. This mimics ArgoCD's `ignoreMissingValueFile` setting.
