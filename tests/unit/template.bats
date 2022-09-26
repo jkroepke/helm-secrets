@@ -188,7 +188,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_IGNORE_MISSING_VALUES=false WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
-        "${HELM_BIN}"  secrets template "${TEST_TEMP_DIR}/chart" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
         -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
@@ -202,7 +202,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_IGNORE_MISSING_VALUES=true WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
-        "${HELM_BIN}"  secrets template "${TEST_TEMP_DIR}/chart" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
         -f "${VALUES_PATH}" 2>&1
 
     refute_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
@@ -853,7 +853,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_IGNORE_MISSING_VALUES=true WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
-        "${HELM_BIN}"  "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
         -f "secrets://${VALUES_PATH}" 2>&1
 
     assert_output --partial "port: 80"
