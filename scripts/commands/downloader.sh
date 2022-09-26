@@ -99,7 +99,12 @@ downloader() {
     esac
 
     if ! encrypted_filepath=$(_file_get "${file}"); then
-        fatal 'File does not exist: %s' "${file}"
+        if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
+            printf ''
+            return
+        else
+            fatal 'File does not exist: %s' "${file}"
+        fi
     fi
 
     if ! decrypt_helper "${encrypted_filepath}" "auto" "stdout"; then

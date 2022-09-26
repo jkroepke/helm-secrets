@@ -54,6 +54,8 @@ DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX-.dec}"
 
 # shellcheck disable=SC2034
 DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
+# shellcheck disable=SC2034
+IGNORE_MISSING_VALUES="${HELM_SECRETS_IGNORE_MISSING_VALUES:-false}"
 
 trap _trap EXIT
 
@@ -163,6 +165,15 @@ while true; do
         # shellcheck disable=SC2034
         SECRET_BACKEND_ARGS="$2"
         shift
+        ;;
+    --ignore-missing-values)
+        # shellcheck disable=SC2034
+        IGNORE_MISSING_VALUES="$2"
+        shift
+        ;;
+    --ignore-missing-values=*)
+        # shellcheck disable=SC2034
+        IGNORE_MISSING_VALUES="${1#*=}"
         ;;
     "")
         # shellcheck source=scripts/commands/help.sh
