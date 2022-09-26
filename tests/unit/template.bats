@@ -170,8 +170,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + not-exists.yaml" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -211,8 +211,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values false" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -224,8 +224,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values true" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -238,8 +238,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values=false" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -251,8 +251,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values=true" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -820,8 +820,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + not-exists.yaml + secrets://" {
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-exists.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
