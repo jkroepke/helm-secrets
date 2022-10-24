@@ -15,7 +15,7 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
       - name: Package helm-secrets
         run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
