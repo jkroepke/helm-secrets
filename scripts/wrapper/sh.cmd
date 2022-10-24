@@ -27,6 +27,21 @@ if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH
 
 
+:: check for bash via scoop
+"%userprofile%\scoop\shims\bash.exe" -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SCOOP_BASH
+
+
+:: check for sh via scoop
+"%userprofile%\scoop\shims\sh.exe" -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SCOOP_SH
+
+
+:: check for git-bash via scoop
+"%userprofile%\scoop\shims\git-bash.exe" -c exit  >nul 2>&1
+IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SCOOP_GITBASH
+
+
 :: check for git-bash (32-bit)
 "%programfiles(x86)%\Git\bin\bash.exe" -c exit  >nul 2>&1
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :GITBASH32
@@ -81,6 +96,24 @@ exit /b %errorlevel%
 
 :GITBASH32
 "%programfiles(x86)%\Git\bin\bash.exe" %*
+exit /b %errorlevel%
+
+
+
+:SCOOP_BASH
+"%userprofile%\scoop\shims\bash.exe" %*
+exit /b %errorlevel%
+
+
+
+:SCOOP_SH
+"%userprofile%\scoop\shims\sh.exe" %*
+exit /b %errorlevel%
+
+
+
+:SCOOP_GITBASH
+"%userprofile%\scoop\shims\git-bash.exe" %*
 exit /b %errorlevel%
 
 
