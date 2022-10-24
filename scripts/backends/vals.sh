@@ -5,7 +5,7 @@ set -euf
 _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
 _vals() {
-    stdin=$(cat /dev/stdin)
+    stdin=$(cat -)
     # shellcheck disable=SC2086
     set -- ${SECRET_BACKEND_ARGS} "$@"
 
@@ -22,7 +22,7 @@ backend_is_file_encrypted() {
 }
 
 backend_is_encrypted() {
-    stdin=$(cat /dev/stdin)
+    stdin=$(cat -)
 
     [ "${stdin#*ref+}" != "$stdin" ]
 }

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Multiple values in a single --set option not correctly passed to helm
+- `cat: can't open '/dev/stdin': No such file or directory` on Windows
 
 ## [4.1.1] - 2022-09-21
 ### Fixed

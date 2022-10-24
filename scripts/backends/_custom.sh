@@ -13,7 +13,7 @@ backend_is_file_encrypted() {
 }
 
 backend_is_encrypted() {
-    LC_ALL=C.UTF-8 grep -q -e "${_BACKEND_REGEX}" /dev/stdin
+    LC_ALL=C.UTF-8 grep -q -e "${_BACKEND_REGEX}" -
 }
 
 backend_encrypt_file() {
