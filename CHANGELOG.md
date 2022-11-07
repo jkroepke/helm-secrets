@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `--ignore-missing-values` (`HELM_SECRETS_IGNORE_MISSING_VALUES`). This option allows ignoring errors related to file not found.
+- if paths or value files beginning with a `?` in beginning, all file not found errors related to that specific value file are ignored.
 - Support for shell installed via scoop
 
 ### Fixed

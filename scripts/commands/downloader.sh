@@ -36,50 +36,78 @@ downloader() {
             fatal 'secrets+gpg-import:// is not allowed in this context!'
         fi
 
-        _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import://!!')
-        _gpg_key_path=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f1)
-        file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
+        _key_and_file=${4#*secrets+gpg-import://}
 
-        if ! _key_location_allowed "${_gpg_key_path}"; then
-            fatal "Key location '%s' is not allowed" "${_gpg_key_path}"
+        # Ignore error on files beginning with ?
+        if [ "${_key_and_file##\?}" != "${_key_and_file}" ]; then
+            _key_and_file="${_key_and_file##\?}"
+            IGNORE_MISSING_VALUES=true
         fi
 
-        _gpg_init "${_gpg_key_path}"
+        _key_path=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
+        file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
+
+        if ! _key_location_allowed "${_key_path}"; then
+            fatal "Key location '%s' is not allowed" "${_key_path}"
+        fi
+
+        _gpg_init "${_key_path}"
         ;;
     secrets+gpg-import-kubernetes://*)
         if [ "${ALLOW_GPG_IMPORT_KUBERNETES}" != "true" ]; then
             fatal 'secrets+gpg-import-kubernetes:// is not allowed in this context!'
         fi
 
-        _gpg_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+gpg-import-kubernetes://!!')
-        _gpg_key_location=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f1)
-        file=$(printf '%s' "${_gpg_key_and_file}" | cut -d '?' -f2-)
-        _gpg_init_kubernetes "${_gpg_key_location}"
+        _key_and_file=${4#*secrets+gpg-import-kubernetes://}
+
+        # Ignore error on files beginning with ?
+        if [ "${_key_and_file##\?}" != "${_key_and_file}" ]; then
+            _key_and_file="${_key_and_file##\?}"
+            IGNORE_MISSING_VALUES=true
+        fi
+
+        _key_location=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
+        file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
+        _gpg_init_kubernetes "${_key_location}"
         ;;
     secrets+age-import://*)
         if [ "${ALLOW_AGE_IMPORT}" != "true" ]; then
             fatal 'secrets+age-import:// is not allowed in this context!'
         fi
 
-        _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import://!!')
-        _age_key_path=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f1)
-        file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
+        _key_and_file=${_file_url#*secrets+age-import://}
 
-        if ! _key_location_allowed "${_age_key_path}"; then
-            fatal "Key location '%s' is not allowed" "${_age_key_path}"
+        # Ignore error on files beginning with ?
+        if [ "${_key_and_file##\?}" != "${_key_and_file}" ]; then
+            _key_and_file="${_key_and_file##\?}"
+            IGNORE_MISSING_VALUES=true
         fi
 
-        _age_init "${_age_key_path}"
+        _key_path=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
+        file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
+
+        if ! _key_location_allowed "${_key_path}"; then
+            fatal "Key location '%s' is not allowed" "${_key_path}"
+        fi
+
+        _age_init "${_key_path}"
         ;;
     secrets+age-import-kubernetes://*)
         if [ "${ALLOW_AGE_IMPORT_KUBERNETES}" != "true" ]; then
             fatal 'secrets+age-import-kubernetes:// is not allowed in this context!'
         fi
 
-        _age_key_and_file=$(printf '%s' "${4}" | sed -E -e 's!secrets\+age-import-kubernetes://!!')
-        _age_key_location=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f1)
-        file=$(printf '%s' "${_age_key_and_file}" | cut -d '?' -f2-)
-        _age_init_kubernetes "${_age_key_location}"
+        _key_and_file=${_file_url#*secrets+age-import-kubernetes://}
+
+        # Ignore error on files beginning with ?
+        if [ "${_key_and_file##\?}" != "${_key_and_file}" ]; then
+            _key_and_file="${_key_and_file##\?}"
+            IGNORE_MISSING_VALUES=true
+        fi
+
+        _key_location=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
+        file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
+        _age_init_kubernetes "${_key_location}"
         ;;
     secrets+literal://*)
         literal="${_file_url#*secrets+literal://}"
@@ -136,18 +164,18 @@ _gpg_init_kubernetes() {
         ;;
     esac
 
-    _gpg_key_path="$(_mktemp)"
+    _key_path="$(_mktemp)"
 
     if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
-        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_gpg_key_path}.base64"; then
+        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_key_path}.base64"; then
         fatal "Couldn't get kubernetes secret %s%s" "${_kubernetes_namespace+${_kubernetes_namespace}/}" "${_kubernetes_secret_name}"
     fi
 
-    if ! base64 --decode <"${_gpg_key_path}.base64" >"${_gpg_key_path}"; then
+    if ! base64 --decode <"${_key_path}.base64" >"${_key_path}"; then
         fatal "Couldn't find key %s in secret %s" "${_secret_key}" "${_kubernetes_secret_name}"
     fi
 
-    _gpg_init "${_gpg_key_path}"
+    _gpg_init "${_key_path}"
 }
 
 _age_init() {
@@ -168,18 +196,18 @@ _age_init_kubernetes() {
         ;;
     esac
 
-    _age_key_path="$(_mktemp)"
+    _key_path="$(_mktemp)"
 
     if ! "${HELM_SECRETS_KUBECTL_PATH:-kubectl}" get secret ${_kubernetes_namespace+-n ${_kubernetes_namespace}} "${_kubernetes_secret_name}" \
-        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_age_key_path}.base64"; then
+        -o "go-template={{ index .data \"${_secret_key}\" }}" >"${_key_path}.base64"; then
         fatal "Couldn't get kubernetes secret %s" "${_kubernetes_namespace+${_kubernetes_namespace}/}${_kubernetes_secret_name}"
     fi
 
-    if ! base64 --decode <"${_age_key_path}.base64" >"${_age_key_path}"; then
+    if ! base64 --decode <"${_key_path}.base64" >"${_key_path}"; then
         fatal "Couldn't find key %s in kubernetes secret %s" "${_secret_key}" "${_kubernetes_secret_name}"
     fi
 
-    _age_init "${_age_key_path}"
+    _age_init "${_key_path}"
 }
 
 _key_location_allowed() {

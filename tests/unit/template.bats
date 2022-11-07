@@ -210,6 +210,20 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "template: helm template w/ chart + not-exists.yaml + ignore errors" {
+    VALUES="not-exists.yaml"
+    VALUES_PATH="?${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    refute_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_output --partial "port: 80"
+    assert_success
+}
+
 @test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values false" {
     VALUES="not-exists.yaml"
     VALUES_PATH="${VALUES}"
@@ -775,6 +789,20 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "template: helm template w/ chart + secrets.yaml + --set-file=http://example.com/404.yaml + ignore errors" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="?http://example.com/404.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" --set-file podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial 'fromFile: ""'
+    assert_success
+}
+
 @test "template: helm template w/ chart + secrets.yaml + http://" {
     VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${VALUES}"
@@ -849,6 +877,20 @@ load '../bats/extensions/bats-file/load'
 @test "template: helm template w/ chart + not-exists.yaml + secrets:// + HELM_SECRETS_IGNORE_MISSING_VALUES=true" {
     VALUES="not-exists.yaml"
     VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_IGNORE_MISSING_VALUES=true WSLENV="HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV}" \
+        "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        -f "secrets://${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: 80"
+    assert_success
+}
+
+@test "template: helm template w/ chart + not-exists.yaml + secrets:// + ignore errors" {
+    VALUES="not-exists.yaml"
+    VALUES_PATH="?${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
@@ -960,6 +1002,21 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 91"
 }
 
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import:// + ignore errors" {
+    if on_windows || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="secrets+gpg-import://?${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/not-found.gpg_key.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "${VALUES_PATH}" 2>&1
+    assert_success
+    assert_output --partial "port: 80"
+}
+
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + secrets+gpg-import://" {
     if on_windows || on_wsl || ! is_backend "sops"; then
         skip
@@ -1030,6 +1087,27 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${VALUES_PATH}" 2>&1
 
     assert_output --partial "port: 92"
+    assert_success
+}
+
+@test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import:// + ignore errors" {
+    if on_windows || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-found.age.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets+age-import://?${TEST_TEMP_DIR}/assets/age/key.txt?${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: 80"
+    assert_success
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets+age-import://?${TEST_TEMP_DIR}/assets/age/key.txt?${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: 80"
     assert_success
 }
 

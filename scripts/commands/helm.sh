@@ -120,6 +120,12 @@ helm_wrapper() {
                 ;;
             esac
 
+            # Ignore error on files beginning with ?
+            if [ "${file##\?}" != "${file}" ]; then
+                file="${file##\?}"
+                IGNORE_MISSING_VALUES=true
+            fi
+
             if ! real_file=$(_file_get "${file}"); then
                 if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
                     real_file="$(_mktemp)"

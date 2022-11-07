@@ -94,3 +94,10 @@ helm template bitnami/mysql --name-template mysql \
 ## Ignore missing value files
 
 If `HELM_SECRETS_IGNORE_MISSING_VALUES=true` is set, helm-secrets ignore all not found errors. This mimics ArgoCD's `ignoreMissingValueFile` setting.
+Alternatively, if a value file beginnings with a question mark, all not found errors related to that values file only are ignored.
+
+Example:
+
+```bash
+helm upgrade -i release . -f secrets://?dev/file-not-found.yaml
+```
