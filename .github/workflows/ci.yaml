@@ -159,6 +159,7 @@ jobs:
       - name: Setup Cygwin
         if: always() && contains(matrix.shell, 'cygwin')
         run: cygwinsetup.exe --quiet-mode --no-desktop --no-startmenu --root  --local-package-dir \packages --site http://mirrors.kernel.org/sourceware/cygwin/ --packages gnupg2
+        shell: C:\tools\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
