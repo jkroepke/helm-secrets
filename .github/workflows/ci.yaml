@@ -154,11 +154,11 @@ jobs:
         uses: egor-tensin/setup-cygwin@v3
         with:
           platform: x64
-          packages: gnupg2
+          # packages: gnupg2
 
       - name: Setup Cygwin
         if: always() && contains(matrix.shell, 'cygwin')
-        run: cat C:\ProgramData\chocolatey\logs\chocolatey.log
+        run: cygwinsetup.exe --quiet-mode --no-desktop --no-startmenu --root  --local-package-dir \packages --site http://mirrors.kernel.org/sourceware/cygwin/ --packages gnupg2
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
