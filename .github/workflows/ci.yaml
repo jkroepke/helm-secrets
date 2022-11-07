@@ -156,6 +156,10 @@ jobs:
           platform: x64
           packages: gnupg2
 
+      - name: Setup Cygwin
+        if: always() && contains(matrix.shell, 'cygwin')
+        run: cat C:\ProgramData\chocolatey\logs\chocolatey.log
+
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
         uses: Vampire/setup-wsl@v1
