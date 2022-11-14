@@ -84,7 +84,7 @@ _sops_winpath() {
 }
 
 _sops_dec_get_type() {
-    if grep -Fxq 'sops:' "${1}"; then
+    if grep -xq 'sops:\s*' "${1}"; then
         echo 'yaml'
     elif grep -q '"data": "ENC' "${1}"; then
         echo 'binary'
