@@ -68,6 +68,19 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "decrypt: Decrypt some-secrets.windows.yaml" {
+    if ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.windows.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    run "${HELM_BIN}" secrets decrypt "${VALUES_PATH}"
+    assert_output --partial 'global_secret: global_bar'
+    assert_success
+}
+
 @test "decrypt: Decrypt values.yaml" {
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/values.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
