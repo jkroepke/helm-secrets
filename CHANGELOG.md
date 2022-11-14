@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.2.1] - 2022-11-14
 ### Fixed
 - fixes detection of SOPS YAML files with Windows line-endings (CR LF)
 
@@ -257,7 +257,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.2.0...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.2.1...HEAD
+[4.2.1]: https://github.com/jkroepke/helm-secrets/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/jkroepke/helm-secrets/compare/v4.1.1...v4.2.0
 [4.1.1]: https://github.com/jkroepke/helm-secrets/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/jkroepke/helm-secrets/compare/v4.0.0...v4.1.0
