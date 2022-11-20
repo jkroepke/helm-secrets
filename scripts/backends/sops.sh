@@ -13,9 +13,7 @@ backend_is_file_encrypted() {
 }
 
 backend_is_encrypted() {
-    stdin=$(cat -)
-
-    [ "${stdin#*sops}" != "$stdin" ] && [ "${stdin#*mac}" != "$stdin" ] && [ "${stdin#*version}" != "$stdin" ]
+    grep -q 'mac.*,type:str]' -
 }
 
 backend_encrypt_file() {
