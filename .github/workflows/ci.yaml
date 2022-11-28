@@ -151,13 +151,10 @@ jobs:
 
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
-        uses: egor-tensin/setup-cygwin@v3
+        uses: cygwin/cygwin-install-action@v3
         with:
           platform: x64
-
-      - name: Setup gnupg2 (cygwin)
-        if: "contains(matrix.shell, 'cygwin')"
-        run: C:\tools\cygwin\cygwinsetup.exe --quiet-mode --no-desktop --no-startmenu --root C:\tools\cygwin\ --local-package-dir C:\tools\cygwin\packages --site "http://mirrors.kernel.org/sourceware/cygwin/" --packages gnupg2
+          packages: gnupg2
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
