@@ -9,6 +9,17 @@
 
 # helm-secrets
 
+## About
+
+helm-secrets is a helm plugin for decrypt encrypted helm value files on the fly.
+
+* Use [sops](https://github.com/mozilla/sops) to encrypt value files and store them into git.
+* Store your secrets a cloud native secret manager like AWS SecretManager, Azure KeyVault or Hashicrop Vault and inject them inside value files.
+* Use helm-secret in your favorite deployment tool or GitOps Operator like ArgoCD
+
+Who’s actually using helm-secrets? If you are using helm-secrets in your company or organization, we would like to invite you to create a PR to add your
+information to this [file](./USERS.md).
+
 ## Installation
 
 See [Installation](https://github.com/jkroepke/helm-secrets/wiki/Installation) for more information.
