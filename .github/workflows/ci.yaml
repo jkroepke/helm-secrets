@@ -3,10 +3,9 @@ name: CI
 
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
-  VERSION_HELM: v3.10.0
+  VERSION_HELM: v3.10.3
   VERSION_SOPS: v3.7.3
-  VERSION_VALS: v0.18.0
-  VERSION_KIND: v0.15.0
+  VERSION_VALS: v0.21.0
 
 on:
   pull_request:
@@ -145,7 +144,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.4
+        uses: jkroepke/setup-vals@v1.0.5
         with:
           version: ${{ env.VERSION_VALS }}
 
@@ -250,7 +249,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.3
+        uses: jkroepke/setup-vals@v1.0.5
         with:
           version: ${{ env.VERSION_VALS }}
 
@@ -287,9 +286,7 @@ jobs:
 
       - run: rm -rf ./coverage/
 
-      - uses: engineerd/setup-kind@v0.5.0
-        with:
-          version: ${{ env.VERSION_KIND }}
+      - uses: helm/kind-action@v1.5.0
 
       - name: bashcov bats --tap -r tests/it
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
@@ -312,9 +309,7 @@ jobs:
         shell: [dash]
         jobs: [4]
     steps:
-      - uses: engineerd/setup-kind@v0.5.0
-        with:
-          version: ${{ env.VERSION_KIND }}
+      - uses: helm/kind-action@v1.5.0
 
       - run: kubectl cluster-info
 
@@ -333,7 +328,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.3
+        uses: jkroepke/setup-vals@v1.0.5
         with:
           version: ${{ env.VERSION_VALS }}
 
