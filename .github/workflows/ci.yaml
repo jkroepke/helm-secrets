@@ -66,10 +66,10 @@ jobs:
           - os: windows-latest
             shell: wsl
             jobs: 4
-          - os: macos-12
+          - os: macos-latest
             shell: bash 3.2
             jobs: 4
-          - os: macos-12
+          - os: macos-latest
             shell: bash 3.2 with coreutils
             jobs: 4
           - os: ubuntu-latest
@@ -166,7 +166,7 @@ jobs:
           echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Setup parallel (mac OS)
-        if: "contains(matrix.os, 'macos-12')"
+        if: "contains(matrix.os, 'macos-latest')"
         run: brew install parallel
 
       - name: Setup parallel (WSL)
