@@ -35,13 +35,15 @@ body:
       label: Environment
       description: |
         examples:
-        - **Helm Version**: 3.7.1
-        - **Helm Secrets Version**: 3.12.0
-        - **OS*: Alpine
-        - **Shell*: busybox
+        - **Helm Version**: 3.10.1
+        - **Helm Secrets Version**: 4.2.0
+        - **ArgoCD Version (if used):**: 2.5.1
+        - **OS**: Alpine
+        - **Shell**: busybox
       value: |
         - Helm Version:
         - Helm Secrets Version:
+        - ArgoCD Version
         - OS:
         - Shell:
     validations:
