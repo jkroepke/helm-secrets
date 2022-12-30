@@ -13,7 +13,3 @@ _file_local_get() {
 
     printf '%s' "${1}"
 }
-
-_file_local_put() {
-    cat - >"${1}"
-}
