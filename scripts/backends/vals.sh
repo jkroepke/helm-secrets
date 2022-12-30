@@ -10,7 +10,8 @@ _vals() {
 
     # In case of an error, give us stderr
     # https://github.com/variantdev/vals/issues/60
-    if ! { error=$( { { $_VALS "$@" ; } 1>&3 ; } 2>&1); } 3>&1; then
+    # Store stderr in a var - https://stackoverflow.com/a/52587939
+    if ! { error=$({ $_VALS "$@" 1>&3; } 2>&1); } 3>&1; then
         echo 'vals error:'
         echo "$error"
     fi
@@ -21,9 +22,7 @@ backend_is_file_encrypted() {
 }
 
 backend_is_encrypted() {
-    stdin=$(cat -)
-
-    [ "${stdin#*ref+}" != "$stdin" ]
+    grep -q 'ref+' -
 }
 
 backend_encrypt_file() {
