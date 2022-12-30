@@ -5,15 +5,14 @@ set -euf
 _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
 _vals() {
-    stdin=$(cat -)
     # shellcheck disable=SC2086
     set -- ${SECRET_BACKEND_ARGS} "$@"
 
     # In case of an error, give us stderr
     # https://github.com/variantdev/vals/issues/60
-    if ! printf '%s' "$stdin" | $_VALS "$@" 2>/dev/null; then
-        log 'vals error:'
-        printf '%s' "$stdin" | $_VALS "$@" >/dev/null
+    if ! { error=$( { { $_VALS "$@" ; } 1>&3 ; } 2>&1); } 3>&1; then
+        echo 'vals error:'
+        echo "$error"
     fi
 }
 
