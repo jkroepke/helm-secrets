@@ -62,12 +62,6 @@ _file_get() {
     _file_"${file_type}"_get "$@"
 }
 
-_file_put() {
-    file_type=$(_file_get_protocol "${1}")
-
-    _file_"${file_type}"_put "$@"
-}
-
 _file_dec_name() {
     _basename="$(basename "${1}")"
 

@@ -18,8 +18,3 @@ _file_custom_get() {
     _sed_i '/^# Source: /d' "${_tmp_file}"
     printf '%s' "${_tmp_file}"
 }
-
-_file_custom_put() {
-    echo "Can't write to remote files!"
-    exit 1
-}

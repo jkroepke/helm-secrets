@@ -27,7 +27,3 @@ _file_http_get() {
 
     printf '%s' "${_tmp_file}"
 }
-
-_file_http_put() {
-    fatal "Can't write to remote files!"
-}
