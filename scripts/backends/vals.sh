@@ -41,6 +41,8 @@ backend_decrypt_file() {
 
     if [ "${input}" = "${output}" ]; then
         fatal "vals: inline decryption is not supported!"
+    elif [ "${input}" = "-" ]; then
+        _vals eval -o "${type}"
     elif [ "${output}" = "" ]; then
         _vals eval -o "${type}" <"${input}"
     else

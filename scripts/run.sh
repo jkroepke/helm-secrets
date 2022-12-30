@@ -56,6 +56,10 @@ DEC_SUFFIX="${HELM_SECRETS_DEC_SUFFIX-.dec}"
 DEC_DIR="${HELM_SECRETS_DEC_DIR:-}"
 # shellcheck disable=SC2034
 IGNORE_MISSING_VALUES="${HELM_SECRETS_IGNORE_MISSING_VALUES:-false}"
+# shellcheck disable=SC2034
+EVALUATE_TEMPLATES="${HELM_SECRETS_EVALUATE_TEMPLATES:-false}"
+# shellcheck disable=SC2034
+EVALUATE_TEMPLATES_DECODE_SECRETS="${HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECRETS:-false}"
 
 trap _trap EXIT
 
@@ -127,6 +131,13 @@ while true; do
         _helm_winpath "$(dirname "${SCRIPT_DIR}")"
         break
         ;;
+    post-renderer)
+        # shellcheck source=scripts/commands/downloader.sh
+        . "${SCRIPT_DIR}/commands/post-renderer.sh"
+
+        post_renderer
+        break
+        ;;
     downloader)
         # shellcheck source=scripts/commands/downloader.sh
         . "${SCRIPT_DIR}/commands/downloader.sh"
@@ -154,8 +165,15 @@ while true; do
         break
         ;;
     --backend | -b)
+        # shellcheck disable=SC2034
+        SECRET_BACKEND="$2"
         load_secret_backend "$2"
         shift
+        ;;
+    --backend=*)
+        # shellcheck disable=SC2034
+        SECRET_BACKEND="${1#*=}"
+        load_secret_backend "${1#*=}"
         ;;
     --quiet | -q)
         # shellcheck disable=SC2034
@@ -166,14 +184,51 @@ while true; do
         SECRET_BACKEND_ARGS="$2"
         shift
         ;;
-    --ignore-missing-values)
+    --backend-args=*)
         # shellcheck disable=SC2034
-        IGNORE_MISSING_VALUES="$2"
-        shift
+        SECRET_BACKEND_ARGS="${1#*=}"
+        ;;
+    --ignore-missing-values)
+        if [ "$2" = "true" ] || [ "$2" = "false" ]; then
+            # shellcheck disable=SC2034
+            IGNORE_MISSING_VALUES="$2"
+            shift
+        else
+            # shellcheck disable=SC2034
+            IGNORE_MISSING_VALUES="true"
+        fi
         ;;
     --ignore-missing-values=*)
         # shellcheck disable=SC2034
         IGNORE_MISSING_VALUES="${1#*=}"
+        ;;
+    --evaluate-templates)
+        if [ "$2" = "true" ] || [ "$2" = "false" ]; then
+            # shellcheck disable=SC2034
+            EVALUATE_TEMPLATES="$2"
+            shift
+        else
+            # shellcheck disable=SC2034
+            EVALUATE_TEMPLATES="true"
+        fi
+        ;;
+    --evaluate-templates=*)
+        # shellcheck disable=SC2034
+        EVALUATE_TEMPLATES="${1#*=}"
+        ;;
+    --evaluate-templates-decode-secrets)
+        if [ "$2" = "true" ] || [ "$2" = "false" ]; then
+            # shellcheck disable=SC2034
+            EVALUATE_TEMPLATES_DECODE_SECRETS="$2"
+            shift
+        else
+            # shellcheck disable=SC2034
+            EVALUATE_TEMPLATES_DECODE_SECRETS="true"
+        fi
+        ;;
+    --evaluate-templates-decode-secrets=*)
+        # shellcheck disable=SC2034
+        EVALUATE_TEMPLATES_DECODE_SECRETS="${1#*=}"
         ;;
     "")
         # shellcheck source=scripts/commands/help.sh

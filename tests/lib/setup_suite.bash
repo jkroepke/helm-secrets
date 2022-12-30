@@ -42,6 +42,10 @@ setup_suite() {
             else
                 "${HELM_BIN}" create "${HELM_CACHE}/chart"
             fi
+
+            if [ -d "${TEST_ROOT}/values/${HELM_SECRETS_BACKEND}/templates" ]; then
+                cp -r "${TEST_ROOT}/values/${HELM_SECRETS_BACKEND}/templates/." "${HELM_CACHE}/chart/templates/"
+            fi
         fi
 
         helm_plugin_install "secrets"

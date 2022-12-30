@@ -224,6 +224,20 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values" {
+    VALUES="not-exists.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env "${HELM_BIN}" secrets --ignore-missing-values template "${TEST_TEMP_DIR}/chart" \
+        -f "${VALUES_PATH}" 2>&1
+
+    refute_output --partial "[helm-secrets] File does not exist: ${VALUES_PATH}"
+    assert_output --partial "port: 80"
+    assert_success
+}
+
 @test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values false" {
     VALUES="not-exists.yaml"
     VALUES_PATH="${VALUES}"
@@ -1425,5 +1439,117 @@ load '../bats/extensions/bats-file/load'
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "global_secret: global_bar"
     assert_output --partial "[helm-secrets] Removed: "
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    refute_output --partial 'secret: "42"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates=true" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates=true template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    refute_output --partial 'secret: "42"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates true" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates true template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    refute_output --partial 'secret: "42"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates false" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates false template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    refute_output --partial 'config: "42"'
+    refute_output --partial 'secret: "42"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    assert_output --partial 'secret: "42"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets=true" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets=true template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    assert_output --partial 'secret: "42"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets true" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets true template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    assert_output --partial 'secret: "42"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets false" {
+    if ! is_backend "vala"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets false template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    refute_output --partial 'secret: "42"'
     assert_success
 }

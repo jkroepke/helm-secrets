@@ -21,6 +21,14 @@ load '../bats/extensions/bats-file/load'
     assert_failure
 }
 
+@test "secret-backend: helm secrets --backend=" {
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
+
+    run "${HELM_BIN}" secrets --backend=nonexists decrypt "${FILE}"
+    assert_output --partial "Can't find secret backend: nonexists"
+    assert_failure
+}
+
 @test "secret-backend: helm secrets + env HELM_SECRETS_BACKEND" {
     FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.yaml"
 
