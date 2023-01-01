@@ -75,7 +75,7 @@ _trap() {
 # MacOS syntax and behavior is different for mktemp
 # https://unix.stackexchange.com/a/555214
 _mktemp() {
-    mktemp "$@" "${TMPDIR}/XXXXXX"
+    mktemp "${@:-}" "${TMPDIR}/XXXXXX"
 }
 
 on_wsl() { false; }
