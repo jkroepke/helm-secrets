@@ -4,15 +4,12 @@ set -euf
 
 help_usage() {
     cat <<'EOF'
-Secrets encryption in Helm Charts
 
-This plugin provides ability to encrypt/decrypt secrets files
-to store in less secure places, before they are installed using
-Helm.
+helm-secrets is a helm plugin for decrypt encrypted helm value files on the fly.
 
-For more information, see the README at github.com/jkroepke/helm-secrets
+For more information, see the README.md at https://github.com/jkroepke/helm-secrets
 
-To decrypt/encrypt/edit you need to initialize/first encrypt secrets with
+To decrypt/encrypt/edit locally you need to initialize/first encrypt secrets with
 sops - https://github.com/mozilla/sops
 
 Available Commands:
@@ -24,11 +21,13 @@ Available Commands:
   <cmd>   wrapper that decrypts encrypted yaml files before running helm <cmd>
 
 Available Options:
-  --quiet                               -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
-  --backend                             -b  Secret backend to use for decryption or encryption (env: $HELM_SECRETS_BACKEND)
-  --backend-args                        -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
-  --ignore-missing-values [true|false]      Ignore missing value files (env: $HELM_SECRETS_IGNORE_MISSING_VALUES)
-  --help                                -h  Show help
-  --version                             -v  Display version of helm-secrets
+  --quiet                                          -q  Suppress info messages (env: $HELM_SECRETS_QUIET)
+  --backend                                        -b  Secret backend to use for decryption or encryption (env: $HELM_SECRETS_BACKEND)
+  --backend-args                                   -a  Additional args for secret backend (env: $HELM_SECRETS_BACKEND_ARGS)
+  --ignore-missing-values [true|false]                 Ignore missing value files (env: $HELM_SECRETS_IGNORE_MISSING_VALUES)
+  --evaluate-templates [true|false]                    Evaluate secret expressions inside helm template (only supported by vals backend) (env: $HELM_SECRETS_EVALUATE_TEMPLATES)
+  --evaluate-templates-decode-secrets [true|false]     If --evaluate-templates is set, decode base64 values from secrets to evaluate them (env: $HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECRETS)
+  --help                                           -h  Show help
+  --version                                        -v  Display version of helm-secrets
 EOF
 }

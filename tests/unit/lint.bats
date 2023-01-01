@@ -305,6 +305,26 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "lint: helm lint w/ chart + some-secrets.yaml + --backend-args= (simple)" {
+    if ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --backend-args="--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "Data key recovered successfully"
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
+    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
 @test "lint: helm lint w/ chart + some-secrets.yaml + -a (simple)" {
     if ! is_backend "sops"; then
         skip
