@@ -7,14 +7,14 @@ load '../bats/extensions/bats-assert/load'
 load '../bats/extensions/bats-file/load'
 
 @test "lint: helm lint" {
-    run "${HELM_BIN}" --debug secrets lint
+    run "${HELM_BIN}" secrets lint
 
     assert_output --partial 'helm secrets [ OPTIONS ] lint'
     assert_success
 }
 
 @test "lint: helm lint --help" {
-    run "${HELM_BIN}" --debug secrets lint --help
+    run "${HELM_BIN}" secrets lint --help
 
     assert_output --partial 'helm secrets [ OPTIONS ] lint'
     assert_success
