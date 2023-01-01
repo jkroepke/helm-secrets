@@ -75,8 +75,13 @@ _trap() {
 # MacOS syntax and behavior is different for mktemp
 # https://unix.stackexchange.com/a/555214
 _mktemp() {
-    # shellcheck disable=SC2068
-    mktemp ${@:-} "${TMPDIR}/XXXXXX"
+    # ksh/posh - @: parameter not set
+    # https://stackoverflow.com/a/35242773
+    if [ $# -eq 0 ]; then
+        mktemp "${TMPDIR}/XXXXXX"
+    else
+        mktemp "$@" "${TMPDIR}/XXXXXX"
+    fi
 }
 
 on_wsl() { false; }
