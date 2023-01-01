@@ -98,7 +98,7 @@ while true; do
         fi
 
         shift
-        encrypt "${@:-}"
+        encrypt "$@"
         break
         ;;
     decrypt)
@@ -112,7 +112,7 @@ while true; do
         fi
 
         shift
-        decrypt "${@:-}"
+        decrypt "$@"
         break
         ;;
     edit)
@@ -239,7 +239,7 @@ while true; do
     *)
         # shellcheck source=scripts/commands/helm.sh
         . "${SCRIPT_DIR}/commands/helm.sh"
-        helm_command "${@:-}"
+        helm_command "$@"
         break
         ;;
     esac
