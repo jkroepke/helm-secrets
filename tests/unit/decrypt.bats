@@ -111,7 +111,7 @@ load '../bats/extensions/bats-file/load'
 
     VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
 
-    run "${HELM_BIN}" secrets decrypt "${VALUES}"
+    run "${HELM_BIN}" --debug secrets decrypt "${VALUES}"
     assert_output --partial 'global_secret: global_bar'
     assert_success
 }
