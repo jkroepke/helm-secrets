@@ -14,12 +14,12 @@ This is a wrapper for "helm [command]". It will detect -f and
 [command]".
 
 Example:
-  $ helm secrets upgrade <HELM UPGRADE OPTIONS>
-  $ helm secrets lint <HELM LINT OPTIONS>
+  $ helm secrets <HELM SECRETS OPTIONS> upgrade <HELM UPGRADE OPTIONS>
+  $ helm secrets <HELM SECRETS OPTIONS> lint <HELM LINT OPTIONS>
 
 Typical usage:
   $ helm secrets upgrade i1 stable/nginx-ingress -f values.test.yaml -f secrets.test.yaml
-  $ helm secrets lint ./my-chart -f values.test.yaml -f secrets.test.yaml
+  $ helm secrets -b vals lint ./my-chart -f values.test.yaml -f secrets.test.yaml
 
 EOF
 }
