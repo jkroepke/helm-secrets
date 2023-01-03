@@ -24,19 +24,21 @@ Typical usage:
 EOF
 }
 
-decrypted_files=$(_mktemp)
+decrypted_files=""
 
 _trap_hook() {
-    if [ -s "${decrypted_files}" ]; then
+    if [ "${decrypted_files}" != "" ]; then
         if [ "${QUIET}" = "false" ]; then
             echo >&2
             # shellcheck disable=SC2016
-            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >&2 <"${decrypted_files}"
+            tr '\n' '\0' <<EOF | xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >&2
+${decrypted_files}
+EOF
         else
-            xargs -0 rm >&2 <"${decrypted_files}"
+            tr '\n' '\0' <<EOF | xargs -0 rm >&2
+${decrypted_files}
+EOF
         fi
-
-        rm "${decrypted_files}"
     fi
 }
 
@@ -144,7 +146,7 @@ helm_wrapper() {
             else
                 if decrypt_helper "${real_file}" "${sops_type}"; then
                     set -- "$@" "${opt_prefix}$(_helm_winpath "${file_dec}" "${double_escape_need}")"
-                    printf '%s\0' "${file_dec}" >>"${decrypted_files}"
+                    decrypted_files="$(printf '%s\n%s' "${decrypted_files}" "${file_dec}")"
 
                     if [ "${QUIET}" = "false" ]; then
                         log 'Decrypt: %s' "${file}"
