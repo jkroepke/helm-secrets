@@ -93,8 +93,7 @@ metadata:
     repository: '{{ .Chart.Home }}'
 type: Opaque
 data:
-  '{{ .Values.secrets.keys.username }}': '{{ .Values.dbUsername | b64enc }}'
-  '{{ .Values.secrets.keys.password }}': '{{ .Values.dbPassword | b64enc }}'
+  supersecret: '{{ .Values.aws | b64enc }}'
 ```
 
 Then we move this file to a subdirectory, `chart` in this example:
