@@ -11,7 +11,7 @@
 
 ## About
 
-helm-secrets is a helm plugin for decrypt encrypted helm **value files** on the fly.
+helm-secrets is a Helm plugin for decrypt encrypted Helm **value files** on the fly.
 
 * Use [sops](https://github.com/mozilla/sops) to encrypt value files and store them into git.
 * Store your secrets a cloud native secret manager like AWS SecretManager, Azure KeyVault or HashiCorp Vault and inject them inside value files or templates.
@@ -44,7 +44,7 @@ See [Usage](https://github.com/jkroepke/helm-secrets/wiki/Usage) for more inform
 
 ### Decrypt secrets via plugin command
 
-Wraps the whole helm command. Slow on multiple value files.
+Wraps the whole  `helm` command. Slow on multiple value files.
 
 ```bash
 helm secrets upgrade name . -f secrets.yaml
@@ -55,7 +55,7 @@ helm secrets upgrade name . -f secrets.yaml
 
 *requires helm 3.9+*
 
-helm secrets supports evaluating [vals](https://github.com/variantdev/vals) expressions inside helm templates by
+helm-secrets supports evaluating [vals](https://github.com/variantdev/vals) expressions inside Helm templates by
 enable the flag `--evaluate-templates`.
 
 **secrets.yaml**
@@ -116,9 +116,9 @@ spec:
 
 ## Terraform support
 
-The Terraform helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
+The Terraform Helm provider does not [support downloader plugins](https://github.com/hashicorp/terraform-provider-helm).
 
-helm secrets can be used together with the [terraform external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source).
+helm-secrets can be used together with the [Terraform external data source provider](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/data_source).
 
 ### Example
 
@@ -137,7 +137,7 @@ resource "helm_release" "example" {
 }
 ```
 
-An example of how to use helm-secrets with terraform could be found in [examples/terraform](examples/terraform/helm.tf).
+An example of how to use helm-secrets with Terraform could be found in [examples/terraform](examples/terraform/helm.tf).
 
 ## Secret backends
 
