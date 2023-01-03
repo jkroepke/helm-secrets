@@ -14,7 +14,7 @@ This integration is also supported inside [ArgoCD](https://github.com/jkroepke/h
 ## Setup
 
 [vals](https://github.com/variantdev/vals) needs to be setup correctly first.
-Download vals and put the binary into your PATH environment variable.
+Download vals and put the binary into your `PATH` environment variable.
 Alternatively, use the environment variable `HELM_SECRETS_VALS_PATH` to define the path of the vals binary.
 
 # Authentication
