@@ -179,7 +179,7 @@ helm_wrapper() {
         if [ "${SECRET_BACKEND_ARGS}" != "" ]; then
             set -- "$@" "--post-renderer-args" "--backend-args" "--post-renderer-args" "${SECRET_BACKEND_ARGS}"
         fi
-        if [ "${EVALUATE_TEMPLATES_DECODE_SECRETS}" != "false" ]; then
+        if [ "${EVALUATE_TEMPLATES_DECODE_SECRETS}" = "true" ]; then
             set -- "$@" "--post-renderer-args" "--evaluate-templates-decode-secrets"
         fi
         set -- "$@" "--post-renderer-args" "post-renderer"

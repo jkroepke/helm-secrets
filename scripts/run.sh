@@ -61,7 +61,8 @@ EVALUATE_TEMPLATES="${HELM_SECRETS_EVALUATE_TEMPLATES:-false}"
 # shellcheck disable=SC2034
 EVALUATE_TEMPLATES_DECODE_SECRETS="${HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECRETS:-false}"
 
-trap '_trap; trap - EXIT; exit' EXIT INT HUP
+trap _trap EXIT
+#trap '_trap; trap - EXIT; exit 1' HUP INT QUIT TERM
 
 load_secret_backend "$SECRET_BACKEND"
 
