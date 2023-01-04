@@ -12,9 +12,7 @@ _vals() {
     # https://github.com/variantdev/vals/issues/60
     # Store stderr in a var - https://stackoverflow.com/a/52587939
     if ! { error=$({ $_VALS "$@" 1>&3; } 2>&1); } 3>&1; then
-        echo 'vals error:' >&2
-        echo "$error" >&2
-        exit 1
+        fatal "vals error: $error"
     fi
 }
 

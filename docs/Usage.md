@@ -343,7 +343,7 @@ helm secrets upgrade . --set 'mysql=secrets://secrets.yaml'
 
 ## Evaluate secret reference inside helm template
 
-*requires helm 3.9+*
+*requires helm 3.9+; vals 0.20+*
 
 helm secrets supports evaluating [vals](https://github.com/variantdev/vals) expressions inside helm templates by
 enable the flag `--evaluate-templates`.
