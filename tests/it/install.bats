@@ -39,7 +39,7 @@ load '../bats/extensions/bats-file/load'
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
+    run "${HELM_BIN}" secrets install --debug "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
