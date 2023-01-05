@@ -1485,7 +1485,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" --debug secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
     refute_output --partial 'secret: "42"'
