@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Performance issues with large value files (vals backend)
+- Remote value file download fails when URL contains query strings
 
 ## [4.2.2] - 2022-11-20
 ### Fixed

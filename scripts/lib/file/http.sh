@@ -15,7 +15,7 @@ _file_http_get() {
         _url="${1}"
     fi
 
-    _tmp_file="$(_mktemp).${_url##*.}"
+    _tmp_file="$(_mktemp)"
 
     if ! download "${_url}" >"${_tmp_file}"; then
         if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
