@@ -1443,7 +1443,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ remote chart + secrets.yaml + http:// + query string url" {
-    VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml?foo=b4r&test=true&arg1="
+    VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml\?foo=b4r&test=true&arg1="
     VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
@@ -1457,7 +1457,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ remote chart + secrets.yaml + http:// + query string url + --set-file" {
-    VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml?foo=b4r&test=true&arg1="
+    VALUES="https://raw.githubusercontent.com/jkroepke/helm-secrets/main/tests/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml\?foo=b4r&test=true&arg1="
     VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
