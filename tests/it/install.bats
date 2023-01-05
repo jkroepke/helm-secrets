@@ -40,11 +40,11 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install --debug "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_failure
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
-    assert_output --partial "STATUS: deployed"
+    refute_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert [ ! -f "${FILE}.dec" ]
+    assert_success
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
     assert_success
