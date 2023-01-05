@@ -1479,7 +1479,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1493,7 +1493,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates=true" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1507,7 +1507,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates true" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1521,7 +1521,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates true + invalid syntax" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1538,7 +1538,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates false" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1552,7 +1552,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1566,7 +1566,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets=true" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1580,7 +1580,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets true" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1594,7 +1594,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets false" {
-    if ! is_backend "vals"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
