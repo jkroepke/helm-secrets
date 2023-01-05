@@ -8,14 +8,14 @@ load '../bats/extensions/bats-file/load'
 
 @test "install: helm install" {
     run "${HELM_BIN}" secrets install
-    assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] install'
+    assert_success
 }
 
 @test "install: helm install --help" {
     run "${HELM_BIN}" secrets install --help
-    assert_success
     assert_output --partial 'helm secrets [ OPTIONS ] install'
+    assert_success
 }
 
 @test "install: helm install w/ chart" {
@@ -24,12 +24,12 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks 2>&1
-    assert_success
     refute_output --partial "[helm-secrets] Decrypt:"
     assert_output --partial 'STATUS: deployed'
     refute_output --partial "[helm-secrets] Removed:"
+    assert_success
 
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_success
 }
 
@@ -40,15 +40,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + --values" {
@@ -58,15 +58,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + --values=" {
@@ -76,15 +76,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml" {
@@ -94,15 +94,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 83"
+    assert_success
 }
 
 @test "install: helm install w/ chart + some-secrets.yaml + --values" {
@@ -112,14 +112,13 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 83"
 }
 
@@ -134,11 +133,12 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 83"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + helm flag" {
@@ -148,16 +148,16 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" --set service.type=NodePort 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
     assert_output --partial "type: NodePort"
+    assert_success
 }
 
 @test "install: helm install w/ chart + pre decrypted secrets.yaml" {
@@ -168,17 +168,17 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert [ -f "${FILE}.dec" ]
+    assert_file_exists "${FILE}.dec"
+    assert_success
 
     run rm "${FILE}.dec"
     assert_success
 
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
-    assert_success
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 82"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + q flag" {
@@ -188,15 +188,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets -q install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + quiet flag" {
@@ -206,15 +206,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets --quiet install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + special path" {
@@ -224,15 +224,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${SPECIAL_CHAR_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + invalid yaml" {
@@ -245,11 +245,11 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_failure
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "YAML parse error on"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
+    assert_failure
 }
 
 @test "install: helm install w/ chart + secrets.yaml + http://" {
@@ -259,15 +259,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: "
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + git://" {
@@ -281,15 +281,15 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_output --partial "[helm-secrets] Removed: "
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + secrets://http://" {
@@ -299,13 +299,13 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.yaml + secrets://git://" {
@@ -319,13 +319,13 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 81"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://" {
@@ -340,13 +340,13 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 91"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://name#key" {
@@ -362,13 +362,13 @@ load '../bats/extensions/bats-file/load'
     kubectl create secret generic gpg-key --from-file=private2.gpg="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" >&2
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://gpg-key#private2.gpg?${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 91"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/name#key" {
@@ -384,13 +384,13 @@ load '../bats/extensions/bats-file/load'
     kubectl -n kube-system create secret generic gpg-key --from-file=private3.gpg="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" >&2
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 91"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/name#key + HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES" {
@@ -405,8 +405,8 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
-    assert_failure
     assert_output --partial "[helm-secrets] secrets+gpg-import-kubernetes:// is not allowed in this context!"
+    assert_failure
 }
 
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/non-exists#key" {
@@ -421,8 +421,8 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/non-exists#private3.gpg?${FILE}" 2>&1
-    assert_failure
     assert_output --partial "[helm-secrets] Couldn't get kubernetes secret kube-system/non-exists"
+    assert_failure
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import://" {
@@ -437,13 +437,13 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import://${TEST_TEMP_DIR}/assets/age/key.txt?${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 92"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://name#key" {
@@ -459,13 +459,13 @@ load '../bats/extensions/bats-file/load'
     kubectl create secret generic age-key --from-file=key.txt="${TEST_TEMP_DIR}/assets/age/key.txt" >&2
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://age-key#key.txt?${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 92"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/name#key" {
@@ -481,13 +481,13 @@ load '../bats/extensions/bats-file/load'
     kubectl -n kube-system create secret generic age-key --from-file=keys.txt="${TEST_TEMP_DIR}/assets/age/key.txt" >&2
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
-    assert_success
     assert_output --partial "STATUS: deployed"
-    assert [ ! -f "${FILE}.dec" ]
-
-    run kubectl get svc -o yaml -l "app.kubernetes.io/name=chart,app.kubernetes.io/instance=${RELEASE}"
+    assert_file_not_exists "${FILE}.dec"
     assert_success
+
+    run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_output --partial "port: 92"
+    assert_success
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/name#key + HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES" {
@@ -502,8 +502,8 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_ALLOW_AGE_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/age-key#keys.txt?${FILE}" 2>&1
-    assert_failure
     assert_output --partial "[helm-secrets] secrets+age-import-kubernetes:// is not allowed in this context!"
+    assert_failure
 }
 
 @test "install: helm install w/ chart + secrets.age.yaml + secrets+age-import-kubernetes://namespace/non-exists#key" {
@@ -518,6 +518,6 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+age-import-kubernetes://kube-system/non-exists#keys.txt?${FILE}" 2>&1
-    assert_failure
     assert_output --partial "[helm-secrets] Couldn't get kubernetes secret kube-system/non-exists"
+    assert_failure
 }

@@ -1479,13 +1479,13 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" --debug secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
     refute_output --partial 'secret: "42"'
@@ -1493,7 +1493,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates=true" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1507,7 +1507,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates true" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1520,8 +1520,25 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "template: helm template w/ chart + --evaluate-templates true + invalid syntax" {
+    if on_wsl || ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}" "false"
+
+    cp -r "${TEST_ROOT}/assets/values/${HELM_SECRETS_BACKEND}/templates/error/." "${TEST_TEMP_DIR}/chart/templates/"
+
+    run "${HELM_BIN}" secrets --evaluate-templates true template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    refute_output --partial 'config: "42"'
+    refute_output --partial 'secret: "42"'
+    assert_output --partial 'vals error:'
+    assert_failure
+}
+
 @test "template: helm template w/ chart + --evaluate-templates false" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1535,7 +1552,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1549,7 +1566,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets=true" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1563,7 +1580,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets true" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 
@@ -1577,7 +1594,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + --evaluate-templates + --evaluate-templates-decode-secrets false" {
-    if ! is_backend "vala"; then
+    if on_wsl || ! is_backend "vals"; then
         skip
     fi
 

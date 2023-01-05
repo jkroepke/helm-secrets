@@ -35,16 +35,12 @@ setup_suite() {
         HELM_DATA_HOME="$(_winpath "${HELM_CACHE}")"
         export HELM_DATA_HOME
 
-        if [ ! -d "${HELM_CACHE}/chart" ]; then
-            mkdir -p "${HELM_CACHE}/chart"
-            if [[ "${HELM_BIN}" == *"helm.exe" ]]; then
-                "${HELM_BIN}" create "$(_winpath "${HELM_CACHE}/chart")"
-            else
-                "${HELM_BIN}" create "${HELM_CACHE}/chart"
-            fi
+        if [ ! -d "${HELM_CACHE}/chart/${HELM_SECRETS_BACKEND}/" ]; then
+            mkdir -p "${HELM_CACHE}/chart/${HELM_SECRETS_BACKEND}/"
+            "${HELM_BIN}" create "$(_winpath "${HELM_CACHE}/chart/${HELM_SECRETS_BACKEND}")"
 
-            if [ -d "${TEST_ROOT}/values/${HELM_SECRETS_BACKEND}/templates" ]; then
-                cp -r "${TEST_ROOT}/values/${HELM_SECRETS_BACKEND}/templates/." "${HELM_CACHE}/chart/templates/"
+            if [ -d "${TEST_ROOT}/assets/values/${HELM_SECRETS_BACKEND}/templates/base/" ]; then
+                cp -r "${TEST_ROOT}/assets/values/${HELM_SECRETS_BACKEND}/templates/base/." "${HELM_CACHE}/chart/${HELM_SECRETS_BACKEND}/templates/"
             fi
         fi
 

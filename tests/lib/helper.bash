@@ -34,7 +34,11 @@ teardown() {
 
 create_chart() {
     {
-        ln -s "${HELM_CACHE}/chart/" "${1}"
+        if [ "${2:-}" == "false" ]; then
+            cp -r "${HELM_CACHE}/chart/${HELM_SECRETS_BACKEND}" "${1}/chart"
+        else
+            ln -s "${HELM_CACHE}/chart/${HELM_SECRETS_BACKEND}" "${1}/chart"
+        fi
     } >&2
 }
 
