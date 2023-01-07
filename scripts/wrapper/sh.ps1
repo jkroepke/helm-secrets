@@ -1,7 +1,7 @@
 trap { "[helm-secrets] powershell errored: $_"; exit 1 }
 
 function which([string] $cmd) {
-    (Get-Command -ErrorAction "SilentlyContinue" gpg.exe).Path
+    (Get-Command -ErrorAction "SilentlyContinue" $cmd).Path
 }
 
 function shellEnv(
@@ -19,32 +19,33 @@ function shellWindowsNative(
     [string][Parameter(Mandatory, Position=0)] $path, 
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
-    $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -Wait -PassThru
+    $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -PassThru
+    $proc | Wait-Process
     exit $proc.ExitCode
 }
 
 function shellWsl(
     [System.Object[]][Parameter(Mandatory, Position=0)] $args
 ) {
-    if ($null -ne $env:HELM_BIN -and $null -ne $env:HELM_SECRETS_HELM_PATH) {
+    if ($null -eq $env:HELM_BIN -and $null -eq $env:HELM_SECRETS_HELM_PATH) {
         if ((which helm.exe) -ne $null) {
             $env:HELM_SECRETS_HELM_PATH = "helm.exe"
         }
     }
 
-    if ($null -ne $env:HELM_SECRETS_SOPS_PATH) {
+    if ($null -eq $env:HELM_SECRETS_SOPS_PATH) {
         if ((which sops.exe) -ne $null) {
             $env:HELM_SECRETS_SOPS_PATH = "sops.exe"
         }
     }
 
-    if ($null -ne $env:HELM_SECRETS_VALS_PATH) {
+    if ($null -eq $env:HELM_SECRETS_VALS_PATH) {
         if ((which vals.exe) -ne $null) {
             $env:HELM_SECRETS_VALS_PATH = "vals.exe"
         }
     }
 
-    if ($null -ne $env:HELM_SECRETS_CURL_PATH) {
+    if ($null -eq $env:HELM_SECRETS_CURL_PATH) {
         if ((which curl.exe) -ne $null) {
             $env:HELM_SECRETS_CURL_PATH = "curl.exe"
         }
@@ -79,7 +80,8 @@ function shellWsl(
         $args[0] = wsl wslpath "$($args[0])"
     }
   
-    $proc = Start-Process -FilePath "wsl.exe" -ArgumentList $args -NoNewWindow -Wait -PassThru
+    $proc = Start-Process -FilePath "wsl.exe" -ArgumentList $args -NoNewWindow -PassThru
+    $proc | Wait-Process
     exit $proc.ExitCode
 }
 
