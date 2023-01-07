@@ -5,7 +5,7 @@ function which([string] $cmd) {
 }
 
 function shellEnv(
-    [string][Parameter(Mandatory, Position=0)] $path, 
+    [string][Parameter(Mandatory, Position=0)] $path,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
     if ($path -eq "wsl") {
@@ -16,7 +16,7 @@ function shellEnv(
 }
 
 function shellWindowsNative(
-    [string][Parameter(Mandatory, Position=0)] $path, 
+    [string][Parameter(Mandatory, Position=0)] $path,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
     $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -PassThru
@@ -76,14 +76,16 @@ function shellWsl(
     $env:WSLENV += if ($env:HELM_SECRETS_CURL_PATH -match "\\") {"/p"}
 
     if ($args[0] -match "\\") {
-        $args[0] = $args[0] -replace "\\","/"        
+        $args[0] = $args[0] -replace "\\","/"
         $args[0] = wsl wslpath "$($args[0])"
     }
-  
+
     $proc = Start-Process -FilePath "wsl.exe" -ArgumentList $args -NoNewWindow -PassThru
     $proc | Wait-Process
     exit $proc.ExitCode
 }
+
+echo $args
 
 if ($env:HELM_DEBUG -eq '1' -or $env:HELM_DEBUG -eq 'true') {
     Set-PSDebug -Trace 1
@@ -102,7 +104,7 @@ $knownShellPaths = @(
     ("${$env:ProgramFiles(x86)}\Git\bin\bash.exe"),
     ("$($env:UserProfile)\scoop\shims\bash.exe"),
     ("$($env:UserProfile)\scoop\shims\sh.exe")
-) 
+)
 
 foreach($knownShellPath in $knownShellPaths) {
     if (Test-Path -Path "$knownShellPath") {
