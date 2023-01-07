@@ -1,5 +1,5 @@
 function which([string] $cmd) {
-    gcm -ErrorAction "SilentlyContinue" $cmd | ft Definition
+    (Get-Command -ErrorAction "SilentlyContinue" gpg.exe).Path
 }
 
 function shellEnv {
