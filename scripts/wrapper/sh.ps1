@@ -73,7 +73,7 @@ function shellWsl {
         $env:WSLENV += if ($env:HELM_SECRETS_HELM_PATH -match "\\") {":HELM_SECRETS_HELM_PATH/p"} else {":HELM_SECRETS_HELM_PATH"}
         $env:WSLENV += if ($env:HELM_SECRETS_SOPS_PATH -match "\\") {":HELM_SECRETS_SOPS_PATH/p"} else {":HELM_SECRETS_SOPS_PATH"}
         $env:WSLENV += if ($env:HELM_SECRETS_VALS_PATH -match "\\") {":HELM_SECRETS_VALS_PATH/p"} else {":HELM_SECRETS_VALS_PATH"}
-        $env:WSLENV += if ($env:HELM_SECRETS_CURL_PATH -match "\\") {":HELM_SECRETS_CURL_PATH/p"} else {":HELM_SECRETS_VALS_PATH"}
+        $env:WSLENV += if ($env:HELM_SECRETS_CURL_PATH -match "\\") {":HELM_SECRETS_CURL_PATH/p"} else {":HELM_SECRETS_CURL_PATH"}
 
         if ($args[0] -match "\\") {
             $args[0] = wsl wslpath "$(arg[0])"
