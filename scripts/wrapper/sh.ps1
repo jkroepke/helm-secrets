@@ -1,10 +1,5 @@
-function which {
-    param(
-        [string] $name
-    )
-    process {
-        Get-Command $name | Select-Object -ExpandProperty Definition
-    }
+function which([string] $cmd) {
+    gcm -ErrorAction "SilentlyContinue" $cmd | ft Definition
 }
 
 function shellEnv {
@@ -35,7 +30,6 @@ function shellWindowsNative {
 
 function shellWsl {
     param(
-        [string][Parameter(Mandatory, Position=0)] $path,
         [string[]][Parameter(Position=1, ValueFromRemainingArguments)] $args
     )
     process {
