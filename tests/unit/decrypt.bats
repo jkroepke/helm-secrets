@@ -196,7 +196,7 @@ load '../bats/extensions/bats-file/load'
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    run "${HELM_BIN}" secrets --backend-args "--verbose --output-type \"yaml\"" decrypt "${VALUES_PATH}"
+    run "${HELM_BIN}" --debug secrets --backend-args "--verbose --output-type \"yaml\"" decrypt "${VALUES_PATH}"
 
     assert_output --partial "Data key recovered successfully"
     assert_output --partial 'global_secret: global_bar'
