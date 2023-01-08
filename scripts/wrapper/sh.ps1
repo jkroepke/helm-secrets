@@ -15,6 +15,9 @@ function runShell(
         }
     }
 
+    echo $args
+    echo $quotedArgs
+
     & $shell $quotedArgs
     exit $LASTEXITCODE
 }
