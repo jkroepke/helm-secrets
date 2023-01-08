@@ -11,7 +11,7 @@ function shellWindowsNative(
     $quotedArgs = foreach ($arg in $args) {
         if ($arg -notmatch '[ "]') { $arg }
         else { # must double-quote
-            '"{0}"' -f ($arg -replace '"', '\"' -replace '\\$', '\\')
+            '"{0}"' -f ($arg -replace '"', '\"' -replace '\\$', '\\' -replace '\\', '\\\\')
         }
     }
 
