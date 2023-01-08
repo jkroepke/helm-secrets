@@ -8,10 +8,10 @@ function shellWindowsNative(
     [string][Parameter(Mandatory, Position=0)] $path,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
-    $args = $args.ForEach({ '"' + $_ + '"' })
+    $args = $args.ForEach({ '"' + ($_ -replace '"','\\"') + '"' })
     echo $args
 
-    $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -PassThru
+    $proc = Start-Process -FilePath $path -ArgumentList $args.join(' ') -NoNewWindow -PassThru
     $proc | Wait-Process
     exit $proc.ExitCode
 }
