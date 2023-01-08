@@ -8,7 +8,7 @@ function shellWindowsNative(
     [string][Parameter(Mandatory, Position=0)] $shell,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
-    & $shell @args
+    & $shell @args % { '"' + ($_ -replace '"','\\"') + '"'}
     exit $LASTEXITCODE
 }
 
@@ -72,8 +72,6 @@ function shellWsl(
     $proc | Wait-Process
     exit $proc.ExitCode
 }
-
-echo $args
 
 if ('1', 'true' -Contains $env:HELM_DEBUG) {
     Set-PSDebug -Trace 1
