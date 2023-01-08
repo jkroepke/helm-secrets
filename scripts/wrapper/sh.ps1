@@ -11,7 +11,7 @@ function runShell(
     $quotedArgs = foreach ($arg in $args) {
         if ($arg -notmatch '[ "]') { $arg }
         else { # must double-quote
-            '"{0}"' -f ($arg -replace '"', '\"' -replace '\\$', '\\' -replace '\\', '\\\\')
+            '"{0}"' -f ($arg -replace '"', '\"' -replace '\\$', '\\')
         }
     }
 
@@ -75,7 +75,7 @@ function prepareWsl(
         $args[0] = wsl wslpath "$($args[0])"
     }
 
-    runShell("wsl.exe", $args)
+    runShell "wsl.exe" $args
 }
 
 if ('1', 'true' -Contains $env:HELM_DEBUG) {
