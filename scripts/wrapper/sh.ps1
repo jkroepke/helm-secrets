@@ -8,9 +8,9 @@ function shellWindowsNative(
     [string][Parameter(Mandatory, Position=0)] $shell,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
-    $args = $args.ForEach({ '"' + ($_ -replace '"','\\"') + '"' })
+    $arg = $args.ForEach({ '"' + ($_ -replace '"','\\"') + '"' }).join(" ")
 
-    & $shell @args
+    & $shell $arg
     exit $LASTEXITCODE
 }
 
