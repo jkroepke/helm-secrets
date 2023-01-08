@@ -1,19 +1,15 @@
-trap { "[helm-secrets] powershell errored in line $($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line)"; exit 1 }
+trap { "[helm-secrets] powershell errored in line $($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line)"; "[helm-secrets] Error: $_"; exit 1 }
 
 function which([string] $cmd) {
     (Get-Command -ErrorAction "SilentlyContinue" $cmd).Path
 }
 
 function shellWindowsNative(
-    [string][Parameter(Mandatory, Position=0)] $path,
+    [string][Parameter(Mandatory, Position=0)] $shell,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
-    $args = $args.ForEach({ '"' + ($_ -replace '"','\\"') + '"' })
-    echo $args
-
-    $proc = Start-Process -FilePath $path -ArgumentList $args.join(' ') -NoNewWindow -PassThru
-    $proc | Wait-Process
-    exit $proc.ExitCode
+    & $shell @args
+    exit $LASTEXITCODE
 }
 
 function shellWsl(
