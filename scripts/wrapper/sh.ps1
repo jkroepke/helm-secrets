@@ -1,4 +1,4 @@
-trap { "[helm-secrets] powershell errored: $_"; exit 1 }
+trap { "[helm-secrets] powershell errored in line $($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line)"; exit 1 }
 
 function which([string] $cmd) {
     (Get-Command -ErrorAction "SilentlyContinue" $cmd).Path
@@ -9,6 +9,13 @@ function shellWindowsNative(
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
     echo $args
+    for($i = 0; $i -lt $args.Length; $i++)
+    {
+        if ($args[$i] -match " ") {
+            $args[$i] = `"` + $args[$i] + `"`
+        }
+    }
+
     $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -PassThru
     $proc | Wait-Process
     exit $proc.ExitCode
@@ -78,7 +85,7 @@ function shellWsl(
 
 echo $args
 
-if ($env:HELM_DEBUG -eq '1' -or $env:HELM_DEBUG -eq 'true') {
+if ('1', 'true' -Contains $env:HELM_DEBUG) {
     Set-PSDebug -Trace 1
 }
 
