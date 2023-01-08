@@ -4,21 +4,11 @@ function which([string] $cmd) {
     (Get-Command -ErrorAction "SilentlyContinue" $cmd).Path
 }
 
-function shellEnv(
-    [string][Parameter(Mandatory, Position=0)] $path,
-    [System.Object[]][Parameter(Mandatory, Position=1)] $args
-) {
-    if ($path -eq "wsl") {
-        shellWsl $args
-    } else {
-        shellWindowsNative $path $args
-    }
-}
-
 function shellWindowsNative(
     [string][Parameter(Mandatory, Position=0)] $path,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
+    echo $args
     $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -PassThru
     $proc | Wait-Process
     exit $proc.ExitCode
@@ -27,6 +17,7 @@ function shellWindowsNative(
 function shellWsl(
     [System.Object[]][Parameter(Mandatory, Position=0)] $args
 ) {
+    echo $args
     if ($null -eq $env:HELM_BIN -and $null -eq $env:HELM_SECRETS_HELM_PATH) {
         if ((which helm.exe) -ne $null) {
             $env:HELM_SECRETS_HELM_PATH = "helm.exe"
@@ -95,11 +86,12 @@ if ($null -eq $env:SOPS_GPG_EXEC) {
     $env:SOPS_GPG_EXEC = (which gpg.exe)
 }
 
-if ($null -ne $env:HELM_SECRETS_WINDOWS_SHELL) {
-    shellEnv $env:HELM_SECRETS_WINDOWS_SHELL $args
+if ($env:HELM_SECRETS_WINDOWS_SHELL -eq 'wsl' ) {
+    shellWsl $args
 }
 
 $knownShellPaths = @(
+    ("$($env:HELM_SECRETS_WINDOWS_SHELL)"),
     ("$($env:ProgramFiles)\Git\bin\bash.exe"),
     ("${$env:ProgramFiles(x86)}\Git\bin\bash.exe"),
     ("$($env:UserProfile)\scoop\shims\bash.exe"),
