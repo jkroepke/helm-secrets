@@ -16,9 +16,7 @@ function shellWindowsNative(
         }
     }
 
-    $args = $args | ForEach-Object {
-        if ($_ -match " ") { "`"$($_)`"" } else { $_ }
-    }
+    $args = $args.ForEach({ '"' + $_ + '"' })
 
     echo $args
 
