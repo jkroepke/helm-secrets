@@ -8,9 +8,14 @@ function shellWindowsNative(
     [string][Parameter(Mandatory, Position=0)] $shell,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
-    $arg = $args.ForEach({ '"' + ($_ -replace '"','\\"') + '"' }).join(" ")
+    $quotedArgs = foreach ($arg in $args) {
+        if ($arg -notmatch '[ "]') { $arg }
+        else { # must double-quote
+            '"{0}"' -f ($arg -replace '"', '\"' -replace '\\$', '\\')
+        }
+    }
 
-    & $shell $arg
+    & $shell $quotedArgs
     exit $LASTEXITCODE
 }
 
