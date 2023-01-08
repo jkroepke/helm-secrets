@@ -16,6 +16,10 @@ function shellWindowsNative(
         }
     }
 
+    $args = $args | ForEach-Object {
+        if ($_ -match " ") { "`"$($_)`"" } else { $_ }
+    }
+
     echo $args
 
     $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -PassThru
