@@ -4,7 +4,7 @@ function which([string] $cmd) {
     (Get-Command -ErrorAction "SilentlyContinue" $cmd).Path
 }
 
-function shellWindowsNative(
+function runShell(
     [string][Parameter(Mandatory, Position=0)] $shell,
     [System.Object[]][Parameter(Mandatory, Position=1)] $args
 ) {
@@ -19,7 +19,7 @@ function shellWindowsNative(
     exit $LASTEXITCODE
 }
 
-function shellWsl(
+function prepareWsl(
     [System.Object[]][Parameter(Mandatory, Position=0)] $args
 ) {
     if ($null -eq $env:HELM_BIN -and $null -eq $env:HELM_SECRETS_HELM_PATH) {
@@ -75,9 +75,7 @@ function shellWsl(
         $args[0] = wsl wslpath "$($args[0])"
     }
 
-    $proc = Start-Process -FilePath "wsl.exe" -ArgumentList $args -NoNewWindow -PassThru
-    $proc | Wait-Process
-    exit $proc.ExitCode
+    runShell("wsl.exe", $args)
 }
 
 if ('1', 'true' -Contains $env:HELM_DEBUG) {
@@ -89,7 +87,7 @@ if ($null -eq $env:SOPS_GPG_EXEC) {
 }
 
 if ($env:HELM_SECRETS_WINDOWS_SHELL -eq 'wsl' ) {
-    shellWsl $args
+    prepareWsl $args
 }
 
 $knownShellPaths = @(
@@ -102,27 +100,27 @@ $knownShellPaths = @(
 
 foreach($knownShellPath in $knownShellPaths) {
     if (Test-Path -Path "$knownShellPath") {
-        shellWindowsNative "$knownShellPath" $args
+        runShell "$knownShellPath" $args
     }
 }
 
 $gitPath = (which git.exe)
 if (Test-Path -Path "$gitPath\..\bin\bash.exe") {
-    shellWindowsNative "$gitPath\..\bin\bash.exe" $args
+    runShell "$gitPath\..\bin\bash.exe" $args
 }
 
 if ((which wsl.exe) -ne $null) {
-    shellWsl $args
+    prepareWsl $args
 }
 
 $shPath = (which sh.exe)
 if ($shPath -ne $null) {
-    shellWindowsNative $shPath $args
+    runShell $shPath $args
 }
 
 $bashPath = (which bash.exe)
 if ($bashPath -ne $null) {
-    shellWindowsNative $bashPath $args
+    runShell $bashPath $args
 }
 
 echo "helm-secrets needs a unix shell. Please install WSL, cygwin or Git for Windows."
