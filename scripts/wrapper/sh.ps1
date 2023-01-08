@@ -12,9 +12,11 @@ function shellWindowsNative(
     for($i = 0; $i -lt $args.Length; $i++)
     {
         if ($args[$i] -match " ") {
-            $args[$i] = `"` + $args[$i] + `"`
+            $args[$i] = "`"$($args[$i])`""
         }
     }
+
+    echo $args
 
     $proc = Start-Process -FilePath $path -ArgumentList $args -NoNewWindow -PassThru
     $proc | Wait-Process
@@ -24,7 +26,6 @@ function shellWindowsNative(
 function shellWsl(
     [System.Object[]][Parameter(Mandatory, Position=0)] $args
 ) {
-    echo $args
     if ($null -eq $env:HELM_BIN -and $null -eq $env:HELM_SECRETS_HELM_PATH) {
         if ((which helm.exe) -ne $null) {
             $env:HELM_SECRETS_HELM_PATH = "helm.exe"
