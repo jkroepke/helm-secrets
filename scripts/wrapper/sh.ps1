@@ -81,6 +81,8 @@ function prepareWsl(
     runShell "wsl.exe" $args
 }
 
+echo $args
+
 if ('1', 'true' -Contains $env:HELM_DEBUG) {
     Set-PSDebug -Trace 1
 }
