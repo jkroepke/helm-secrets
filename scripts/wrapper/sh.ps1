@@ -16,7 +16,7 @@ function runShell(
     }
 
     echo $args
-    echo $quotedArgs
+    echo $quotedArgs.join(" ")
 
     & $shell $quotedArgs
     exit $LASTEXITCODE
