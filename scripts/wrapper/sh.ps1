@@ -15,10 +15,13 @@ function runShell(
         }
     }
 
-    echo $args
-    echo $quotedArgs -join " "
+    $quotedArg = $quotedArgs -join " "
 
-    & $shell $quotedArgs
+    echo $args
+    echo $quotedArgs
+    echo $quotedArg
+
+    & $shell $quotedArg
     exit $LASTEXITCODE
 }
 
