@@ -14,14 +14,14 @@ This integration is also supported inside [ArgoCD](https://github.com/jkroepke/h
 ## Setup
 
 [vals](https://github.com/variantdev/vals) needs to be setup correctly first.
-Download vals and put the binary into the PATH.
+Download `vals` and put the binary into your `PATH` environment variable.
 Alternatively, use the environment variable `HELM_SECRETS_VALS_PATH` to define the path of the vals binary.
 
 # Authentication
 
 ## AWS
 
-AWS supports a multiple mechanism for authentication.
+AWS supports a multiple mechanism for authentication:
 
 1. Define `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables
 2. OIDC login flows / IAM Roles for services accounts
@@ -61,15 +61,67 @@ Azure supports a multiple mechanism for authentication through environment varia
 
 # Usage
 
-Before running helm, the environment variable `HELM_SECRETS_BACKEND=vals` needs to be set.
-This enables the vals integration in helm secrets.
+Before running `helm`, the environment variable `HELM_SECRETS_BACKEND=vals` needs
+to be set or the command line option `--backend=vals` must be put in use.
+
+This enables the `vals` integration in helm-secrets.
+
 Vals needs cloud prover credentials to fetch secrets from the secret services.
+Be sure to have them in place before trying to use (for instance, use the cloud
+provider own CLI to fetch the same secrets).
 
 helm-secrets can not fill the cloud provider secrets store through the encryption command.
 
+> :warning: Vals reference strings must be declared in the "values" file (the
+> YAML file being used by the Helm template to provide values), not in the
+> resource itself!
+
+This is how you are suppose to do. First create a `Secret` (or anyother
+resource you want) file, that we will call `secret.yaml` in this example:
+
+```yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: '{{ .Chart.Name }}-secrets'
+  labels:
+    app.kubernetes.io/name: '{{ .Chart.Name }}-secrets'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion | toString }}'
+    namespace: '{{ .Values.namespace }}'
+    name: '{{ .Chart.Name }}'
+    repository: '{{ .Chart.Home }}'
+type: Opaque
+data:
+  supersecret: '{{ .Values.aws | b64enc }}'
+```
+
+Then we move this file to a subdirectory, `chart` in this example:
+
+```
+mkdir chart
+mv secret.yaml chart
+```
+
+And then the "values" file, let's call it `values.yaml` and add the following
+content:
+
+```yaml
+aws: ref+awssecrets://mysecret/value
+```
+
+Finally, put everything together:
+
+```
+helm secrets template -f values.yaml chart/secret.yaml
+```
+
+That's it! You should see some message form `vals` stating that the secrets
+were retrieve and the resulting content from the template in the `STDOUT`.
+
 ## Supported Backends
 
-vals support different backends. Click on the backend to gain more information.
+`vals` support different backends. Click on the backend to gain more information.
 
 - [Vault](https://github.com/variantdev/vals/blob/main/README.md#vault)
 - [AWS SSM Parameter Store](https://github.com/variantdev/vals/blob/main/README.md#aws-ssm-parameter-store)
