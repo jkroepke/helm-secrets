@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `--ignore-missing-values` Support for evaluating secret references (`vals` backend) in helm templates (requires helm 3.9.0; vals 0.20+)
 
-### Changed
-- Use powershell instead cmd for windows environments
-
 ### Fixed
 - Performance issues with large value files (vals backend)
 - Remote value file download fails when URL contains query strings

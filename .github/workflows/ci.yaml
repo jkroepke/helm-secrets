@@ -205,7 +205,6 @@ jobs:
             || github.ref
           }}"
           helm secrets -v
-          env SOPS_AGE_KEY_FILE=tests/assets/age/key.txt helm secrets --backend-args "--verbose --output-type \"yaml\"" decrypt "tests/assets/values/sops/secrets.age.yaml"
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
