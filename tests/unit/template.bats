@@ -592,6 +592,16 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "template: helm template w/ chart + wrapper --set-file=service.port=secrets+literal://vals!" {
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        --set-file=service.port=secrets+literal://vals!ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+}
+
 @test "template: helm template w/ chart + wrapper --set-file=service.port=secrets+literal:// + quotes in value" {
     if ! is_backend "vals"; then
         skip
@@ -1007,6 +1017,21 @@ load '../bats/extensions/bats-file/load'
     fi
 
     VALUES="secrets+gpg-import://${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    VALUES_PATH="${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "${VALUES_PATH}" 2>&1
+    assert_success
+    assert_output --partial "port: 91"
+}
+
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://sops!" {
+    if on_windows; then
+        skip
+    fi
+
+    VALUES="secrets+gpg-import://sops!${TEST_TEMP_DIR}/assets/gpg/private2.gpg?${TEST_TEMP_DIR}/assets/values/sops/secrets.gpg_key.yaml"
     VALUES_PATH="${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"

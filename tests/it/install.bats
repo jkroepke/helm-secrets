@@ -409,6 +409,22 @@ load '../bats/extensions/bats-file/load'
     assert_failure
 }
 
+@test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://sops!namespace/name#key + HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES" {
+    if on_windows; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.gpg_key.yaml"
+    SEED="${RANDOM}"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://sops!kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
+    assert_output --partial "[helm-secrets] secrets+gpg-import-kubernetes:// is not allowed in this context!"
+    assert_failure
+}
+
 @test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://namespace/non-exists#key" {
     if on_windows || ! is_backend "sops"; then
         skip
