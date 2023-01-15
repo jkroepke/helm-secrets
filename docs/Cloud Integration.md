@@ -135,6 +135,7 @@ were retrieve and the resulting content from the template in the `STDOUT`.
 - [File](https://github.com/variantdev/vals/blob/main/README.md#file)
 - [Azure Key Vault](https://github.com/variantdev/vals/blob/main/README.md#azure-key-vault)
 - [EnvSubst](https://github.com/variantdev/vals/blob/main/README.md#envsubst)
+- [Gitlab CI Secrets](https://github.com/variantdev/vals/blob/main/README.md#gitlab-secrets)
 
 
 # Example secret.yaml

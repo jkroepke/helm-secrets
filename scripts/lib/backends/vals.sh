@@ -16,19 +16,19 @@ _vals() {
     fi
 }
 
-backend_is_file_encrypted() {
-    backend_is_encrypted <"${1}"
+_vals_backend_is_file_encrypted() {
+    _vals_backend_is_encrypted <"${1}"
 }
 
-backend_is_encrypted() {
+_vals_backend_is_encrypted() {
     grep -q 'ref+' -
 }
 
-backend_encrypt_file() {
+_vals_backend_encrypt_file() {
     fatal "Encrypting files is not supported!"
 }
 
-backend_decrypt_file() {
+_vals_backend_decrypt_file() {
     type="${1}"
     input="${2}"
     # if omit then output to stdout
@@ -49,8 +49,8 @@ backend_decrypt_file() {
     fi
 }
 
-backend_decrypt_literal() {
-    if printf '%s' "${1}" | backend_is_encrypted; then
+_vals_backend_decrypt_literal() {
+    if printf '%s' "${1}" | _vals_backend_is_encrypted; then
         if ! literal_value=$(printf '"": %s' "${1}" | _vals env -f -); then
             return 1
         fi
@@ -61,7 +61,7 @@ backend_decrypt_literal() {
     fi
 }
 
-backend_edit_file() {
+_vals_backend_edit_file() {
     fatal "vals: Editing files is not supported!"
 }
 

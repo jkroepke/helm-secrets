@@ -44,6 +44,12 @@ downloader() {
             IGNORE_MISSING_VALUES=true
         fi
 
+        # Force secret backend
+        if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
+            load_secret_backend "${_key_and_file%%\!*}"
+            _key_and_file="${_key_and_file#*!}"
+        fi
+
         _key_path=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
 
@@ -66,6 +72,12 @@ downloader() {
             IGNORE_MISSING_VALUES=true
         fi
 
+        # Force secret backend
+        if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
+            load_secret_backend "${_key_and_file%%\!*}"
+            _key_and_file="${_key_and_file#*!}"
+        fi
+
         _key_location=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
         _gpg_init_kubernetes "${_key_location}"
@@ -81,6 +93,12 @@ downloader() {
         if [ "${_key_and_file##\?}" != "${_key_and_file}" ]; then
             _key_and_file="${_key_and_file##\?}"
             IGNORE_MISSING_VALUES=true
+        fi
+
+        # Force secret backend
+        if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
+            load_secret_backend "${_key_and_file%%\!*}"
+            _key_and_file="${_key_and_file#*!}"
         fi
 
         _key_path=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
@@ -105,12 +123,24 @@ downloader() {
             IGNORE_MISSING_VALUES=true
         fi
 
+        # Force secret backend
+        if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
+            load_secret_backend "${_key_and_file%%\!*}"
+            _key_and_file="${_key_and_file#*!}"
+        fi
+
         _key_location=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
         _age_init_kubernetes "${_key_location}"
         ;;
     secrets+literal://*)
         literal="${_file_url#*secrets+literal://}"
+
+        # Force secret backend
+        if [ "${literal#*!}" != "${literal}" ]; then
+            load_secret_backend "${literal%%\!*}"
+            literal="${literal#*!}"
+        fi
 
         if ! backend_decrypt_literal "${literal}"; then
             exit 1
@@ -120,6 +150,18 @@ downloader() {
         ;;
     secrets://*)
         file="${_file_url#*secrets://}"
+
+        # Ignore error on files beginning with ?
+        if [ "${file##\?}" != "${file}" ]; then
+            file="${file##\?}"
+            IGNORE_MISSING_VALUES=true
+        fi
+
+        # Force secret backend
+        if [ "${file#*!}" != "${file}" ]; then
+            load_secret_backend "${file%%\!*}"
+            file="${file#*!}"
+        fi
         ;;
     *)
         fatal "Unknown protocol '%s'!" "${_file_url}"

@@ -218,15 +218,15 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + special path" {
-    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    FILE="!${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE##\!}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_output --partial "[helm-secrets] Removed: ${FILE##\!}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -405,6 +405,22 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
+    assert_output --partial "[helm-secrets] secrets+gpg-import-kubernetes:// is not allowed in this context!"
+    assert_failure
+}
+
+@test "install: helm install w/ chart + secrets.gpg_key.yaml + secrets+gpg-import-kubernetes://sops!namespace/name#key + HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES" {
+    if on_windows; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/sops/secrets.gpg_key.yaml"
+    SEED="${RANDOM}"
+    RELEASE="install-$(date +%s)-${SEED}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_SECRETS_ALLOW_GPG_IMPORT_KUBERNETES=false helm install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "secrets+gpg-import-kubernetes://sops!kube-system/gpg-key#private3.gpg?${FILE}" 2>&1
     assert_output --partial "[helm-secrets] secrets+gpg-import-kubernetes:// is not allowed in this context!"
     assert_failure
 }

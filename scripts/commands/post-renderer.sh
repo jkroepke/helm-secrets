@@ -4,8 +4,8 @@ set -euf
 
 post_renderer() {
     if [ "${EVALUATE_TEMPLATES_DECODE_SECRETS}" = "true" ]; then
-        _vals ksdecode -f - | backend_decrypt_file "yaml" "-"
+        _vals ksdecode -f - | _vals_backend_decrypt_file "yaml" "-"
     else
-        backend_decrypt_file "yaml" "-"
+        _vals_backend_decrypt_file "yaml" "-"
     fi
 }

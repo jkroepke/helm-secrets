@@ -10,18 +10,18 @@ _envsubst() {
     envsubst "$@"
 }
 
-backend_is_file_encrypted() {
+_custom_backend_is_file_encrypted() {
     input="${1}"
 
     grep -q '\$' "${input}"
 }
 
-backend_encrypt_file() {
+_custom_backend_encrypt_file() {
     echo "Encrypting files with envsubst backend is not supported!"
     exit 1
 }
 
-backend_decrypt_file() {
+_custom_backend_decrypt_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"
@@ -35,7 +35,7 @@ backend_decrypt_file() {
     fi
 }
 
-backend_edit_file() {
+_custom_backend_edit_file() {
     echo "Editing files with envsubst backend is not supported!"
     exit 1
 }

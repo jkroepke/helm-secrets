@@ -153,7 +153,7 @@ An additional documentation, resources and examples can be found [here](https://
 ## Moving parts of project
 
 - [`scripts/run.sh`](scripts/run.sh) - Main helm-secrets plugin code for all helm-secrets plugin actions available in `helm secrets help` after plugin install
-- [`scripts/backends`](scripts/backends) - Location of the in-tree secrets backends
+- [`scripts/backends`](scripts/lib/backends) - Location of the in-tree secrets backends
 - [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
 - [`scripts/lib`](scripts/lib) - Common functions used by `helm secrets`.
 - [`scripts/wrapper`](scripts/wrapper) - Wrapper scripts for Windows systems.

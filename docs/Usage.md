@@ -363,3 +363,29 @@ stringData:
 ```bash
 helm secrets --evaluate-templates upgrade name .
 ```
+
+
+# Override backend per value file
+
+In additional to global default [backend](Secret%20Backends.md) configuration `HELM_SECRETS_BACKEND`, it's possible to override a secret backend per file.
+
+This is useful for migration scenarios. To define a backend, put the name of the backend followed by a `!` as prefix
+before the file path, but after `://`.
+
+## Examples
+
+```bash
+helm secrets template -f 'sops!secrets/secret.yaml' -f 'vals!secrets/secret.yaml'
+helm template -f 'secrets://sops!secrets/secret.yaml' -f 'secrets://vals!secrets/secret.yaml'
+helm template -f 'secrets://sops!secrets/secret.yaml' -f 'secrets://vals!secrets/secret.yaml'
+helm template -f 'secrets+gpg-import://sops!/helm-secrets-private-keys/key.asc?secrets.yaml'
+helm template -f 'secrets://secrets.yaml' --set-file 'secrets+literal://vals!ref+vault://secret/mysql#/rootPassword'
+```
+
+## Restriction
+
+You can configure the allowed backend by the environment variable `HELM_SECRETS_ALLOWED_BACKENDS`, e.g. `HELM_SECRETS_ALLOWED_BACKENDS=sops,vals`
+
+## Limitations
+
+If a file path contains `!` and you do not want to override a secret backend, you have to define a `!` as prefix.

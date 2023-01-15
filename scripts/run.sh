@@ -18,6 +18,9 @@ SCRIPT_DIR="${HELM_PLUGIN_DIR}/scripts"
 # shellcheck source=scripts/lib/file.sh
 . "${SCRIPT_DIR}/lib/file.sh"
 
+# shellcheck source=scripts/lib/backend.sh
+. "${SCRIPT_DIR}/lib/backend.sh"
+
 # shellcheck source=scripts/lib/http.sh
 . "${SCRIPT_DIR}/lib/http.sh"
 
@@ -64,7 +67,8 @@ EVALUATE_TEMPLATES_DECODE_SECRETS="${HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECR
 trap _trap EXIT
 trap 'trap - EXIT; _trap; exit 1' HUP INT QUIT TERM
 
-load_secret_backend "$SECRET_BACKEND"
+load_secret_backend "${SECRET_BACKEND}"
+DEFAULT_SECRET_BACKEND="${SECRET_BACKEND}"
 
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
     shift
@@ -166,15 +170,13 @@ while true; do
         break
         ;;
     --backend | -b)
-        # shellcheck disable=SC2034
-        SECRET_BACKEND="$2"
-        load_secret_backend "$2"
+        load_secret_backend "${2}"
+        DEFAULT_SECRET_BACKEND="${SECRET_BACKEND}"
         shift
         ;;
     --backend=*)
-        # shellcheck disable=SC2034
-        SECRET_BACKEND="${1#*=}"
         load_secret_backend "${1#*=}"
+        DEFAULT_SECRET_BACKEND="${SECRET_BACKEND}"
         ;;
     --quiet | -q)
         # shellcheck disable=SC2034

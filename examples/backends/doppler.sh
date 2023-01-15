@@ -9,8 +9,8 @@ _DOPPLER="${HELM_SECRETS_VAULT_PATH:-doppler}"
 # shellcheck disable=SC2034
 _BACKEND_REGEX='!doppler [a-z0-9_-]*\#.*\#[A-Z0-9_]*'
 
-# shellcheck source=scripts/backends/_custom.sh
-. "${SCRIPT_DIR}/backends/_custom.sh"
+# shellcheck source=scripts/lib/backends/_custom.sh
+. "${SCRIPT_DIR}/lib/backends/_custom.sh"
 
 _doppler() {
     # shellcheck disable=SC2086

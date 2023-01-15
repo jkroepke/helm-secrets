@@ -35,25 +35,6 @@ fatal() {
     exit 1
 }
 
-load_secret_backend() {
-    backend="${1}"
-    if [ -f "${SCRIPT_DIR}/backends/${backend}.sh" ]; then
-        # shellcheck source=scripts/backends/sops.sh
-        . "${SCRIPT_DIR}/backends/${backend}.sh"
-    else
-        # Allow to load out of tree backends.
-        if [ ! -f "${backend}" ]; then
-            fatal "Can't find secret backend: %s" "${backend}"
-        fi
-
-        # shellcheck disable=SC2034
-        HELM_SECRETS_SCRIPT_DIR="${SCRIPT_DIR}"
-
-        # shellcheck source=tests/assets/custom-backend.sh
-        . "${backend}"
-    fi
-}
-
 _regex_escape() {
     # This is a function because dealing with quotes is a pain.
     # http://stackoverflow.com/a/2705678/120999

@@ -9,8 +9,8 @@ _VAULT="${HELM_SECRETS_VAULT_PATH:-vault}"
 # shellcheck disable=SC2034
 _BACKEND_REGEX='!vault [A-z0-9][A-z0-9/*\.\_\-]*\#[A-z0-9*\.\_\-][A-z0-9*\.\_\-]*'
 
-# shellcheck source=scripts/backends/_custom.sh
-. "${SCRIPT_DIR}/backends/_custom.sh"
+# shellcheck source=scripts/lib/backends/_custom.sh
+. "${SCRIPT_DIR}/lib/backends/_custom.sh"
 
 _vault() {
     # shellcheck disable=SC2086

@@ -57,13 +57,9 @@ setup_suite() {
             "${HELM_BIN}" secrets patch unix
         fi
 
-        case "${HELM_SECRETS_BACKEND:-sops}" in
-        sops)
-            GPG_PRIVATE_KEY="$(_winpath "${TEST_ROOT}/assets/gpg/private.gpg")"
-            "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
-            ;;
-        vals)
-            export _TEST_KEY="-----BEGIN PGP MESSAGE-----
+        GPG_PRIVATE_KEY="$(_winpath "${TEST_ROOT}/assets/gpg/private.gpg")"
+        "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
+        export _TEST_KEY="-----BEGIN PGP MESSAGE-----
 wcFMAxYpv4YXKfBAARAAVzE7/FMD7+UWwMls23zKKLoTs+5w9GMvugn0wi5KOJ8P
 PSrRY4r27VhwQH38gWDrzo3RCmO9414xZ0JW0HaN2Pgd3ml6mYCY/5RE7apgGZQI
 3Im0fv8bhIwaP2UWPp74EXLzA3mh1dUtwxmuWOeoSq+Vm5NtbjkfUt/4MIcF5IAY
@@ -80,11 +76,9 @@ EmU8gQoUsAHKYro0hPfzBZyJlL+TqCPgHeRPANVgm4Ww6RlVrNFpTy9H4m4s5y/h
 EzAA
 =jf7D
 -----END PGP MESSAGE-----"
-            export _TEST_global_secret=global_bar
-            export _TEST_SERVICE_PORT=81
-            export _TEST_SOME_SERVICE_PORT=83
-            ;;
-        esac
+        export _TEST_global_secret=global_bar
+        export _TEST_SERVICE_PORT=81
+        export _TEST_SOME_SERVICE_PORT=83
 
         if on_windows; then
             # remove symlink, since its not supported on windows
@@ -95,11 +89,7 @@ EzAA
 
 teardown_suite() {
     {
-        case "${HELM_SECRETS_BACKEND:-sops}" in
-        sops)
-            "${GPGCONF_BIN}" --kill gpg-agent >&2 || true
-            ;;
-        esac
+        "${GPGCONF_BIN}" --kill gpg-agent >&2 || true
     } >&2
 }
 
