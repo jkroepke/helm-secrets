@@ -7,12 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- `--ignore-missing-values` Support for evaluating secret references (`vals` backend) in helm templates (requires helm 3.9.0; vals 0.20+)
+- Support for evaluating secret references (`--evaluate-templates`; `vals` backend) in helm templates (requires helm 3.9.0; vals 0.20+)
 - Override secret backend per value file
 - Restrict secret backend, using `HELM_SECRETS_ALLOWED_BACKENDS` environment variable
 
 ### Fixed
-- Performance issues with large value files (vals backend)
+- Performance issues with large value files (`vals` backend)
 - Remote value file download fails when URL contains query strings
 
 ## [4.2.2] - 2022-11-20
