@@ -1,5 +1,5 @@
 @setlocal enableextensions
-@echo off
+@echo on
 IF DEFINED HELM_DEBUG (
     IF "%HELM_DEBUG%"=="1" (
         @echo on
