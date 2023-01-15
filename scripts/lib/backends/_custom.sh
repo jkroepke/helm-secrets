@@ -8,19 +8,19 @@ _custom_backend_get_secret() {
     fatal "Please override function '_custom_backend_get_secret' in your backend!"
 }
 
-backend_is_file_encrypted() {
-    backend_is_encrypted <"${1}"
+_custom_backend_is_file_encrypted() {
+    _custom_backend_is_encrypted <"${1}"
 }
 
-backend_is_encrypted() {
+_custom_backend_is_encrypted() {
     LC_ALL=C.UTF-8 grep -q -e "${_BACKEND_REGEX}" -
 }
 
-backend_encrypt_file() {
+_custom_backend_encrypt_file() {
     fatal "Encrypting files is not supported!"
 }
 
-backend_decrypt_file() {
+_custom_backend_decrypt_file() {
     type="${1}"
     input="${2}"
     # if omit then output to stdout
@@ -74,10 +74,10 @@ backend_decrypt_file() {
     fi
 }
 
-backend_decrypt_literal() {
+_custom_backend_decrypt_literal() {
     _custom_backend_get_secret "${1}"
 }
 
-backend_edit_file() {
+_custom_backend_edit_file() {
     fatal "custom: Editing files is not supported!"
 }

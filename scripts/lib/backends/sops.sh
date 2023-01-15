@@ -8,15 +8,15 @@ _sops() {
     $_SOPS "$@"
 }
 
-backend_is_file_encrypted() {
-    backend_is_encrypted <"${1}"
+_sops_backend_is_file_encrypted() {
+    _sops_backend_is_encrypted <"${1}"
 }
 
-backend_is_encrypted() {
+_sops_backend_is_encrypted() {
     grep -q 'mac.*,type:str]' -
 }
 
-backend_encrypt_file() {
+_sops_backend_encrypt_file() {
     type="${1}"
     input="${2}"
     output="${3}"
@@ -34,7 +34,7 @@ backend_encrypt_file() {
     fi
 }
 
-backend_decrypt_file() {
+_sops_backend_decrypt_file() {
     type="${1}"
     input="${2}"
     # if omit then output to stdout
@@ -53,15 +53,15 @@ backend_decrypt_file() {
     fi
 }
 
-backend_decrypt_literal() {
-    if printf '%s' "${1}" | backend_is_encrypted; then
+_sops_backend_decrypt_literal() {
+    if printf '%s' "${1}" | _sops_backend_is_encrypted; then
         printf '%s' "${1}" | _sops --decrypt --input-type 'json' --output-type 'json' /dev/stdin
     else
         printf '%s' "${1}"
     fi
 }
 
-backend_edit_file() {
+_sops_backend_edit_file() {
     type="${1}"
     input="${2}"
 

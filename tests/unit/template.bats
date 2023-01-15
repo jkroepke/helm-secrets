@@ -367,7 +367,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
+    VALUES_PATH="!${SPECIAL_CHAR_DIR}/${VALUES}"
 
     create_chart "${SPECIAL_CHAR_DIR}"
 
@@ -1605,4 +1605,125 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'config: "42"'
     refute_output --partial 'secret: "42"'
     assert_success
+}
+
+@test "template: helm template w/ chart + sops!secrets.yaml + wrapper --set vals!service.port" {
+    VALUES="assets/values/sops/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "sops!${VALUES_PATH}" \
+        --set "service.port=vals!ref+echo://87" 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + sops!secrets.yaml + wrapper --set vals!service.port + HELM_SECRETS_ALLOWED_BACKENDS=vals,sops" {
+    VALUES="assets/values/sops/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # shellcheck disable=SC2030 disable=SC2031
+    run env HELM_SECRETS_ALLOWED_BACKENDS=vals,sops WSLENV="HELM_SECRETS_ALLOWED_BACKENDS:${WSLENV}" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "sops!${VALUES_PATH}" \
+        --set "service.port=vals!ref+echo://87" 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + nonexists!secrets.yaml + wrapper --set nonexists!service.port" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "nonexists!${VALUES_PATH}" \
+        --set "service.port=nonexists!ref+echo://87" 2>&1
+
+    assert_output --partial "Can't find secret backend: nonexists"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + nonexists!secrets.yaml + wrapper --set nonexists!service.port + HELM_SECRETS_ALLOWED_BACKENDS=noop" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # shellcheck disable=SC2030 disable=SC2031
+    run env HELM_SECRETS_ALLOWED_BACKENDS=noop WSLENV="HELM_SECRETS_ALLOWED_BACKENDS:${WSLENV}" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "nonexists!${VALUES_PATH}" \
+        --set "service.port=nonexists!ref+echo://87" 2>&1
+
+    assert_output --partial "secret backend '${HELM_SECRETS_BACKEND}' not allowed"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + secrets://sops!secrets.yaml + --set-file secrets://sops!file.txt" {
+    VALUES="assets/values/sops/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.txt"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://sops!${VALUES_PATH}" \
+        --set-file podAnnotations.fromFile="secrets://sops!${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output --partial "hello=fromextrafile"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets://vals!secrets.yaml + --set-file secrets://vals!file.txt" {
+    VALUES="assets/values/vals/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.txt"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://vals!${VALUES_PATH}" \
+        --set-file podAnnotations.fromFile="secrets://vals!${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output --partial "hello=fromextrafile"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets://vals!secrets.yaml + --set-file secrets://vals!file.txt + HELM_SECRETS_ALLOWED_BACKENDS=noop" {
+    VALUES="assets/values/vals/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.txt"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # shellcheck disable=SC2030 disable=SC2031
+    run env HELM_SECRETS_ALLOWED_BACKENDS=noop WSLENV="HELM_SECRETS_ALLOWED_BACKENDS:${WSLENV}" \
+        "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://vals!${VALUES_PATH}" \
+        --set-file podAnnotations.fromFile="secrets://vals!${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "secret backend '${HELM_SECRETS_BACKEND}' not allowed"
+    assert_failure
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets://nonexists!secrets.yaml + --set-file secrets://nonexists!file.txt" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.txt"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://nonexists!${VALUES_PATH}" \
+        --set-file podAnnotations.fromFile="secrets://nonexists!${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "Can't find secret backend: nonexists"
+    assert_failure
 }

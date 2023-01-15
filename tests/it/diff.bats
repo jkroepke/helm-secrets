@@ -43,7 +43,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + --values" {
@@ -58,7 +58,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + --values=" {
@@ -73,7 +73,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml" {
@@ -88,7 +88,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values" {
@@ -103,7 +103,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + some-secrets.yaml + --values=" {
@@ -118,7 +118,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + helm flag" {
@@ -134,7 +134,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 81"
     assert_output --partial "type: NodePort"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + pre decrypted secrets.yaml" {
@@ -167,7 +167,7 @@ load '../bats/extensions/bats-file/load'
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + quiet flag" {
@@ -182,11 +182,11 @@ load '../bats/extensions/bats-file/load'
     refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + special path" {
-    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    FILE="!${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     SEED="${RANDOM}"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -194,10 +194,10 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE##\!}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_output --partial "[helm-secrets] Removed: ${FILE##\!}.dec"
+    assert_file_not_exists "${FILE##\!}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + invalid yaml" {
@@ -214,7 +214,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "YAML parse error on"
     assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + http://" {
@@ -229,7 +229,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     assert_output --partial "[helm-secrets] Removed: "
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm install w/ chart + secrets.yaml + git://" {
@@ -248,7 +248,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     assert_output --partial "[helm-secrets] Removed: "
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + secrets://http://" {
@@ -261,7 +261,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm install w/ chart + secrets.yaml + secrets://git://" {
@@ -278,5 +278,5 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
     assert_output --partial "port: 81"
-    assert [ ! -f "${FILE}.dec" ]
+    assert_file_not_exists "${FILE}.dec"
 }

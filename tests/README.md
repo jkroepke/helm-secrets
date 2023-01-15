@@ -91,7 +91,7 @@ This method is described as "Run bats from source" inside the bats-core document
 More information about running single tests or filtering tests can be found here: https://github.com/bats-core/bats-core#usage
 
 By default, the sops backend is selected for tests. 
-If you want to test another secret backend like [vals](../scripts/backends/vals.sh), you could do it by env variable `HELM_SECRETS_BACKEND=vals`.
+If you want to test another secret backend like [vals](../scripts/lib/backends/vals.sh), you could do it by env variable `HELM_SECRETS_BACKEND=vals`.
 
 ```bash
 # Unit Tests

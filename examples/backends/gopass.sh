@@ -3,8 +3,8 @@
 # shellcheck disable=SC2034
 _BACKEND_REGEX='!gopass [A-Za-z0-9\-\_\/]*'
 
-# shellcheck source=scripts/backends/_custom.sh
-. "${SCRIPT_DIR}/backends/_custom.sh"
+# shellcheck source=scripts/lib/backends/_custom.sh
+. "${SCRIPT_DIR}/lib/backends/_custom.sh"
 
 _gopass() {
     # shellcheck disable=SC2086

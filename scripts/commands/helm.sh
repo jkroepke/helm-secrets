@@ -73,6 +73,15 @@ helm_wrapper() {
                 opt_prefix="${literal%%=*}="
                 literal="${literal#*=}"
 
+                # Force secret backend
+                if [ "${literal#*!}" != "${literal}" ]; then
+                    load_secret_backend "${literal%%\!*}"
+
+                    literal="${literal#*!}"
+                else
+                    load_secret_backend "${DEFAULT_SECRET_BACKEND}"
+                fi
+
                 if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
@@ -124,6 +133,14 @@ helm_wrapper() {
             if [ "${file##\?}" != "${file}" ]; then
                 file="${file##\?}"
                 IGNORE_MISSING_VALUES=true
+            fi
+
+            # Force secret backend
+            if [ "${file#*!}" != "${file}" ]; then
+                load_secret_backend "${file%%\!*}"
+                file="${file#*!}"
+            else
+                load_secret_backend "${DEFAULT_SECRET_BACKEND}"
             fi
 
             if ! real_file=$(_file_get "${file}"); then

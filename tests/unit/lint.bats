@@ -238,7 +238,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
+    VALUES_PATH="!${SPECIAL_CHAR_DIR}/${VALUES}"
 
     create_chart "${SPECIAL_CHAR_DIR}"
 

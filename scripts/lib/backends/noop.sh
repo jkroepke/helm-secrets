@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
-backend_is_file_encrypted() {
+_noop_backend_is_file_encrypted() {
     true
 }
 
-backend_encrypt_file() {
+_noop_backend_encrypt_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"
@@ -18,7 +18,7 @@ backend_encrypt_file() {
     fi
 }
 
-backend_decrypt_file() {
+_noop_backend_decrypt_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"
@@ -34,11 +34,11 @@ backend_decrypt_file() {
     fi
 }
 
-backend_decrypt_literal() {
+_noop_backend_decrypt_literal() {
     printf '%s' "${1}"
 }
 
-backend_edit_file() {
+_noop_backend_edit_file() {
     # shellcheck disable=SC2034
     type="${1}"
     input="${2}"
