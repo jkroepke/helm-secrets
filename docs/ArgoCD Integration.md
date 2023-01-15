@@ -56,8 +56,9 @@ spec:
       fileParameters:
         - name: config
           path: secrets://secrets.yaml
+        # requires vals backend
         - name: mysql.rootPassword
-          path: secrets+literal://ref+vault://secret/mysql#/rootPassword
+          path: secrets+literal://vals!ref+vault://secret/mysql#/rootPassword
 ```
 </p>
 </details>
@@ -160,7 +161,7 @@ repoServer:
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
       value: "false"
-    # helm secrets wrapper mode installation (optional)
+    # helm secrets wrapper mode installation (required for multi source apps, uncommend 3 lines below)
     # - name: HELM_SECRETS_HELM_PATH
     #   value: /usr/local/bin/helm
   volumes:
@@ -169,7 +170,7 @@ repoServer:
   volumeMounts:
     - mountPath: /custom-tools
       name: custom-tools
-  # helm secrets wrapper mode installation (optional)
+  # helm secrets wrapper mode installation (required for multi source apps, uncommend 3 lines below)
   #  - mountPath: /usr/local/sbin/helm
   #    subPath: helm
   #    name: custom-tools
