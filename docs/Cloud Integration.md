@@ -14,7 +14,7 @@ This integration is also supported inside [ArgoCD](https://github.com/jkroepke/h
 ## Setup
 
 [vals](https://github.com/variantdev/vals) needs to be setup correctly first.
-Download `vals` and put the binary into your `PATH` environment variable.
+Download `vals` from [GitHub](https://github.com/variantdev/vals/releases/latest) and put the binary into your `PATH`. e.g. `/usr/local/bin/`.
 Alternatively, use the environment variable `HELM_SECRETS_VALS_PATH` to define the path of the vals binary.
 
 # Authentication
@@ -165,5 +165,5 @@ wrapper-less environment like ArgoCD through downloader syntax (`--set-file` onl
 ```bash
 export HELM_SECRETS_BACKEND=vals
 helm template bitnami/mysql --name-template mysql \
-  --set-file auth.rootPassword=secrets://ref+azurekeyvault://my-vault/secret-a
+  --set-file auth.rootPassword=secrets+literal://ref+azurekeyvault://my-vault/secret-a
 ```

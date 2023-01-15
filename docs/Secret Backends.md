@@ -1,6 +1,7 @@
 # Secret Backends
 
-It's possible to use another secret backend then sops, e.g. vals.
+helm-secret support multiple backend. [sops](https://github.com/mozilla/sops) and [vals](https://github.com/variantdev/vals).
+sops is good for on-premise installation. vals can be used to fetch secrets from external systems like AWS Secrets Manager or Azure KeyVault. 
 
 Example for in-tree backends via an CLI option
 ```bash
@@ -17,7 +18,13 @@ Example for out-of-tree backends
 helm secrets -b ./path/to/backend.sh decrypt ./tests/assets/helm_vars/secrets.yaml
 ```
 
-The backend option is a global one. A file level switch isn't supported yet.
+The backend option is a global one. A file level switch is supported, too.
+
+```bash
+helm secrets template . -f 'sops!tests/assets/helm_vars/secrets.yaml'
+```
+
+For more information, read [USAGE.md](./Usage.md#override-backend-per-value-file)
 
 ## Implement an own secret backend
 
