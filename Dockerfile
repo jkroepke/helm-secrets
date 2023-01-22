@@ -1,25 +1,24 @@
 FROM alpine:latest
 
-ENV PATH="$PATH:/opt/custom-tools/" \
-    SOPS_VERSION=3.7.2 \
-    HELM_VERSION=3.8.2 \
-    KUBECTL_VERSION=1.23.5
-
-RUN apk add --no-cache gnupg
+ARG VERSION_HELM=3.11.0
+ARG VERSION_SOPS=3.7.3
+ARG VERSION_VALS=0.21.0
+ARG VERSION_KUBECTL=0.21.0
 
 SHELL ["/bin/sh", "-exc"]
 
-WORKDIR /opt/custom-tools/helm-plugins
-COPY scripts/ /opt/custom-tools/helm-plugins/scripts/
-COPY plugin.yaml /opt/custom-tools/helm-plugins/
+ENV HOME=/home/user/
 
 RUN if [ "$(uname -m)" == "x86_64" ]; then CURL_ARCH=amd64; GO_ARCH=amd64; else CURL_ARCH="aarch64" GO_ARCH="arm64"; fi \
-    && wget -qO /opt/custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${CURL_ARCH} \
-    && wget -qO /opt/custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH} \
-    && wget -qO /opt/custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl \
-    && wget -qO - https://get.helm.sh/helm-v${HELM_VERSION}-linux-${GO_ARCH}.tar.gz | tar xzvf - -C /usr/local/bin/ --strip-components 1 "linux-${GO_ARCH}/helm" \
-    && chmod +x /opt/custom-tools/* /usr/local/bin/helm \
-    && /opt/custom-tools/curl --version && /opt/custom-tools/sops --version && /opt/custom-tools/kubectl version --client --short && /usr/local/bin/helm version --short
+    && apk add --no-cache gnupg curl && adduser -D user \
+    && wget -qO /usr/local/bin/sops https://github.com/mozilla/sops/releases/download/v${VERSION_SOPS}/sops-v${VERSION_SOPS}.linux.${GO_ARCH} \
+    && wget -qO /usr/local/bin/kubectl https://dl.k8s.io/release/v${VERSION_KUBECTL}/bin/linux/${GO_ARCH}/kubectl \
+    && wget -qO - https://get.helm.sh/helm-v${VERSION_HELM}-linux-${GO_ARCH}.tar.gz | tar xzvf - -C /usr/local/bin/ --strip-components 1 "linux-${GO_ARCH}/helm" \
+    && wget -qO - https://github.com/variantdev/vals/releases/download/v${VERSION_VALS}/vals_${VERSION_VALS}_linux_amd64.tar.gz | tar xzf - -C /usr/local/bin/ vals \
+    && chmod +x /usr/local/bin/*
 
-USER 1001
+COPY scripts/ /home/user/.local/share/helm/plugins/helm-plugins/scripts/
+COPY plugin.yaml /home/user/.local/share/helm/plugins/helm-plugins/
+
+USER user
 

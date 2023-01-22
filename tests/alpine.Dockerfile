@@ -1,8 +1,8 @@
 FROM alpine
 
-ARG VERSION_HELM=3.9.0
+ARG VERSION_HELM=3.11.0
 ARG VERSION_SOPS=3.7.3
-ARG VERSION_VALS=0.18.0
+ARG VERSION_VALS=0.21.0
 
 RUN apk add git curl gnupg ruby bash \
     && curl -sSfL https://github.com/mozilla/sops/releases/download/v${VERSION_SOPS}/sops-v${VERSION_SOPS}.linux -o /usr/local/bin/sops \
