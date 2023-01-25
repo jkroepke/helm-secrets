@@ -17,7 +17,7 @@ VALUES_ALLOW_PATH_TRAVERSAL="${HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL:-true}"
 
 _file_get_protocol() {
     case "$1" in
-    http*)
+    http?://*)
         echo "http"
         ;;
     *://*)
