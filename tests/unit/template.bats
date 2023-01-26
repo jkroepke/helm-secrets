@@ -187,7 +187,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    touch "${TEST_TEMP_DIR}/http.yaml"
+    touch "http.yaml"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "http.yaml" 2>&1
 
