@@ -181,6 +181,21 @@ load '../bats/extensions/bats-file/load'
     assert_failure
 }
 
+@test "template: helm template w/ chart + http.yaml" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    touch "http.yaml"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "http.yaml" 2>&1
+
+    assert_output --partial "port: 80"
+    assert_success
+    assert_file_not_exists "http.yaml.dec"
+}
+
 @test "template: helm template w/ chart + not-exists.yaml + HELM_SECRETS_IGNORE_MISSING_VALUES=false" {
     VALUES="not-exists.yaml"
     VALUES_PATH="${VALUES}"
