@@ -88,13 +88,12 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 <p>
 
 ```Dockerfile
-ARG ARGOCD_VERSION="v2.4.8"
+ARG ARGOCD_VERSION="v2.6.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.3"
-ARG VALS_VERSION="0.18.0"
+ARG VALS_VERSION="0.22.0"
 ARG HELM_SECRETS_VERSION="4.3.0"
-ARG KUBECTL_VERSION="1.24.3"
-# In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
+ARG KUBECTL_VERSION="1.26.1"
 ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
     HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
@@ -111,7 +110,7 @@ RUN apt-get update && \
 RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-# helm secrets wrapper mode installation (optional)
+# -- UNCOMMENT LINE for support multi source apps
 # RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/usr/local/sbin/helm"
 
 # sops backend installation (optional)
@@ -119,7 +118,7 @@ RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 
 # vals backend installation (optional)
-RUN curl -fsSL https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
+RUN curl -fsSL https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar xzf - -C /usr/local/bin/ vals \
     && chmod +x /usr/local/bin/vals
 
@@ -162,16 +161,15 @@ repoServer:
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
       value: "false"
-    # helm secrets wrapper mode installation (required for multi source apps, uncommend 3 lines below)
-    # - name: HELM_SECRETS_HELM_PATH
-    #   value: /usr/local/bin/helm
+    - name: HELM_SECRETS_HELM_PATH
+      value: /usr/local/bin/helm
   volumes:
     - name: custom-tools
       emptyDir: {}
   volumeMounts:
     - mountPath: /custom-tools
       name: custom-tools
-  # helm secrets wrapper mode installation (required for multi source apps, uncommend 3 lines below)
+  # -- UNCOMMENT LINE for support multi source apps support (all 3 lines below)
   #  - mountPath: /usr/local/sbin/helm
   #    subPath: helm
   #    name: custom-tools
@@ -184,9 +182,9 @@ repoServer:
         - name: HELM_SECRETS_VERSION
           value: "4.3.0"
         - name: KUBECTL_VERSION
-          value: "1.24.3"
+          value: "1.26.1"
         - name: VALS_VERSION
-          value: "0.18.0"
+          value: "0.22.0"
         - name: SOPS_VERSION
           value: "3.7.3"
       args:
@@ -197,10 +195,9 @@ repoServer:
           wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
-          wget -qO- https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
+          wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
           
-          # helm secrets wrapper mode installation (optional)
-          # RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
+          printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
           
           chmod +x /custom-tools/*
       volumeMounts:

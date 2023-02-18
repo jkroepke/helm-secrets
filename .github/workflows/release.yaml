@@ -42,9 +42,9 @@ jobs:
     - run: >-
         sed -i 's/HELM_SECRETS_VERSION=".*"/HELM_SECRETS_VERSION="'${GITHUB_REF_NAME/v}'"/g' docs/ArgoCD\ Integration.md
     - run: >-
-        sed -i -e '/- name: HELM_SECRETS_VERSION/{N;d;}' docs/ArgoCD\ Integration.md
+        sed -i -e '/- name: HELM_SECRETS_VERSION/{n;d;}' docs/ArgoCD\ Integration.md
     - run: >-
-        sed -i '/- name: HELM_SECRETS_VERSION/a           value: "'${GITHUB_REF_NAME/v}'"' docs/ArgoCD\ Integration.md
+        sed -i.bak -e '/- name: HELM_SECRETS_VERSION/a\'$'\n''          value: "'${GITHUB_REF_NAME/v}'"' docs/ArgoCD\ Integration.md
     - run: >-
         sed -i "s/--version .*/--version ${GITHUB_REF_NAME}/g" docs/Installation.md
 
