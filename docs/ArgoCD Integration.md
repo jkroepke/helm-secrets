@@ -181,6 +181,8 @@ repoServer:
       image: alpine:latest
       command: [sh, -ec]
       env:
+        - name: HELM_SECRETS_VERSION
+          value: "4.3.0"
         - name: KUBECTL_VERSION
           value: "1.24.3"
         - name: VALS_VERSION
