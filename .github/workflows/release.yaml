@@ -32,7 +32,7 @@ jobs:
   docs:
     name: Set latest version
     runs-on: ubuntu-latest
-    if: !contains(github.ref_name, 'rc')
+    if: "!contains(github.ref_name, 'rc')"
     permissions:
       contents: write
       pull-requests: write
