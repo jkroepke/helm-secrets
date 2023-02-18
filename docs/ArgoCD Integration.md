@@ -69,7 +69,7 @@ because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c55
 
 ## Multi-Source Application Support [BETA]
 
-ArgoCD has limited supported for helm-secrets and Multi-Source application. Only `vals` backend is supported.
+ArgoCD has limited supported for helm-secrets and Multi-Source application. `sops` backend is not tested yet.
 
 References: 
 * https://github.com/argoproj/argo-cd/issues/11866
@@ -79,8 +79,11 @@ References:
 On ArgoCD 2.6.x, `sops` isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
 This is in conflict with helm-secrets, since the string needs to beginn with `secrets://`. On top, ArgoCD do not resolve references in URLs.
 
-If you are using `vals` backend, ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) is set on the argocd-repo-server. 
+Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) is set on the argocd-repo-server. 
 Please ensure you are following the lastest installation instructions (updated on 2023-02-18).
+
+If you are using `sops` backend, additionally define the environment variable `HELM_SECRETS_LOAD_GPG_KEYS` with the path of gpg key as values.
+Read more about mounting gpg keys [here](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
 
 **Note**: The limitation lives on ArgoCD side. helm-secrets is not able to mitigate the limitations at all.
 
@@ -99,7 +102,7 @@ spec:
     targetRevision: 15.7.1
     helm:
       valueFiles:
-        # Omit any secrets:// prefix, since its not supported
+        # Omit any secrets:// prefix, since its not supported in multi source apps
         - $values/charts/prometheus/secrets.yaml
 
       # inline secret references are still supported
@@ -148,6 +151,9 @@ ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
     HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
     HELM_SECRETS_WRAPPER_ENABLED=true
+
+# Optionally, set default gpg key for sops files
+# ENV HELM_SECRETS_LOAD_GPG_KEYS=/path/to/gpg.key
 
 USER root
 RUN apt-get update && \
@@ -357,6 +363,9 @@ To use the *secrets+gpg-import / secrets+age-import* syntax, the keys need to be
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 ```yaml
 repoServer:
+  env:
+  - name: HELM_SECRETS_LOAD_GPG_KEYS
+    values: /helm-secrets-private-keys/key.asc
   volumes:
     - name: helm-secrets-private-keys
       secret:
@@ -377,10 +386,13 @@ spec:
   source:
     helm:
       valueFiles:
-        # Method 1: Mount the gpg key from a kubernetes secret as volume
+        # Method 1: Use gpg key defined in HELM_SECRETS_LOAD_GPG_KEYS
+        - secrets://secrets.yaml
+
+        # Method 2: Dynamically reference the gpg key inside values file
         # secrets+gpg-import://<key-volume-mount>/<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
         # secrets+age-import://<key-volume-mount>/<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
-        # Example Method 1: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
+        # Example Method 2: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
         - secrets+gpg-import:///helm-secrets-private-keys/key.asc?secrets.yaml
 ```
 

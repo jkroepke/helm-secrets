@@ -1091,6 +1091,46 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + HELM_SECRETS_LOAD_GPG_KEYS=/private2.gpg" {
+    if on_windows || on_wsl || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="secrets://${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    VALUES_PATH="${VALUES}"
+    HELM_SECRETS_HELM_PATH="$(command -v "${HELM_BIN}")"
+
+    create_chart "${TEST_TEMP_DIR}"
+    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"${TEST_TEMP_DIR}/helm"
+    chmod +x "${TEST_TEMP_DIR}/helm"
+
+    run env -u TMPDIR HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" HELM_SECRETS_LOAD_GPG_KEYS="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" \
+        "${TEST_TEMP_DIR}/helm" template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: 91"
+    assert_success
+}
+
+@test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + HELM_SECRETS_LOAD_GPG_KEYS=/" {
+    if on_windows || on_wsl || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="secrets://${TEST_TEMP_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.gpg_key.yaml"
+    VALUES_PATH="${VALUES}"
+    HELM_SECRETS_HELM_PATH="$(command -v "${HELM_BIN}")"
+
+    create_chart "${TEST_TEMP_DIR}"
+    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"${TEST_TEMP_DIR}/helm"
+    chmod +x "${TEST_TEMP_DIR}/helm"
+
+    run env -u TMPDIR HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" HELM_SECRETS_LOAD_GPG_KEYS="${TEST_TEMP_DIR}/assets/gpg/" \
+        "${TEST_TEMP_DIR}/helm" template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: 91"
+    assert_success
+}
+
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://git://" {
     if on_windows || ! is_backend "sops"; then
         skip

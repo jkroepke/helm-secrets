@@ -63,12 +63,18 @@ IGNORE_MISSING_VALUES="${HELM_SECRETS_IGNORE_MISSING_VALUES:-false}"
 EVALUATE_TEMPLATES="${HELM_SECRETS_EVALUATE_TEMPLATES:-false}"
 # shellcheck disable=SC2034
 EVALUATE_TEMPLATES_DECODE_SECRETS="${HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECRETS:-false}"
+# shellcheck disable=SC2034
+LOAD_GPG_KEYS="${HELM_SECRETS_LOAD_GPG_KEYS:-false}"
 
 trap _trap EXIT
 trap 'trap - EXIT; _trap; exit 1' HUP INT QUIT TERM
 
 load_secret_backend "${SECRET_BACKEND}"
 DEFAULT_SECRET_BACKEND="${SECRET_BACKEND}"
+
+if [ "${LOAD_GPG_KEYS}" != "false" ]; then
+    _gpg_load_keys
+fi
 
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
     shift
