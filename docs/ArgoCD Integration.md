@@ -92,7 +92,7 @@ ARG ARGOCD_VERSION="v2.4.8"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.3"
 ARG VALS_VERSION="0.18.0"
-ARG HELM_SECRETS_VERSION="4.2.2"
+ARG HELM_SECRETS_VERSION="4.3.0"
 ARG KUBECTL_VERSION="1.24.3"
 # In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
 ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
@@ -181,8 +181,6 @@ repoServer:
       image: alpine:latest
       command: [sh, -ec]
       env:
-        - name: HELM_SECRETS_VERSION
-          value: "4.2.2"
         - name: KUBECTL_VERSION
           value: "1.24.3"
         - name: VALS_VERSION
