@@ -67,6 +67,52 @@ spec:
 Helm will call helm-secrets
 because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
 
+## Multi-Source Application Support [BETA]
+
+ArgoCD has limited supported for helm-secrets and Multi-Source application. Only `vals` backend is supported.
+
+References: 
+* https://github.com/argoproj/argo-cd/issues/11866
+* https://github.com/argoproj/argo-cd/pull/11966
+
+
+On ArgoCD 2.6.x, `sops` isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
+This is in conflict with helm-secrets, since the string needs to beginn with `secrets://`. On top, ArgoCD do not resolve references in URLs.
+
+If you are using `vals` backend, ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) is set on the argocd-repo-server. 
+Please ensure you are following the lastest installation instructions (updated on 2023-02-18).
+
+**Note**: The limitation lives on ArgoCD side. helm-secrets is not able to mitigate the limitations at all.
+
+
+<details>
+<summary>Example Multi-Source Application</summary>
+<p>
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+spec:
+  sources:
+  - repoURL: 'https://prometheus-community.github.io/helm-charts'
+    chart: prometheus
+    targetRevision: 15.7.1
+    helm:
+      valueFiles:
+        # Omit any secrets:// prefix, since its not supported
+        - $values/charts/prometheus/secrets.yaml
+
+      # inline secret references are still supported
+      fileParameters:
+        - name: mysql.rootPassword
+          path: secrets+literal://vals!ref+awssecrets://myteam/mydoc#/foo/bar
+  - repoURL: 'https://git.example.gom/org/value-files.git'
+    targetRevision: dev
+    ref: values
+```
+</p>
+</details>
+
 # Installation on Argo CD
 
 Before using helm secrets, we are required to install `helm-secrets` on the `argocd-repo-server`. 
@@ -94,11 +140,14 @@ ARG SOPS_VERSION="3.7.3"
 ARG VALS_VERSION="0.22.0"
 ARG HELM_SECRETS_VERSION="4.3.0"
 ARG KUBECTL_VERSION="1.26.1"
-ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
+# vals or sops
+ENV HELM_SECRETS_BACKEND="vals" \
+    HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
     HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
-    HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false
+    HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
+    HELM_SECRETS_WRAPPER_ENABLED=true
 
 USER root
 RUN apt-get update && \
@@ -111,7 +160,7 @@ RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kub
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 # -- UNCOMMENT LINE for support multi source apps
-# RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/usr/local/sbin/helm"
+RUN printf '#!/usr/bin/env sh\nif [ "\${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1\$s secrets "$@"; fi\nexec %1\$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
 
 # sops backend installation (optional)
 RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
@@ -154,12 +203,16 @@ repoServer:
       value: /custom-tools/kubectl
     - name: HELM_SECRETS_CURL_PATH
       value: /custom-tools/curl
+    - name: HELM_SECRETS_BACKEND
+      value: "vals" # or sops
     # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
     - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
+      value: "false"
+    - name: HELM_SECRETS_WRAPPER_ENABLED
       value: "false"
     - name: HELM_SECRETS_HELM_PATH
       value: /usr/local/bin/helm
@@ -169,10 +222,9 @@ repoServer:
   volumeMounts:
     - mountPath: /custom-tools
       name: custom-tools
-  # -- UNCOMMENT LINE for support multi source apps support (all 3 lines below)
-  #  - mountPath: /usr/local/sbin/helm
-  #    subPath: helm
-  #    name: custom-tools
+    - mountPath: /usr/local/sbin/helm
+      subPath: helm
+      name: custom-tools
 
   initContainers:
     - name: download-tools
@@ -196,8 +248,8 @@ repoServer:
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
           wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
-          
-          printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
+
+          printf '#!/usr/bin/env sh\nif [ "${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1$s secrets "$@"; fi\nexec %1$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
           
           chmod +x /custom-tools/*
       volumeMounts:
