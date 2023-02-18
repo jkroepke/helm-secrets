@@ -1110,7 +1110,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 91"
     assert_success
 
-    run env GNUPGHOME="${HOME}/.helm-secrets/" gpgconf --kill gpg-agent
+    run env GNUPGHOME="${HOME}/.helm-secrets" gpgconf --kill gpg-agent
 }
 
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + HELM_SECRETS_LOAD_GPG_KEYS=/" {
@@ -1132,7 +1132,7 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "port: 91"
     assert_success
 
-    run env GNUPGHOME="${HOME}/.helm-secrets/" gpgconf --kill gpg-agent
+    run env GNUPGHOME="${HOME}/.helm-secrets" gpgconf --kill gpg-agent
 }
 
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://git://" {
