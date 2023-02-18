@@ -365,12 +365,12 @@ This is an example values file for the [ArgoCD Server Helm chart](https://argopr
 repoServer:
   env:
   - name: HELM_SECRETS_LOAD_GPG_KEYS
+    # Multiple keys can be separated by space
     values: /helm-secrets-private-keys/key.asc
   volumes:
     - name: helm-secrets-private-keys
       secret:
         secretName: helm-secrets-private-keys
-
   volumeMounts:
     - mountPath: /helm-secrets-private-keys/
       name: helm-secrets-private-keys
