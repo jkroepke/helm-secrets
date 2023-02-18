@@ -66,9 +66,9 @@ _mktemp() {
 }
 
 _gpg_load_keys() {
-    export GNUPGHOME="${HOME}/.helm-secrets"
+    export GNUPGHOME="${HOME}/.secrets"
     if [ ! -d "${GNUPGHOME}" ]; then
-        mkdir -p "${HOME}/.helm-secrets"
+        mkdir -p "${HOME}/.secrets"
 
         for key in ${LOAD_GPG_KEYS}; do
             if [ -d "${key}" ]; then
