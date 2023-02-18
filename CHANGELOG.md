@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.3.0] - 2023-02-18
 ### Added
 - Support for evaluating secret references (`--evaluate-templates`; `vals` backend) in helm templates (requires helm 3.9.0; vals 0.20+)
 - Override secret backend per value file
@@ -271,7 +271,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.2.2...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.3.0...HEAD
+[4.3.0]: https://github.com/jkroepke/helm-secrets/compare/v4.2.2...v4.3.0
 [4.2.2]: https://github.com/jkroepke/helm-secrets/compare/v4.2.1...v4.2.2
 [4.2.1]: https://github.com/jkroepke/helm-secrets/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/jkroepke/helm-secrets/compare/v4.1.1...v4.2.0
