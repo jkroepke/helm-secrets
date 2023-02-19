@@ -1,7 +1,7 @@
 # Argo CD Integration
 
 Before starting to integrate helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
-[It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
+[It's recommended to use age encryption over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
 
 Since ArgoCD is a shared environment,
 consider reading [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
@@ -10,9 +10,9 @@ to prevent users from reading files outside the own directory.
 # Prerequisites
 
 - ArgoCD 2.3.0+, 2.2.6+, 2.1.11+ (ArgoCD 2.1.9, 2.1.10, 2.2.4, 2.2.5 is [NOT compatible with helm-secrets](https://github.com/argoproj/argo-cd/issues/8397))
+- Multi-source applications requires at least helm-secrets [4.4.0](https://github.com/jkroepke/helm-secrets/releases/tag/v4.4.0) and some special [instructions](#multi-source-application-support-beta)!
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
 - age encrypted values requires at least [3.10.0](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0) and sops [3.7.0](https://github.com/mozilla/sops/releases/tag/v3.7.0)
-- For multi-source application, *enable* helm wrapper sections from Step 1
 
 # Usage
 
@@ -49,8 +49,8 @@ spec:
         # Example Method 2: (Assumptions: namespace=argocd, secret-name=helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 
-        # ### Method 3: No keys provided
-        # Example Method 3: (Assumptions: kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
+        # ### Method 3: Use HELM_SECRETS_LOAD_GPG_KEYS
+        # Example Method 3: (Assumptions: Pre-seeded gpg agent is running or kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
       
       # fileParameters (--set-file) are supported, too. 
