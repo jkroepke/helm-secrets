@@ -3,9 +3,9 @@ name: CI
 
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
-  VERSION_HELM: v3.10.3
+  VERSION_HELM: v3.11.1
   VERSION_SOPS: v3.7.3
-  VERSION_VALS: v0.21.0
+  VERSION_VALS: v0.22.0
 
 on:
   pull_request:
@@ -152,7 +152,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.5
+        uses: jkroepke/setup-vals@v1.0.6
         with:
           version: ${{ env.VERSION_VALS }}
 
@@ -257,7 +257,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.5
+        uses: jkroepke/setup-vals@v1.0.6
         with:
           version: ${{ env.VERSION_VALS }}
 
@@ -336,7 +336,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.5
+        uses: jkroepke/setup-vals@v1.0.6
         with:
           version: ${{ env.VERSION_VALS }}
 

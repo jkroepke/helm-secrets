@@ -1,7 +1,7 @@
 # Argo CD Integration
 
 Before starting to integrate helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
-[It's recommended to use age over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
+[It's recommended to use age encryption over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
 
 Since ArgoCD is a shared environment,
 consider reading [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
@@ -10,9 +10,9 @@ to prevent users from reading files outside the own directory.
 # Prerequisites
 
 - ArgoCD 2.3.0+, 2.2.6+, 2.1.11+ (ArgoCD 2.1.9, 2.1.10, 2.2.4, 2.2.5 is [NOT compatible with helm-secrets](https://github.com/argoproj/argo-cd/issues/8397))
+- Multi-source applications requires at least helm-secrets [4.4.0](https://github.com/jkroepke/helm-secrets/releases/tag/v4.4.0) and some special [instructions](#multi-source-application-support-beta)!
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
 - age encrypted values requires at least [3.10.0](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0) and sops [3.7.0](https://github.com/mozilla/sops/releases/tag/v3.7.0)
-- For multi-source application, *enable* helm wrapper sections from Step 1
 
 # Usage
 
@@ -49,8 +49,8 @@ spec:
         # Example Method 2: (Assumptions: namespace=argocd, secret-name=helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 
-        # ### Method 3: No keys provided
-        # Example Method 3: (Assumptions: kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
+        # ### Method 3: Use HELM_SECRETS_LOAD_GPG_KEYS
+        # Example Method 3: (Assumptions: Pre-seeded gpg agent is running or kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
       
       # fileParameters (--set-file) are supported, too. 
@@ -66,6 +66,55 @@ spec:
 
 Helm will call helm-secrets
 because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
+
+## Multi-Source Application Support [BETA]
+
+ArgoCD has limited supported for helm-secrets and Multi-Source application. `sops` backend is not tested yet.
+
+References: 
+* https://github.com/argoproj/argo-cd/issues/11866
+* https://github.com/argoproj/argo-cd/pull/11966
+
+
+On ArgoCD 2.6.x, `sops` isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
+This is in conflict with helm-secrets, since the string needs to beginn with `secrets://`. On top, ArgoCD do not resolve references in URLs.
+
+Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) is set on the argocd-repo-server. 
+Please ensure you are following the lastest installation instructions (updated on 2023-02-18).
+
+If you are using `sops` backend, additionally define the environment variable `HELM_SECRETS_LOAD_GPG_KEYS` with the path of gpg key as values.
+Read more about mounting gpg keys [here](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
+
+**Note**: The limitation lives on ArgoCD side. helm-secrets is not able to mitigate the limitations at all.
+
+
+<details>
+<summary>Example Multi-Source Application</summary>
+<p>
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+spec:
+  sources:
+  - repoURL: 'https://prometheus-community.github.io/helm-charts'
+    chart: prometheus
+    targetRevision: 15.7.1
+    helm:
+      valueFiles:
+        # Omit any secrets:// prefix, since its not supported in multi source apps
+        - $values/charts/prometheus/secrets.yaml
+
+      # inline secret references are still supported
+      fileParameters:
+        - name: mysql.rootPassword
+          path: secrets+literal://vals!ref+awssecrets://myteam/mydoc#/foo/bar
+  - repoURL: 'https://git.example.gom/org/value-files.git'
+    targetRevision: dev
+    ref: values
+```
+</p>
+</details>
 
 # Installation on Argo CD
 
@@ -88,18 +137,23 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 <p>
 
 ```Dockerfile
-ARG ARGOCD_VERSION="v2.4.8"
+ARG ARGOCD_VERSION="v2.6.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.7.3"
-ARG VALS_VERSION="0.18.0"
+ARG VALS_VERSION="0.22.0"
 ARG HELM_SECRETS_VERSION="4.3.0"
-ARG KUBECTL_VERSION="1.24.3"
-# In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
-ENV HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
+ARG KUBECTL_VERSION="1.26.1"
+# vals or sops
+ENV HELM_SECRETS_BACKEND="vals" \
+    HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
     HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
-    HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false
+    HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
+    HELM_SECRETS_WRAPPER_ENABLED=true
+
+# Optionally, set default gpg key for sops files
+# ENV HELM_SECRETS_LOAD_GPG_KEYS=/path/to/gpg.key
 
 USER root
 RUN apt-get update && \
@@ -111,15 +165,15 @@ RUN apt-get update && \
 RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-# helm secrets wrapper mode installation (optional)
-# RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/usr/local/sbin/helm"
+# -- UNCOMMENT LINE for support multi source apps
+RUN printf '#!/usr/bin/env sh\nif [ "\${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1\$s secrets "$@"; fi\nexec %1\$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
 
 # sops backend installation (optional)
 RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 
 # vals backend installation (optional)
-RUN curl -fsSL https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
+RUN curl -fsSL https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar xzf - -C /usr/local/bin/ vals \
     && chmod +x /usr/local/bin/vals
 
@@ -155,6 +209,8 @@ repoServer:
       value: /custom-tools/kubectl
     - name: HELM_SECRETS_CURL_PATH
       value: /custom-tools/curl
+    - name: HELM_SECRETS_BACKEND
+      value: "vals" # or sops
     # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
     - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
       value: "false"
@@ -162,19 +218,19 @@ repoServer:
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
       value: "false"
-    # helm secrets wrapper mode installation (required for multi source apps, uncommend 3 lines below)
-    # - name: HELM_SECRETS_HELM_PATH
-    #   value: /usr/local/bin/helm
+    - name: HELM_SECRETS_WRAPPER_ENABLED
+      value: "false"
+    - name: HELM_SECRETS_HELM_PATH
+      value: /usr/local/bin/helm
   volumes:
     - name: custom-tools
       emptyDir: {}
   volumeMounts:
     - mountPath: /custom-tools
       name: custom-tools
-  # helm secrets wrapper mode installation (required for multi source apps, uncommend 3 lines below)
-  #  - mountPath: /usr/local/sbin/helm
-  #    subPath: helm
-  #    name: custom-tools
+    - mountPath: /usr/local/sbin/helm
+      subPath: helm
+      name: custom-tools
 
   initContainers:
     - name: download-tools
@@ -184,9 +240,9 @@ repoServer:
         - name: HELM_SECRETS_VERSION
           value: "4.3.0"
         - name: KUBECTL_VERSION
-          value: "1.24.3"
+          value: "1.26.1"
         - name: VALS_VERSION
-          value: "0.18.0"
+          value: "0.22.0"
         - name: SOPS_VERSION
           value: "3.7.3"
       args:
@@ -197,10 +253,9 @@ repoServer:
           wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
-          wget -qO- https://github.com/variantdev/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
-          
-          # helm secrets wrapper mode installation (optional)
-          # RUN printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
+          wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
+
+          printf '#!/usr/bin/env sh\nif [ "${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1$s secrets "$@"; fi\nexec %1$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
           
           chmod +x /custom-tools/*
       volumeMounts:
@@ -308,11 +363,14 @@ To use the *secrets+gpg-import / secrets+age-import* syntax, the keys need to be
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm).
 ```yaml
 repoServer:
+  env:
+  - name: HELM_SECRETS_LOAD_GPG_KEYS
+    # Multiple keys can be separated by space
+    values: /helm-secrets-private-keys/key.asc
   volumes:
     - name: helm-secrets-private-keys
       secret:
         secretName: helm-secrets-private-keys
-
   volumeMounts:
     - mountPath: /helm-secrets-private-keys/
       name: helm-secrets-private-keys
@@ -328,10 +386,13 @@ spec:
   source:
     helm:
       valueFiles:
-        # Method 1: Mount the gpg key from a kubernetes secret as volume
+        # Method 1: Use gpg key defined in HELM_SECRETS_LOAD_GPG_KEYS
+        - secrets://secrets.yaml
+
+        # Method 2: Dynamically reference the gpg key inside values file
         # secrets+gpg-import://<key-volume-mount>/<key-name>.asc?<relative/path/to/the/encrypted/secrets.yaml>
         # secrets+age-import://<key-volume-mount>/<key-name>.txt?<relative/path/to/the/encrypted/secrets.yaml>
-        # Example Method 1: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
+        # Example Method 2: (Assumptions: key-volume-mount=/helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
         - secrets+gpg-import:///helm-secrets-private-keys/key.asc?secrets.yaml
 ```
 

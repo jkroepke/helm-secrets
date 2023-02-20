@@ -65,6 +65,23 @@ _mktemp() {
     fi
 }
 
+_gpg_load_keys() {
+    export GNUPGHOME="${HOME}/.secrets"
+    if [ ! -d "${GNUPGHOME}" ]; then
+        mkdir -p "${HOME}/.secrets"
+
+        for key in ${LOAD_GPG_KEYS}; do
+            if [ -d "${key}" ]; then
+                for file in "${key}"/*; do
+                    gpg --batch --no-permission-warning --quiet --import "${file}"
+                done
+            else
+                gpg --batch --no-permission-warning --quiet --import "${key}"
+            fi
+        done
+    fi
+}
+
 on_wsl() { false; }
 on_cygwin() { false; }
 _sed_i() { sed -i "$@"; }
