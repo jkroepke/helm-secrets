@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Migrations for ArgoCD multi source application limitations
 
+### Fixed
+- Error `curl: option --netrc-file=/custom-tools/.netrc: is unknown`, if NETRC environment variable is defined
+
 ## [4.3.0] - 2023-02-18
 ### Added
 - Support for evaluating secret references (`--evaluate-templates`; `vals` backend) in helm templates (requires helm 3.9.0; vals 0.20+)
