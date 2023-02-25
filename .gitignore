@@ -8,3 +8,5 @@ coverage
 *.test
 
 .netrc
+
+test*.sh

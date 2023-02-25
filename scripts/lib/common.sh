@@ -72,7 +72,7 @@ _gpg_load_keys() {
 
         for key in ${LOAD_GPG_KEYS}; do
             if [ -d "${key}" ]; then
-                for file in "${key}"/*; do
+                for file in "${key%%/}/"*; do
                     gpg --batch --no-permission-warning --quiet --import "${file}"
                 done
             else
