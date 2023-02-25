@@ -75,7 +75,7 @@ _gpg_load_keys() {
                 for file in "${key}"/*; do
                     gpg --batch --no-permission-warning --quiet --import "${file}"
                 done
-            else
+            elif [ -f "${key}" ]; then
                 gpg --batch --no-permission-warning --quiet --import "${key}"
             fi
         done
