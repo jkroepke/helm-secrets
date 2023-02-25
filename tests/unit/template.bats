@@ -1126,13 +1126,13 @@ load '../bats/extensions/bats-file/load'
     printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"${TEST_TEMP_DIR}/helm"
     chmod +x "${TEST_TEMP_DIR}/helm"
 
-    run env -u TMPDIR HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" HELM_SECRETS_LOAD_GPG_KEYS="${TEST_TEMP_DIR}/assets/gpg/" \
+    run env -u TMPDIR GNUPGHOME="${HOME}/${BATS_TEST_NUMBER}" HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" HELM_SECRETS_LOAD_GPG_KEYS="${TEST_TEMP_DIR}/assets/gpg/" \
         "${TEST_TEMP_DIR}/helm" template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "port: 91"
     assert_success
 
-    run env GNUPGHOME="${HOME}/.helm-secrets" gpgconf --kill gpg-agent
+    run env GNUPGHOME="${HOME}/${BATS_TEST_NUMBER}" gpgconf --kill gpg-agent
 }
 
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://git://" {
