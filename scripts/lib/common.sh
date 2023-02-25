@@ -69,12 +69,15 @@ _gpg_load_keys() {
     export GNUPGHOME="${GNUPGHOME:-"${HOME}/.secrets"}"
     if [ ! -d "${GNUPGHOME}" ]; then
         mkdir -p "${GNUPGHOME}"
+        set -x
 
         for key in ${LOAD_GPG_KEYS}; do
             if [ -d "${key}" ]; then
+                set +f
                 for file in "${key%%/}/"*; do
                     gpg --batch --no-permission-warning --quiet --import "${file}"
                 done
+                set -f
             else
                 gpg --batch --no-permission-warning --quiet --import "${key}"
             fi
