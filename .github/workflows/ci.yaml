@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run the sh-checker
-        uses: luizm/action-sh-checker@v0.5.0
+        uses: luizm/action-sh-checker@v0.6.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHELLCHECK_OPTS: -x
@@ -31,7 +31,7 @@ jobs:
           sh_checker_exclude: "tests/assets tests/bats"
 
       - name: Run the sh-checker
-        uses: luizm/action-sh-checker@v0.5.0
+        uses: luizm/action-sh-checker@v0.6.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHELLCHECK_OPTS: -x
