@@ -11,3 +11,9 @@ If the environment variable `HELM_SECRETS_URL_VARIABLE_EXPANSION` is set to `tru
 - `secrets://https://${GITHUB_TOKEN}@raw.githubusercontent.com/org/repo/ref/pathtofile.yml`
 
 In this case, `GITHUB_TOKEN` will be substituted with an environment variable named GITHUB_TOKEN. Only `${}` syntax is supported.
+
+## Conflicting environments
+
+Some environment like ArgoCD do the same, but with an [limited](https://argo-cd.readthedocs.io/en/stable/user-guide/build-environment/) subset of environment variables. 
+
+In such situations, the `$` needs escaped to prevent evalution in environments. For ArgoCD, it's an additional dolar sign like `$${GITHUB_TOKEN}`. Other environments are working with back-slash like `\${GITHUB_TOKEN}`
