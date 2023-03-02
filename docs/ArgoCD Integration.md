@@ -79,8 +79,11 @@ References:
 On ArgoCD 2.6.x, `sops` isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
 This is in conflict with helm-secrets, since the string needs to beginn with `secrets://`. On top, ArgoCD do not resolve references in URLs.
 
-Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) is set on the argocd-repo-server. 
-Please ensure you are following the lastest installation instructions (updated on 2023-02-18).
+`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH` must be set to `true`, since ArgoCD pass value files with absolute file path.
+
+Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) and 
+`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true` is set on the argocd-repo-server. 
+Please ensure you are following the lastest installation instructions (updated on 2023-03-03).
 
 If you are using `sops` backend, additionally define the environment variable `HELM_SECRETS_LOAD_GPG_KEYS` with the path of gpg key as values.
 Read more about mounting gpg keys [here](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
@@ -150,7 +153,7 @@ ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
     HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
-    HELM_SECRETS_WRAPPER_ENABLED=true
+    HELM_SECRETS_WRAPPER_ENABLED=false
 
 # Optionally, set default gpg key for sops files
 # ENV HELM_SECRETS_LOAD_GPG_KEYS=/path/to/gpg.key
@@ -165,9 +168,6 @@ RUN apt-get update && \
 RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-# -- UNCOMMENT LINE for support multi source apps
-RUN printf '#!/usr/bin/env sh\nif [ "\${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1\$s secrets "$@"; fi\nexec %1\$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
-
 # sops backend installation (optional)
 RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
@@ -176,6 +176,8 @@ RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION
 RUN curl -fsSL https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar xzf - -C /usr/local/bin/ vals \
     && chmod +x /usr/local/bin/vals
+
+RUN ln -sf "$(helm env HELM_PLUGINS)/helm-secrets/scripts/wrapper/helm.sh" /usr/local/sbin/helm
 
 USER argocd
 
@@ -209,6 +211,8 @@ repoServer:
       value: /custom-tools/kubectl
     - name: HELM_SECRETS_CURL_PATH
       value: /custom-tools/curl
+    - name: HELM_SECRETS_HELM_PATH
+      value: /usr/local/bin/helm
     - name: HELM_SECRETS_BACKEND
       value: "vals" # or sops
     # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
@@ -220,8 +224,6 @@ repoServer:
       value: "false"
     - name: HELM_SECRETS_WRAPPER_ENABLED
       value: "false"
-    - name: HELM_SECRETS_HELM_PATH
-      value: /usr/local/bin/helm
   volumes:
     - name: custom-tools
       emptyDir: {}
@@ -255,7 +257,7 @@ repoServer:
 
           wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
 
-          printf '#!/usr/bin/env sh\nif [ "${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1$s secrets "$@"; fi\nexec %1$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
+          cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm
           
           chmod +x /custom-tools/*
       volumeMounts:
