@@ -76,7 +76,7 @@ References:
 * https://github.com/argoproj/argo-cd/pull/11966
 
 
-On ArgoCD 2.6.x, `sops` isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
+On ArgoCD 2.6.x, helm-secrets isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
 This is in conflict with helm-secrets, since the string needs to beginn with `secrets://`. On top, ArgoCD do not resolve references in URLs.
 
 `HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH` must be set to `true`, since ArgoCD pass value files with absolute file path.
