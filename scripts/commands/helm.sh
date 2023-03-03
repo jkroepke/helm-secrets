@@ -75,9 +75,12 @@ helm_wrapper() {
 
                 # Force secret backend
                 if [ "${literal#*!}" != "${literal}" ]; then
-                    load_secret_backend "${literal%%\!*}"
-
-                    literal="${literal#*!}"
+                    if is_secret_backend "${literal%%\!*}"; then
+                        load_secret_backend "${literal%%\!*}"
+                        literal="${literal#*!}"
+                    else
+                        load_secret_backend "${DEFAULT_SECRET_BACKEND}"
+                    fi
                 else
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
