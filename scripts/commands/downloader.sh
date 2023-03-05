@@ -12,19 +12,6 @@ KEY_LOCATION_PREFIX="${HELM_SECRETS_KEY_LOCATION_PREFIX:-""}"
 # shellcheck source=scripts/commands/decrypt.sh
 . "${SCRIPT_DIR}/commands/decrypt.sh"
 
-_trap_kill_gpg_agent() {
-    if [ -n "${_GNUPGHOME+x}" ]; then
-        if [ -f "${_GNUPGHOME}/.helm-secrets" ]; then
-            # On CentOS 7, there is no kill option
-            case $(gpgconf --help 2>&1) in
-            *--kill*)
-                gpgconf --kill gpg-agent
-                ;;
-            esac
-        fi
-    fi
-}
-
 downloader() {
     # https://helm.sh/docs/topics/plugins/#downloader-plugins
     # It's always the 4th parameter
@@ -186,9 +173,7 @@ _gpg_init() {
     _GNUPGHOME=$(_mktemp -d)
     touch "${_GNUPGHOME}/.helm-secrets"
 
-    GNUPGHOME="${_GNUPGHOME}"
-    export GNUPGHOME
-
+    export GNUPGHOME="${_GNUPGHOME}"
     gpg --batch --no-permission-warning --quiet --import "${1}"
 }
 
