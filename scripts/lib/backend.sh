@@ -14,6 +14,10 @@ ALLOWED_BACKENDS="${HELM_SECRETS_ALLOWED_BACKENDS:-}"
 # shellcheck source=scripts/lib/backends/vals.sh
 . "${SCRIPT_DIR}/lib/backends/vals.sh"
 
+is_secret_backend() {
+    [ -f "${SCRIPT_DIR}/lib/backends/${1}.sh" ] || [ -f "${1}" ]
+}
+
 load_secret_backend() {
     backend="${1}"
 
@@ -30,15 +34,15 @@ load_secret_backend() {
         esac
     fi
 
-    if [ -f "${SCRIPT_DIR}/lib/backends/${1}.sh" ]; then
+    if [ -f "${SCRIPT_DIR}/lib/backends/${backend}.sh" ]; then
         # shellcheck disable=SC2034
-        SECRET_BACKEND="${1}"
+        SECRET_BACKEND="${backend}"
         return
     fi
 
     # Allow to load out of tree backends.
-    if [ ! -f "${1}" ]; then
-        fatal "Can't find secret backend: %s" "${1}"
+    if [ ! -f "${backend}" ]; then
+        fatal "Can't find secret backend: %s" "${backend}"
     fi
 
     # shellcheck disable=SC2034

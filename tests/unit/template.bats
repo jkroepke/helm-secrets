@@ -478,9 +478,10 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
-        --set=service.port=ref+echo://87 2>&1
+        --set=service.port=ref+echo://87,podAnnotations.second=value 2>&1
 
     assert_output --partial "port: 87"
+    assert_output --partial "second: value"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -500,6 +501,21 @@ load '../bats/extensions/bats-file/load'
 
     assert_output --partial "port: 87"
     assert_output --partial "second: va,lue"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper --set=podAnnotations.second + !" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set=podAnnotations.second='va!ue' 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output --partial "second: va!ue"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
