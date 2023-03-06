@@ -52,7 +52,7 @@ spec:
         # ### Method 3: Use HELM_SECRETS_LOAD_GPG_KEYS
         # Example Method 3: (Assumptions: Pre-seeded gpg agent is running or kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
-      
+
       # fileParameters (--set-file) are supported, too. 
       fileParameters:
         - name: config
@@ -71,19 +71,25 @@ because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c55
 
 ArgoCD has limited supported for helm-secrets and Multi-Source application. `sops` backend is not tested yet.
 
-References: 
+References:
 * https://github.com/argoproj/argo-cd/issues/11866
 * https://github.com/argoproj/argo-cd/pull/11966
 
-
-On ArgoCD 2.6.x, `sops` isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
+On ArgoCD 2.6.x, helm-secrets isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
 This is in conflict with helm-secrets, since the string needs to beginn with `secrets://`. On top, ArgoCD do not resolve references in URLs.
 
-Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) is set on the argocd-repo-server. 
-Please ensure you are following the lastest installation instructions (updated on 2023-02-18).
+`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH` must be set to `true`, since ArgoCD pass value files with absolute file path.
 
-If you are using `sops` backend, additionally define the environment variable `HELM_SECRETS_LOAD_GPG_KEYS` with the path of gpg key as values.
+Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) and
+`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true` is set on the argocd-repo-server.
+Please ensure you are following the lastest installation instructions (updated on 2023-03-03).
+
+### sops backend
+
+If you are using `sops` backend, you have to [mounte](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
+the gpg keys on the `argocd-repo-server` and additionally define the environment variable `HELM_SECRETS_LOAD_GPG_KEYS` with the path of gpg key as values.
 Read more about mounting gpg keys [here](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
+
 
 **Note**: The limitation lives on ArgoCD side. helm-secrets is not able to mitigate the limitations at all.
 
@@ -97,30 +103,30 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 spec:
   sources:
-  - repoURL: 'https://prometheus-community.github.io/helm-charts'
-    chart: prometheus
-    targetRevision: 15.7.1
-    helm:
-      valueFiles:
-        # Omit any secrets:// prefix, since its not supported in multi source apps
-        - $values/charts/prometheus/secrets.yaml
+    - repoURL: 'https://prometheus-community.github.io/helm-charts'
+      chart: prometheus
+      targetRevision: 15.7.1
+      helm:
+        valueFiles:
+          # Omit any secrets:// prefix, since its not supported in multi source apps
+          - $values/charts/prometheus/secrets.yaml
 
-      # inline secret references are still supported
-      fileParameters:
-        - name: mysql.rootPassword
-          path: secrets+literal://vals!ref+awssecrets://myteam/mydoc#/foo/bar
-  - repoURL: 'https://git.example.gom/org/value-files.git'
-    targetRevision: dev
-    ref: values
+        # inline secret references are still supported
+        fileParameters:
+          - name: mysql.rootPassword
+            path: secrets+literal://vals!ref+awssecrets://myteam/mydoc#/foo/bar
+    - repoURL: 'https://git.example.gom/org/value-files.git'
+      targetRevision: dev
+      ref: values
 ```
 </p>
 </details>
 
 # Installation on Argo CD
 
-Before using helm secrets, we are required to install `helm-secrets` on the `argocd-repo-server`. 
+Before using helm secrets, we are required to install `helm-secrets` on the `argocd-repo-server`.
 Depends on the secret backend, `sops` or `vals` is required on the `argocd-repo-server`, too.
-There are two methods to do this. 
+There are two methods to do this.
 Either create your custom ArgoCD Docker Image or install them via an init container.
 
 ## Step 1: Customize argocd-repo-server
@@ -150,7 +156,7 @@ ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
     HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
-    HELM_SECRETS_WRAPPER_ENABLED=true
+    HELM_SECRETS_WRAPPER_ENABLED=false
 
 # Optionally, set default gpg key for sops files
 # ENV HELM_SECRETS_LOAD_GPG_KEYS=/path/to/gpg.key
@@ -165,9 +171,6 @@ RUN apt-get update && \
 RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
-# -- UNCOMMENT LINE for support multi source apps
-RUN printf '#!/usr/bin/env sh\nif [ "\${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1\$s secrets "$@"; fi\nexec %1\$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
-
 # sops backend installation (optional)
 RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
@@ -176,6 +179,8 @@ RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION
 RUN curl -fsSL https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
     | tar xzf - -C /usr/local/bin/ vals \
     && chmod +x /usr/local/bin/vals
+
+RUN ln -sf "$(helm env HELM_PLUGINS)/helm-secrets/scripts/wrapper/helm.sh" /usr/local/sbin/helm
 
 USER argocd
 
@@ -201,40 +206,50 @@ repoServer:
   env:
     - name: HELM_PLUGINS
       value: /custom-tools/helm-plugins/
+    - name: HELM_SECRETS_CURL_PATH
+      value: /custom-tools/curl
     - name: HELM_SECRETS_SOPS_PATH
       value: /custom-tools/sops
     - name: HELM_SECRETS_VALS_PATH
       value: /custom-tools/vals
     - name: HELM_SECRETS_KUBECTL_PATH
       value: /custom-tools/kubectl
-    - name: HELM_SECRETS_CURL_PATH
-      value: /custom-tools/curl
     - name: HELM_SECRETS_BACKEND
-      value: "vals" # or sops
+      value: sops
     # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
     - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH
-      value: "false"
+      value: "true"
     - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
       value: "false"
     - name: HELM_SECRETS_WRAPPER_ENABLED
-      value: "false"
+      value: "true"
     - name: HELM_SECRETS_HELM_PATH
       value: /usr/local/bin/helm
+
+    - name: HELM_SECRETS_LOAD_GPG_KEYS
+      # Multiple keys can be separated by space
+      value: /helm-secrets-private-keys/key.asc
   volumes:
     - name: custom-tools
       emptyDir: {}
+    # kubectl create secret generic helm-secrets-private-keys --from-file=key.asc=assets/gpg/private2.gpg
+    - name: helm-secrets-private-keys
+      secret:
+        secretName: helm-secrets-private-keys
   volumeMounts:
     - mountPath: /custom-tools
       name: custom-tools
     - mountPath: /usr/local/sbin/helm
       subPath: helm
       name: custom-tools
-
+    - mountPath: /helm-secrets-private-keys/
+      name: helm-secrets-private-keys
   initContainers:
     - name: download-tools
       image: alpine:latest
+      imagePullPolicy: IfNotPresent
       command: [sh, -ec]
       env:
         - name: HELM_SECRETS_VERSION
@@ -249,13 +264,14 @@ repoServer:
         - |
           mkdir -p /custom-tools/helm-plugins
           wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf-;
-
+          
+          wget -qO /custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64
           wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
           wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
 
-          printf '#!/usr/bin/env sh\nif [ "${HELM_SECRETS_WRAPPER_ENABLED}" = "true" ]; then exec %1$s secrets "$@"; fi\nexec %1$s "$@"' "helm" "${HELM_SECRETS_HELM_PATH}" >"/usr/local/sbin/helm" && chmod +x "/custom-tools/helm"
+          cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm
           
           chmod +x /custom-tools/*
       volumeMounts:
@@ -301,7 +317,7 @@ server:
 
 # Configuration of ArgoCD
 
-When using private key encryption, it is required to configure ArgoCD repo server so that it has access 
+When using private key encryption, it is required to configure ArgoCD repo server so that it has access
 to the private key to decrypt the encrypted value file(s). When using GCP KMS, encrypted value file(s)
 can be decrypted using [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials).
 
@@ -352,7 +368,7 @@ before running sops. Define `SOPS_AGE_RECIPIENTS` is only required on initial en
 
 ### Creating the kubernetes secret holding the exported private key
 ```bash
-kubectl create secret generic helm-secrets-private-keys --from-file=key.asc
+kubectl -n argocd create secret generic helm-secrets-private-keys --from-file=key.asc=assets/gpg/private2.gpg
 ```
 
 ### Making the key accessible within ArgoCD
@@ -364,9 +380,9 @@ This is an example values file for the [ArgoCD Server Helm chart](https://argopr
 ```yaml
 repoServer:
   env:
-  - name: HELM_SECRETS_LOAD_GPG_KEYS
-    # Multiple keys can be separated by space
-    values: /helm-secrets-private-keys/key.asc
+    - name: HELM_SECRETS_LOAD_GPG_KEYS
+      # Multiple keys can be separated by space
+      value: /helm-secrets-private-keys/key.asc
   volumes:
     - name: helm-secrets-private-keys
       secret:
@@ -411,12 +427,12 @@ repoServer:
     name: argocd-repo-server
 
   rbac:
-  - apiGroups:
-    - ""
-    resources:
-    - secrets
-    verbs:
-    - get
+    - apiGroups:
+        - ""
+      resources:
+        - secrets
+      verbs:
+        - get
 ```
 
 RBAC permissions can be verified by executing the command below:
@@ -448,9 +464,9 @@ spec:
 
 sops and vals are supporting multiple cloud providers.
 
-### AWS 
+### AWS
 
-The argocd-repo-server need access to cloud services. If ArgoCD is deployed on an EKS, 
+The argocd-repo-server need access to cloud services. If ArgoCD is deployed on an EKS,
 [AWS IRSA](https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html) can be used here.
 
 This is an example values file for the [ArgoCD Server Helm chart](https://argoproj.github.io/argo-helm):
@@ -467,7 +483,7 @@ repoServer:
 If IRSA is not available, move forward with static credentials.
 
 1. Create a secret contain the `AWS_DEFAULT_REGION`, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-   Example: 
+   Example:
    ```bash
    kubectl create secret generic argocd-aws-credentials \
      --from-literal=AWS_DEFAULT_REGION=eu-central-1 \
@@ -486,8 +502,8 @@ If IRSA is not available, move forward with static credentials.
 
 ### GCP KMS
 
-To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD, 
-but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission. 
+To work with GCP KMS encrypted value files, no private keys need to be provided to ArgoCD,
+but the Kubernetes ServiceAccount which runs the argocd-repo-server needs to have the `cloudkms.cryptoKeyVersions.useToDecrypt` permission.
 There are various ways to achieve this,
 but the recommended way is to use [GKE Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity).
 Please read Google's documentation to link your Kubernetes ServiceAccount and a Google Service Account.

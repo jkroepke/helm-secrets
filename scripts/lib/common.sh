@@ -46,8 +46,15 @@ _trap() {
         _trap_hook
     fi
 
-    if command -v _trap_kill_gpg_agent >/dev/null; then
-        _trap_kill_gpg_agent
+    if [ -n "${_GNUPGHOME+x}" ]; then
+        if [ -f "${_GNUPGHOME}/.helm-secrets" ]; then
+            # On CentOS 7, there is no kill option
+            case $(gpgconf --help 2>&1) in
+            *--kill*)
+                gpgconf --kill gpg-agent
+                ;;
+            esac
+        fi
     fi
 
     rm -rf "${TMPDIR}"
@@ -66,23 +73,21 @@ _mktemp() {
 }
 
 _gpg_load_keys() {
-    export GNUPGHOME="${GNUPGHOME:-"${HOME}/.secrets"}"
-    if [ ! -d "${GNUPGHOME}" ]; then
-        mkdir -p "${GNUPGHOME}"
-        set -x
+    _GNUPGHOME=$(_mktemp -d)
+    touch "${_GNUPGHOME}/.helm-secrets"
 
-        for key in ${LOAD_GPG_KEYS}; do
-            if [ -d "${key}" ]; then
-                set +f
-                for file in "${key%%/}/"*; do
-                    gpg --batch --no-permission-warning --quiet --import "${file}"
-                done
-                set -f
-            else
-                gpg --batch --no-permission-warning --quiet --import "${key}"
-            fi
-        done
-    fi
+    export GNUPGHOME="${_GNUPGHOME}"
+    for key in ${LOAD_GPG_KEYS}; do
+        if [ -d "${key}" ]; then
+            set +f
+            for file in "${key%%/}/"*; do
+                gpg --batch --no-permission-warning --quiet --import "${file}"
+            done
+            set -f
+        else
+            gpg --batch --no-permission-warning --quiet --import "${key}"
+        fi
+    done
 }
 
 on_wsl() { false; }
