@@ -285,7 +285,7 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Support all helm sub commands and plugins
 
 [Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.4.1...HEAD
-[4.4.1]: https://github.com/jkroepke/helm-secrets/compare/v4.4.1...v4.4.1
+[4.4.1]: https://github.com/jkroepke/helm-secrets/compare/v4.4.0...v4.4.1
 [4.4.0]: https://github.com/jkroepke/helm-secrets/compare/v4.3.0...v4.4.0
 [4.3.0]: https://github.com/jkroepke/helm-secrets/compare/v4.2.2...v4.3.0
 [4.2.2]: https://github.com/jkroepke/helm-secrets/compare/v4.2.1...v4.2.2
