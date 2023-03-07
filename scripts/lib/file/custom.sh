@@ -15,6 +15,6 @@ _file_custom_get() {
         exit 1
     fi
 
-    _sed_i '/^# Source: /d' "${_tmp_file}"
+    _sed_i -e '1,3d' -e 's/^  //g' "${_tmp_file}"
     printf '%s' "${_tmp_file}"
 }
