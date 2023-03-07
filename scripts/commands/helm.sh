@@ -140,8 +140,12 @@ helm_wrapper() {
 
             # Force secret backend
             if [ "${file#*!}" != "${file}" ]; then
-                load_secret_backend "${file%%\!*}"
-                file="${file#*!}"
+                if is_secret_backend "${file%%\!*}"; then
+                    load_secret_backend "${file%%\!*}"
+                    file="${file#*!}"
+                else
+                    load_secret_backend "${DEFAULT_SECRET_BACKEND}"
+                fi
             else
                 load_secret_backend "${DEFAULT_SECRET_BACKEND}"
             fi
