@@ -382,11 +382,11 @@ load '../bats/extensions/bats-file/load'
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="!${SPECIAL_CHAR_DIR}/${VALUES}"
+    VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
 
     create_chart "${SPECIAL_CHAR_DIR}"
 
-    run "${HELM_BIN}" secrets template "${SPECIAL_CHAR_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    run "${HELM_BIN}" --debug secrets template "${SPECIAL_CHAR_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
@@ -1894,7 +1894,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "nonexists!${VALUES_PATH}" \
         --set "service.port=nonexists!ref+echo://87" 2>&1
 
-    assert_output --partial "Can't find secret backend: nonexists"
+    assert_output --partial "[helm-secrets] File does not exist: nonexists!${VALUES_PATH}"
     assert_failure
 }
 
