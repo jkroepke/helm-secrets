@@ -218,7 +218,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "install: helm install w/ chart + secrets.yaml + special path" {
-    FILE="!${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    FILE= "${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     SEED="${RANDOM}"
     RELEASE="install-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"

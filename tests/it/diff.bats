@@ -186,7 +186,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + special path" {
-    FILE="!${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    FILE= "${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     SEED="${RANDOM}"
     RELEASE="diff-$(date +%s)-${SEED}"
 
