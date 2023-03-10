@@ -11,12 +11,12 @@ _file_custom_get() {
     GETTER_CHART_PATH="$(_helm_winpath "${SCRIPT_DIR}/lib/file/helm-values-getter")"
     VALUES="$(_helm_winpath "${1}")"
 
-    if ! "${HELM_BIN}" template "${GETTER_CHART_PATH}" --set-file "content=${VALUES}" >"${_tmp_file}"; then
+    if ! CONTENT="$("${HELM_BIN}" template "${GETTER_CHART_PATH}" --set-file "content=${VALUES}")"; then
         fatal "helm template command errored on value '%s'" "${1}"
     fi
 
     # shellcheck disable=SC2016
-    if ! _sed_i -e '1,3d' -e 's/^  //g' -e :a -e '/^\n*$/{$d;N;ba' -e '}' "${_tmp_file}"; then
+    if ! printf '%s' "${CONTENT}" | sed -e '1,3d' -e 's/^  //g' >"${_tmp_file}"; then
         fatal "sed command errored on value '%s'" "${1}"
     fi
 
