@@ -644,6 +644,7 @@ load '../bats/extensions/bats-file/load'
         --set-file='podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt,service.port=secrets+literal://ref+echo://88' 2>&1
 
     assert_output --partial "port: 88"
+    assert_output --partial ":88'"
     assert_output --partial "quotes: 1234567!!\"§\$%&/(?=)(/&%\$§\"><;:_,;:_'''*'*\ndks"
     assert_success
 }
@@ -792,6 +793,7 @@ load '../bats/extensions/bats-file/load'
         --set-file='podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt,service.port=secrets+literal://ref+echo://88' 2>&1
 
     assert_output --partial "port: 88"
+    assert_output --partial ":88'"
     assert_output --partial "quotes: 1234567!!\"§\$%&/(?=)(/&%\$§\"><;:_,;:_'''*'*\ndks"
     assert_success
 }
