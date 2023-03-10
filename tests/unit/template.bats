@@ -788,7 +788,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" --debug secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
         --set-file='podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt,service.port=secrets+literal://ref+echo://88' 2>&1
 
     assert_output --partial "port: 88"

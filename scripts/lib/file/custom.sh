@@ -16,5 +16,6 @@ _file_custom_get() {
     fi
 
     _sed_i -e '1,3d' -e 's/^  //g' "${_tmp_file}"
+    truncate -s-1 "${_tmp_file}"
     printf '%s' "${_tmp_file}"
 }

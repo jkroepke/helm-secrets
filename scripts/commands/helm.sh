@@ -24,19 +24,19 @@ Typical usage:
 EOF
 }
 
-decrypted_files=$(_mktemp)
+decrypted_file_list=$(_mktemp)
 
 _trap_hook() {
-    if [ -s "${decrypted_files}" ]; then
+    if [ -s "${decrypted_file_list}" ]; then
         if [ "${QUIET}" = "false" ]; then
             echo >&2
             # shellcheck disable=SC2016
-            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >&2 <"${decrypted_files}"
+            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >&2 <"${decrypted_file_list}"
         else
-            xargs -0 rm >&2 <"${decrypted_files}"
+            xargs -0 rm >&2 <"${decrypted_file_list}"
         fi
 
-        rm "${decrypted_files}"
+        rm "${decrypted_file_list}"
     fi
 }
 
@@ -105,12 +105,12 @@ helm_wrapper() {
 
             case "${_1}" in
             --values=* | --set-file=*)
-                file="${_1#*=}"
+                files="${_1#*=}"
 
                 set -- "$@" "${_1%%=*}"
                 ;;
             *)
-                file="${2}"
+                files="${2}"
 
                 set -- "$@" "$1"
                 shift
@@ -118,65 +118,78 @@ helm_wrapper() {
                 ;;
             esac
 
-            case "$_1" in
-            -f | --values | --values=?*)
-                double_escape_need=0
-                sops_type="yaml"
-                opt_prefix=""
-                ;;
-            --set-file | --set-file=?*)
-                double_escape_need=1
-                sops_type="auto"
-                opt_prefix="${file%%=*}="
-                file="${file#*=}"
-                ;;
-            esac
+            decrypted_files=""
 
-            # Ignore error on files beginning with ?
-            if [ "${file##\?}" != "${file}" ]; then
-                file="${file##\?}"
-                IGNORE_MISSING_VALUES=true
-            fi
+            IFS='
+'
 
-            # Force secret backend
-            if [ "${file#*!}" != "${file}" ]; then
-                if is_secret_backend "${file%%\!*}"; then
-                    load_secret_backend "${file%%\!*}"
-                    file="${file#*!}"
+            for file in $(printf '%s' "${files}" | sed -E 's/([^\\]),/\1\n/g'); do
+                case "$_1" in
+                -f | --values | --values=?*)
+                    double_escape_need=0
+                    sops_type="yaml"
+                    opt_prefix=""
+                    ;;
+                --set-file | --set-file=?*)
+                    double_escape_need=1
+                    sops_type="auto"
+                    opt_prefix="${file%%=*}="
+                    file="${file#*=}"
+                    ;;
+                esac
+
+                # Ignore error on files beginning with ?
+                if [ "${file##\?}" != "${file}" ]; then
+                    file="${file##\?}"
+                    IGNORE_MISSING_VALUES=true
+                fi
+
+                # Force secret backend
+                if [ "${file#*!}" != "${file}" ]; then
+                    if is_secret_backend "${file%%\!*}"; then
+                        load_secret_backend "${file%%\!*}"
+                        file="${file#*!}"
+                    else
+                        load_secret_backend "${DEFAULT_SECRET_BACKEND}"
+                    fi
                 else
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
-            else
-                load_secret_backend "${DEFAULT_SECRET_BACKEND}"
-            fi
 
-            if ! real_file=$(_file_get "${file}"); then
-                if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
-                    real_file="$(_mktemp)"
-                else
-                    fatal 'File does not exist: %s' "${file}"
+                if ! real_file=$(_file_get "${file}"); then
+                    if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
+                        real_file="$(_mktemp)"
+                    else
+                        fatal 'File does not exist: %s' "${file}"
+                    fi
                 fi
-            fi
 
-            file_dec="$(_file_dec_name "${real_file}")"
-            if [ -f "${file_dec}" ]; then
-                set -- "$@" "${opt_prefix}$(_helm_winpath "${file_dec}" "${double_escape_need}")"
-
-                if [ "${QUIET}" = "false" ]; then
-                    log 'Decrypt skipped: %s' "${file}"
-                fi
-            else
-                if decrypt_helper "${real_file}" "${sops_type}"; then
-                    set -- "$@" "${opt_prefix}$(_helm_winpath "${file_dec}" "${double_escape_need}")"
-                    printf '%s\0' "${file_dec}" >>"${decrypted_files}"
+                file_dec="$(_file_dec_name "${real_file}")"
+                if [ -f "${file_dec}" ]; then
+                    decrypted_files="${decrypted_files}${opt_prefix}$(_helm_winpath "${file_dec}" "${double_escape_need}"),"
 
                     if [ "${QUIET}" = "false" ]; then
-                        log 'Decrypt: %s' "${file}"
+                        log 'Decrypt skipped: %s' "${file}"
                     fi
                 else
-                    set -- "$@" "${opt_prefix}$(_helm_winpath "${real_file}" "${double_escape_need}")"
+                    if decrypt_helper "${real_file}" "${sops_type}"; then
+                        printf '%s\0' "${file_dec}" >>"${decrypted_file_list}"
+
+                        if [ "${QUIET}" = "false" ]; then
+                            log 'Decrypt: %s' "${file}"
+                        fi
+
+                        decrypted_files="${decrypted_files}${opt_prefix}$(_helm_winpath "${file_dec}" "${double_escape_need}"),"
+                    else
+                        decrypted_files="${decrypted_files}${opt_prefix}$(_helm_winpath "${real_file}" "${double_escape_need}"),"
+                    fi
                 fi
-            fi
+            done
+
+            unset IFS
+
+            set -- "$@" "${decrypted_files%*,}"
+
             ;;
         *)
             if [ -d "$1" ] || [ -f "$1" ]; then
