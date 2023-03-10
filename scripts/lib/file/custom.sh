@@ -15,12 +15,9 @@ _file_custom_get() {
         fatal "helm template command errored on value '%s'" "${1}"
     fi
 
-    if ! _sed_i -e '1,3d' -e 's/^  //g' "${_tmp_file}"; then
+    # shellcheck disable=SC2016
+    if ! _sed_i -e '1,3d' -e 's/^  //g' -e :a -e '/^\n*$/{$d;N;ba' -e '}' "${_tmp_file}"; then
         fatal "sed command errored on value '%s'" "${1}"
-    fi
-
-    if ! truncate -s-1 "${_tmp_file}"; then
-        fatal "truncate command errored on value '%s'" "${1}"
     fi
 
     printf '%s' "${_tmp_file}"
