@@ -3,7 +3,6 @@
 set -euf
 
 if [ "${HELM_DEBUG:-}" = "1" ] || [ "${HELM_DEBUG:-}" = "true" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
-    export HELM_DEBUG=1
     set -x
 fi
 
