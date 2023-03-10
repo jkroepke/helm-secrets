@@ -186,7 +186,7 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml + special path" {
-    FILE= "${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     SEED="${RANDOM}"
     RELEASE="diff-$(date +%s)-${SEED}"
 
@@ -194,10 +194,10 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE##\!}"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: ${FILE##\!}.dec"
-    assert_file_not_exists "${FILE##\!}.dec"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exists "${FILE}.dec"
 }
 
 @test "diff: helm diff upgrade w/ chart + invalid yaml" {
