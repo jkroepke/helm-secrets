@@ -70,6 +70,8 @@ helm_wrapper() {
 '
 
             for literal in $(printf '%s' "${literals}" | sed -E 's/([^\\]),/\1\n/g'); do
+                unset IFS
+
                 opt_prefix="${literal%%=*}="
                 literal="${literal#*=}"
 
@@ -95,8 +97,6 @@ helm_wrapper() {
                     decrypted_literals="${decrypted_literals}${opt_prefix}$(printf '%s' "${decrypted_literal}" | sed -e 's/\\/\\\\/g' | sed -e 's/,/\\,/g'),"
                 fi
             done
-
-            unset IFS
 
             set -- "$@" "${decrypted_literals%*,}"
             ;;
@@ -124,6 +124,8 @@ helm_wrapper() {
 '
 
             for file in $(printf '%s' "${files}" | sed -E 's/([^\\]),/\1\n/g'); do
+                unset IFS
+
                 case "$_1" in
                 -f | --values | --values=?*)
                     double_escape_need=0
@@ -185,8 +187,6 @@ helm_wrapper() {
                     fi
                 fi
             done
-
-            unset IFS
 
             set -- "$@" "${decrypted_files%*,}"
 
