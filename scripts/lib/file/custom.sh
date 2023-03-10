@@ -12,10 +12,16 @@ _file_custom_get() {
     VALUES="$(_helm_winpath "${1}")"
 
     if ! "${HELM_BIN}" template "${GETTER_CHART_PATH}" --set-file "content=${VALUES}" >"${_tmp_file}"; then
-        exit 1
+        fatal "helm template command errored on value '%s'" "${1}"
     fi
 
-    _sed_i -e '1,3d' -e 's/^  //g' "${_tmp_file}"
-    truncate -s-1 "${_tmp_file}"
+    if ! _sed_i -e '1,3d' -e 's/^  //g' "${_tmp_file}"; then
+        fatal "sed command errored on value '%s'" "${1}"
+    fi
+
+    if ! truncate -s-1 "${_tmp_file}"; then
+        fatal "truncate command errored on value '%s'" "${1}"
+    fi
+
     printf '%s' "${_tmp_file}"
 }
