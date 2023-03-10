@@ -775,7 +775,7 @@ load '../bats/extensions/bats-file/load'
 @test "template: helm template w/ chart + wrapper + --set-file=service.port=secrets+literal://vals!" {
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" --debug secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
         --set-file=service.port=secrets+literal://vals!ref+echo://87 2>&1
 
     assert_output --partial "port: 87"
