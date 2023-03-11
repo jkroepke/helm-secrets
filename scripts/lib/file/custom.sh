@@ -9,12 +9,15 @@ _file_custom_exists() {
 _file_custom_get() {
     _tmp_file=$(_mktemp)
     GETTER_CHART_PATH="$(_helm_winpath "${SCRIPT_DIR}/lib/file/helm-values-getter")"
-    VALUES="$(_helm_winpath "${1}")"
 
-    if ! "${HELM_BIN}" template "${GETTER_CHART_PATH}" --set-file "content=${VALUES}" >"${_tmp_file}"; then
-        exit 1
+    if ! CONTENT="$(env -u HELM_DEBUG "${HELM_BIN}" template "${GETTER_CHART_PATH}" --set-file "content=${1}")"; then
+        fatal "helm template command errored on value '%s'" "${1}"
     fi
 
-    _sed_i '/^# Source: /d' "${_tmp_file}"
+    # shellcheck disable=SC2016
+    if ! printf '%s' "${CONTENT}" | sed -e '1,3d' -e 's/^  //g' >"${_tmp_file}"; then
+        fatal "sed command errored on value '%s'" "${1}"
+    fi
+
     printf '%s' "${_tmp_file}"
 }

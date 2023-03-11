@@ -73,10 +73,6 @@ jobs:
             shell: bash 3.2 with coreutils
             jobs: 4
           - os: ubuntu-latest
-            container: ubuntu:22.04
-            shell: bash 5.1
-            jobs: 4
-          - os: ubuntu-latest
             container: centos:7
             shell: bash 4.2
             jobs: 4

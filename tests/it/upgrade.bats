@@ -218,17 +218,17 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "upgrade: helm upgrade w/ chart + secrets.yaml + special path" {
-    FILE="!${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    FILE="${SPECIAL_CHAR_DIR}/assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     SEED="${RANDOM}"
     RELEASE="upgrade-$(date +%s)-${SEED}"
     create_chart "${SPECIAL_CHAR_DIR}"
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE##\!}"
+    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE##\!}.dec"
-    assert_file_not_exists "${FILE##\!}.dec"
+    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
+    assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_success

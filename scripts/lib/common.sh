@@ -97,7 +97,7 @@ _winpath() { printf '%s' "${1}"; }
 _helm_winpath() { printf '%s' "${1}"; }
 
 case "$(uname -s)" in
-CYGWIN*)
+CYGWIN* | MINGW64_NT*)
     on_cygwin() { true; }
     _winpath() {
         if [ "${2:-0}" = "1" ]; then

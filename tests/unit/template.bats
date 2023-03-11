@@ -382,7 +382,7 @@ load '../bats/extensions/bats-file/load'
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="!${SPECIAL_CHAR_DIR}/${VALUES}"
+    VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
 
     create_chart "${SPECIAL_CHAR_DIR}"
 
@@ -595,7 +595,7 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "template: helm template w/ chart + wrapper --set-file service.port=secrets+literal://" {
+@test "template: helm template w/ chart + --set-file service.port=secrets+literal://" {
     if ! is_backend "vals"; then
         skip
     fi
@@ -609,7 +609,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "template: helm template w/ chart + wrapper --set-file=service.port=secrets+literal://" {
+@test "template: helm template w/ chart + --set-file=service.port=secrets+literal://" {
     if ! is_backend "vals"; then
         skip
     fi
@@ -623,7 +623,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "template: helm template w/ chart + wrapper --set-file=service.port=secrets+literal://vals!" {
+@test "template: helm template w/ chart + --set-file=service.port=secrets+literal://vals!" {
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
@@ -633,7 +633,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
-@test "template: helm template w/ chart + wrapper --set-file=service.port=secrets+literal:// + quotes in value" {
+@test "template: helm template w/ chart + --set-file=service.port=secrets+literal:// + quotes in value" {
     if ! is_backend "vals"; then
         skip
     fi
@@ -644,11 +644,12 @@ load '../bats/extensions/bats-file/load'
         --set-file='podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt,service.port=secrets+literal://ref+echo://88' 2>&1
 
     assert_output --partial "port: 88"
+    assert_output --partial ":88'"
     assert_output --partial "quotes: 1234567!!\"§\$%&/(?=)(/&%\$§\"><;:_,;:_'''*'*\ndks"
     assert_success
 }
 
-@test "template: helm template w/ chart + secrets.yaml + wrapper --set-file service.port=secrets+literal:// w/ error" {
+@test "template: helm template w/ chart + secrets.yaml + --set-file service.port=secrets+literal:// w/ error" {
     if ! is_backend "vals"; then
         skip
     fi
@@ -738,6 +739,155 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${VALUES_PATH}" --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "[helm-secrets] Error while download url ${SET_FILE_PATH}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + wrapper + --set-file service.port=secrets+literal://" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        --set-file service.port=secrets+literal://ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+}
+
+@test "template: helm template w/ chart + wrapper + --set-file=service.port=secrets+literal://" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        --set-file=service.port=secrets+literal://ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+}
+
+@test "template: helm template w/ chart + wrapper + --set-file=service.port=secrets+literal://vals!" {
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        --set-file=service.port=secrets+literal://vals!ref+echo://87 2>&1
+
+    assert_output --partial "port: 87"
+    assert_success
+}
+
+@test "template: helm template w/ chart + wrapper + --set-file=service.port=secrets+literal:// + quotes in value" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        --set-file='podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt,service.port=secrets+literal://ref+echo://88' 2>&1
+
+    assert_output --partial "port: 88"
+    assert_output --partial ":88'"
+    assert_output --partial "quotes: 1234567!!\"§\$%&/(?=)(/&%\$§\"><;:_,;:_'''*'*\ndks"
+    assert_success
+}
+
+@test "template: helm template w/ chart + secrets.yaml + wrapper + --set-file service.port=secrets+literal:// w/ error" {
+    if ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        --set-file 'service.port=secrets+literal://ref+file://notexists' 2>&1
+
+    refute_output --partial "port: "
+    assert_failure
+}
+
+@test "template: helm template w/ chart + secrets://secrets.yaml + wrapper + --set-file secrets://file.txt" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.txt"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
+        --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output --partial "hello=fromextrafile"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets://secrets.yaml + wrapper + --set-file secrets://file.json" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.json"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
+        --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output -e 'hello\\?":.*\\?"fromextrafile'
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets://secrets.yaml + wrapper + --set-file=secrets://file.yaml" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
+        --set-file=podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output --partial "hello: fromextrafile"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets://secrets.yaml + wrapper + --set-file=secrets://file.properties" {
+    if ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.properties"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
+        --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output --partial "hello=fromextrafile"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets://secrets.yaml + wrapper + --set-file=secrets://http://example.com/404.yaml" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="http://example.com/404.yaml"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
 
     assert_output --partial "[helm-secrets] Error while download url ${SET_FILE_PATH}"
     assert_failure
@@ -1585,7 +1735,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" --debug secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
     refute_output --partial 'secret: "42"'
@@ -1746,7 +1896,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "nonexists!${VALUES_PATH}" \
         --set "service.port=nonexists!ref+echo://87" 2>&1
 
-    assert_output --partial "Can't find secret backend: nonexists"
+    assert_output --partial "[helm-secrets] File does not exist: nonexists!${VALUES_PATH}"
     assert_failure
 }
 
