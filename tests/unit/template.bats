@@ -751,7 +751,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
         --set-file service.port=secrets+literal://ref+echo://87 2>&1
 
     assert_output --partial "port: 87"
@@ -765,7 +765,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
         --set-file=service.port=secrets+literal://ref+echo://87 2>&1
 
     assert_output --partial "port: 87"
@@ -775,7 +775,7 @@ load '../bats/extensions/bats-file/load'
 @test "template: helm template w/ chart + wrapper + --set-file=service.port=secrets+literal://vals!" {
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
         --set-file=service.port=secrets+literal://vals!ref+echo://87 2>&1
 
     assert_output --partial "port: 87"
@@ -789,7 +789,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
         --set-file='podAnnotations.quotes=secrets+literal://ref+file://assets/values/vals/password.txt,service.port=secrets+literal://ref+echo://88' 2>&1
 
     assert_output --partial "port: 88"
@@ -805,7 +805,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
         --set-file 'service.port=secrets+literal://ref+file://notexists' 2>&1
 
     refute_output --partial "port: "
@@ -819,7 +819,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" --debug secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${VALUES_PATH}" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
         --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
 
     assert_output --partial "port: 81"
@@ -835,7 +835,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${VALUES_PATH}" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
         --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
 
     assert_output --partial "port: 81"
@@ -851,7 +851,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${VALUES_PATH}" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
         --set-file=podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
 
     assert_output --partial "port: 81"
@@ -871,7 +871,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${VALUES_PATH}" \
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" \
         --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
 
     assert_output --partial "port: 81"
@@ -887,7 +887,7 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${VALUES_PATH}" --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" --set-file podAnnotations.fromFile="secrets://${SET_FILE_PATH}" 2>&1
 
     assert_output --partial "[helm-secrets] Error while download url ${SET_FILE_PATH}"
     assert_failure
