@@ -49,7 +49,7 @@ jobs:
         sed -i "s/--version .*/--version ${GITHUB_REF_NAME}/g" docs/Installation.md
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v4
+      uses: peter-evans/create-pull-request@v5
       with:
         commit-message: "[docs] Set version to ${{ github.ref_name }}"
         title: "[docs] Set version to ${{ github.ref_name }}"
