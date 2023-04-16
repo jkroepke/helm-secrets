@@ -51,8 +51,7 @@ _vals_backend_decrypt_file() {
 
 _vals_backend_decrypt_literal() {
     if printf '%s' "${1}" | _vals_backend_is_encrypted; then
-        value="$(_vals get "${1}")"
-        if [ $? -ne 0 ]; then
+        if ! value="$(_vals get "${1}")"; then
             return 1
         fi
 
