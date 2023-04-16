@@ -51,11 +51,12 @@ _vals_backend_decrypt_file() {
 
 _vals_backend_decrypt_literal() {
     if printf '%s' "${1}" | _vals_backend_is_encrypted; then
-        if ! literal_value=$(printf '"": %s' "${1}" | _vals env -f -); then
+        value="$(_vals get "${1}")"
+        if [ $? -ne 0 ]; then
             return 1
         fi
 
-        printf '%s' "${literal_value#*=}"
+        printf '%s' "${value}"
     else
         printf '%s' "${1}"
     fi
