@@ -80,6 +80,8 @@ The sops secret store is enabled by default.
 
 [vals](https://github.com/variantdev/vals) is a tool for managing configuration values and secrets form various sources.
 
+To use vals with helm-secrets, the vals CLI binary is needed. vals 0.22.0 or higher is required.
+
 It supports various backends:
 
 * [Vault](https://github.com/variantdev/vals#vault)
