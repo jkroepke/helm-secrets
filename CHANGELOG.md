@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changes
+- BREAKING: helm-secrets requires vals 0.22 or higher
+
 ### Fixed
-- Avoid quoting issues with literals and `vals` backend (requires vals 0.22+).
+- Avoid quoting issues with literals and `vals` backend
 
 ## [4.4.2] - 2023-03-11
 
