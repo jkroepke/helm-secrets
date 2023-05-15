@@ -1247,7 +1247,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_HELM_PATH="$(command -v "${HELM_BIN}")"
 
     create_chart "${TEST_TEMP_DIR}"
-    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"${TEST_TEMP_DIR}/helm"
+    cp "${GIT_ROOT}/scripts/wrapper/helm.sh" "${TEST_TEMP_DIR}/helm"
     chmod +x "${TEST_TEMP_DIR}/helm"
 
     run env -u TMPDIR HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" \
@@ -1267,7 +1267,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_HELM_PATH="$(command -v "${HELM_BIN}")"
 
     create_chart "${TEST_TEMP_DIR}"
-    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"${TEST_TEMP_DIR}/helm"
+    cp "${GIT_ROOT}/scripts/wrapper/helm.sh" "${TEST_TEMP_DIR}/helm"
     chmod +x "${TEST_TEMP_DIR}/helm"
 
     run env -u TMPDIR HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" HELM_SECRETS_LOAD_GPG_KEYS="${TEST_TEMP_DIR}/assets/gpg/private2.gpg" \
@@ -1289,7 +1289,7 @@ load '../bats/extensions/bats-file/load'
     HELM_SECRETS_HELM_PATH="$(command -v "${HELM_BIN}")"
 
     create_chart "${TEST_TEMP_DIR}"
-    printf '#!/usr/bin/env sh\nexec %s secrets "$@"' "${HELM_SECRETS_HELM_PATH}" >"${TEST_TEMP_DIR}/helm"
+    cp "${GIT_ROOT}/scripts/wrapper/helm.sh" "${TEST_TEMP_DIR}/helm"
     chmod +x "${TEST_TEMP_DIR}/helm"
 
     run env -u TMPDIR GNUPGHOME="${HOME}/${BATS_TEST_NUMBER}" HELM_SECRETS_HELM_PATH="${HELM_SECRETS_HELM_PATH}" PATH="${TEST_TEMP_DIR}:${PATH}" HELM_SECRETS_LOAD_GPG_KEYS="${TEST_TEMP_DIR}/assets/gpg/" \
@@ -1749,10 +1749,13 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates=true template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates=true template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
     refute_output --partial 'secret: "42"'
+    refute_output --partial 'secret.env: "44"'
     assert_success
 }
 
@@ -1763,10 +1766,50 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates true template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates true template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
     refute_output --partial 'secret: "42"'
+    refute_output --partial 'secret.env: "44"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + HELM_SECRETS_EVALUATE_TEMPLATES=true" {
+    if on_wsl || ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run env SECRET_VALUE=44 HELM_SECRETS_EVALUATE_TEMPLATES=true WSLENV="HELM_SECRETS_EVALUATE_TEMPLATES:SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
+    refute_output --partial 'secret: "42"'
+    refute_output --partial 'secret.env: "44"'
+    assert_success
+}
+
+@test "template: helm template w/ chart + wrapper + HELM_SECRETS_EVALUATE_TEMPLATES=true" {
+    if on_wsl || ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    cp "${GIT_ROOT}/scripts/wrapper/helm.sh" "${TEST_TEMP_DIR}/helm"
+    chmod +x "${TEST_TEMP_DIR}/helm"
+
+    run env SECRET_VALUE=44 HELM_SECRETS_EVALUATE_TEMPLATES=true WSLENV="HELM_SECRETS_EVALUATE_TEMPLATES:SECRET_VALUE:${WSLENV}" \
+        "${TEST_TEMP_DIR}/helm" secrets template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
+    refute_output --partial 'secret: "42"'
+    refute_output --partial 'secret.env: "44"'
     assert_success
 }
 
@@ -1779,10 +1822,13 @@ load '../bats/extensions/bats-file/load'
 
     cp -r "${TEST_ROOT}/assets/values/${HELM_SECRETS_BACKEND}/templates/error/." "${TEST_TEMP_DIR}/chart/templates/"
 
-    run "${HELM_BIN}" secrets --evaluate-templates true template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates true template "${TEST_TEMP_DIR}/chart" 2>&1
 
     refute_output --partial 'config: "42"'
+    refute_output --partial 'config.env: "44"'
     refute_output --partial 'secret: "42"'
+    refute_output --partial 'secret.env: "44"'
     assert_output --partial 'vals error:'
     assert_failure
 }
@@ -1794,10 +1840,13 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates false template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates false template "${TEST_TEMP_DIR}/chart" 2>&1
 
     refute_output --partial 'config: "42"'
+    refute_output --partial 'config.env: "44"'
     refute_output --partial 'secret: "42"'
+    refute_output --partial 'secret.env: "44"'
     assert_success
 }
 
@@ -1808,10 +1857,13 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
     assert_output --partial 'secret: "42"'
+    assert_output --partial 'secret.env: "44"'
     assert_success
 }
 
@@ -1822,10 +1874,13 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets=true template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets=true template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
     assert_output --partial 'secret: "42"'
+    assert_output --partial 'secret.env: "44"'
     assert_success
 }
 
@@ -1836,10 +1891,13 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets true template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets true template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
     assert_output --partial 'secret: "42"'
+    assert_output --partial 'secret.env: "44"'
     assert_success
 }
 
@@ -1850,10 +1908,13 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets false template "${TEST_TEMP_DIR}/chart" 2>&1
+    run env SECRET_VALUE=44 WSLENV="SECRET_VALUE:${WSLENV}" \
+        "${HELM_BIN}" secrets --evaluate-templates --evaluate-templates-decode-secrets false template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
+    assert_output --partial 'config.env: "44"'
     refute_output --partial 'secret: "42"'
+    refute_output --partial 'secret.env: "44"'
     assert_success
 }
 
