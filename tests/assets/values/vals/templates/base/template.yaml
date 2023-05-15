@@ -2,9 +2,11 @@ apiVersion: v1
 kind: ConfigMap
 data:
   config: ref+echo://42
+  config.env: ref+envsubst://$SECRET_VALUE
 ---
 apiVersion: v1
 kind: Secret
 data:
   secret: '{{ print "ref+echo://42" | b64enc }}'
+  secret.env: '{{ print "ref+envsubst://$SECRET_VALUE" | b64enc }}'
 ---
