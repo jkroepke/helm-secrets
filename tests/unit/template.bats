@@ -1785,7 +1785,8 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env SECRET_VALUE=44 HELM_SECRETS_EVALUATE_TEMPLATES=true WSLENV="HELM_SECRETS_EVALUATE_TEMPLATES:SECRET_VALUE:${WSLENV}" \
+    # shellcheck disable=SC2030 disable=SC2031
+    run env SECRET_VALUE=44 HELM_SECRETS_EVALUATE_TEMPLATES=true WSLENV="HELM_SECRETS_EVALUATE_TEMPLATES:SECRET_VALUE:${WSLENV:-}" \
         "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial 'config: "42"'
