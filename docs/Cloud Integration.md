@@ -96,14 +96,9 @@ data:
   supersecret: '{{ .Values.aws | b64enc }}'
 ```
 
-Then we move this file to a subdirectory, `chart` in this example:
+The `secret.yaml` should be saved into the `templates` folder of your helm chart. 
 
-```
-mkdir chart
-mv secret.yaml chart
-```
-
-And then the "values" file, let's call it `values.yaml` and add the following
+Next, create a values file named `values.yaml` and add the following snippet
 content:
 
 ```yaml
@@ -113,11 +108,10 @@ aws: ref+awssecrets://mysecret/value
 Finally, put everything together:
 
 ```
-helm secrets template -f values.yaml chart/secret.yaml
+helm secrets template -f values.yaml .
 ```
 
-That's it! You should see some message form `vals` stating that the secrets
-were retrieve and the resulting content from the template in the `STDOUT`.
+That's it! You should see the resulting content from the template.
 
 ## Supported Backends
 
