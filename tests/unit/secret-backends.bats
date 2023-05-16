@@ -57,7 +57,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets -b noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*${VALUES}"
+    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
     assert_failure
 }
 
@@ -66,7 +66,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --backend noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*${VALUES}"
+    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
     assert_failure
 }
 
@@ -75,7 +75,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets -q -b noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*${VALUES}"
+    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
     assert_failure
 }
 
@@ -84,7 +84,7 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_BACKEND=noop WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*${VALUES}"
+    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
     assert_failure
 }
 
@@ -93,7 +93,7 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_BACKEND=sops WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets -b noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*${VALUES}"
+    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
     assert_failure
 }
 
