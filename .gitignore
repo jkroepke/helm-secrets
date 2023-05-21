@@ -10,3 +10,4 @@ coverage
 .netrc
 
 test*.sh
+/vendor

@@ -237,10 +237,10 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Setup Ruby 2.6
+      - name: Setup Ruby 3.2
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
 
       - name: Setup Helm
         uses: azure/setup-helm@v3.5
@@ -258,7 +258,7 @@ jobs:
           version: ${{ env.VERSION_VALS }}
 
       - name: Install bashcov
-        run: gem install bashcov simplecov-cobertura
+        run: bundle install
 
       - name: Print Environment
         run: |-
