@@ -237,10 +237,10 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Setup Ruby 3.2
+      - name: Setup Ruby 3.0
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2
+          ruby-version: 3.0
 
       - name: Setup Helm
         uses: azure/setup-helm@v3.5
