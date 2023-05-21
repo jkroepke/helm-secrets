@@ -258,7 +258,7 @@ jobs:
           version: ${{ env.VERSION_VALS }}
 
       - name: Install bashcov
-        run: gem install bashcov:'< 2' simplecov-cobertura:'< 2'
+        run: gem install bashcov simplecov-cobertura
 
       - name: Print Environment
         run: |-
