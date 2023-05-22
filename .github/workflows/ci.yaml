@@ -148,7 +148,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.6
+        uses: jkroepke/setup-vals@v1.1.1
         with:
           version: ${{ env.VERSION_VALS }}
 
@@ -253,7 +253,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.6
+        uses: jkroepke/setup-vals@v1.1.1
         with:
           version: ${{ env.VERSION_VALS }}
 
@@ -332,7 +332,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@v1.0.6
+        uses: jkroepke/setup-vals@v1.1.1
         with:
           version: ${{ env.VERSION_VALS }}
 
