@@ -39,10 +39,10 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "${VERSION}"
 }
 
-@test "helm-plugin: helm secrets version" {
+@test "helm-plugin: helm secrets version + HELM_SECRETS_WRAPPER_ENABLED" {
     VERSION=$(grep version "${GIT_ROOT}/plugin.yaml" | cut -d'"' -f2) >&2
 
-    run "${HELM_BIN}" secrets version
+    run env HELM_SECRETS_WRAPPER_ENABLED=true "${GIT_ROOT}/scripts/wrapper/helm.sh" version
     assert_success
-    assert_output --partial "${VERSION}"
+    assert_output --partial "v3"
 }

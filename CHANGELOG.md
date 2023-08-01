@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Avoid quoting issues with literals and `vals` backend
+- Remove `helm secrets version` to avoid a conflict with `helm version`
 
 ## [4.4.2] - 2023-03-11
 

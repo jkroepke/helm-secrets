@@ -169,7 +169,7 @@ while true; do
         help_usage
         break
         ;;
-    --version | -v | version)
+    --version | -v)
         # shellcheck source=scripts/commands/version.sh
         . "${SCRIPT_DIR}/commands/version.sh"
         version
