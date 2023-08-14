@@ -67,6 +67,8 @@ _file_dec_name() {
 
     if [ "${DEC_DIR}" != "" ]; then
         printf '%s/%s%s%s' "${DEC_DIR}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
+    elif [ "${DECRYPT_SECRETS_IN_TMP_DIR}" = "true" ]; then
+        printf '%s/%s%s%s' "${TMPDIR}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
     elif [ "${1}" != "${_basename}" ]; then
         printf '%s/%s%s%s' "$(dirname "${1}")" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
     else

@@ -2048,3 +2048,37 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial "Can't find secret backend: nonexists"
     assert_failure
 }
+
+@test "template: helm template w/ chart + secrets.yaml + HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR=true" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # shellcheck disable=SC2030 disable=SC2031
+    run env HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR=true WSLENV="HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR:${WSLENV}" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output --partial "port: 81"
+    refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    assert_output -e "\[helm-secrets\] Removed: .*/secrets.yaml.dec"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + secrets.yaml + --decrypt-secrets-in-tmp-dir" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets --decrypt-secrets-in-tmp-dir template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output --partial "port: 81"
+    refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    assert_output -e "\[helm-secrets\] Removed: .*/secrets.yaml.dec"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}

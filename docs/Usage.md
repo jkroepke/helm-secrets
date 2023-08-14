@@ -25,6 +25,7 @@ Available Options:
   --ignore-missing-values [true|false]                 Ignore missing value files (env: $HELM_SECRETS_IGNORE_MISSING_VALUES)
   --evaluate-templates [true|false]                    Evaluate secret expressions inside helm template (only supported by vals backend) (env: $HELM_SECRETS_EVALUATE_TEMPLATES)
   --evaluate-templates-decode-secrets [true|false]     If --evaluate-templates is set, decode base64 values from secrets to evaluate them (env: $HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECRETS)
+  --decrypt-secrets-in-tmp-dir [true|false]            Decrypt secrets in a temp directory. May solve concurrency issues. (env: $HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR)
   --help                                           -h  Show help
   --version                                        -v  Display version of helm-secrets
 ```

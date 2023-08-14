@@ -225,6 +225,8 @@ repoServer:
       value: "false"
     - name: HELM_SECRETS_WRAPPER_ENABLED
       value: "true"
+    - name: HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR
+      value: "true"
     - name: HELM_SECRETS_HELM_PATH
       value: /usr/local/bin/helm
 
