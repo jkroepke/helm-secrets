@@ -1869,8 +1869,8 @@ load '../bats/extensions/bats-file/load'
 
     assert_output --partial 'config: "42"'
     assert_output --partial 'config.env: "44"'
-    assert_output --partial 'secret: "42"'
-    assert_output --partial 'secret.env: "44"'
+    assert_output --partial 'secret: NDI='
+    assert_output --partial 'secret.env: NDQ='
     assert_success
 }
 
@@ -1887,8 +1887,8 @@ load '../bats/extensions/bats-file/load'
 
     assert_output --partial 'config: "42"'
     assert_output --partial 'config.env: "44"'
-    assert_output --partial 'secret: "42"'
-    assert_output --partial 'secret.env: "44"'
+    assert_output --partial 'secret: NDI='
+    assert_output --partial 'secret.env: NDQ='
     assert_success
 }
 
@@ -1905,8 +1905,8 @@ load '../bats/extensions/bats-file/load'
 
     assert_output --partial 'config: "42"'
     assert_output --partial 'config.env: "44"'
-    assert_output --partial 'secret: "42"'
-    assert_output --partial 'secret.env: "44"'
+    assert_output --partial 'secret: NDI='
+    assert_output --partial 'secret.env: NDQ='
     assert_success
 }
 

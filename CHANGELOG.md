@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.5.0] - 2023-08-14
+
 ### Added 
 - Added `--decrypt-secrets-in-tmp-dir` to solve concurrency issues or if work disk is read-only
 
 ### Changes
-- BREAKING: helm-secrets requires vals 0.22 or higher
+- BREAKING: helm-secrets requires vals 0.26.2 or higher
 
 ### Fixed
 - Avoid quoting issues with literals and `vals` backend
