@@ -6,7 +6,7 @@ _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
 _vals() {
     # shellcheck disable=SC2086
-    set -- ${SECRET_BACKEND_ARGS} "$@"
+    set -- "$@" ${SECRET_BACKEND_ARGS}
 
     # In case of an error, give us stderr
     # https://github.com/variantdev/vals/issues/60
