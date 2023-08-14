@@ -2055,7 +2055,9 @@ load '../bats/extensions/bats-file/load'
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR=true "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    # shellcheck disable=SC2030 disable=SC2031
+    run env HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR=true WSLENV="HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR:${WSLENV}" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
