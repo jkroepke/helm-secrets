@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Package helm-secrets
         run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
@@ -37,7 +37,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - run: >-
         sed -i 's/HELM_SECRETS_VERSION=".*"/HELM_SECRETS_VERSION="'${GITHUB_REF_NAME/v}'"/g' docs/ArgoCD\ Integration.md
