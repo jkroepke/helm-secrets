@@ -7,8 +7,7 @@ Since ArgoCD is a shared environment,
 consider reading [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
 to prevent users from reading files outside the own directory.
 
-> *INFO*
-> With helm-secrets, you can encrypt value files only. Encypted manifests/templates are not supported.
+➡ With helm-secrets, you can encrypt value files only. Encypted manifests/templates are not supported.
 
 # Prerequisites
 
