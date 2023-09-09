@@ -1301,6 +1301,22 @@ load '../bats/extensions/bats-file/load'
     run env GNUPGHOME="${HOME}/${BATS_TEST_NUMBER}" gpgconf --kill gpg-agent
 }
 
+@test "template: helm template w/ chart + secrets.age.yaml + secrets+gpg-import:// + without key file" {
+    if on_windows || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-found.age.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets+gpg-import://${VALUES_PATH}" 2>&1
+
+    assert_output --partial "Invalid syntax: secrets+gpg-import://[path to key]?[path secrets.yaml]"
+    assert_failure
+}
+
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + secrets+gpg-import://git://" {
     if on_windows || ! is_backend "sops"; then
         skip
@@ -1373,6 +1389,22 @@ load '../bats/extensions/bats-file/load'
 
     assert_output --partial "port: 80"
     assert_success
+}
+
+@test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import:// + without key file" {
+    if on_windows || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/not-found.age.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets+age-import://${VALUES_PATH}" 2>&1
+
+    assert_output --partial "Invalid syntax: secrets+age-import://[path to key]?[path secrets.yaml]"
+    assert_failure
 }
 
 @test "template: helm template w/ chart + secrets.age.yaml + secrets+age-import://git://" {

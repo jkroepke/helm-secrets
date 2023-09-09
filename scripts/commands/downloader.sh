@@ -40,6 +40,11 @@ downloader() {
         _key_path=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
 
+        # check if key file is given
+        if [ "${_key_path}" = "${file}" ]; then
+            fatal "Invalid syntax: secrets+gpg-import://[path to key]?[path secrets.yaml]"
+        fi
+
         if ! _key_location_allowed "${_key_path}"; then
             fatal "Key location '%s' is not allowed" "${_key_path}"
         fi
@@ -67,6 +72,12 @@ downloader() {
 
         _key_location=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
+
+        # check if key file is given
+        if [ "${_key_location}" = "${file}" ]; then
+            fatal "Invalid syntax: secrets+gpg-import-kubernetes://[path to key]?[path secrets.yaml]"
+        fi
+
         _gpg_init_kubernetes "${_key_location}"
         ;;
     secrets+age-import://*)
@@ -90,6 +101,11 @@ downloader() {
 
         _key_path=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
+
+        # check if key file is given
+        if [ "${_key_path}" = "${file}" ]; then
+            fatal "Invalid syntax: secrets+age-import://[path to key]?[path secrets.yaml]"
+        fi
 
         if ! _key_location_allowed "${_key_path}"; then
             fatal "Key location '%s' is not allowed" "${_key_path}"
@@ -118,6 +134,12 @@ downloader() {
 
         _key_location=$(printf '%s' "${_key_and_file}" | cut -d '?' -f1)
         file=$(printf '%s' "${_key_and_file}" | cut -d '?' -f2-)
+
+        # check if key file is given
+        if [ "${_key_location}" = "${file}" ]; then
+            fatal "Invalid syntax: secrets+age-import-kubernetes://[path to key]?[path secrets.yaml]"
+        fi
+
         _age_init_kubernetes "${_key_location}"
         ;;
     secrets+literal://*)
