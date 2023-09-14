@@ -66,11 +66,23 @@ helm_wrapper() {
 
             decrypted_literals=""
 
-            IFS='
-'
+            IFS=","
+            _literal=""
 
-            for literal in $(printf '%s' "${literals}" | sed -E 's/([^\\]),/\1\n/g'); do
+            for literal in ${literals}; do
                 unset IFS
+
+                case "${literal}" in
+                *\\)
+                    _literal="${literal}"
+                    continue
+                    ;;
+                esac
+
+                if [ "${_literal}" != "" ]; then
+                    literal="${_literal},${literal}"
+                    _literal=""
+                fi
 
                 opt_prefix="${literal%%=*}="
                 literal="${literal#*=}"
