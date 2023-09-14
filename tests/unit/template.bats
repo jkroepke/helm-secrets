@@ -170,6 +170,10 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "template: helm template w/ chart + secrets.yaml + helm flag + multiline" {
+    if on_windows; then
+        skip
+    fi
+
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
