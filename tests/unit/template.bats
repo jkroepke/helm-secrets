@@ -169,6 +169,24 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "template: helm template w/ chart + secrets.yaml + helm flag + multiline" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set "podAnnotations.second=key1:
+key2: value" 2>&1
+
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output --partial "port: 81"
+    assert_output --partial "key1:"
+    assert_output --partial "key2: value"
+    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
 @test "template: helm template w/ chart + not-exists.yaml" {
     VALUES="not-exists.yaml"
     VALUES_PATH="${VALUES}"
