@@ -164,7 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.10.0] - 2021-11-05
 ### Added
-- Add [age](https://github.com/mozilla/sops#encrypting-using-age) support for downloader plugin syntax.
+- Add [age](https://github.com/getsops/sops#encrypting-using-age) support for downloader plugin syntax.
 
 ### Changed
 - Improvements to the ArgoCD integration documentation.

@@ -10,7 +10,7 @@ Edit encrypted secrets
 
 Decrypt encrypted file, edit and then encrypt
 
-You can use plain sops to edit - https://github.com/mozilla/sops
+You can use plain sops to edit - https://github.com/getsops/sops
 
 Example:
   $ helm secrets edit <SECRET_FILE_PATH>

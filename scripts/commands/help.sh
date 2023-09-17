@@ -10,7 +10,7 @@ helm-secrets is a helm plugin for decrypt encrypted helm value files on the fly.
 For more information, see the README.md at https://github.com/jkroepke/helm-secrets
 
 To decrypt/encrypt/edit locally you need to initialize/first encrypt secrets with
-sops - https://github.com/mozilla/sops
+sops - https://github.com/getsops/sops
 
 Available Commands:
   encrypt Encrypt secrets file

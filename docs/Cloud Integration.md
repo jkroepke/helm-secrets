@@ -123,7 +123,7 @@ That's it! You should see the resulting content from the template.
 - [AWS S3](https://github.com/variantdev/vals/blob/main/README.md#aws-s3)
 - [GCP Secrets Manager](https://github.com/variantdev/vals/blob/main/README.md#gcp-secrets-manager)
 - [Google GCS](https://github.com/variantdev/vals/blob/main/README.md#google-gcs)
-- [SOPS](https://github.com/variantdev/vals/blob/main/README.md#sops) powered by [sops](https://github.com/mozilla/sops)
+- [SOPS](https://github.com/variantdev/vals/blob/main/README.md#sops) powered by [sops](https://github.com/getsops/sops)
 - [Terraform (tfstate)](https://github.com/variantdev/vals/blob/main/README.md#terraform-tfstate) powered by [tfstate-lookup](https://github.com/fujiwara/tfstate-lookup)
 - [Echo](https://github.com/variantdev/vals/blob/main/README.md#echo)
 - [File](https://github.com/variantdev/vals/blob/main/README.md#file)
