@@ -13,7 +13,7 @@
 
 helm-secrets is a Helm plugin for decrypt encrypted Helm **value files** on the fly.
 
-* Use [sops](https://github.com/mozilla/sops) to encrypt value files and store them into git.
+* Use [sops](https://github.com/getsops/sops) to encrypt value files and store them into git.
 * Store your secrets a cloud native secret manager like AWS SecretManager, Azure KeyVault or HashiCorp Vault and inject them inside value files or templates.
 * Use helm-secret in your favorite deployment tool or GitOps Operator like ArgoCD
 
@@ -142,7 +142,7 @@ An example of how to use helm-secrets with Terraform could be found in [examples
 ## Secret backends
 
 helm-secrets support multiple secret backends.
-Currently, [sops](https://github.com/mozilla/sops) and [vals](https://github.com/variantdev/vals/) are supported.
+Currently, [sops](https://github.com/getsops/sops) and [vals](https://github.com/variantdev/vals/) are supported.
 
 See [Secret-Backends](https://github.com/jkroepke/helm-secrets/wiki/Secret-Backends) how to use them.
 

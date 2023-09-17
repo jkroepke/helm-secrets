@@ -1,7 +1,7 @@
 # Argo CD Integration
 
 Before starting to integrate helm-secrets with ArgoCD, consider using [age](https://github.com/FiloSottile/age/) over gpg.
-[It's recommended to use age encryption over GPG, if possible.](https://github.com/mozilla/sops#encrypting-using-age)
+[It's recommended to use age encryption over GPG, if possible.](https://github.com/getsops/sops#encrypting-using-age)
 
 Since ArgoCD is a shared environment,
 consider reading [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
@@ -14,7 +14,7 @@ to prevent users from reading files outside the own directory.
 - ArgoCD 2.3.0+, 2.2.6+, 2.1.11+ (ArgoCD 2.1.9, 2.1.10, 2.2.4, 2.2.5 is [NOT compatible with helm-secrets](https://github.com/argoproj/argo-cd/issues/8397))
 - Multi-source applications requires at least helm-secrets [4.4.0](https://github.com/jkroepke/helm-secrets/releases/tag/v4.4.0) and some special [instructions](#multi-source-application-support-beta)!
 - helm-secrets [3.9.x](https://github.com/jkroepke/helm-secrets/releases/tag/v3.9.1) or higher.
-- age encrypted values requires at least [3.10.0](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0) and sops [3.7.0](https://github.com/mozilla/sops/releases/tag/v3.7.0)
+- age encrypted values requires at least [3.10.0](https://github.com/jkroepke/helm-secrets/releases/tag/v3.10.0) and sops [3.7.0](https://github.com/getsops/sops/releases/tag/v3.7.0)
 
 # Usage
 
@@ -174,7 +174,7 @@ RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kub
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 # sops backend installation (optional)
-RUN curl -fsSL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
+RUN curl -fsSL https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 
 # vals backend installation (optional)
@@ -270,7 +270,7 @@ repoServer:
           wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf-;
           
           wget -qO /custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64
-          wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
+          wget -qO /custom-tools/sops https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
           wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
@@ -344,7 +344,7 @@ When asked to enter a password, you need to omit it.
 
 Please also note that currently it is recommended to use the --rfc4880.
 This prevents you from running into a compatibility issue between gpg 2.2 and gpg 2.3
-(Related Issue: [Encryption with GnuPG 2.3 (RFC4880bis) causes compatibility issues with GnuPG 2.2](https://github.com/mozilla/sops/issues/896))
+(Related Issue: [Encryption with GnuPG 2.3 (RFC4880bis) causes compatibility issues with GnuPG 2.2](https://github.com/getsops/sops/issues/896))
 
 ```bash
 gpg --armor --export-secret-keys <key-id> > key.asc
@@ -363,7 +363,7 @@ age-keygen -o key.txt
 ```
 
 The public key can be found in the output of the generate-key command.
-Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://github.com/mozilla/sops#encrypting-using-age), set the environment variables
+Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://github.com/getsops/sops#encrypting-using-age), set the environment variables
 
 * `SOPS_AGE_KEY_FILE="path/age/key.txt"`
 * `SOPS_AGE_RECIPIENTS=public-key`

@@ -34,7 +34,7 @@ Then follow the installation instruction for bats here: https://github.com/bats-
 More information's here: https://github.com/bats-core/bats-core
 
 ### sops
-Can be downloaded here: https://github.com/mozilla/sops/releases
+Can be downloaded here: https://github.com/getsops/sops/releases
 
 Alternately available via [homebrew](https://brew.sh/):
 
@@ -42,7 +42,7 @@ Alternately available via [homebrew](https://brew.sh/):
 brew install sops
 ```
 
-More information's here: https://github.com/mozilla/sops
+More information's here: https://github.com/getsops/sops
 
 ### gpg
 sops only non-public cloud encryption method based on gpg.

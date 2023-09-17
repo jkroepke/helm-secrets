@@ -1,6 +1,6 @@
 # Secret Backends
 
-helm-secret support multiple backend. [sops](https://github.com/mozilla/sops) and [vals](https://github.com/variantdev/vals).
+helm-secret support multiple backend. [sops](https://github.com/getsops/sops) and [vals](https://github.com/variantdev/vals).
 sops is good for on-premise installation. vals can be used to fetch secrets from external systems like AWS Secrets Manager or Azure KeyVault. 
 
 Example for in-tree backends via an CLI option
@@ -70,9 +70,9 @@ HELM_SECRETS_VALS_PATH=/custom/location/vals helm secrets decrypt ./tests/assets
 If you use sops with helm-secrets, the sops CLI tool is needed. 
 sops 3.2.0 is required at a minimum.
 
-Download: https://github.com/mozilla/sops/releases/latest
+Download: https://github.com/getsops/sops/releases/latest
 
-Before starting using sops with gpg, consider starting to use [age](https://github.com/mozilla/sops#encrypting-using-age).
+Before starting using sops with gpg, consider starting to use [age](https://github.com/getsops/sops#encrypting-using-age).
 
 The sops secret store is enabled by default.
 

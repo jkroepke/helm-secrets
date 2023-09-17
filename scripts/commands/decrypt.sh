@@ -10,7 +10,7 @@ Decrypt secrets
 
 It uses your gpg credentials to decrypt previously encrypted values file.
 
-You can use plain sops to decrypt specific files - https://github.com/mozilla/sops
+You can use plain sops to decrypt specific files - https://github.com/getsops/sops
 
 Typical usage:
   $ helm secrets dec secrets/project/secrets.yaml
