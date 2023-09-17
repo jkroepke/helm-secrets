@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 ARG VERSION_HELM=3.11.0
-ARG VERSION_SOPS=3.7.3
+ARG VERSION_SOPS=3.8.0
 ARG VERSION_VALS=0.24.0
 
 RUN apt-get update -qq && apt-get install -yqq git curl gnupg2 ruby \
