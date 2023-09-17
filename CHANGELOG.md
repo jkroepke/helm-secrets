@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `secrets+*-import://` added syntax checks
 
 ### Fixed
-- Multiline parameter values 
+- Multiline parameter values
+- Change all mozilla/sops to getsops/mozilla (https://github.com/getsops/sops/issues/1246)
 
 ## [4.5.0] - 2023-08-14
 
