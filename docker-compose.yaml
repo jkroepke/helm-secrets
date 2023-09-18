@@ -13,7 +13,7 @@ services:
       - >-
         apt-get update 
         && apt-get install git gnupg ruby curl -y
-        && curl -sSfL https://github.com/getsops/sops/releases/download/v3.7.2/sops-v3.7.2.linux -o /usr/local/bin/sops
+        && curl -sSfL https://github.com/getsops/sops/releases/download/v3.8.0/sops-v3.8.0.linux.amd64 -o /usr/local/bin/sops
         && curl -sSfL https://releases.hashicorp.com/vault/1.10.1/vault_1.10.1_linux_amd64.zip -o /tmp/vault.zip && unzip /tmp/vault.zip && mv vault /usr/local/bin
         && curl -sSfL https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz | tar zxf - -C /usr/local/bin/ --strip-components 1 linux-amd64/helm
         && chmod +x /usr/local/bin/*
