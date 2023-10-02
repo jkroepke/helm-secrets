@@ -112,7 +112,7 @@ If you use git there is commit hook that prevents commiting decrypted files and 
 
 - Values/Secrets data are not a part of the chart. You need to manage your values, public charts contains mostly defaults without secrets - data vs code
 - To use the helm-secrets plugin you should build your `.sops.yaml` rules to make everything automatic
-- Use helm secrets <enc|dec|view|edit> for everyday work with you secret yaml files
+- Use helm secrets <encrypt|decrypt|edit> for everyday work with you secret yaml files
 - Use version control systems like GIT to work in teams and get history of versions
 - Everyday search keys is simple even with encrypted files or decrypt on-the-fly with git diff config included
 - With example helm_vars you can manage multiple world locations with multiple projects that contain multiple environments
