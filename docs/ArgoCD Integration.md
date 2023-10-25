@@ -147,7 +147,7 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 ```Dockerfile
 ARG ARGOCD_VERSION="v2.6.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
-ARG SOPS_VERSION="3.7.3"
+ARG SOPS_VERSION="3.8.1"
 ARG VALS_VERSION="0.24.0"
 ARG HELM_SECRETS_VERSION="4.5.1"
 ARG KUBECTL_VERSION="1.26.1"
@@ -263,7 +263,7 @@ repoServer:
         - name: VALS_VERSION
           value: "0.24.0"
         - name: SOPS_VERSION
-          value: "3.7.3"
+          value: "3.8.1"
       args:
         - |
           mkdir -p /custom-tools/helm-plugins

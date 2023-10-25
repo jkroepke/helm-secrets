@@ -61,7 +61,7 @@ argo-cd:
           - name: VALS_VERSION
             value: "0.24.0"
           - name: SOPS_VERSION
-            value: "3.7.3"
+            value: "3.8.1"
         args:
           - |
             mkdir -p /custom-tools/helm-plugins
