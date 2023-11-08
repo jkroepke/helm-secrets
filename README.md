@@ -167,3 +167,9 @@ An additional documentation, resources and examples can be found [here](https://
 © 2017-2020 [Zendesk](https://github.com/zendesk/helm-secrets)
 
 Licensed under the [Apache License, Version 2.0](LICENSE)
+
+## Thanks
+
+- [JetBrains IDEs](https://www.jetbrains.com/?from=jkroepke)
+
+[![JetBrains-Logo (Haupt) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=jkroepke)
