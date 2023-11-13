@@ -174,7 +174,7 @@ RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kub
     -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 # sops backend installation (optional)
-RUN curl -fsSL https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux \
+RUN curl -fsSL https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 \
     -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
 
 # vals backend installation (optional)
