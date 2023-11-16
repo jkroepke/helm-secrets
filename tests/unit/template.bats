@@ -2138,6 +2138,27 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko}" {
+    if on_windows || on_wsl; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template --set "imagePullSecrets={fr,en,de,zh,ko}" "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial "- fr"
+    assert_output --partial "- en"
+    assert_output --partial "- de"
+    assert_output --partial "- zh"
+    assert_output --partial "- ko"
+    assert_success
+}
+
+@test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko}" {
+    if on_windows || on_wsl; then
+        skip
+    fi
+
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template --set "imagePullSecrets={fr,en,de,zh,ko}" "${TEST_TEMP_DIR}/chart" 2>&1
@@ -2151,14 +2172,72 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko} with quoted values" {
+    if on_windows || on_wsl; then
+        skip
+    fi
+
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template --set "imagePullSecrets={"fr","en","de","zh","ko"}" "${TEST_TEMP_DIR}/chart" 2>&1
+    run "${HELM_BIN}" secrets template --set 'imagePullSecrets={"fr","en","de","zh","ko"}' "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial "- fr"
     assert_output --partial "- en"
     assert_output --partial "- de"
     assert_output --partial "- zh"
     assert_output --partial "- ko"
+    assert_success
+}
+
+@test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko} with escaped comma" {
+    if on_windows || on_wsl; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template --set 'imagePullSecrets={"fr","e\,n","de","zh","ko"}' "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial "- \"fr\""
+    assert_output --partial "- '\"e,n\"'"
+    assert_output --partial "- \"de\""
+    assert_output --partial "- \"zh\""
+    assert_output --partial "- \"ko\""
+    assert_success
+}
+
+@test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko} with escaped bracket" {
+    if on_windows || on_wsl; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template --set 'imagePullSecrets={fr,de,\}3\,2,ko,zh}' "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial "- fr"
+    assert_output --partial "- de"
+    assert_output --partial "- '}3,2'"
+    assert_output --partial "- zh"
+    assert_output --partial "- ko"
+    assert_success
+}
+
+@test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko} with multiple escaped values" {
+    if on_windows || on_wsl; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template --set 'imagePullSecrets={fr,d\,e,en,ko,zh},service.port=87,podAnnotations.second=Hello{Wo\,a' "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial "- fr"
+    assert_output --partial "- d,"
+    assert_output --partial "- de"
+    assert_output --partial "- zh"
+    assert_output --partial "- ko"
+
+    assert_output --partial "port: 87"
+    assert_output --partial "second: Hello{Wo,a"
     assert_success
 }
