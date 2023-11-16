@@ -84,7 +84,12 @@ helm_wrapper() {
                     _literal=""
                 fi
 
-                opt_prefix="${literal%%=*}="
+                opt_prefix="${literal%%=*}"
+
+                if [ "$opt_prefix" != "" ]; then
+                    opt_prefix="${opt_prefix}="
+                fi
+
                 literal="${literal#*=}"
 
                 # Force secret backend
