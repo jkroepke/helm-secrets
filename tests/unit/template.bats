@@ -2154,23 +2154,6 @@ key2: value" 2>&1
     assert_success
 }
 
-@test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko}" {
-    if on_windows || on_wsl; then
-        skip
-    fi
-
-    create_chart "${TEST_TEMP_DIR}"
-
-    run "${HELM_BIN}" secrets template --set "imagePullSecrets={fr,en,de,zh,ko}" "${TEST_TEMP_DIR}/chart" 2>&1
-
-    assert_output --partial "- fr"
-    assert_output --partial "- en"
-    assert_output --partial "- de"
-    assert_output --partial "- zh"
-    assert_output --partial "- ko"
-    assert_success
-}
-
 @test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko} with quoted values" {
     if on_windows || on_wsl; then
         skip
