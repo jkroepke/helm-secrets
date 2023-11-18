@@ -2163,11 +2163,11 @@ key2: value" 2>&1
 
     run "${HELM_BIN}" secrets template --set 'imagePullSecrets={"fr","en","de","zh","ko"}' "${TEST_TEMP_DIR}/chart" 2>&1
 
-    assert_output --partial "- \"fr\""
-    assert_output --partial "- \"en\""
-    assert_output --partial "- \"de\""
-    assert_output --partial "- \"zh\""
-    assert_output --partial "- \"ko\""
+    assert_output --partial "- '\"fr\"'"
+    assert_output --partial "- '\"en\"'"
+    assert_output --partial "- '\"de\"'"
+    assert_output --partial "- '\"zh\"'"
+    assert_output --partial "- '\"ko\"'"
     assert_success
 }
 
@@ -2180,11 +2180,11 @@ key2: value" 2>&1
 
     run "${HELM_BIN}" secrets template --set 'imagePullSecrets={"fr","e\,n","de","zh","ko"}' "${TEST_TEMP_DIR}/chart" 2>&1
 
-    assert_output --partial "- \"fr\""
+    assert_output --partial "- '\"fr\"'"
     assert_output --partial "- '\"e,n\"'"
-    assert_output --partial "- \"de\""
-    assert_output --partial "- \"zh\""
-    assert_output --partial "- \"ko\""
+    assert_output --partial "- '\"de\"'"
+    assert_output --partial "- '\"zh\"'"
+    assert_output --partial "- '\"ko\"'"
     assert_success
 }
 
@@ -2215,8 +2215,8 @@ key2: value" 2>&1
     run "${HELM_BIN}" secrets template --set 'imagePullSecrets={fr,d\,e,en,ko,zh},service.port=87,podAnnotations.second=Hello{Wo\,a' "${TEST_TEMP_DIR}/chart" 2>&1
 
     assert_output --partial "- fr"
-    assert_output --partial "- d,"
-    assert_output --partial "- de"
+    assert_output --partial "- d,e"
+    assert_output --partial "- en"
     assert_output --partial "- zh"
     assert_output --partial "- ko"
 

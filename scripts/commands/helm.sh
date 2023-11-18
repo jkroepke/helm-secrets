@@ -69,8 +69,12 @@ helm_wrapper() {
             IFS=","
             _literal=""
 
+            set_list=false
+
             for literal in ${literals}; do
                 unset IFS
+
+                opt_prefix=""
 
                 case "${literal}" in
                 *\\)
@@ -84,13 +88,26 @@ helm_wrapper() {
                     _literal=""
                 fi
 
-                opt_prefix="${literal%%=*}"
+                if [ "${set_list}" = "false" ]; then
+                    opt_prefix="${literal%%=*}"
 
-                if [ "$opt_prefix" != "" ]; then
-                    opt_prefix="${opt_prefix}="
+                    if [ "$opt_prefix" != "" ]; then
+                        opt_prefix="${opt_prefix}="
+                    fi
+
+                    literal="${literal#*=}"
                 fi
 
-                literal="${literal#*=}"
+                case "${literal}" in
+                \\\{*) ;;
+                *\\\}) ;;
+                \{*)
+                    set_list=true
+                    ;;
+                *\})
+                    set_list=false
+                    ;;
+                esac
 
                 # Force secret backend
                 if [ "${literal#*!}" != "${literal}" ]; then
