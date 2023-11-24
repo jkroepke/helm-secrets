@@ -31,7 +31,7 @@ _Note: is feature is turned off by default and requires the environment variable
 export HELM_SECRETS_URL_VARIABLE_EXPANSION=true
 export GH_TOKEN=ghp_xxxxxx 
 
-helm template -f secrets://https://${GH_TOKEN}@raw.githubusercontent.com/jkroepke/helm-secrets/main/examples/sops/secrets.yaml
+helm template -f secrets://https://$${GH_TOKEN}@raw.githubusercontent.com/jkroepke/helm-secrets/main/examples/sops/secrets.yaml
 ```
 
 ### Via .netrc file
