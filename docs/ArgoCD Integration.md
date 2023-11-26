@@ -333,9 +333,8 @@ There are two ways to configure ArgoCD to have access to your private key:
 
 Both methods depend on a Kubernetes secret holding the key in plain-text format (i.e., not encrypted or protected by a passphrase).
 
-### Using GPG
-#### Generating the key and export it as ASCII armored file.
-
+### Generating the key
+#### Using GPG
 ```bash
 gpg --full-generate-key --rfc4880
 ```
@@ -355,9 +354,7 @@ It looks something like this:
 gpg: key 1234567890987654321 marked as ultimately trusted
 ```
 
-### Using age
-#### Generating the key
-
+#### Using age
 ```bash
 age-keygen -o key.txt
 ```
@@ -368,11 +365,17 @@ Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://g
 * `SOPS_AGE_KEY_FILE="path/age/key.txt"`
 * `SOPS_AGE_RECIPIENTS=public-key`
 
-before running sops. Define `SOPS_AGE_RECIPIENTS` is only required on initial encryption of a plain file.
+before running sops. Defining `SOPS_AGE_RECIPIENTS` is only required on initial encryption of a plain file.
 
 ### Creating the kubernetes secret holding the exported private key
+#### Using GPG
 ```bash
 kubectl -n argocd create secret generic helm-secrets-private-keys --from-file=key.asc=assets/gpg/private2.gpg
+```
+
+#### Using age
+```bash
+kubectl -n argocd create secret generic helm-secrets-private-keys --from-file=key.txt=assets/age/key.txt
 ```
 
 ### Making the key accessible within ArgoCD
@@ -384,9 +387,11 @@ This is an example values file for the [ArgoCD Server Helm chart](https://argopr
 ```yaml
 repoServer:
   env:
-    - name: HELM_SECRETS_LOAD_GPG_KEYS
+    - name: HELM_SECRETS_LOAD_GPG_KEYS # For GPG
       # Multiple keys can be separated by space
       value: /helm-secrets-private-keys/key.asc
+    - name: SOPS_AGE_KEY_FILE # For age
+      value: /helm/secrets-private-keys/key.txt
   volumes:
     - name: helm-secrets-private-keys
       secret:
@@ -406,7 +411,7 @@ spec:
   source:
     helm:
       valueFiles:
-        # Method 1: Use gpg key defined in HELM_SECRETS_LOAD_GPG_KEYS
+        # Method 1: Use gpg key defined in HELM_SECRETS_LOAD_GPG_KEYS or age key defined in SOPS_AGE_KEY_FILE
         - secrets://secrets.yaml
 
         # Method 2: Dynamically reference the gpg key inside values file
