@@ -64,6 +64,27 @@ Alternately available via [homebrew](https://brew.sh/):
 brew info vault
 ```
 
+### onepassword (optional)
+
+The 1Password CLI is only required to run the tests with the `HELM_SECRETS_BACKEND=custom-onepassword` environment variable.
+
+Instructions on how to install and set up the 1Password CLI can be found here: https://developer.1password.com/docs/cli/get-started
+
+Create the following test item before running the tests:
+
+```shell
+op item create --category=login \
+    --title='helm-secrets test' \
+    --vault='Private' \
+    'username=test-username' \
+    'password=mytestpassword123' \
+    'email[email]=test@example.com' \
+    'data.username[text]=a-test-name' \
+    'data.password[password]=testthispassword' \
+    'data 2.email[email]=my-test@example.com' \
+    'data 2.password[password]=my-test-could-be-different!'
+```
+
 ## Run
 
 If possible start the tests from the root of the repository. Then execute:

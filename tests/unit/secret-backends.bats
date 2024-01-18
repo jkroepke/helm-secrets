@@ -116,3 +116,37 @@ load '../bats/extensions/bats-file/load'
     assert_output --partial 'production#global_secret'
     assert_success
 }
+
+@test "secret-backend: helm secrets --backend ${GIT_ROOT}/examples/backends/onepassword.sh" {
+    if ! is_custom_backend "onepassword"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/custom-backend/onepassword-secrets.yaml"
+
+    run "${HELM_BIN}" secrets --backend "${GIT_ROOT}/examples/backends/onepassword.sh" decrypt "${FILE}"
+
+    refute_output --partial 'op://'
+    assert_output --partial 'test-username'
+    assert_output --partial 'mytestpassword123'
+    assert_output --partial 'a-test-name'
+    assert_output --partial 'my-test@example.com'
+    assert_success
+}
+
+@test "secret-backend: helm secrets + env HELM_SECRETS_BACKEND=${GIT_ROOT}/examples/backends/onepassword.sh" {
+    if ! is_custom_backend "onepassword"; then
+        skip
+    fi
+
+    FILE="${TEST_TEMP_DIR}/assets/values/custom-backend/onepassword-secrets.yaml"
+
+    run env HELM_SECRETS_BACKEND="${GIT_ROOT}/examples/backends/onepassword.sh" WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets decrypt "${FILE}"
+
+    refute_output --partial 'op://'
+    assert_output --partial 'test-username'
+    assert_output --partial 'mytestpassword123'
+    assert_output --partial 'a-test-name'
+    assert_output --partial 'my-test@example.com'
+    assert_success
+}
