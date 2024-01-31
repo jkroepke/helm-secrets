@@ -5,13 +5,13 @@ load '../lib/binaries'
 
 setup_suite() {
     {
+        export HELM_SECRETS_BACKEND="${HELM_SECRETS_BACKEND:-"sops"}"
+        export HELM_SECRETS_CUSTOM_BACKEND=${HELM_SECRETS_CUSTOM_BACKEND:-""}
+
         if [[ "${HELM_SECRETS_BACKEND}" == "custom-"* ]]; then
             HELM_SECRETS_CUSTOM_BACKEND="${HELM_SECRETS_BACKEND}"
             unset HELM_SECRETS_BACKEND
         fi
-
-        export HELM_SECRETS_BACKEND="${HELM_SECRETS_BACKEND:-"sops"}"
-        export HELM_SECRETS_CUSTOM_BACKEND=${HELM_SECRETS_CUSTOM_BACKEND:-""}
 
         REAL_HOME="${HOME}"
         export HOME="${BATS_SUITE_TMPDIR}"
