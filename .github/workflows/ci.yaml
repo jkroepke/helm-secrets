@@ -161,7 +161,7 @@ jobs:
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
-        uses: Vampire/setup-wsl@v2
+        uses: Vampire/setup-wsl@v3
 
       - name: Setup coreutils
         if: "contains(matrix.shell, 'coreutils')"
