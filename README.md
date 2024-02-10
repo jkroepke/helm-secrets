@@ -9,6 +9,8 @@
 
 # helm-secrets
 
+⭐ I don't forget to star this repository! ⭐
+
 ## About
 
 helm-secrets is a Helm plugin for decrypt encrypted Helm **value files** on the fly.
