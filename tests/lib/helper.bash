@@ -46,6 +46,10 @@ is_backend() {
     [[ "${HELM_SECRETS_BACKEND}" == "${1}" ]]
 }
 
+is_custom_backend() {
+    [[ "${HELM_SECRETS_CUSTOM_BACKEND}" == "custom-${1}" ]]
+}
+
 on_windows() {
     # shellcheck disable=SC2154
     ! [[ "${_uname}" == "Darwin" || "${_uname}" == "Linux" ]] || on_wsl

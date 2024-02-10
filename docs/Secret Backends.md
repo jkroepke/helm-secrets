@@ -28,7 +28,7 @@ For more information, read [USAGE.md](./Usage.md#override-backend-per-value-file
 
 ## Implement an own secret backend
 
-Start by a copy of [sops backend](https://github.com/jkroepke/helm-secrets/blob/main/scripts/backends/sops.sh) and adjust to your own needs.
+Start by a copy of [sops backend](https://github.com/jkroepke/helm-secrets/blob/main/scripts/lib/backends/sops.sh) and adjust to your own needs.
 The custom backend can be load via `HELM_SECRETS_BACKEND` parameter or `-d` option (higher preference).
 
 ## Pass additional arguments to a secret backend
