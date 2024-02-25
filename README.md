@@ -9,7 +9,7 @@
 
 # helm-secrets
 
-⭐ I don't forget to star this repository! ⭐
+⭐ Don't forget to star this repository! ⭐
 
 ## About
 
