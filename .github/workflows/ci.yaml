@@ -370,7 +370,7 @@ jobs:
       - unit-tests
       - integration-tests
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: .
 
