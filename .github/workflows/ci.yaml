@@ -143,7 +143,7 @@ jobs:
           version: ${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.5.0
+        uses: mdgreenwald/mozilla-sops-action@v1.6.0
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -248,7 +248,7 @@ jobs:
           version: ${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.5.0
+        uses: mdgreenwald/mozilla-sops-action@v1.6.0
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -329,7 +329,7 @@ jobs:
           version: ${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.5.0
+        uses: mdgreenwald/mozilla-sops-action@v1.6.0
         with:
           version: ${{ env.VERSION_SOPS }}
 
