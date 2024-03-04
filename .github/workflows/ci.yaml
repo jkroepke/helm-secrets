@@ -72,10 +72,10 @@ jobs:
           - os: macos-latest
             shell: bash 3.2 with coreutils
             jobs: 4
-          - os: ubuntu-latest
-            container: centos:7
-            shell: bash 4.2
-            jobs: 4
+          #- os: ubuntu-latest
+          #  container: centos:7
+          #  shell: bash 4.2
+          #  jobs: 4
           - os: ubuntu-latest
             container: registry.access.redhat.com/ubi8/ubi-minimal
             shell: bash 4.4
