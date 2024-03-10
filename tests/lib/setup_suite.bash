@@ -95,10 +95,9 @@ EzAA
 
 teardown_suite() {
     {
-        set -x
         "${GPGCONF_BIN}" --kill gpg-agent
 
-        
+        ps aux 
         tasklist
     } >&3
     
