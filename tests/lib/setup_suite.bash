@@ -97,7 +97,11 @@ teardown_suite() {
     {
         set -x
         "${GPGCONF_BIN}" --kill gpg-agent
+
+        
+        tasklist
     } >&2
+    
 }
 
 helm_plugin_install() {
