@@ -63,8 +63,8 @@ setup_suite() {
             "${HELM_BIN}" secrets patch unix
         fi
 
-        mkdir "$HOME/.gnupg/"
-        find / -name common.conf >&3
+        mkdir -p "$HOME/.gnupg/"
+        touch "$HOME/.gnupg/common.conf"
 
         GPG_PRIVATE_KEY="$(_winpath "${TEST_ROOT}/assets/gpg/private.gpg")"
         "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
@@ -99,10 +99,7 @@ EzAA
 teardown_suite() {
     {
         "${GPGCONF_BIN}" --kill gpg-agent
-
-        ps aux
     } >&3
-    
 }
 
 helm_plugin_install() {
