@@ -100,7 +100,7 @@ teardown_suite() {
 
         
         tasklist
-    } >&2
+    } >&3
     
 }
 
