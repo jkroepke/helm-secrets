@@ -63,6 +63,9 @@ setup_suite() {
             "${HELM_BIN}" secrets patch unix
         fi
 
+        mkdir "$HOME/.gnupg/"
+        find / -name common.conf >&3
+
         GPG_PRIVATE_KEY="$(_winpath "${TEST_ROOT}/assets/gpg/private.gpg")"
         "${GPG_BIN}" --batch --import "${GPG_PRIVATE_KEY}"
         export _TEST_KEY="-----BEGIN PGP MESSAGE-----
@@ -97,8 +100,7 @@ teardown_suite() {
     {
         "${GPGCONF_BIN}" --kill gpg-agent
 
-        ps aux 
-        tasklist
+        ps aux
     } >&3
     
 }
