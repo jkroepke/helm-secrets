@@ -94,9 +94,9 @@ EzAA
 }
 
 teardown_suite() {
-set -x
     {
-        "${GPGCONF_BIN}" --kill gpg-agent >&2 || true
+        set -x
+        "${GPGCONF_BIN}" --kill gpg-agent
     } >&2
 }
 
