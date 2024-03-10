@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -x
-
 export WSLENV="${WSLENV:-}"
 
 setup() {
