@@ -149,7 +149,7 @@ ARG ARGOCD_VERSION="v2.6.2"
 FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.8.1"
 ARG VALS_VERSION="0.24.0"
-ARG HELM_SECRETS_VERSION="4.5.1"
+ARG HELM_SECRETS_VERSION="4.6.0"
 ARG KUBECTL_VERSION="1.26.1"
 # vals or sops
 ENV HELM_SECRETS_BACKEND="vals" \
@@ -257,7 +257,7 @@ repoServer:
       command: [sh, -ec]
       env:
         - name: HELM_SECRETS_VERSION
-          value: "4.5.1"
+          value: "4.6.0"
         - name: KUBECTL_VERSION
           value: "1.26.1"
         - name: VALS_VERSION
