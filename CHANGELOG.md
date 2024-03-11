@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-
 - Added a new custom backend for the 1Password CLI, which is located at `examples/backends/onepassword.sh` (#431)
+
+### Fixes
+- fix: parsing of array values (https://github.com/jkroepke/helm-secrets/issues/418)
 
 ## [4.5.1] - 2023-09-23
 
