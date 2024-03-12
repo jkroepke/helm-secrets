@@ -310,8 +310,8 @@ data:
 The [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd) supports defining `argocd-cm` settings through [values.yaml](https://github.com/argoproj/argo-helm/blob/6ff050f6f57edda1e6912ef0bb17d085684e103e/charts/argo-cd/values.yaml#L1155-L1157):
 
 ```yaml
-configs:
-  cm:
+server:
+  config:
     helm.valuesFileSchemes: >-
       secrets+gpg-import, secrets+gpg-import-kubernetes,
       secrets+age-import, secrets+age-import-kubernetes,
@@ -391,7 +391,7 @@ repoServer:
       # Multiple keys can be separated by space
       value: /helm-secrets-private-keys/key.asc
     - name: SOPS_AGE_KEY_FILE # For age
-      value: /helm/secrets-private-keys/key.txt
+      value: /helm-secrets-private-keys/key.txt
   volumes:
     - name: helm-secrets-private-keys
       secret:
