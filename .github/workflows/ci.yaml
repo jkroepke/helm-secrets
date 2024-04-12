@@ -138,7 +138,7 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@v4
         with:
           version: ${{ env.VERSION_HELM }}
 
@@ -243,7 +243,7 @@ jobs:
           ruby-version: "3.0"
 
       - name: Setup Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@v4
         with:
           version: ${{ env.VERSION_HELM }}
 
@@ -283,10 +283,12 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - run: rm -rf ./coverage/
 
@@ -324,7 +326,7 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@v4
         with:
           version: ${{ env.VERSION_HELM }}
 
