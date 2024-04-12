@@ -283,10 +283,12 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - run: rm -rf ./coverage/
 
