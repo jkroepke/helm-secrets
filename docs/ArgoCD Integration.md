@@ -55,7 +55,7 @@ spec:
         # Example Method 3: (Assumptions: Pre-seeded gpg agent is running or kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
 
-      # fileParameters (--set-file) are supported, too. 
+      # fileParameters (--set-file) are supported, too.
       fileParameters:
         - name: config
           path: secrets://secrets.yaml
@@ -150,7 +150,7 @@ FROM argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION="3.8.1"
 ARG VALS_VERSION="0.37.1"
 ARG HELM_SECRETS_VERSION="4.6.0"
-ARG KUBECTL_VERSION="1.26.1"
+ARG KUBECTL_VERSION="1.30.1"
 # vals or sops
 ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
@@ -259,7 +259,7 @@ repoServer:
         - name: HELM_SECRETS_VERSION
           value: "4.6.0"
         - name: KUBECTL_VERSION
-          value: "1.26.1"
+          value: "1.30.1"
         - name: VALS_VERSION
           value: "0.37.1"
         - name: SOPS_VERSION
@@ -268,7 +268,7 @@ repoServer:
         - |
           mkdir -p /custom-tools/helm-plugins
           wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf-;
-          
+
           wget -qO /custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64
           wget -qO /custom-tools/sops https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
           wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
@@ -276,7 +276,7 @@ repoServer:
           wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
 
           cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm
-          
+
           chmod +x /custom-tools/*
       volumeMounts:
         - mountPath: /custom-tools
