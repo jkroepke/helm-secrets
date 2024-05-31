@@ -1,6 +1,7 @@
 [![CI](https://github.com/jkroepke/helm-secrets/workflows/CI/badge.svg)](https://github.com/jkroepke/helm-secrets/)
 [![License](https://img.shields.io/github/license/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/blob/main/LICENSE)
-[![Current Release](https://img.shields.io/github/release/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/releases/latest)
+[![Current Release](https://img.shields.io/github/release/jkroepke/helm-secrets.svg?logo=github)](https://github.com/jkroepke/helm-secrets/releases/latest)
+[![GitHub Repo stars](https://img.shields.io/github/stars/jkroepke/helm-secrets?style=flat&logo=github)](https://github.com/jkroepke/helm-secrets/stargazers)
 [![GitHub all releases](https://img.shields.io/github/downloads/jkroepke/helm-secrets/total?logo=github)](https://github.com/jkroepke/helm-secrets/releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/jkroepke/helm-secrets.svg)](https://github.com/jkroepke/helm-secrets/pulls)
