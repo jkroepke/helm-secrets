@@ -3,7 +3,7 @@ FROM alpine:latest
 ARG VERSION_HELM=3.11.0
 ARG VERSION_SOPS=3.8.1
 ARG VERSION_VALS=0.37.1
-ARG VERSION_KUBECTL=0.21.0
+ARG VERSION_KUBECTL=1.30.1
 
 SHELL ["/bin/sh", "-exc"]
 
@@ -21,4 +21,3 @@ COPY scripts/ /home/user/.local/share/helm/plugins/helm-plugins/scripts/
 COPY plugin.yaml /home/user/.local/share/helm/plugins/helm-plugins/
 
 USER user
-
