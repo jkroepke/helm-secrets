@@ -69,7 +69,7 @@ spec:
 Helm will call helm-secrets
 because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
 
-## Multi-Source Application Support [BETA]
+## Multi-Source Application Support
 
 ArgoCD has limited supported for helm-secrets and Multi-Source application.
 
