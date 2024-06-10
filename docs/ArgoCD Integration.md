@@ -71,7 +71,7 @@ because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c55
 
 ## Multi-Source Application Support [BETA]
 
-ArgoCD has limited supported for helm-secrets and Multi-Source application. `sops` backend is not tested yet.
+ArgoCD has limited supported for helm-secrets and Multi-Source application.
 
 References:
 * https://github.com/argoproj/argo-cd/issues/11866
