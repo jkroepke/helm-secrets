@@ -547,7 +547,6 @@ spec:
 
 # Known Limitations
 ## External Chart and local values
-Please note that it is not possible to use helm secrets in Argo CD for external Charts.
 Please take a look at [this issue](https://github.com/argoproj/argo-cd/issues/7257) for more information.
 
 As workaround, you can fetch additional values from remote locations:
