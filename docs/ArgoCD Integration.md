@@ -69,9 +69,9 @@ spec:
 Helm will call helm-secrets
 because it is [registered](https://github.com/jkroepke/helm-secrets/blob/4e61c556655b99e16d2faff5fd2312251ad06456/plugin.yaml#L12-L19) as [downloader plugin](https://helm.sh/docs/topics/plugins/#downloader-plugins).
 
-## Multi-Source Application Support [BETA]
+## Multi-Source Application Support
 
-ArgoCD has limited supported for helm-secrets and Multi-Source application. `sops` backend is not tested yet.
+ArgoCD has limited supported for helm-secrets and Multi-Source application.
 
 References:
 * https://github.com/argoproj/argo-cd/issues/11866
@@ -547,7 +547,6 @@ spec:
 
 # Known Limitations
 ## External Chart and local values
-Please note that it is not possible to use helm secrets in Argo CD for external Charts.
 Please take a look at [this issue](https://github.com/argoproj/argo-cd/issues/7257) for more information.
 
 As workaround, you can fetch additional values from remote locations:
