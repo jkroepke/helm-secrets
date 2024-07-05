@@ -307,7 +307,7 @@ data:
     https
 ```
 
-The [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd) supports defining `argocd-cm` settings through [values.yaml](https://github.com/argoproj/argo-helm/blob/6ff050f6f57edda1e6912ef0bb17d085684e103e/charts/argo-cd/values.yaml#L1155-L1157):
+The [ArgoCD Server Helm chart](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd) supports defining `argocd-cm` settings through [values.yaml](https://github.com/argoproj/argo-helm/blob/de281eca6e3e73bc8d96d29cd1c8cc637ab2752b/charts/argo-cd/values.yaml#L164):
 
 ```yaml
 configs:
