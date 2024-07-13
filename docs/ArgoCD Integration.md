@@ -145,12 +145,13 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 <p>
 
 ```Dockerfile
-ARG ARGOCD_VERSION="v2.6.2"
+ARG ARGOCD_VERSION="v2.11.4"
 FROM argoproj/argocd:$ARGOCD_VERSION
-ARG SOPS_VERSION="3.8.1"
-ARG VALS_VERSION="0.37.1"
-ARG HELM_SECRETS_VERSION="4.6.0"
-ARG KUBECTL_VERSION="1.30.1"
+ARG SOPS_VERSION=3.9.0
+ARG KUBECTL_VERSION=1.30.2
+ARG VALS_VERSION=0.37.3
+ARG HELM_SECRETS_VERSION=4.6.0
+
 # vals or sops
 ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
@@ -158,7 +159,13 @@ ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
     HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
-    HELM_SECRETS_WRAPPER_ENABLED=false
+    HELM_SECRETS_WRAPPER_ENABLED=false \
+    HELM_PLUGINS=/gitops-tools/helm-plugins/ \
+    HELM_SECRETS_CURL_PATH=/gitops-tools/curl \
+    HELM_SECRETS_SOPS_PATH=/gitops-tools/sops \
+    HELM_SECRETS_VALS_PATH=/gitops-tools/vals \
+    HELM_SECRETS_KUBECTL_PATH=/gitops-tools/kubectl \
+    PATH="$PATH:/gitops-tools"
 
 # Optionally, set default gpg key for sops files
 # ENV HELM_SECRETS_LOAD_GPG_KEYS=/path/to/gpg.key
@@ -166,27 +173,42 @@ ENV HELM_SECRETS_BACKEND="vals" \
 USER root
 RUN apt-get update && \
     apt-get install -y \
-      curl && \
+      wget && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    mkdir -p /gitops-tools/helm-plugins
 
-RUN curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
-    -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
+RUN \ 
+    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/') && \
+    wget -qO "/gitops-tools/curl" "https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${GO_ARCH}" && \
+    true
+
+RUN \
+    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
+    wget -qO "/gitops-tools/kubectl" "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl" && \
+    true
 
 # sops backend installation (optional)
-RUN curl -fsSL https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 \
-    -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
+RUN \
+    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
+    wget -qO "/gitops-tools/sops" "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}" && \
+    true
 
 # vals backend installation (optional)
-RUN curl -fsSL https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz \
-    | tar xzf - -C /usr/local/bin/ vals \
-    && chmod +x /usr/local/bin/vals
+RUN \
+    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
+    wget -qO- "https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz" | tar zxv -C /gitops-tools vals && \
+    true
 
-RUN ln -sf "$(helm env HELM_PLUGINS)/helm-secrets/scripts/wrapper/helm.sh" /usr/local/sbin/helm
+# helm secert installation 
+RUN \
+    wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz" | tar -C /gitops-tools/helm-plugins -xzf- && \
+    true
+
+RUN chmod +x /gitops-tools/* && ln -sf /gitops-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /usr/local/sbin/helm
 
 USER argocd
 
-RUN helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkroepke/helm-secrets
 ```
 
 </details>
@@ -207,15 +229,15 @@ This is an example values file for the [ArgoCD Server Helm chart](https://github
 repoServer:
   env:
     - name: HELM_PLUGINS
-      value: /custom-tools/helm-plugins/
+      value: /gitops-tools/helm-plugins/
     - name: HELM_SECRETS_CURL_PATH
-      value: /custom-tools/curl
+      value: /gitops-tools/curl
     - name: HELM_SECRETS_SOPS_PATH
-      value: /custom-tools/sops
+      value: /gitops-tools/sops
     - name: HELM_SECRETS_VALS_PATH
-      value: /custom-tools/vals
+      value: /gitops-tools/vals
     - name: HELM_SECRETS_KUBECTL_PATH
-      value: /custom-tools/kubectl
+      value: /gitops-tools/kubectl
     - name: HELM_SECRETS_BACKEND
       value: sops
     # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
@@ -236,18 +258,18 @@ repoServer:
       # Multiple keys can be separated by space
       value: /helm-secrets-private-keys/key.asc
   volumes:
-    - name: custom-tools
+    - name: gitops-tools
       emptyDir: {}
     # kubectl create secret generic helm-secrets-private-keys --from-file=key.asc=assets/gpg/private2.gpg
     - name: helm-secrets-private-keys
       secret:
         secretName: helm-secrets-private-keys
   volumeMounts:
-    - mountPath: /custom-tools
-      name: custom-tools
+    - mountPath: /gitops-tools
+      name: gitops-tools
     - mountPath: /usr/local/sbin/helm
       subPath: helm
-      name: custom-tools
+      name: gitops-tools
     - mountPath: /helm-secrets-private-keys/
       name: helm-secrets-private-keys
   initContainers:
@@ -259,28 +281,29 @@ repoServer:
         - name: HELM_SECRETS_VERSION
           value: "4.6.0"
         - name: KUBECTL_VERSION
-          value: "1.30.1"
+          value: "1.30.2"
         - name: VALS_VERSION
-          value: "0.37.1"
+          value: "0.37.3"
         - name: SOPS_VERSION
-          value: "3.8.1"
+          value: "3.9.0"
       args:
         - |
-          mkdir -p /custom-tools/helm-plugins
-          wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf-;
+          mkdir -p /gitops-tools/helm-plugins
 
-          wget -qO /custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64
-          wget -qO /custom-tools/sops https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
-          wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+          GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/')
+          wget -qO /gitops-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${GO_ARCH}
 
-          wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz | tar -xzf- -C /custom-tools/ vals;
+          GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
+          wget -qO /gitops-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl
+          wget -qO /gitops-tools/sops https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}
+          wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz | tar zxv -C /gitops-tools vals
+          wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /gitops-tools/helm-plugins -xzf-
 
-          cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm
-
-          chmod +x /custom-tools/*
+          chmod +x /gitops-tools/*
+          cp /gitops-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /gitops-tools/helm
       volumeMounts:
-        - mountPath: /custom-tools
-          name: custom-tools
+        - mountPath: /gitops-tools
+          name: gitops-tools
 ```
 
 </details>
