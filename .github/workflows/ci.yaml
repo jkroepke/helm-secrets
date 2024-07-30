@@ -265,7 +265,7 @@ jobs:
           bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"'
           bash tests/bats/core/bin/bats -v
           sops --version
-          gpg --version
+          gpg --version || gpg2 --version
           vals version
 
       - name: Prepare bashcov
