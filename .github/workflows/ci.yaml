@@ -182,7 +182,7 @@ jobs:
           bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh || echo unknown)"'
           bash tests/bats/core/bin/bats -v
           sops --version
-          gpg --version || gpg2 --version
+          gpg2 --version
           vals version
 
       - name: Print Environment (Windows)
@@ -265,7 +265,7 @@ jobs:
           bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh)"'
           bash tests/bats/core/bin/bats -v
           sops --version
-          gpg --version || gpg2 --version
+          gpg --version
           vals version
 
       - name: Prepare bashcov
