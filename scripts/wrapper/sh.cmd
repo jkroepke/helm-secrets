@@ -270,6 +270,7 @@ SET WSLENV=HELM_SECRET_WSL_INTEROP:%WSLENV%
 
 SET SCRIPT="%1"
 if not [x%SCRIPT:\=%]==[x%SCRIPT%] (
+    SET SCRIPT="%SCRIPT:'=%"
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
     FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %SCRIPT:\=/%`) DO (
         SET SCRIPT="%%F"
