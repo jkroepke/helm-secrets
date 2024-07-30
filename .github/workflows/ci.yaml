@@ -178,11 +178,12 @@ jobs:
         run: wsl bash -c 'apt-get update -qq && apt-get install -yqq parallel'
 
       - name: Print Environment
+        continue-on-error: true
         run: |-
           bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh || echo unknown)"'
           bash tests/bats/core/bin/bats -v
           sops --version
-          gpg2 --version
+          gpg --version
           vals version
 
       - name: Print Environment (Windows)
