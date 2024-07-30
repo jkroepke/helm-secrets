@@ -17,6 +17,16 @@ IF NOT DEFINED SOPS_GPG_EXEC (
     )
 )
 
+:: Some environment name it gpg2.exe
+IF NOT DEFINED SOPS_GPG_EXEC (
+    where /q gpg2.exe
+    IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 (
+        FOR /F "tokens=* USEBACKQ" %%F IN (`where gpg.exe`) DO (
+            SET SOPS_GPG_EXEC=%%F
+        )
+    )
+)
+
 :: If HELM_SECRETS_WINDOWS_SHELL is provided, use it.
 if not "%HELM_SECRETS_WINDOWS_SHELL%"=="" GOTO :ENVSH
 
