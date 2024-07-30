@@ -1,4 +1,7 @@
 @echo off
+
+SETLOCAL DisableDelayedExpansion
+
 IF DEFINED HELM_DEBUG (
     IF "%HELM_DEBUG%"=="1" (
         @echo on
