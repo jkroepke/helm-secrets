@@ -7,7 +7,7 @@ Since ArgoCD is a shared environment,
 consider reading [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
 to prevent users from reading files outside the own directory.
 
-➡ With helm-secrets, you can encrypt value files only. Encypted manifests/templates are not supported.
+➡ With helm-secrets, you can encrypt value files only. Encrypted manifests/templates are not supported.
 
 # Prerequisites
 
@@ -77,18 +77,18 @@ References:
 * https://github.com/argoproj/argo-cd/issues/11866
 * https://github.com/argoproj/argo-cd/pull/11966
 
-On ArgoCD 2.6.x, helm-secrets isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginn of a string.
-This is in conflict with helm-secrets, since the string needs to beginn with `secrets://`. On top, ArgoCD do not resolve references in URLs.
+On ArgoCD 2.6.x, helm-secrets isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginning of a string.
+This is in conflict with helm-secrets, since the string needs to begin with `secrets://`. On top, ArgoCD do not resolve references in URLs.
 
 `HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH` must be set to `true`, since ArgoCD pass value files with absolute file path.
 
 Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) and
 `HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true` is set on the argocd-repo-server.
-Please ensure you are following the lastest installation instructions (updated on 2023-03-03).
+Please ensure you are following the latest installation instructions (updated on 2023-03-03).
 
 ### sops backend
 
-If you are using `sops` backend, you have to [mounte](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
+If you are using `sops` backend, you have to [mount](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
 the gpg keys on the `argocd-repo-server` and additionally define the environment variable `HELM_SECRETS_LOAD_GPG_KEYS` with the path of gpg key as values.
 Read more about mounting gpg keys [here](#method-1--mount-the-private-key-from-a-kubernetes-secret-as-volume-on-the-argocd-repo-server)
 

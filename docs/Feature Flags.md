@@ -16,4 +16,4 @@ In this case, `GITHUB_TOKEN` will be substituted with an environment variable na
 
 Some environment like ArgoCD do the same, but with an [limited](https://argo-cd.readthedocs.io/en/stable/user-guide/build-environment/) subset of environment variables. 
 
-In such situations, the `$` needs escaped to prevent evalution in environments. For ArgoCD, it's an additional dolar sign like `$${GITHUB_TOKEN}`. Other environments are working with back-slash like `\${GITHUB_TOKEN}`
+In such situations, the `$` needs escaped to prevent evaluation in environments. For ArgoCD, it's an additional dollar sign like `$${GITHUB_TOKEN}`. Other environments are working with back-slash like `\${GITHUB_TOKEN}`

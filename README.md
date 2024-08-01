@@ -14,10 +14,10 @@
 
 ## About
 
-helm-secrets is a Helm plugin for decrypt encrypted Helm **value files** on the fly.
+helm-secrets is a Helm plugin to decrypt encrypted Helm **value files** on the fly.
 
-* Use [sops](https://github.com/getsops/sops) to encrypt value files and store them into git.
-* Store your secrets a cloud native secret manager like AWS SecretManager, Azure KeyVault or HashiCorp Vault and inject them inside value files or templates.
+* Use [sops](https://github.com/getsops/sops) to encrypt value files and store them in git.
+* Store your secrets in a cloud native secret manager like AWS SecretManager, Azure KeyVault or HashiCorp Vault and inject them inside value files or templates.
 * Use helm-secret in your favorite deployment tool or GitOps Operator like ArgoCD
 
 Who’s actually using helm-secrets? If you are using helm-secrets in your company or organization, we would like to invite you to create a PR to add your
@@ -34,7 +34,7 @@ For full documentation, read [GitHub wiki](https://github.com/jkroepke/helm-secr
 ### Decrypt secrets via protocol handler
 
 Run decrypted command on specific value files. 
-This is method is preferred over the plugin command below. 
+This method is preferred over the plugin command below. 
 This mode is used in [ArgoCD](https://github.com/jkroepke/helm-secrets/wiki/ArgoCD-Integration) environments.
 
 On Windows, the command `helm secrets patch windows` needs to be run first.
@@ -47,7 +47,7 @@ See [Usage](https://github.com/jkroepke/helm-secrets/wiki/Usage) for more inform
 
 ### Decrypt secrets via plugin command
 
-Wraps the whole  `helm` command. Slow on multiple value files.
+Wraps the whole `helm` command. Slow on multiple value files.
 
 ```bash
 helm secrets upgrade name . -f secrets.yaml
@@ -58,8 +58,7 @@ helm secrets upgrade name . -f secrets.yaml
 
 *requires helm 3.9+; vals 0.20+*
 
-helm-secrets supports evaluating [vals](https://github.com/variantdev/vals) expressions inside Helm templates by
-enable the flag `--evaluate-templates`.
+helm-secrets supports evaluating [vals](https://github.com/variantdev/vals) expressions inside Helm templates with the flag `--evaluate-templates`.
 
 **secrets.yaml**
 
@@ -140,7 +139,7 @@ resource "helm_release" "example" {
 }
 ```
 
-An example of how to use helm-secrets with Terraform could be found in [examples/terraform](examples/terraform/helm.tf).
+An example of how to use helm-secrets with Terraform can be found in [examples/terraform](examples/terraform/helm.tf).
 
 ## Secret backends
 
@@ -151,7 +150,7 @@ See [Secret-Backends](https://github.com/jkroepke/helm-secrets/wiki/Secret-Backe
 
 ## Documentation
 
-An additional documentation, resources and examples can be found [here](https://github.com/jkroepke/helm-secrets/wiki/Usage).
+Additional documentation, resources and examples can be found [here](https://github.com/jkroepke/helm-secrets/wiki/Usage).
 
 ## Moving parts of project
 
@@ -160,7 +159,7 @@ An additional documentation, resources and examples can be found [here](https://
 - [`scripts/commands`](scripts/commands) - Sub Commands of `helm secrets` are defined here.
 - [`scripts/lib`](scripts/lib) - Common functions used by `helm secrets`.
 - [`scripts/wrapper`](scripts/wrapper) - Wrapper scripts for Windows systems.
-- [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more informations.
+- [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more information.
 - [`examples`](examples) - Some example secrets.yaml
 
 ## Copyright and license
