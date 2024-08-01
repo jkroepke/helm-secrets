@@ -122,7 +122,7 @@ HELM_SECRETS_BACKEND=vault bats -r tests/unit
 HELM_SECRETS_BACKEND=vault bats -r tests/it
 ```
 
-The vault tests require a reachable vault server. Start one on you local machine by run:
+The vault tests require a reachable vault server. Start one on your local machine by running:
 
 ```bash
 vault server -dev -dev-root-token-id=test
