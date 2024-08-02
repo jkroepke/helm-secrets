@@ -186,12 +186,6 @@ jobs:
           gpg --version
           vals version
 
-      - name: Print Environment (Windows)
-        if: "contains(matrix.os, 'windows-latest')"
-        run: |-
-          scripts/wrapper/sh.cmd --version
-          scripts/wrapper/sh.cmd -c -- "uname -a"
-
       - name: Run helm-secrets w/o bats
         run: |-
           helm plugin install "${{ github.event_name == 'pull_request'

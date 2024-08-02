@@ -421,7 +421,7 @@ key2: value" 2>&1
     SPACE_DIR="${TEST_TEMP_DIR}/a b"
     mkdir "${SPACE_DIR}"
 
-    env HELM_PLUGINS="${SPACE_DIR}" helm_plugin_install "secrets"
+    cp -r "$("${HELM_BIN}" env HELM_PLUGINS)" "${SPACE_DIR}"
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${SPACE_DIR}/${VALUES}"
