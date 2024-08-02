@@ -417,6 +417,26 @@ key2: value" 2>&1
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "template: helm template w/ chart + secrets.yaml + space path" {
+    SPACE_DIR="${TEST_TEMP_DIR}/a b"
+    mkdir "${SPACE_DIR}"
+
+    env HELM_PLUGINS="${SPACE_DIR}" helm_plugin_install "secrets"
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${SPACE_DIR}/${VALUES}"
+
+    create_chart "${SPACE_DIR}"
+
+    run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" secrets template "${SPACE_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output --partial "port: 81"
+    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
 @test "template: helm template w/ chart + invalid yaml" {
     if [[ "${VALS_BIN}" = *".exe" ]]; then
         skip "Unix path w/ vals.exe"
