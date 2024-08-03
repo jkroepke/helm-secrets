@@ -8,7 +8,7 @@ command: "$HELM_PLUGIN_DIR/scripts/run.sh"
 platformCommand:
   - os: windows
     command: >-
-      cmd /E:ON /V:ON /c !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
+      cmd /c $HELM_PLUGIN_DIR\scripts\wrapper\run.cmd
 
 downloaders:
   - command: "scripts/run.sh downloader"
