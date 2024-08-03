@@ -79,7 +79,6 @@ if [ "${LOAD_GPG_KEYS}" != "false" ]; then
 fi
 
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
-    shift
     argc=$#
     j=0
 
