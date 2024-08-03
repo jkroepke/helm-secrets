@@ -420,9 +420,12 @@ key2: value" 2>&1
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    cp -a "$("${HELM_BIN}" env HELM_PLUGINS)/." "${SPACE_DIR}" >&2
-
     create_chart "${TEST_TEMP_DIR}"
+
+    run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
+
+    assert_success
+
 
     run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
