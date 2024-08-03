@@ -2,11 +2,6 @@
 
 SETLOCAL DisableDelayedExpansion
 
-SET SCRIPT_DIR="%~dp0"
-for %%F in ("%SCRIPT_DIR%") do set PLUGIN_DIR=%%~dpF
-SET RUNSH="%PLUGIN_DIR%\run.sh"
-SET RUNSH="%RUNSH:\=/%"
-
 IF DEFINED HELM_DEBUG (
     IF "%HELM_DEBUG%"=="1" (
         @echo on
@@ -15,6 +10,11 @@ IF DEFINED HELM_DEBUG (
         @echo on
     )
 )
+
+SET SCRIPT_DIR=%~dp0
+SET SCRIPT_DIR=%SCRIPT_DIR:~0,-1%
+FOR %%F in ("%SCRIPT_DIR%") do SET PLUGIN_DIR=%%~dpF
+SET RUNSH=%PLUGIN_DIR%run.sh
 
 IF NOT DEFINED SOPS_GPG_EXEC (
     where /q gpg.exe
