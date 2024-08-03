@@ -2,7 +2,8 @@
 
 SETLOCAL DisableDelayedExpansion
 
-SET RUNSH="%~dp0../run.sh"
+SET SCRIPT_DIR="%~dp0"
+SET RUNSH="%~dpSCRIPT_DIRrun.sh"
 SET RUNSH="%RUNSH:\=/%"
 
 IF DEFINED HELM_DEBUG (
