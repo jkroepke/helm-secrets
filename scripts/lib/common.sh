@@ -107,6 +107,8 @@ CYGWIN* | MINGW64_NT*)
         fi
     }
     _helm_winpath() { _winpath "$@"; }
+
+    _sed_i 's!  - command: .*!  - command: "scripts/wrapper/run.cmd downloader"!' "${HELM_PLUGIN_DIR}/plugin.yaml"
     ;;
 Darwin)
     case $(sed --help 2>&1) in
