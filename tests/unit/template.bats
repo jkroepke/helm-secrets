@@ -426,9 +426,9 @@ key2: value" 2>&1
 
     run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
-    refute_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
