@@ -24,7 +24,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets edit nonexists
     assert_failure
-    assert_output --partial 'config file not found and no keys provided through command line options'
+    assert_output --partial 'config file not found, or has no creation rules, and no keys provided through command line options'
 }
 
 @test "edit: File if not exits + valid encryption config" {
