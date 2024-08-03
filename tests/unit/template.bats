@@ -414,7 +414,7 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + secrets.yaml + space path" {
-    SPACE_DIR="${TEST_TEMP_DIR}/a b"
+    SPACE_DIR="${TEST_TEMP_DIR}/plugin dir"
     mkdir "${SPACE_DIR}"
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
