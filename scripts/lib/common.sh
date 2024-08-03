@@ -135,3 +135,7 @@ Darwin)
     fi
     ;;
 esac
+
+if on_wsl || on_cygwin; then
+    _sed_i 's!  - command: .*!  - command: "scripts/wrapper/run.cmd downloader"!' "${HELM_PLUGIN_DIR}/plugin.yaml"
+fi

@@ -426,7 +426,6 @@ key2: value" 2>&1
 
     assert_success
 
-
     run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
