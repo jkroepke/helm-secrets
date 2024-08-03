@@ -399,10 +399,6 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + secrets.yaml + special path" {
-    if on_windows; then
-        skip "Skip on Windows"
-    fi
-
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
 
@@ -421,18 +417,18 @@ key2: value" 2>&1
     SPACE_DIR="${TEST_TEMP_DIR}/a b"
     mkdir "${SPACE_DIR}"
 
-    cp -r "$("${HELM_BIN}" env HELM_PLUGINS)" "${SPACE_DIR}"
-
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${SPACE_DIR}/${VALUES}"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    create_chart "${SPACE_DIR}"
+    cp -a "$("${HELM_BIN}" env HELM_PLUGINS)/." "${SPACE_DIR}" >&2
 
-    run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" secrets template "${SPACE_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    create_chart "${TEST_TEMP_DIR}"
 
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    refute_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
