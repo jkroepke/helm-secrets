@@ -3,7 +3,8 @@
 SETLOCAL DisableDelayedExpansion
 
 SET SCRIPT_DIR="%~dp0"
-SET RUNSH="%~dpSCRIPT_DIR%run.sh"
+for %%F in ("%SCRIPT_DIR%") do set PLUGIN_DIR=%%~dpF
+SET RUNSH="%PLUGIN_DIR%\run.sh"
 SET RUNSH="%RUNSH:\=/%"
 
 IF DEFINED HELM_DEBUG (
