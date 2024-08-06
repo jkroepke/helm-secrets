@@ -276,7 +276,7 @@ IF "x%HELM_SECRETS_CURL_PATH:\=%"=="x%HELM_SECRETS_CURL_PATH%" (
 SET HELM_SECRET_WSL_INTEROP=1
 SET WSLENV=HELM_SECRET_WSL_INTEROP:%WSLENV%
 
-if not [x%RUNSH:\=%]==[x%RUNSH%] (
+if not ["x%RUNSH:\=%"]==["x%RUNSH%"] (
     :: CMD output to variable - https://stackoverflow.com/a/6362922/8087167
     FOR /F "tokens=* USEBACKQ" %%F IN (`wsl wslpath %RUNSH:\=/%`) DO (
         SET RUNSH="%%F"
