@@ -418,7 +418,7 @@ key2: value" 2>&1
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     SPACE_DIR="plugin dir"
-    mkdir -p "${SPACE_DIR}" >&2
+    mkdir -p "${SPACE_DIR}/helm-secrets/" >&2
     cp -r "${GIT_ROOT}"/{plugin.yaml,scripts} "${SPACE_DIR}/helm-secrets/" >&2
 
     run env HELM_PLUGINS="${SPACE_DIR}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list
