@@ -414,16 +414,19 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + secrets.yaml + space path" {
+    SPACE_DIR="${TEST_TEMP_DIR}/plugin dir"
+    mkdir "${SPACE_DIR}"
+ 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
-
+    
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
+    run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
 
     assert_success
 
-    run env HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    run env HELM_PLUGINS="${SPACE_DIR}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
