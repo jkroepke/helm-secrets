@@ -422,7 +422,9 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run env HELM_PLUGINS="${SPACE_DIR}" WSLENV="HELM_PLUGINS/p:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
+    env HELM_PLUGINS="${SPACE_DIR}" WSLENV="HELM_PLUGINS/p:${WSLENV}" "${HELM_BIN}" env >&2
+    env HELM_PLUGINS="$(_winpath "${SPACE_DIR}")" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
+    run env HELM_PLUGINS="${SPACE_DIR}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
 
     assert_success
 
