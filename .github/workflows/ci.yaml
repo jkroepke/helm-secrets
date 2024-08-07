@@ -198,7 +198,7 @@ jobs:
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
-        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats -f 'space path' --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: sops
           BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|sops] "
@@ -206,7 +206,7 @@ jobs:
 
       - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit
         if: "!contains(matrix.shell, 'cygwin')"
-        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats -f 'space path' --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals
           BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|vals] "

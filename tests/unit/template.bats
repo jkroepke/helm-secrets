@@ -419,17 +419,20 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    echo --- >&2
-    env "${HELM_BIN}" env HELM_PLUGINS >&2
-    echo --- >&2
-    env HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
-    echo --- >&2
-    env HELM_PLUGINS="$(_winpath "${TEST_TEMP_DIR}/plugin dir")" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
-    echo --- >&2
+    if on_windows; then
+        echo --- >&2
+        env "${HELM_BIN}" env HELM_PLUGINS >&2
+        echo --- >&2
+        env HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
+        echo --- >&2
+        env HELM_PLUGINS="$(_winpath "${TEST_TEMP_DIR}/plugin dir")" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
+        echo --- >&2
+    fi
 
+    env HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
     run env HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
 
-    assert_success
+    exit 1 >&2
 
     run env HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
@@ -440,7 +443,7 @@ key2: value" 2>&1
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "template: helm template w/ chart + invalid yaml" {
+@test "template: helm template   w/ chart + invalid yaml" {
     if [[ "${VALS_BIN}" = *".exe" ]]; then
         skip "Unix path w/ vals.exe"
     fi
