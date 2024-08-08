@@ -5,14 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.6.0] - 2024-08-09
+## [4.6.1] - 2024-08-09
+
+### Fixes
+- fix: Helm Secrets does not support spaces in windows user name (https://github.com/jkroepke/helm-secrets/pull/467)
+
+## [4.6.0] - 2024-03-11
 
 ### Added
 - Added a new custom backend for the 1Password CLI, which is located at `examples/backends/onepassword.sh` (#431)
 
 ### Fixes
 - fix: parsing of array values (https://github.com/jkroepke/helm-secrets/issues/418)
-- fix: Helm Secrets does not support spaces in windows user name (https://github.com/jkroepke/helm-secrets/pull/467)
 
 ## [4.5.1] - 2023-09-23
 
@@ -319,7 +323,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.0...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.1...HEAD
+[4.6.0]: https://github.com/jkroepke/helm-secrets/compare/v4.6.0...v4.6.1
 [4.6.0]: https://github.com/jkroepke/helm-secrets/compare/v4.5.1...v4.6.0
 [4.5.1]: https://github.com/jkroepke/helm-secrets/compare/v4.5.0...v4.5.1
 [4.5.0]: https://github.com/jkroepke/helm-secrets/compare/v4.4.2...v4.5.0
