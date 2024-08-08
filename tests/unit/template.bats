@@ -427,7 +427,7 @@ key2: value" 2>&1
 
     env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
     env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
-    #env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
+    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
     #env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
 
     run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
