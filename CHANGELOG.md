@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.6.0] - 2024-08-09
 
 ### Added
 - Added a new custom backend for the 1Password CLI, which is located at `examples/backends/onepassword.sh` (#431)
 
 ### Fixes
 - fix: parsing of array values (https://github.com/jkroepke/helm-secrets/issues/418)
+- fix: Helm Secrets does not support spaces in windows user name (https://github.com/jkroepke/helm-secrets/pull/467)
 
 ## [4.5.1] - 2023-09-23
 
