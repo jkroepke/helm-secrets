@@ -415,9 +415,9 @@ key2: value" 2>&1
 
 @test "template: helm template w/ chart + secrets.yaml + space path" {
     if on_windows; then
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\space dir\\"
+        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\space dir${BATS_ROOT_PID}\\"
     else
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/space dir/"
+        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/space dir${BATS_ROOT_PID}/"
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
