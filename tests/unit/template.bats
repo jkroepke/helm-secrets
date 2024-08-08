@@ -425,6 +425,17 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
+    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
+    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
+    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
+
+    assert_success
+
+    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list
+
+    assert_output --partial "secrets"
+    assert_success
+
     run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
