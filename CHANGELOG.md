@@ -319,7 +319,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.5.1...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.0...HEAD
+[4.6.0]: https://github.com/jkroepke/helm-secrets/compare/v4.5.1...v4.6.0
 [4.5.1]: https://github.com/jkroepke/helm-secrets/compare/v4.5.0...v4.5.1
 [4.5.0]: https://github.com/jkroepke/helm-secrets/compare/v4.4.2...v4.5.0
 [4.4.2]: https://github.com/jkroepke/helm-secrets/compare/v4.4.1...v4.4.2
