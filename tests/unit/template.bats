@@ -432,7 +432,7 @@ key2: value" 2>&1
     assert_output --partial "secrets"
     assert_success
 
-    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    run env HELM_DATA_HOME="$(_winpath "${HELM_DATA_HOME}")" WSLENV="HELM_DATA_HOME/p:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
