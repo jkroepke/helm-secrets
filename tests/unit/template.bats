@@ -414,20 +414,20 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + secrets.yaml + space path" {
-    HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir/"
+    HELM_PLUGIN_DIR="$("${HELM_BIN}" env HELM_PLUGIN_DIR)/plugin dir/"
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
-    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
+    env HELM_PLUGIN_DIR="${HELM_PLUGIN_DIR}" WSLENV="HELM_PLUGIN_DIR:${WSLENV}" "${HELM_BIN}" env >&2
+    env HELM_PLUGIN_DIR="${HELM_PLUGIN_DIR}" WSLENV="HELM_PLUGIN_DIR:${WSLENV}" "${HELM_BIN}" plugin list >&2
+    run env HELM_PLUGIN_DIR="${HELM_PLUGIN_DIR}" WSLENV="HELM_PLUGIN_DIR:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
 
     assert_success
 
-    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    run env HELM_PLUGIN_DIR="${HELM_PLUGIN_DIR}" WSLENV="HELM_PLUGIN_DIR:${WSLENV}" "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
