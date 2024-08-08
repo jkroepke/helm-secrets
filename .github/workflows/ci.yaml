@@ -3,9 +3,9 @@ name: CI
 
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
-  VERSION_HELM: v3.12.3
-  VERSION_SOPS: v3.8.1
-  VERSION_VALS: v0.26.2
+  VERSION_HELM: v3.15.3
+  VERSION_SOPS: v3.9.0
+  VERSION_VALS: v0.37.3
 
 on:
   pull_request:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@v0.8.0
         env:
@@ -133,7 +133,7 @@ jobs:
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -178,18 +178,13 @@ jobs:
         run: wsl bash -c 'apt-get update -qq && apt-get install -yqq parallel'
 
       - name: Print Environment
+        continue-on-error: true
         run: |-
           bash -c 'echo "Shell: $(readlink /bin/sh || readlink /var/select/sh || echo unknown)"'
           bash tests/bats/core/bin/bats -v
           sops --version
           gpg --version
           vals version
-
-      - name: Print Environment (Windows)
-        if: "contains(matrix.os, 'windows-latest')"
-        run: |-
-          scripts/wrapper/sh.cmd --version
-          scripts/wrapper/sh.cmd -c -- "uname -a"
 
       - name: Run helm-secrets w/o bats
         run: |-
@@ -232,7 +227,7 @@ jobs:
       BATSLIB_TEMP_PRESERVE: "0"
       BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
@@ -321,7 +316,7 @@ jobs:
 
       - run: kubectl cluster-info
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 

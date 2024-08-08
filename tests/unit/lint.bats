@@ -233,10 +233,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "lint: helm lint w/ chart + secrets.yaml + special path" {
-    if on_windows; then
-        skip "Skip on Windows"
-    fi
-
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${SPECIAL_CHAR_DIR}/${VALUES}"
 

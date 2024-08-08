@@ -79,7 +79,6 @@ if [ "${LOAD_GPG_KEYS}" != "false" ]; then
 fi
 
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
-    shift
     argc=$#
     j=0
 
@@ -156,13 +155,6 @@ while true; do
         . "${SCRIPT_DIR}/commands/downloader.sh"
 
         downloader "$2" "$3" "$4" "$5"
-        break
-        ;;
-    patch)
-        # shellcheck source=scripts/commands/patch.sh
-        . "${SCRIPT_DIR}/commands/patch.sh"
-
-        patch "$2"
         break
         ;;
     --help | -h | help)

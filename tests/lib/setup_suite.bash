@@ -57,12 +57,6 @@ setup_suite() {
             helm_plugin_install "diff" --version 3.5.0
         fi
 
-        if on_windows || on_wsl; then
-            "${HELM_BIN}" secrets patch windows
-        else
-            "${HELM_BIN}" secrets patch unix
-        fi
-
         mkdir -p "$HOME/.gnupg/"
         touch "$HOME/.gnupg/common.conf"
 
