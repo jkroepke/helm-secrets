@@ -414,16 +414,17 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + secrets.yaml + space path" {
-    HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/plugin dir/"
+    HELM_DATA_HOME="${TEST_TEMP_DIR}/plugin dir/"
+    mkdir -p "${HELM_DATA_HOME}"
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
     create_chart "${TEST_TEMP_DIR}"
 
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
-    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
+    env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME/p:${WSLENV}" "${HELM_BIN}" env >&2
+    env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME/p:${WSLENV}" "${HELM_BIN}" plugin list >&2
+    run env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME/p:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
 
     assert_success
 
