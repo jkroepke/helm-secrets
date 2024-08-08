@@ -431,6 +431,9 @@ key2: value" 2>&1
     assert_success
 
     run env HELM_PLUGINS="$(_winpath "${HELM_PLUGINS}")" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" --debug secrets --version
+
+    assert_failure
+
     run env HELM_PLUGINS="$(_winpath "${HELM_PLUGINS}")" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
 
     assert_success
