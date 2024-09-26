@@ -4,7 +4,7 @@ set -euf
 
 dec_usage() {
     cat <<EOF
-helm secrets [ OPTIONS ] dec [ -i ] [ --terraform ] <path to file>
+helm secrets [ OPTIONS ] decrypt [ -i ] [ --terraform ] <path to file>
 
 Decrypt secrets
 
@@ -13,11 +13,11 @@ It uses your gpg credentials to decrypt previously encrypted values file.
 You can use plain sops to decrypt specific files - https://github.com/getsops/sops
 
 Typical usage:
-  $ helm secrets dec secrets/project/secrets.yaml
+  $ helm secrets decrypt secrets/project/secrets.yaml
 
   # Decrypt file inline
 
-  $ helm secrets dec -i secrets/project/secrets.yaml
+  $ helm secrets decrypt -i secrets/project/secrets.yaml
 
 EOF
 }

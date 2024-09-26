@@ -4,7 +4,7 @@ set -euf
 
 enc_usage() {
     cat <<EOF
-helm secrets [ OPTIONS ] enc [ -i ] <path to file>
+helm secrets [ OPTIONS ] encrypt [ -i ] <path to file>
 
 Encrypt secrets
 
@@ -15,7 +15,7 @@ This allows you to first decrypt the file, edit it, then encrypt it again.
 You can use plain sops to encrypt - https://github.com/getsops/sops
 
 Example:
-  $ helm secrets enc <SECRET_FILE_PATH>
+  $ helm secrets encrypt <SECRET_FILE_PATH>
   $ git add <SECRET_FILE_PATH>
   $ git commit
   $ git push
