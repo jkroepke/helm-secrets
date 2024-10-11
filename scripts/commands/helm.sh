@@ -28,12 +28,20 @@ decrypted_file_list=$(_mktemp)
 
 _trap_hook() {
     if [ -s "${decrypted_file_list}" ]; then
-        while read -r f; do
+        _max="$(awk "BEGIN{FS=\"\x00\"}{}END{print NF}" "${decrypted_file_list}")"
+        _idx=1
+        while test "$_idx" -lt "$_max"
+        do
+            f="$(awk "BEGIN{FS=\"\x00\"}{print \$$_idx}" "${decrypted_file_list}")"
             rm "$f" || continue
             if [ "${QUIET}" = "false" ]; then
                 printf "[helm-secrets] Removed: %s\n" "$f"
             fi
-        done <"${decrypted_file_list}" >&2
+            # shellcheck won't like that one ...
+            # but can we _idx=$((_idx+1)) here / what would other tests say?
+            # ... I'm already banking a lot on awk ... maybe next try ...
+            _idx="$(expr "$_idx" + 1)"
+        done >&2
 
         rm "${decrypted_file_list}"
     fi
@@ -208,10 +216,7 @@ helm_wrapper() {
                     fi
                 else
                     if decrypt_helper "${real_file}" "${sops_type}"; then
-                        # printf '%s\0' "${file_dec}" >>"${decrypted_file_list}"
-                        # ^^ ... I'm sure there was a good reason for this ...
-                        # let's see where CI breaks ... when I just go with the obvious:
-                        echo "${file_dec}" >>"${decrypted_file_list}"
+                        printf '%s\0' "${file_dec}" >>"${decrypted_file_list}"
 
                         if [ "${QUIET}" = "false" ]; then
                             log 'Decrypt: %s' "${file}"
