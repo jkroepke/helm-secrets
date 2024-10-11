@@ -4,7 +4,8 @@ GEM
     bashcov (3.0.2)
       simplecov (~> 0.21.2)
     docile (1.4.0)
-    rexml (3.2.5)
+    rexml (3.3.6)
+      strscan
     simplecov (0.21.2)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -14,9 +15,11 @@ GEM
       simplecov (~> 0.19)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
+    strscan (3.1.0)
 
 PLATFORMS
   x86_64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   bashcov (~> 3.0, >= 3.0.2)
