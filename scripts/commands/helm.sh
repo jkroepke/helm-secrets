@@ -30,8 +30,7 @@ _trap_hook() {
     if [ -s "${decrypted_file_list}" ]; then
         _max="$(awk "BEGIN{FS=\"\x00\"}{}END{print NF}" "${decrypted_file_list}")"
         _idx=1
-        while test "$_idx" -lt "$_max"
-        do
+        while test "$_idx" -lt "$_max"; do
             f="$(awk "BEGIN{FS=\"\x00\"}{print \$$_idx}" "${decrypted_file_list}")"
             rm "$f" || continue
             if [ "${QUIET}" = "false" ]; then
