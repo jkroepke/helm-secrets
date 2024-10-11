@@ -28,13 +28,13 @@ decrypted_file_list=$(_mktemp)
 
 _trap_hook() {
     if [ -s "${decrypted_file_list}" ]; then
-        if [ "${QUIET}" = "false" ]; then
-            echo >&2
-            # shellcheck disable=SC2016
-            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >&2 <"${decrypted_file_list}"
-        else
-            xargs -0 rm >&2 <"${decrypted_file_list}"
-        fi
+        while read -r f
+        do
+            rm "$f"
+            if [ "${QUIET}" = "false" ]; then
+                printf "[helm-secrets] Removed: %s\n" "$f"
+            fi
+        done <"${decrypted_file_list}"
 
         rm "${decrypted_file_list}"
     fi
