@@ -28,8 +28,7 @@ decrypted_file_list=$(_mktemp)
 
 _trap_hook() {
     if [ -s "${decrypted_file_list}" ]; then
-        while read -r f
-        do
+        while read -r f; do
             rm "$f"
             if [ "${QUIET}" = "false" ]; then
                 printf "[helm-secrets] Removed: %s\n" "$f"
