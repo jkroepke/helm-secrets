@@ -24,19 +24,25 @@ Typical usage:
 EOF
 }
 
-decrypted_file_list=$(_mktemp)
+decrypted_file_list_dir=$(_mktemp -d)
 
 _trap_hook() {
-    if [ -s "${decrypted_file_list}" ]; then
-        if [ "${QUIET}" = "false" ]; then
-            echo >&2
-            # shellcheck disable=SC2016
-            xargs -0 -n1 sh -c 'rm "$1" && printf "[helm-secrets] Removed: %s\n" "$1"' sh >&2 <"${decrypted_file_list}"
-        else
-            xargs -0 rm >&2 <"${decrypted_file_list}"
-        fi
+    if [ -d "${decrypted_file_list_dir}" ]; then
+        set +f # Enable globbing
+        for file in "${decrypted_file_list_dir}"/*.file; do
+            set -f # Disable globbing
 
-        rm "${decrypted_file_list}"
+            if [ -e "$file" ]; then # Make sure it isn't an empty match, in case of no files
+                decrypted_file=$(cat "$file")
+                rm -- "$(printf '%s' "$decrypted_file")"
+
+                if [ "${QUIET}" = "false" ]; then
+                    printf "[helm-secrets] Removed: %s\n" "$decrypted_file"
+                fi
+            fi
+        done
+
+        rm -rf "${decrypted_file_list_dir}"
     fi
 }
 
@@ -209,7 +215,7 @@ helm_wrapper() {
                     fi
                 else
                     if decrypt_helper "${real_file}" "${sops_type}"; then
-                        printf '%s\0' "${file_dec}" >>"${decrypted_file_list}"
+                        printf '%s' "${file_dec}" >"${decrypted_file_list_dir}/${j}.file"
 
                         if [ "${QUIET}" = "false" ]; then
                             log 'Decrypt: %s' "${file}"
