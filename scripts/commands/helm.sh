@@ -32,14 +32,11 @@ _trap_hook() {
         _idx=1
         while test "$_idx" -lt "$_max"; do
             f="$(awk "BEGIN{FS=\"\x00\"}{print \$$_idx}" "${decrypted_file_list}")"
+            _idx="$(expr "$_idx" + 1)"
             rm "$f" || continue
             if [ "${QUIET}" = "false" ]; then
                 printf "[helm-secrets] Removed: %s\n" "$f"
             fi
-            # shellcheck won't like that one ...
-            # but can we _idx=$((_idx+1)) here / what would other tests say?
-            # ... I'm already banking a lot on awk ... maybe next try ...
-            _idx="$(expr "$_idx" + 1)"
         done >&2
 
         rm "${decrypted_file_list}"
