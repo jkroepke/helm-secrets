@@ -29,7 +29,7 @@ decrypted_file_list=$(_mktemp)
 _trap_hook() {
     if [ -s "${decrypted_file_list}" ]; then
         while read -r f; do
-            rm "$f"
+            rm "$f" || continue
             if [ "${QUIET}" = "false" ]; then
                 printf "[helm-secrets] Removed: %s\n" "$f"
             fi
@@ -208,7 +208,10 @@ helm_wrapper() {
                     fi
                 else
                     if decrypt_helper "${real_file}" "${sops_type}"; then
-                        printf '%s\0' "${file_dec}" >>"${decrypted_file_list}"
+                        # printf '%s\0' "${file_dec}" >>"${decrypted_file_list}"
+                        # ^^ ... I'm sure there was a good reason for this ...
+                        # let's see where CI breaks ... when I just go with the obvious:
+                        echo "${file_dec}" >>"${decrypted_file_list}"
 
                         if [ "${QUIET}" = "false" ]; then
                             log 'Decrypt: %s' "${file}"
