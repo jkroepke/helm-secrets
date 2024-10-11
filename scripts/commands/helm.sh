@@ -32,7 +32,7 @@ _trap_hook() {
         _idx=1
         while test "$_idx" -lt "$_max"; do
             f="$(awk "BEGIN{FS=\"\x00\"}{print \$$_idx}" "${decrypted_file_list}")"
-            _idx=$((_idx+1))
+            _idx=$((_idx + 1))
             rm "$f" || continue
             if [ "${QUIET}" = "false" ]; then
                 printf "[helm-secrets] Removed: %s\n" "$f"
