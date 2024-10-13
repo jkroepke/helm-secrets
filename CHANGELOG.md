@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.6.2] - 2024-10-12
+## [4.6.2] - 2024-10-13
 
 ### Fixes
 - fix: examples in the help of encrypt/decrypt commands
