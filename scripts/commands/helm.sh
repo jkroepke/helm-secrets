@@ -37,7 +37,7 @@ _trap_hook() {
                 rm -- "$(printf '%s' "$decrypted_file")"
 
                 if [ "${QUIET}" = "false" ]; then
-                    printf "[helm-secrets] Removed: %s\n" "$decrypted_file"
+                    printf "[helm-secrets] Removed: %s\n" "$decrypted_file" >&2
                 fi
             fi
         done
