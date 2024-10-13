@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.6.2] - 2024-10-13
+
 ### Fixes
 - fix: examples in the help of encrypt/decrypt commands
+- fix: remove dependency on `xargs`, since it's not available on OpenShift
 
 ## [4.6.1] - 2024-08-09
 
@@ -328,7 +331,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.1...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.2...HEAD
+[4.6.2]: https://github.com/jkroepke/helm-secrets/compare/v4.6.1...v4.6.2
 [4.6.1]: https://github.com/jkroepke/helm-secrets/compare/v4.6.0...v4.6.1
 [4.6.0]: https://github.com/jkroepke/helm-secrets/compare/v4.5.1...v4.6.0
 [4.5.1]: https://github.com/jkroepke/helm-secrets/compare/v4.5.0...v4.5.1
