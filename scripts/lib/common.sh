@@ -106,7 +106,7 @@ CYGWIN* | MINGW64_NT*)
             printf '%s' "${1}" | cygpath -w -l -f -
         fi
     }
-    
+
     _helm_winpath() { _winpath "$@"; }
 
     _sed_i 's!  - command: .*!  - command: "scripts/wrapper/run.cmd downloader"!' "${HELM_PLUGIN_DIR}/plugin.yaml"
@@ -132,9 +132,9 @@ Darwin)
 
         # We are on a Linux VM, but helm.exe (Win32) is called
         case "${HELM_BIN}" in
-        *.exe) 
+        *.exe)
             _helm_winpath() { _winpath "$@"; }
-            
+
             _sed_i 's!  - command: .*!  - command: "scripts/wrapper/run.cmd downloader"!' "${HELM_PLUGIN_DIR}/plugin.yaml"
             ;;
         esac
