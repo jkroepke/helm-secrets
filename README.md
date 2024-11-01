@@ -160,6 +160,12 @@ Additional documentation, resources and examples can be found [here](https://git
 - [`tests`](tests) - Test scripts to check if all parts of the plugin work. Using test assets with PGP keys to make real tests on real data with real encryption/decryption. See [`tests/README.md`](tests/README.md) for more information.
 - [`examples`](examples) - Some example secrets.yaml
 
+## Open Source Sponsors
+
+Thanks to all sponsors!
+
+* [@hegawa](https://github.com/hegawa) (25$) onetime
+
 ## Copyright and license
 
 © 2020-2022 [Jan-Otto Kröpke (jkroepke)](https://github.com/jkroepke/helm-secrets)
