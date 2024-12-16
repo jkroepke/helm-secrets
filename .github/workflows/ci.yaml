@@ -290,7 +290,7 @@ jobs:
 
       - run: rm -rf ./coverage/
 
-      - uses: helm/kind-action@v1.10.0
+      - uses: helm/kind-action@v1.11.0
 
       - name: bashcov bats --tap -r tests/it
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
@@ -315,7 +315,7 @@ jobs:
         shell: [dash]
         jobs: [4]
     steps:
-      - uses: helm/kind-action@v1.10.0
+      - uses: helm/kind-action@v1.11.0
 
       - run: kubectl cluster-info
 
