@@ -157,7 +157,7 @@ jobs:
 
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
-        uses: cygwin/cygwin-install-action@v4
+        uses: cygwin/cygwin-install-action@v5
         with:
           platform: x64
           packages: gnupg2
