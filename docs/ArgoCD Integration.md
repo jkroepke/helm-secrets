@@ -146,7 +146,7 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 
 ```Dockerfile
 ARG ARGOCD_VERSION="v2.11.4"
-FROM argoproj/argocd:$ARGOCD_VERSION
+FROM quay.io/argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION=3.9.0
 ARG KUBECTL_VERSION=1.30.2
 ARG VALS_VERSION=0.37.3
