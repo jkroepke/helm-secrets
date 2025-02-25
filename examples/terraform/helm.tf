@@ -1,5 +1,5 @@
 data "external" "helm-secrets" {
-  program = ["helm", "secrets", "terraform", "--terraform", "../../examples/sops/secrets.yaml"]
+  program = ["helm", "secrets", "decrypt", "--terraform", "../../examples/sops/secrets.yaml"]
 }
 
 resource "helm_release" "example" {
