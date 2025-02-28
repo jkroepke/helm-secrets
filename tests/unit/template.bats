@@ -2262,6 +2262,19 @@ key2: value" 2>&1
     assert_success
 }
 
+@test "template: helm template w/ chart + --set podAnnotations.second=fr\,en\,de\,zh\,ko with escaped comma" {
+    if on_windows || on_wsl; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template --set 'podAnnotations.second=fr\,en\,de\,zh\,ko' "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial "second: fr,en,de,zh,ko"
+    assert_success
+}
+
 @test "template: helm template w/ chart + --set imagePullSecrets={fr,en,de,zh,ko} with escaped bracket" {
     if on_windows || on_wsl; then
         skip

@@ -84,7 +84,11 @@ helm_wrapper() {
 
                 case "${literal}" in
                 *\\)
-                    _literal="${literal}"
+                    if [ "${_literal}" != "" ]; then
+                      _literal="${_literal},${literal}"
+                    else
+                      _literal="${literal}"
+                    fi
                     continue
                     ;;
                 esac
