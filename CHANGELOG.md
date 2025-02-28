@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.6.3] - 2025-02-28
+## [4.6.3] - 2025-03-01
 
 ### Fixes
 - helm_wrapper does not honor escaped commas in --set arguments
