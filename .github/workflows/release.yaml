@@ -13,13 +13,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Package helm-secrets
         run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2.2.2
         with:
           name: Release ${{ github.ref_name }}
           draft: false
@@ -37,7 +37,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
     - run: >-
         sed -i 's/HELM_SECRETS_VERSION=".*"/HELM_SECRETS_VERSION="'${GITHUB_REF_NAME/v}'"/g' docs/ArgoCD\ Integration.md
@@ -49,7 +49,7 @@ jobs:
         sed -i "s/--version .*/--version ${GITHUB_REF_NAME}/g" docs/Installation.md
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v7
+      uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
       with:
         commit-message: "[docs] Set version to ${{ github.ref_name }}"
         title: "[docs] Set version to ${{ github.ref_name }}"
