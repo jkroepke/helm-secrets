@@ -8,6 +8,9 @@
     "🛠️ dependencies"
   ],
   "dependencyDashboardApproval": true,
+  "git-submodules": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "groupName": "golangci-lint",
