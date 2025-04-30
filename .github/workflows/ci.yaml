@@ -248,9 +248,10 @@ jobs:
           version: ${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        uses: nhedger/setup-sops@v2
         with:
           version: ${{ env.VERSION_SOPS }}
+          token: ${{ github.token }}
 
       - name: Setup vals
         uses: jkroepke/setup-vals@v1.1.3
