@@ -24,6 +24,8 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "decrypt: Decrypt secrets.yaml" {
+    set -x
+
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
