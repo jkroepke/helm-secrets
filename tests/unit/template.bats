@@ -2228,7 +2228,7 @@ key2: value" 2>&1
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
-    assert_output -e "\[helm-secrets\] Removed: .*/secrets.yaml.dec"
+    assert_output -e "\[helm-secrets\] Removed: .*secrets.yaml.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -2244,7 +2244,7 @@ key2: value" 2>&1
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
-    assert_output -e "\[helm-secrets\] Removed: .*/secrets.yaml.dec"
+    assert_output -e "\[helm-secrets\] Removed: .*secrets.yaml.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
