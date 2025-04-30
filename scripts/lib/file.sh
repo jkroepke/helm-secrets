@@ -64,7 +64,7 @@ _file_get() {
 
 _file_dec_name() {
     _basename="$(basename "${1}")"
-    _dirname="$(dirname "${1}" | sed 's/\//_/g')"  # Replace / with _ to make a safe filename
+    _dirname="$(dirname "${1}" | sed 's/\//_/g')" # Replace / with _ to make a safe filename
 
     if [ "${DEC_DIR}" != "" ]; then
         printf '%s/%s_%s%s%s' "${DEC_DIR}" "${_dirname}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
