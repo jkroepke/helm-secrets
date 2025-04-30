@@ -3,11 +3,11 @@ name: CI
 
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
-  # renovate github=helm/helm
+  # renovate: github=helm/helm
   VERSION_HELM: 3.15.3
-  # renovate github=getsops/sops
+  # renovate: github=getsops/sops
   VERSION_SOPS: 3.10.2
-  # renovate github=helmfile/vals
+  # renovate: github=helmfile/vals
   VERSION_VALS: 0.37.3
 
 on:
