@@ -5,7 +5,6 @@ load '../lib/binaries'
 
 setup_suite() {
     {
-        set -x
         export HELM_SECRETS_BACKEND="${HELM_SECRETS_BACKEND:-"sops"}"
         export HELM_SECRETS_CUSTOM_BACKEND=${HELM_SECRETS_CUSTOM_BACKEND:-""}
 
