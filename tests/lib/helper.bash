@@ -11,7 +11,7 @@ setup() {
         export TEST_TEMP_DIR
 
         # copy assets
-        cp -a "${TEST_ROOT}/assets" "${TEST_TEMP_DIR}/"
+        cp -rP "${TEST_ROOT}/assets" "${TEST_TEMP_DIR}/"
         if on_windows; then
             # shellcheck disable=SC2016
             SPECIAL_CHAR_DIR="${TEST_TEMP_DIR}/$(printf '%s' 'a b')"
@@ -21,7 +21,7 @@ setup() {
         fi
 
         mkdir "${SPECIAL_CHAR_DIR}"
-        cp -a "${TEST_ROOT}/assets" "${SPECIAL_CHAR_DIR}/"
+        cp -rP "${TEST_ROOT}/assets" "${SPECIAL_CHAR_DIR}/"
 
         ln -s "${TEST_ROOT}/assets/values/sops/.sops.yaml" "${TEST_TEMP_DIR}"
     } >&2
