@@ -55,13 +55,13 @@ argo-cd:
         command: [ sh, -ec ]
         env:
           - name: HELM_SECRETS_VERSION
-            value: "3.15.0"
+            value: "3.17.3"
           - name: KUBECTL_VERSION
-            value: "1.24.3"
+            value: "1.33.0"
           - name: VALS_VERSION
-            value: "0.37.1"
+            value: "0.40.1"
           - name: SOPS_VERSION
-            value: "3.8.1"
+            value: "3.10.2"
         args:
           - |
             mkdir -p /custom-tools/helm-plugins

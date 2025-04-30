@@ -1660,6 +1660,8 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + --kube-insecure-skip-tls-verify" {
+    skip "broken, see https://github.com/helm/helm/issues/13686"
+
     if ! is_backend "sops"; then
         skip
     fi

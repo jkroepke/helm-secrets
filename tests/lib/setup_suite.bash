@@ -105,11 +105,11 @@ helm_plugin_install() {
         case "${1}" in
         diff)
             URL="https://github.com/databus23/helm-diff"
-            VERSION=v3.6.0
+            VERSION=v3.11.0
             ;;
         git)
             URL="https://github.com/aslafy-z/helm-git"
-            VERSION=v0.14.0
+            VERSION=v1.3.0
             ;;
         secrets)
             URL="$(_winpath "${GIT_ROOT}")"
