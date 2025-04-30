@@ -3,9 +3,9 @@ name: CI
 
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
-  VERSION_HELM: v3.17.3
-  VERSION_SOPS: v3.10.2
-  VERSION_VALS: v0.37.3
+  VERSION_HELM: 3.17.3
+  VERSION_SOPS: 3.10.2
+  VERSION_VALS: 0.37.3
 
 on:
   pull_request:
@@ -143,17 +143,18 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v4
         with:
-          version: ${{ env.VERSION_HELM }}
+          version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        uses: nhedger/setup-sops@v2
         with:
           version: ${{ env.VERSION_SOPS }}
+          token: ${{ github.token }}
 
       - name: Setup vals
         uses: jkroepke/setup-vals@v1.1.3
         with:
-          version: ${{ env.VERSION_VALS }}
+          version: v${{ env.VERSION_VALS }}
 
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
@@ -245,7 +246,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v4
         with:
-          version: ${{ env.VERSION_HELM }}
+          version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
         uses: nhedger/setup-sops@v2
@@ -256,7 +257,7 @@ jobs:
       - name: Setup vals
         uses: jkroepke/setup-vals@v1.1.3
         with:
-          version: ${{ env.VERSION_VALS }}
+          version: v${{ env.VERSION_VALS }}
 
       - name: Install bashcov
         run: bundle install
@@ -329,17 +330,18 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v4
         with:
-          version: ${{ env.VERSION_HELM }}
+          version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        uses: nhedger/setup-sops@v2
         with:
           version: ${{ env.VERSION_SOPS }}
+          token: ${{ github.token }}
 
       - name: Setup vals
         uses: jkroepke/setup-vals@v1.1.3
         with:
-          version: ${{ env.VERSION_VALS }}
+          version: v${{ env.VERSION_VALS }}
 
       - name: Print Environment
         run: |-
