@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   helm-secrets:
-    image: ubuntu:20.04
+    image: ubuntu:24.04
     working_dir: /work/helm-secrets
     init: true
     stop_grace_period: 0s
