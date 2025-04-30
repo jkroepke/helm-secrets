@@ -4,7 +4,7 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github=helm/helm
-  VERSION_HELM: 3.15.3
+  VERSION_HELM: 3.17.3
   # renovate: github=getsops/sops
   VERSION_SOPS: 3.9.0
   # renovate: github=helmfile/vals
@@ -251,10 +251,9 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: nhedger/setup-sops@187c90dbb4e28c3225263886266a5b92baa7e5a1 # v2.1.1
+        uses: mdgreenwald/mozilla-sops-action@v1.6.0
         with:
           version: ${{ env.VERSION_SOPS }}
-          token: ${{ github.token }}
 
       - name: Setup vals
         uses: jkroepke/setup-vals@005fcbbe02e9ed6cfc6c16d7d8e4c85a98b65542 # v1.1.3
@@ -335,10 +334,9 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: nhedger/setup-sops@187c90dbb4e28c3225263886266a5b92baa7e5a1 # v2.1.1
+        uses: mdgreenwald/mozilla-sops-action@v1.6.0
         with:
           version: ${{ env.VERSION_SOPS }}
-          token: ${{ github.token }}
 
       - name: Setup vals
         uses: jkroepke/setup-vals@005fcbbe02e9ed6cfc6c16d7d8e4c85a98b65542 # v1.1.3
