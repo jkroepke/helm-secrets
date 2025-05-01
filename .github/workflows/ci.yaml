@@ -6,7 +6,7 @@ env:
   # renovate: github=helm/helm
   VERSION_HELM: 3.17.3
   # renovate: github=getsops/sops
-  VERSION_SOPS: 3.9.0
+  VERSION_SOPS: 3.10.2
   # renovate: github=helmfile/vals
   VERSION_VALS: 0.40.1
 
@@ -149,7 +149,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@d9714e521cbaecdae64a89d2fdd576dd2aa97056 # v1.6.0
+        uses: jkroepke/setup-sops@v1
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -251,7 +251,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@d9714e521cbaecdae64a89d2fdd576dd2aa97056 # v1.6.0
+        uses: jkroepke/setup-sops@v1
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -334,7 +334,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@d9714e521cbaecdae64a89d2fdd576dd2aa97056 # v1.6.0
+        uses: jkroepke/setup-sops@v1
         with:
           version: ${{ env.VERSION_SOPS }}
 
