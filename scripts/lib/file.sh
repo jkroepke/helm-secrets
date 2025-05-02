@@ -64,11 +64,12 @@ _file_get() {
 
 _file_dec_name() {
     _basename="$(basename "${1}")"
-
+    _dirname="$(dirname "${1}")"
+    _dirname="$(printf '%s' "${_dirname}" | sed 's/\//_/g')"
     if [ "${DEC_DIR}" != "" ]; then
-        printf '%s/%s%s%s' "${DEC_DIR}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
+        printf '%s/%s_%s%s%s' "${DEC_DIR}" "${_dirname}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
     elif [ "${DECRYPT_SECRETS_IN_TMP_DIR}" = "true" ]; then
-        printf '%s/%s%s%s' "${TMPDIR}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
+        printf '%s/%s_%s%s%s' "${TMPDIR}" "${_dirname}" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
     elif [ "${1}" != "${_basename}" ]; then
         printf '%s/%s%s%s' "$(dirname "${1}")" "${DEC_PREFIX}" "${_basename}" "${DEC_SUFFIX}"
     else

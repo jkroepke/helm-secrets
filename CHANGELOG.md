@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.6.4] - 2025-05-02
+
+### Fixes
+- fix: gets a unique decrypted filename based on both its directory path and basename (https://github.com/jkroepke/helm-secrets/pull/505)
+
+
 ## [4.6.3] - 2025-03-01
 
 ### Fixes
@@ -336,7 +342,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.3...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.4...HEAD
+[4.6.4]: https://github.com/jkroepke/helm-secrets/compare/v4.6.3...v4.6.4
 [4.6.3]: https://github.com/jkroepke/helm-secrets/compare/v4.6.2...v4.6.3
 [4.6.2]: https://github.com/jkroepke/helm-secrets/compare/v4.6.1...v4.6.2
 [4.6.1]: https://github.com/jkroepke/helm-secrets/compare/v4.6.0...v4.6.1
