@@ -6,9 +6,9 @@ env:
   # renovate: github=helm/helm
   VERSION_HELM: 3.17.3
   # renovate: github=getsops/sops
-  VERSION_SOPS: 3.9.0
+  VERSION_SOPS: 3.10.2
   # renovate: github=helmfile/vals
-  VERSION_VALS: 0.37.3
+  VERSION_VALS: 0.40.1
 
 on:
   pull_request:
@@ -149,7 +149,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        uses: jkroepke/setup-sops@v1
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -241,7 +241,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@dffc446db9ba5a0c4446edb5bca1c5c473a806c5 # v1.235.0
+        uses: ruby/setup-ruby@f41e084df884422b269f4c01c3748a9df4431a75 # v1.236.0
         with:
           ruby-version: "3.0"
 
@@ -251,7 +251,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        uses: jkroepke/setup-sops@v1
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -334,7 +334,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        uses: jkroepke/setup-sops@v1
         with:
           version: ${{ env.VERSION_SOPS }}
 
