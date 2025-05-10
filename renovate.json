@@ -7,10 +7,12 @@
   "labels": [
     "🛠️ dependencies"
   ],
-  "dependencyDashboardApproval": true,
-  "git-submodules": {
-    "enabled": true
-  },
+  "timezone": "Europe/Berlin",
+  "schedule": [
+    "* 14-17 * * 5"
+  ],
+  "automerge": true,
+  "platformAutomerge": true,
   "packageRules": [
     {
       "groupName": "golangci-lint",
