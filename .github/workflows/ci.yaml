@@ -149,7 +149,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@eef1638ff369a928e9b252bd007450d8d20441bd # v1.1.1
+        uses: jkroepke/setup-sops@4ab95a67efd39a416c8e120a05b0a945b1470421 # v1.2.0
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -241,7 +241,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@e34163cd15f4bb403dcd72d98e295997e6a55798 # v1.238.0
+        uses: ruby/setup-ruby@84684c07c1965536eb4802c8daf1a77968df0cb1 # v1.239.0
         with:
           ruby-version: "3.0"
 
@@ -251,7 +251,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@eef1638ff369a928e9b252bd007450d8d20441bd # v1.1.1
+        uses: jkroepke/setup-sops@4ab95a67efd39a416c8e120a05b0a945b1470421 # v1.2.0
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -286,7 +286,7 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # v5.4.2
+      - uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -302,7 +302,7 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
 
-      - uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # v5.4.2
+      - uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -334,7 +334,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@eef1638ff369a928e9b252bd007450d8d20441bd # v1.1.1
+        uses: jkroepke/setup-sops@4ab95a67efd39a416c8e120a05b0a945b1470421 # v1.2.0
         with:
           version: ${{ env.VERSION_SOPS }}
 
