@@ -149,7 +149,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@4ab95a67efd39a416c8e120a05b0a945b1470421 # v1.2.0
+        uses: jkroepke/setup-sops@b0e8ad6e13954a1aab71309109e48cc597a9ec9a # v1.2.2
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -241,7 +241,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@1a0ff446f5856bdfec298b61a09727c860d9d480 # v1.240.0
+        uses: ruby/setup-ruby@c95ae3725f6ebdd095f2bd19caed7ebc14435ba5 # v1.243.0
         with:
           ruby-version: "3.0"
 
@@ -251,7 +251,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@4ab95a67efd39a416c8e120a05b0a945b1470421 # v1.2.0
+        uses: jkroepke/setup-sops@b0e8ad6e13954a1aab71309109e48cc597a9ec9a # v1.2.2
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -334,7 +334,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@4ab95a67efd39a416c8e120a05b0a945b1470421 # v1.2.0
+        uses: jkroepke/setup-sops@b0e8ad6e13954a1aab71309109e48cc597a9ec9a # v1.2.2
         with:
           version: ${{ env.VERSION_SOPS }}
 
