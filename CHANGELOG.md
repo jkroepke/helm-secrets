@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [4.6.5] - 2025-05-20
+
+### Fixes
+- fix: Unable to install since helm 3.18.0 #530 (https://github.com/jkroepke/helm-secrets/pull/531)
+
 ## [4.6.4] - 2025-05-02
 
 ### Fixes
