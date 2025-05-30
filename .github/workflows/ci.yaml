@@ -149,12 +149,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@b0e8ad6e13954a1aab71309109e48cc597a9ec9a # v1.2.2
+        uses: jkroepke/setup-sops@f483a9ac69ba1aa6d3a4c10a4583883d7edc4171 # v1.2.3
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@24b26b918739fa4e1dde1b576b37c27d71931628 # v1.4.2
+        uses: jkroepke/setup-vals@75976b8bbdcb63ab202ec1ea91a0898a994c94e6 # v1.4.3
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -251,12 +251,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@b0e8ad6e13954a1aab71309109e48cc597a9ec9a # v1.2.2
+        uses: jkroepke/setup-sops@f483a9ac69ba1aa6d3a4c10a4583883d7edc4171 # v1.2.3
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@24b26b918739fa4e1dde1b576b37c27d71931628 # v1.4.2
+        uses: jkroepke/setup-vals@75976b8bbdcb63ab202ec1ea91a0898a994c94e6 # v1.4.3
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -334,12 +334,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@b0e8ad6e13954a1aab71309109e48cc597a9ec9a # v1.2.2
+        uses: jkroepke/setup-sops@f483a9ac69ba1aa6d3a4c10a4583883d7edc4171 # v1.2.3
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@24b26b918739fa4e1dde1b576b37c27d71931628 # v1.4.2
+        uses: jkroepke/setup-vals@75976b8bbdcb63ab202ec1ea91a0898a994c94e6 # v1.4.3
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -380,7 +380,7 @@ jobs:
           path: .
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@cf701569b05ccdd861a76b8607a66d76f6fd4857 # v5.5.1
+        uses: mikepenz/action-junit-report@65fe03598d8d251738592a497a9e8547a5c48eaa # v5.6.0
         with:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true
