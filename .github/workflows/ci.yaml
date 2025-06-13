@@ -149,12 +149,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@f483a9ac69ba1aa6d3a4c10a4583883d7edc4171 # v1.2.3
+        uses: jkroepke/setup-sops@e9ffa8a3cee41e122f1317301af0ad98fc2fd18c # v1.2.4
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@75976b8bbdcb63ab202ec1ea91a0898a994c94e6 # v1.4.3
+        uses: jkroepke/setup-vals@9cf9a9cb4a1cf3e44fc16e47562871c8f634f533 # v1.4.6
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -241,7 +241,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@13e7a03dc3ac6c3798f4570bfead2aed4d96abfb # v1.244.0
+        uses: ruby/setup-ruby@a4effe49ee8ee5b8b5091268c473a4628afb5651 # v1.245.0
         with:
           ruby-version: "3.0"
 
@@ -251,12 +251,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@f483a9ac69ba1aa6d3a4c10a4583883d7edc4171 # v1.2.3
+        uses: jkroepke/setup-sops@e9ffa8a3cee41e122f1317301af0ad98fc2fd18c # v1.2.4
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@75976b8bbdcb63ab202ec1ea91a0898a994c94e6 # v1.4.3
+        uses: jkroepke/setup-vals@9cf9a9cb4a1cf3e44fc16e47562871c8f634f533 # v1.4.6
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -334,12 +334,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@f483a9ac69ba1aa6d3a4c10a4583883d7edc4171 # v1.2.3
+        uses: jkroepke/setup-sops@e9ffa8a3cee41e122f1317301af0ad98fc2fd18c # v1.2.4
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@75976b8bbdcb63ab202ec1ea91a0898a994c94e6 # v1.4.3
+        uses: jkroepke/setup-vals@9cf9a9cb4a1cf3e44fc16e47562871c8f634f533 # v1.4.6
         with:
           version: v${{ env.VERSION_VALS }}
 
