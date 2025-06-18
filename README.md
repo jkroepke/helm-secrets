@@ -178,4 +178,4 @@ Licensed under the [Apache License, Version 2.0](LICENSE)
 
 - [JetBrains IDEs](https://www.jetbrains.com/?from=jkroepke)
 
-[![JetBrains-Logo (Haupt) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=jkroepke)
+[![JetBrains logo.](https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg)]([https://jb.gg/OpenSource](https://www.jetbrains.com/?from=jkroepke))
