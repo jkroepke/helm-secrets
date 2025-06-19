@@ -180,7 +180,7 @@ Licensed under the [Apache License, Version 2.0](LICENSE)
 
 <a href="https://www.jetbrains.com/?from=jkroepke">
 <picture>
-  <source srcset="[images/logo-dark-mode.png](https://www.jetbrains.com/company/brand/img/logo_jb_dos_3.svg)" media="(prefers-color-scheme: dark)">
+  <source srcset="https://www.jetbrains.com/company/brand/img/logo_jb_dos_3.svg" media="(prefers-color-scheme: dark)">
   <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg">
 </picture>
 </a>
