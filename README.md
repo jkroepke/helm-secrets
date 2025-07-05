@@ -183,7 +183,7 @@ Thanks to all sponsors!
 
 ## Acknowledgements
 
-Thanks to JetBrains IDEs and Sparklabs for their support.
+Thanks to JetBrains IDEs for their support.
 
 <table>
   <thead>
@@ -199,15 +199,8 @@ Thanks to JetBrains IDEs and Sparklabs for their support.
           <a href="https://www.jetbrains.com/?from=jkroepke">
             <picture>
               <source srcset="https://www.jetbrains.com/company/brand/img/logo_jb_dos_3.svg" media="(prefers-color-scheme: dark)">
-              <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg">
+              <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" style="height: 50px">
             </picture>
-          </a>
-        </center>
-      </td>
-      <td>
-        <center>
-          <a href="https://www.sparklabs.com/viscosity">
-            <img src="https://www.sparklabs.com/static/other/logo_assets/logo_cropped.png" alt="Sparklabs Viscosity logo" height="100px">
           </a>
         </center>
       </td>
