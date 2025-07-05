@@ -174,13 +174,43 @@ Thanks to all sponsors!
 
 Licensed under the [Apache License, Version 2.0](LICENSE)
 
-## Thanks
+## Open Source Sponsors
 
-- [JetBrains IDEs](https://www.jetbrains.com/?from=jkroepke)
+Thanks to all sponsors!
 
-<a href="https://www.jetbrains.com/?from=jkroepke">
-<picture>
-  <source srcset="https://www.jetbrains.com/company/brand/img/logo_jb_dos_3.svg" media="(prefers-color-scheme: dark)">
-  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg">
-</picture>
-</a>
+* [@hegawa](https://github.com/hegawa) (25$) onetime
+* [@Zero-Down-Time](https://github.com/Zero-Down-Time) (25$) onetime
+
+## Acknowledgements
+
+Thanks to JetBrains IDEs and Sparklabs for their support.
+
+<table>
+  <thead>
+    <tr>
+      <th><a href="https://www.jetbrains.com/?from=jkroepke">JetBrains IDEs</a></th>
+      <th><a href="https://www.sparklabs.com/viscosity">Sparklabs</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <center>
+          <a href="https://www.jetbrains.com/?from=jkroepke">
+            <picture>
+              <source srcset="https://www.jetbrains.com/company/brand/img/logo_jb_dos_3.svg" media="(prefers-color-scheme: dark)">
+              <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg">
+            </picture>
+          </a>
+        </center>
+      </td>
+      <td>
+        <center>
+          <a href="https://www.sparklabs.com/viscosity">
+            <img src="https://www.sparklabs.com/static/other/logo_assets/logo_cropped.png" alt="Sparklabs Viscosity logo" height="100px">
+          </a>
+        </center>
+      </td>
+    </tr>
+  </tbody>
+</table>
