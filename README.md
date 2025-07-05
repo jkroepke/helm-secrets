@@ -189,7 +189,6 @@ Thanks to JetBrains IDEs for their support.
   <thead>
     <tr>
       <th><a href="https://www.jetbrains.com/?from=jkroepke">JetBrains IDEs</a></th>
-      <th><a href="https://www.sparklabs.com/viscosity">Sparklabs</a></th>
     </tr>
   </thead>
   <tbody>
