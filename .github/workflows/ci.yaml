@@ -8,7 +8,7 @@ env:
   # renovate: github=getsops/sops
   VERSION_SOPS: 3.10.2
   # renovate: github=helmfile/vals
-  VERSION_VALS: 0.41.3
+  VERSION_VALS: 0.42.0
 
 on:
   pull_request:
