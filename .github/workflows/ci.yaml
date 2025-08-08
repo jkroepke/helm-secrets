@@ -154,7 +154,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@3e94e41aea1aba190e7325ae533ceae8a2eed6a2 # v1.4.8
+        uses: jkroepke/setup-vals@f5dee6f3fdf97e7df8e3762b8b7aaa003eb07915 # v1.4.9
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -256,7 +256,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@3e94e41aea1aba190e7325ae533ceae8a2eed6a2 # v1.4.8
+        uses: jkroepke/setup-vals@f5dee6f3fdf97e7df8e3762b8b7aaa003eb07915 # v1.4.9
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -339,7 +339,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@3e94e41aea1aba190e7325ae533ceae8a2eed6a2 # v1.4.8
+        uses: jkroepke/setup-vals@f5dee6f3fdf97e7df8e3762b8b7aaa003eb07915 # v1.4.9
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -375,7 +375,7 @@ jobs:
       - unit-tests
       - integration-tests
     steps:
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           path: .
 
