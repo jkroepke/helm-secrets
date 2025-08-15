@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@17bd25a6ee188d2b91f677060038f4ba37ba14b2 # v0.9.0
         env:
@@ -139,7 +139,7 @@ jobs:
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
 
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           submodules: true
 
@@ -235,13 +235,13 @@ jobs:
       BATSLIB_TEMP_PRESERVE: "0"
       BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@2a7b30092b0caf9c046252510f9273b4875f3db9 # v1.254.0
+        uses: ruby/setup-ruby@829114fc20da43a41d27359103ec7a63020954d4 # v1.255.0
         with:
           ruby-version: "3.0"
 
@@ -324,7 +324,7 @@ jobs:
 
       - run: kubectl cluster-info
 
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           submodules: true
 
