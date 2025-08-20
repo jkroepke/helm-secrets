@@ -86,6 +86,27 @@ helm secrets --backend vals template bitnami/mysql --name-template mysql \
 
 See [Cloud Integration](https://github.com/jkroepke/helm-secrets/wiki/Cloud-Integration) for more information.
 
+### GCP Secret Manager shorthand
+
+When using Google Cloud Secret Manager with vals, you can set `GCP_PROJECT` to use shorthand notation:
+
+```bash
+export GCP_PROJECT=my-project
+helm secrets --backend vals template chart \
+  --set database.password=ref+gcpsecrets://db-password
+```
+
+This automatically expands to `ref+gcpsecrets://my-project/db-password` before being passed to vals.
+
+For ArgoCD, set `GCP_PROJECT` as an environment variable on the repo-server alongside other helm-secrets configuration:
+
+```yaml
+env:
+  - name: HELM_SECRETS_WRAPPER_ENABLED
+    value: "true"
+  - name: GCP_PROJECT
+    value: "my-project"
+```
 
 ## ArgoCD support
 

@@ -4,6 +4,28 @@ set -euf
 
 _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
+# Preprocess ref+gcpsecrets://mysecret to ref+gcpsecrets://${GCP_PROJECT}/mysecret
+_vals_preprocess_gcp_secrets() {
+    local input_content="${1}"
+    
+    # Check if we need to preprocess and have GCP_PROJECT set
+    if printf '%s' "${input_content}" | grep -q 'ref+gcpsecrets://[^/[:space:]]*[[:space:]]\|ref+gcpsecrets://[^/[:space:]]*$'; then
+        if [ -z "${GCP_PROJECT:-}" ]; then
+            fatal "GCP_PROJECT environment variable must be set when using ref+gcpsecrets://mysecret pattern"
+        fi
+        
+        # Replace patterns that don't have a project path (no / after ://)  
+        # This regex matches ref+gcpsecrets:// followed by non-slash/non-space characters
+        # and ensures we only match those that don't already have a slash in the path part
+        printf '%s' "${input_content}" | sed '
+            s|ref+gcpsecrets://\([^/[:space:]]*\)\([[:space:]]\)|ref+gcpsecrets://'"${GCP_PROJECT}"'/\1\2|g
+            s|ref+gcpsecrets://\([^/[:space:]]*\)$|ref+gcpsecrets://'"${GCP_PROJECT}"'/\1|g
+        '
+    else
+        printf '%s' "${input_content}"
+    fi
+}
+
 _vals() {
     # shellcheck disable=SC2086
     set -- "$@" ${SECRET_BACKEND_ARGS}
@@ -41,23 +63,29 @@ _vals_backend_decrypt_file() {
     if [ "${input}" = "${output}" ]; then
         fatal "vals: inline decryption is not supported!"
     elif [ "${input}" = "-" ]; then
-        _vals eval -o "${type}"
+        temp_content=$(cat)
+        _vals_preprocess_gcp_secrets "${temp_content}" | _vals eval -o "${type}"
     elif [ "${output}" = "" ]; then
-        _vals eval -o "${type}" <"${input}"
+        _vals_preprocess_gcp_secrets "$(cat "${input}")" | _vals eval -o "${type}"
     else
-        _vals eval -o "${type}" <"${input}" >"${output}"
+        _vals_preprocess_gcp_secrets "$(cat "${input}")" | _vals eval -o "${type}" >"${output}"
     fi
 }
 
 _vals_backend_decrypt_literal() {
-    if printf '%s' "${1}" | _vals_backend_is_encrypted; then
-        if ! value="$(_vals get "${1}")"; then
+    input_literal="${1}"
+    
+    # Preprocess the literal for GCP secrets
+    preprocessed_literal="$(_vals_preprocess_gcp_secrets "${input_literal}")"
+    
+    if printf '%s' "${preprocessed_literal}" | _vals_backend_is_encrypted; then
+        if ! value="$(_vals get "${preprocessed_literal}")"; then
             return 1
         fi
 
         printf '%s' "${value}"
     else
-        printf '%s' "${1}"
+        printf '%s' "${preprocessed_literal}"
     fi
 }
 
