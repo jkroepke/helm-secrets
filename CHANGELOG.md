@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- GCP Secret Manager shorthand notation support: automatically expand `ref+gcpsecrets://mysecret` to `ref+gcpsecrets://${HELM_SECRETS_GCP_PROJECT}/mysecret` when using vals backend
 
 ## [4.6.5] - 2025-05-20
 
