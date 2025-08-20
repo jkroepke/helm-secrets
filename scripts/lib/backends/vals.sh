@@ -4,22 +4,22 @@ set -euf
 
 _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
-# Preprocess ref+gcpsecrets://mysecret to ref+gcpsecrets://${GCP_PROJECT}/mysecret
+# Preprocess ref+gcpsecrets://mysecret to ref+gcpsecrets://${HELM_SECRETS_GCP_PROJECT}/mysecret
 _vals_preprocess_gcp_secrets() {
     local input_content="${1}"
     
-    # Check if we need to preprocess and have GCP_PROJECT set
+    # Check if we need to preprocess and have HELM_SECRETS_GCP_PROJECT set
     if printf '%s' "${input_content}" | grep -q 'ref+gcpsecrets://[^/[:space:]]*[[:space:]]\|ref+gcpsecrets://[^/[:space:]]*$'; then
-        if [ -z "${GCP_PROJECT:-}" ]; then
-            fatal "GCP_PROJECT environment variable must be set when using ref+gcpsecrets://mysecret pattern"
+        if [ -z "${HELM_SECRETS_GCP_PROJECT:-}" ]; then
+            fatal "HELM_SECRETS_GCP_PROJECT environment variable must be set when using ref+gcpsecrets://mysecret pattern"
         fi
         
         # Replace patterns that don't have a project path (no / after ://)  
         # This regex matches ref+gcpsecrets:// followed by non-slash/non-space characters
         # and ensures we only match those that don't already have a slash in the path part
         printf '%s' "${input_content}" | sed '
-            s|ref+gcpsecrets://\([^/[:space:]]*\)\([[:space:]]\)|ref+gcpsecrets://'"${GCP_PROJECT}"'/\1\2|g
-            s|ref+gcpsecrets://\([^/[:space:]]*\)$|ref+gcpsecrets://'"${GCP_PROJECT}"'/\1|g
+            s|ref+gcpsecrets://\([^/[:space:]]*\)\([[:space:]]\)|ref+gcpsecrets://'"${HELM_SECRETS_GCP_PROJECT}"'/\1\2|g
+            s|ref+gcpsecrets://\([^/[:space:]]*\)$|ref+gcpsecrets://'"${HELM_SECRETS_GCP_PROJECT}"'/\1|g
         '
     else
         printf '%s' "${input_content}"
