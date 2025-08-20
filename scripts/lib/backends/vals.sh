@@ -6,7 +6,7 @@ _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
 # Preprocess ref+gcpsecrets://mysecret to ref+gcpsecrets://${HELM_SECRETS_GCP_PROJECT}/mysecret
 _vals_preprocess_gcp_secrets() {
-    local input_content="${1}"
+    input_content="${1}"
 
     # Check if we need to preprocess and have HELM_SECRETS_GCP_PROJECT set
     if printf '%s' "${input_content}" | grep -q 'ref+gcpsecrets://[^/[:space:]]*[[:space:]]\|ref+gcpsecrets://[^/[:space:]]*$'; then
