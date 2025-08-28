@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.6.6] - 2025-08-28
+
+### Fixes
+- fix: Add default platformCommand in plugin.yaml when no os value matches #566 (https://github.com/jkroepke/helm-secrets/pull/568)
 
 ## [4.6.5] - 2025-05-20
 
