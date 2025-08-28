@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.6.7] - 2025-08-28
+
+### Fixes
+- fix: Change WSL CI tests to use Ubuntu distro instead of Debian #569 (https://github.com/jkroepke/helm-secrets/pull/571)
+
 ## [4.6.6] - 2025-08-28
 
 ### Fixes
