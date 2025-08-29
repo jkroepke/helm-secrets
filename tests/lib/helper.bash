@@ -71,6 +71,18 @@ on_cygwin() {
     [[ "${_uname}" == "CYGWIN"* ]]
 }
 
+helm_version() {
+    "${HELM_BIN}" version --short | sed 's/[^0-9.]*\([0-9.]*\).*/\1/'
+}
+
+helm_version_less_than() {
+    [ "$(printf '%s\n%s\n' "$(helm_version)" "$1" | sort -V | head -n1)" != "$1" ]
+}
+
+helm_version_greater_or_equal_than() {
+    [ "$(printf '%s\n%s\n' "$(helm_version)" "$1" | sort -V | head -n1)" == "$1" ]
+}
+
 _winpath() {
     if on_wsl; then
         touch "${1}"
