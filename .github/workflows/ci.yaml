@@ -59,6 +59,7 @@ jobs:
         container: [""]
         shell: [dash]
         jobs: [4]
+        helm-version: [""]
         include:
           - os: windows-latest
             shell: bash
@@ -83,6 +84,14 @@ jobs:
             container: registry.access.redhat.com/ubi8/ubi-minimal
             shell: bash 4.4
             jobs: 4
+          - os: ubuntu-latest
+            shell: bash
+            jobs: 4
+            helm-version: 3.9.4
+          - os: ubuntu-latest
+            shell: bash
+            jobs: 4
+            helm-version: 3.16.4
           - os: ubuntu-latest
             container: alpine
             shell: zsh
@@ -146,7 +155,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
         with:
-          version: v${{ env.VERSION_HELM }}
+          version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
         uses: jkroepke/setup-sops@e9ffa8a3cee41e122f1317301af0ad98fc2fd18c # v1.2.4
