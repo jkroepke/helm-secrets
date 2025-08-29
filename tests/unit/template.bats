@@ -414,6 +414,9 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + secrets.yaml + space path" {
+    if helm_version_less_than 3.13.0; then
+        skip
+    fi
     if on_windows; then
         HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\space dir${BATS_ROOT_PID}\\"
     else
@@ -1684,6 +1687,9 @@ key2: value" 2>&1
     if ! is_backend "sops"; then
         skip
     fi
+    if helm_version_less_than 3.15.2; then
+        skip
+    fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
@@ -1691,6 +1697,28 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --kube-insecure-skip-tls-verify=true -f "${VALUES_PATH}" 2>&1
+
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output --partial "port: 83"
+    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + some-secrets.yaml + --insecure-skip-tls-verify=true" {
+    if ! is_backend "sops"; then
+        skip
+    fi
+    if helm_version_greater_or_equal_than 3.15.2; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --insecure-skip-tls-verify=true -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
