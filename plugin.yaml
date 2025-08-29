@@ -8,6 +8,10 @@ platformCommand:
   - os: windows
     command: >-
       cmd /c $HELM_PLUGIN_DIR\scripts\wrapper\run.cmd
+  - os: linux
+    command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+  - os: darwin
+    command: "$HELM_PLUGIN_DIR/scripts/run.sh"
   - command: "$HELM_PLUGIN_DIR/scripts/run.sh"
 
 downloaders:
