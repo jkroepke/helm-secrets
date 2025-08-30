@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.6.7] - 2025-08-28
+## [4.6.7] - 2025-08-30
 
 ### Fixes
 - fix: Change WSL CI tests to use Ubuntu distro instead of Debian #569 (https://github.com/jkroepke/helm-secrets/pull/571)
+- fix: Add Linux and Darwin commands to plugin.yaml #574 (https://github.com/jkroepke/helm-secrets/pull/574)
 
 ## [4.6.6] - 2025-08-28
 
@@ -357,7 +358,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.7...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.8...HEAD
+[4.6.8]: https://github.com/jkroepke/helm-secrets/compare/v4.6.7...v4.6.8
 [4.6.7]: https://github.com/jkroepke/helm-secrets/compare/v4.6.6...v4.6.7
 [4.6.6]: https://github.com/jkroepke/helm-secrets/compare/v4.6.5...v4.6.6
 [4.6.5]: https://github.com/jkroepke/helm-secrets/compare/v4.6.4...v4.6.5
