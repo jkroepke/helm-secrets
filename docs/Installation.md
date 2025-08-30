@@ -4,7 +4,7 @@
 
 Install a specific version (recommend). Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for latest version.
 ```bash
-helm plugin install https://github.com/jkroepke/helm-secrets --version v4.6.6
+helm plugin install https://github.com/jkroepke/helm-secrets --version v4.6.7
 ```
 
 Install latest unstable version from main branch
