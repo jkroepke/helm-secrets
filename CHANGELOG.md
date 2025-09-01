@@ -236,7 +236,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - A better ArgoCD Integration. helm-secrets can load now gpg keys for you by using the uri `secrets+gpg-import://path/key.asc?path/secrets.yaml` as value file.
   As alternative, you can use `secrets+gpg-import-kubernetes://` to import a gpg key from an existing kubernetes secret, but it requires the kubectl command.
-  Checkout the [docs/ARGOCD.md](docs/ArgoCD Integration.md) for more information.
+  Checkout the [docs/ARGOCD.md](docs/ArgoCD%20Integration.md) for more information.
 - [vals](https://github.com/variantdev/vals) driver. vals supporting Vault, AWS SSM, GCP, sops, terraform states or other files.
 
 ## [3.8.3] - 2021-08-06
