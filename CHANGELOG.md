@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.6.9] - 2025-09-01
+
+### Changed
+- All GitHub Releases since 4.6.9 are immutable.
+
 ## [4.6.8] - 2025-09-01
 
 ### Fixes
@@ -363,7 +368,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.8...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.6.9...HEAD
+[4.6.9]: https://github.com/jkroepke/helm-secrets/compare/v4.6.8...v4.6.9
 [4.6.8]: https://github.com/jkroepke/helm-secrets/compare/v4.6.7...v4.6.8
 [4.6.7]: https://github.com/jkroepke/helm-secrets/compare/v4.6.6...v4.6.7
 [4.6.6]: https://github.com/jkroepke/helm-secrets/compare/v4.6.5...v4.6.6
