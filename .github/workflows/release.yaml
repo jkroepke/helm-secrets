@@ -22,7 +22,9 @@ jobs:
         run: |
           gh release create ${{ github.ref_name }} \
             -t "Release ${{ github.ref_name }}" \
-            -n "# CHANGELOG\n\n* https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md\n" \
+            -n "# CHANGELOG
+
+          * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md" \
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
             helm-secrets.tar.gz
         env:
