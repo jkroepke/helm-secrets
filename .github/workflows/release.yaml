@@ -19,16 +19,14 @@ jobs:
         run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
 
       - name: Create Release
-        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
-        with:
-          name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: ${{ contains(github.ref_name, 'rc') }}
-          files: helm-secrets.tar.gz
-          body: |-
-            # CHANGELOG
-
-            * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md
+        run: |
+          gh release create ${{ github.ref_name }} \
+            -t "Release ${{ github.ref_name }}" \
+            -n "# CHANGELOG\n\n* https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md\n" \
+            ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
+            helm-secrets.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
     name: Set latest version
     runs-on: ubuntu-latest
