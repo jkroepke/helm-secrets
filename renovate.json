@@ -15,11 +15,19 @@
       "semanticCommitScope": "docs",
       "addLabels": [
         "chore"
-      ]
+      ],
+      "separateMajorMinor": false
     },
     {
       "matchDepTypes": ["git-submodules"],
       "groupName": "all bats dependencies",
+      "semanticCommitScope": "dev",
+      "addLabels": [
+        "chore"
+      ]
+    },
+    {
+      "matchFileNames": ["Gemfile"],
       "semanticCommitScope": "dev",
       "addLabels": [
         "chore"
