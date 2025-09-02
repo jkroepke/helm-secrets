@@ -4,6 +4,16 @@
   "git-submodules": {
     "enabled": true
   },
+  "packageRules": [
+    {
+      "matchFileNames": ["(^|/).+\\.md$"],
+      "groupName": "docs dependencies",
+      "semanticCommitScope": "docs",
+      "addLabels": [
+        "chore"
+      ]
+    }
+  ],
   "regexManagers": [
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -12,11 +22,7 @@
       ],
       "depNameTemplate": "quay.io/argoproj/argocd",
       "datasourceTemplate": "docker",
-      "versioningTemplate": "semver",
-      "semanticCommitScope": "docs",
-      "addLabels": [
-        "chore"
-      ]
+      "versioningTemplate": "semver"
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -26,11 +32,7 @@
       ],
       "depNameTemplate": "getsops/sops",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver",
-      "semanticCommitScope": "docs",
-      "addLabels": [
-        "chore"
-      ]
+      "versioningTemplate": "semver"
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -40,11 +42,7 @@
       ],
       "depNameTemplate": "kubernetes/kubectl",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver",
-      "semanticCommitScope": "docs",
-      "addLabels": [
-        "chore"
-      ]
+      "versioningTemplate": "semver"
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -54,11 +52,7 @@
       ],
       "depNameTemplate": "helmfile/vals",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver",
-      "semanticCommitScope": "docs",
-      "addLabels": [
-        "chore"
-      ]
+      "versioningTemplate": "semver"
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -68,11 +62,7 @@
       ],
       "depNameTemplate": "jkroepke/helm-secrets",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver",
-      "semanticCommitScope": "docs",
-      "addLabels": [
-        "chore"
-      ]
+      "versioningTemplate": "semver"
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -82,11 +72,7 @@
       ],
       "depNameTemplate": "FiloSottile/age",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver",
-      "semanticCommitScope": "docs",
-      "addLabels": [
-        "chore"
-      ]
+      "versioningTemplate": "semver"
     }
   ]
 }
