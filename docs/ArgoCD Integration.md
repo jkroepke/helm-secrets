@@ -7,7 +7,7 @@ Since ArgoCD is a shared environment,
 consider reading [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments)
 to prevent users from reading files outside the own directory.
 
-➡ With helm-secrets, you can encrypt value files only. Encrypted manifests/templates are not supported.
+➡ With helm-secrets, you can encrypt value files only. Encrypted manifests/templates aren’t supported.
 
 # Prerequisites
 
@@ -77,14 +77,14 @@ References:
 * https://github.com/argoproj/argo-cd/issues/11866
 * https://github.com/argoproj/argo-cd/pull/11966
 
-On ArgoCD 2.6.x, helm-secrets isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginning of a string.
-This is in conflict with helm-secrets, since the string needs to begin with `secrets://`. On top, ArgoCD do not resolve references in URLs.
+On ArgoCD 2.6 or higher, helm-secrets isn't supported in Multi-Source application, because the source reference, e.g.: `$ref` needs to be at the beginning of a string.
+This is in conflict with helm-secrets, since the string needs to begin with `secrets://`. On top, ArgoCD don’t resolve references in URLs.
 
-`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH` must be set to `true`, since ArgoCD pass value files with absolute file path.
+`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH` must be set to `true`, since ArgoCD pass value files with an absolute file path.
 
 Ensure that the env `HELM_SECRETS_WRAPPER_ENABLED=true` (default `false`) and
-`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true` is set on the argocd-repo-server.
-Please ensure you are following the latest installation instructions (updated on 2023-03-03).
+`HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true` is set on the `argocd-repo-server`.
+Please ensure you’re following the latest installation instructions (updated on 2023-03-03).
 
 ### sops backend
 
@@ -126,7 +126,7 @@ spec:
 
 # Installation on Argo CD
 
-Before using helm secrets, we are required to install `helm-secrets` on the `argocd-repo-server`.
+Before using helm secrets, we’re required to install `helm-secrets` on the `argocd-repo-server`.
 Depends on the secret backend, `sops` or `vals` is required on the `argocd-repo-server`, too.
 There are two methods to do this.
 Either create your custom ArgoCD Docker Image or install them via an init container.
@@ -150,6 +150,7 @@ FROM quay.io/argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION=3.9.0
 ARG KUBECTL_VERSION=1.30.2
 ARG VALS_VERSION=0.37.3
+ARG AGE_VERSION=1.2.1
 ARG HELM_SECRETS_VERSION=4.6.0
 
 # vals or sops
@@ -164,6 +165,7 @@ ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_CURL_PATH=/gitops-tools/curl \
     HELM_SECRETS_SOPS_PATH=/gitops-tools/sops \
     HELM_SECRETS_VALS_PATH=/gitops-tools/vals \
+    HELM_SECRETS_AGE_PATH=/gitops-tools/age \
     HELM_SECRETS_KUBECTL_PATH=/gitops-tools/kubectl \
     PATH="$PATH:/gitops-tools"
 
@@ -178,37 +180,26 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     mkdir -p /gitops-tools/helm-plugins
 
-RUN \ 
-    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/') && \
-    wget -qO "/gitops-tools/curl" "https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${GO_ARCH}" && \
-    true
+SHELL ["bash", "-c"]
 
-RUN \
-    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
-    wget -qO "/gitops-tools/kubectl" "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl" && \
-    true
-
-# sops backend installation (optional)
-RUN \
-    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
-    wget -qO "/gitops-tools/sops" "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}" && \
-    true
-
-# vals backend installation (optional)
-RUN \
-    GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
-    wget -qO- "https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz" | tar zxv -C /gitops-tools vals && \
-    true
-
-# helm secert installation 
-RUN \
-    wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz" | tar -C /gitops-tools/helm-plugins -xzf- && \
-    true
-
-RUN chmod +x /gitops-tools/* && ln -sf /gitops-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /usr/local/sbin/helm
+RUN set -exuo pipefail \ 
+    && export CURL_ARCH=$(uname -m | sed -e 's/x86_64/amd64/') \
+    && wget -qO "${HELM_SECRETS_CURL_PATH}" "https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${CURL_ARCH}" \
+    && export GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')
+    && wget -qO "${HELM_SECRETS_KUBECTL_PATH}" "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl" \
+    && wget -qO "${HELM_SECRETS_SOPS_PATH}" "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}" \
+    && wget -qO- "https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz" | tar zxv -C "${HELM_SECRETS_VALS_PATH%/*}" vals \
+    && wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz" | tar -C "${HELM_PLUGINS}" -xzf- \
+    && wget -qO- "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz" | tar -xzf- --strip-components=1 -C "${HELM_SECRETS_AGE_PATH%/*}" age/age \
+    && chmod +x \
+        "${HELM_SECRETS_CURL_PATH}" \
+        "${HELM_SECRETS_SOPS_PATH}" \
+        "${HELM_SECRETS_KUBECTL_PATH}" \
+        "${HELM_SECRETS_VALS_PATH}" \
+        "${HELM_SECRETS_AGE_PATH}" \
+    && ln -sf "${HELM_PLUGINS}/helm-secrets/scripts/wrapper/helm.sh" /usr/local/sbin/helm
 
 USER argocd
-
 ```
 
 </details>
@@ -236,6 +227,8 @@ repoServer:
       value: /gitops-tools/sops
     - name: HELM_SECRETS_VALS_PATH
       value: /gitops-tools/vals
+    - name: HELM_SECRETS_AGE_PATH
+      value: /gitops-tools/age
     - name: HELM_SECRETS_KUBECTL_PATH
       value: /gitops-tools/kubectl
     - name: HELM_SECRETS_BACKEND
@@ -286,21 +279,30 @@ repoServer:
           value: "0.37.3"
         - name: SOPS_VERSION
           value: "3.9.0"
+        - name: AGE_VERSION
+          value: "1.2.1"
       args:
         - |
-          mkdir -p /gitops-tools/helm-plugins
+          mkdir -p "${HELM_PLUGINS}"
 
-          GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/')
-          wget -qO /gitops-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${GO_ARCH}
+          export CURL_ARCH=$(uname -m | sed -e 's/x86_64/amd64/')
+          wget -qO "${HELM_SECRETS_CURL_PATH}" https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${CURL_ARCH}
 
-          GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
-          wget -qO /gitops-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl
-          wget -qO /gitops-tools/sops https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}
-          wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz | tar zxv -C /gitops-tools vals
+          export GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')
+          wget -qO "${HELM_SECRETS_KUBECTL_PATH}" https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl
+          wget -qO "${HELM_SECRETS_SOPS_PATH}" https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}
+          wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz | tar zxv -C "${HELM_SECRETS_VALS_PATH%/*}" vals
           wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /gitops-tools/helm-plugins -xzf-
+          wget -qO- "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz" | tar -xzf- --strip-components=1 -C "${HELM_SECRETS_AGE_PATH%/*}" age/age
+          
+          chmod +x \
+            "${HELM_SECRETS_CURL_PATH}" \
+            "${HELM_SECRETS_SOPS_PATH}" \
+            "${HELM_SECRETS_KUBECTL_PATH}" \
+            "${HELM_SECRETS_VALS_PATH}" \
+            "${HELM_SECRETS_AGE_PATH}"
 
-          chmod +x /gitops-tools/*
-          cp /gitops-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /gitops-tools/helm
+          cp "${HELM_PLUGINS}/helm-secrets/scripts/wrapper/helm.sh" /gitops-tools/helm
       volumeMounts:
         - mountPath: /gitops-tools
           name: gitops-tools
@@ -383,7 +385,7 @@ age-keygen -o key.txt
 ```
 
 The public key can be found in the output of the generate-key command.
-Unlike gpg, age does not have an agent. [To encrypt the key with sops](https://github.com/getsops/sops#encrypting-using-age), set the environment variables
+Unlike gpg, age doesn’t have an agent. [To encrypt the key with sops](https://github.com/getsops/sops#encrypting-using-age), set the environment variables
 
 * `SOPS_AGE_KEY_FILE="path/age/key.txt"`
 * `SOPS_AGE_RECIPIENTS=public-key`
