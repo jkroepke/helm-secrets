@@ -9,8 +9,7 @@
       ],
       "depNameTemplate": "quay.io/argoproj/argocd",
       "datasourceTemplate": "docker",
-      "versioningTemplate": "semver",
-      "extractVersion": "v(?<version>.*)"
+      "versioningTemplate": "semver"
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
