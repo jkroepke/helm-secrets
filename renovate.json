@@ -1,12 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>jkroepke/renovate-config"],
+  "extends": [
+    "github>jkroepke/renovate-config"
+  ],
   "git-submodules": {
     "enabled": true
   },
   "packageRules": [
     {
-      "matchFileNames": ["(^|/).+\\.md$"],
+      "matchFileNames": [
+        "(^|/).+\\.md$"
+      ],
       "groupName": "docs dependencies",
       "semanticCommitScope": "docs",
       "addLabels": [
@@ -14,9 +18,12 @@
       ]
     }
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["(^|/).+\\.md$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/).+\\.md$/"
+      ],
       "matchStrings": [
         "ARG\\s+ARGOCD_VERSION=\"v(?<currentValue>.*?)\""
       ],
@@ -25,7 +32,10 @@
       "versioningTemplate": "semver"
     },
     {
-      "fileMatch": ["(^|/).+\\.md$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/).+\\.md$/"
+      ],
       "matchStrings": [
         "ARG\\s+SOPS_VERSION=(?<currentValue>.*?)\\s+",
         "- name: SOPS_VERSION\\n\\s+value: \"(?<currentValue>.*?)\""
@@ -35,7 +45,10 @@
       "versioningTemplate": "semver"
     },
     {
-      "fileMatch": ["(^|/).+\\.md$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/).+\\.md$/"
+      ],
       "matchStrings": [
         "ARG\\s+KUBECTL_VERSION=(?<currentValue>.*?)\\s+",
         "- name: KUBECTL_VERSION\\n\\s+value: \"(?<currentValue>.*?)\""
@@ -45,7 +58,10 @@
       "versioningTemplate": "semver"
     },
     {
-      "fileMatch": ["(^|/).+\\.md$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/).+\\.md$/"
+      ],
       "matchStrings": [
         "ARG\\s+VALS_VERSION=(?<currentValue>.*?)\\s+",
         "- name: VALS_VERSION\\n\\s+value: \"(?<currentValue>.*?)\""
@@ -55,7 +71,10 @@
       "versioningTemplate": "semver"
     },
     {
-      "fileMatch": ["(^|/).+\\.md$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/).+\\.md$/"
+      ],
       "matchStrings": [
         "ARG\\s+HELM_SECRETS_VERSION=(?<currentValue>.*?)\\s+",
         "- name: HELM_SECRETS_VERSION\\n\\s+value: \"(?<currentValue>.*?)\""
@@ -65,7 +84,10 @@
       "versioningTemplate": "semver"
     },
     {
-      "fileMatch": ["(^|/).+\\.md$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/).+\\.md$/"
+      ],
       "matchStrings": [
         "ARG\\s+AGE_VERSION=(?<currentValue>.*?)\\s+",
         "- name: AGE_VERSION\\n\\s+value: \"(?<currentValue>.*?)\""
