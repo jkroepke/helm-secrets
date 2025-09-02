@@ -9,7 +9,11 @@
       ],
       "depNameTemplate": "quay.io/argoproj/argocd",
       "datasourceTemplate": "docker",
-      "versioningTemplate": "semver"
+      "versioningTemplate": "semver",
+      "semanticCommitScope": "docs",
+      "addLabels": [
+        "chore"
+      ]
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -19,7 +23,11 @@
       ],
       "depNameTemplate": "getsops/sops",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver"
+      "versioningTemplate": "semver",
+      "semanticCommitScope": "docs",
+      "addLabels": [
+        "chore"
+      ]
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -29,7 +37,11 @@
       ],
       "depNameTemplate": "kubernetes/kubectl",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver"
+      "versioningTemplate": "semver",
+      "semanticCommitScope": "docs",
+      "addLabels": [
+        "chore"
+      ]
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -39,7 +51,11 @@
       ],
       "depNameTemplate": "helmfile/vals",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver"
+      "versioningTemplate": "semver",
+      "semanticCommitScope": "docs",
+      "addLabels": [
+        "chore"
+      ]
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -49,7 +65,11 @@
       ],
       "depNameTemplate": "jkroepke/helm-secrets",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver"
+      "versioningTemplate": "semver",
+      "semanticCommitScope": "docs",
+      "addLabels": [
+        "chore"
+      ]
     },
     {
       "fileMatch": ["(^|/).+\\.md$"],
@@ -59,7 +79,11 @@
       ],
       "depNameTemplate": "FiloSottile/age",
       "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver"
+      "versioningTemplate": "semver",
+      "semanticCommitScope": "docs",
+      "addLabels": [
+        "chore"
+      ]
     }
   ]
 }
