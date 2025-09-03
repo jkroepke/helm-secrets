@@ -69,7 +69,7 @@
         "ARG\\s+KUBECTL_VERSION=(?<currentValue>.*?)\\s+",
         "- name: KUBECTL_VERSION\\n\\s+value: \"(?<currentValue>.*?)\""
       ],
-      "depNameTemplate": "kubernetes/kubectl",
+      "depNameTemplate": "kubernetes/kubernetes",
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver"
     },
