@@ -12,7 +12,7 @@
         "/(^|/).+\\.md$/"
       ],
       "groupName": "docs dependencies",
-      "semanticCommitScope": "docs",
+      "semanticCommitScope": "docs-deps",
       "addLabels": [
         "chore"
       ],
@@ -21,14 +21,14 @@
     {
       "matchManagers": ["git-submodules"],
       "groupName": "all bats dependencies",
-      "semanticCommitScope": "dev",
+      "semanticCommitScope": "dev-deps",
       "addLabels": [
         "chore"
       ]
     },
     {
       "matchFileNames": ["Gemfile"],
-      "semanticCommitScope": "dev",
+      "semanticCommitScope": "dev-deps",
       "addLabels": [
         "chore"
       ]
