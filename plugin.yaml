@@ -6,8 +6,7 @@ description: |-
 useTunnel: false
 platformCommand:
   - os: windows
-    command: >-
-      cmd /v:on /c "set p=%HELM_PLUGIN_DIR%\scripts\wrapper\run.cmd && call !p!"
+    command: cmd /v:on /c set p=%HELM_PLUGIN_DIR%\scripts\wrapper\run.cmd^&^&call "!p!" %*
   - os: linux
     command: "$HELM_PLUGIN_DIR/scripts/run.sh"
   - os: darwin
