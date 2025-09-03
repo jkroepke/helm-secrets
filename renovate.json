@@ -19,7 +19,7 @@
       "separateMajorMinor": false
     },
     {
-      "matchDepTypes": ["git-submodules"],
+      "matchManagers": ["git-submodules"],
       "groupName": "all bats dependencies",
       "semanticCommitScope": "dev",
       "addLabels": [
