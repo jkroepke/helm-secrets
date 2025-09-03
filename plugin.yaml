@@ -7,7 +7,7 @@ useTunnel: false
 platformCommand:
   - os: windows
     command: >-
-      cmd /c %HELM_PLUGIN_DIR%\scripts\wrapper\run.cmd
+      cmd /c "\"%HELM_PLUGIN_DIR%\\scripts\\wrapper\\run.cmd\""
   - os: linux
     command: "$HELM_PLUGIN_DIR/scripts/run.sh"
   - os: darwin
