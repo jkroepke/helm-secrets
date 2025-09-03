@@ -9,7 +9,7 @@
   "packageRules": [
     {
       "matchFileNames": [
-        "(^|/).+\\.md$"
+        "/(^|/).+\\.md$/"
       ],
       "groupName": "docs dependencies",
       "semanticCommitScope": "docs",
