@@ -2,6 +2,13 @@ name: 🐞 Bug
 description: Something is not working as indended.
 labels: [bug]
 body:
+  - type: markdown
+    attributes:
+      value: |-
+        > [!NOTE]
+        > If you get the warning `WARNING: both 'platformCommand' and 'command' are set`, please update helm-secrets first!
+
+        Thanks for taking the time to fill out this bug report!
   - type: textarea
     attributes:
       label: Current Behavior
