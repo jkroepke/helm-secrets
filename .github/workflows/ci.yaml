@@ -34,7 +34,7 @@ jobs:
         name: Detect changes
         shell: bash
         run: |
-          echo "changed=$(git diff --name-only origin/${{ github.base_ref }} ${{ github.sha }} | tee /dev/stderr | grep '^(scripts/|tests/|.github/workflows/ci.yaml)' | wc -l)" >> $GITHUB_OUTPUT
+          echo "changed=$(git diff --name-only origin/${{ github.base_ref }} ${{ github.sha }} -- scripts/ tests/ .github/workflows/ci.yaml | wc -l)" >> $GITHUB_OUTPUT
 
   lint:
     runs-on: ubuntu-24.04
