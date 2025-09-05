@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
       - id: set-output
         run: |
-          echo "::set-output name=changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^(scripts/|tests/|.github/workflows/ci.yaml)' | wc -l)"
+          echo "changed=$(git diff --name-only ${{ github.base_ref }} ${{ github.sha }} | grep '^(scripts/|tests/|.github/workflows/ci.yaml)' | wc -l)" >> $GITHUB_OUTPUT
 
   lint:
     runs-on: ubuntu-24.04
