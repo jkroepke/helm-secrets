@@ -65,10 +65,11 @@ jobs:
 
   unit-tests:
     runs-on: ${{ matrix.os }}
+    if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
+    needs: detect-changes
     container: ${{ matrix.container }}
     env:
       HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
-    if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -259,6 +260,7 @@ jobs:
   coverage:
     runs-on: ubuntu-24.04
     if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
+    needs: detect-changes
     env:
       BATSLIB_TEMP_PRESERVE: "0"
       BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
@@ -340,6 +342,7 @@ jobs:
   integration-tests:
     runs-on: ubuntu-24.04
     if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
+    needs: detect-changes
     strategy:
       fail-fast: false
       matrix:
