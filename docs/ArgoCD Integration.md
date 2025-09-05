@@ -145,7 +145,7 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 <p>
 
 ```Dockerfile
-ARG ARGOCD_VERSION="v3.1.1"
+ARG ARGOCD_VERSION="v3.1.3"
 FROM quay.io/argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION=3.10.2
 ARG KUBECTL_VERSION=1.34.0
