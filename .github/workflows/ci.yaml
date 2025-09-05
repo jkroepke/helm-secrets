@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
       - id: set-output
         run: |
-          echo "::set-output name=changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^(scripts/)' | wc -l)"
+          echo "::set-output name=changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^(scripts/|tests/)' | wc -l)"
 
   lint:
     runs-on: ubuntu-24.04
