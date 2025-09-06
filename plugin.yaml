@@ -14,7 +14,7 @@ platformCommand:
   - command: "$HELM_PLUGIN_DIR/scripts/run.sh"
 
 downloaders:
-  - command: "scripts/wrapper/run.cmd downloader"
+  - command: "scripts/run.sh downloader"
     protocols:
       - "secrets"
       - "secrets+gpg-import"
