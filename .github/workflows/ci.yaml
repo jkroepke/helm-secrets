@@ -19,9 +19,27 @@ on:
       - 'docs/**'
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.set-output.outputs.changed }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - id: set-output
+        name: Detect changes
+        shell: bash
+        run: |
+          echo "changed=$(git diff --name-only origin/${{ github.base_ref }} ${{ github.sha }} -- scripts/ tests/ .github/workflows/ci.yaml | wc -l)" >> $GITHUB_OUTPUT
+
   lint:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    runs-on: ubuntu-24.04
+    needs: detect-changes
+    if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Run the sh-checker
@@ -47,60 +65,61 @@ jobs:
 
   unit-tests:
     runs-on: ${{ matrix.os }}
+    if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
+    needs: detect-changes
     container: ${{ matrix.container }}
     env:
       HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-24.04]
         container: [""]
         shell: [dash]
         jobs: [4]
         helm-version: [""]
         include:
-          - os: windows-latest
+          - os: windows-24.04
             shell: bash
             jobs: 1
-          - os: windows-latest
+          - os: windows-24.04
             shell: cygwin
             jobs: 1
-          - os: windows-latest
+          - os: windows-24.04
             shell: wsl
             jobs: 4
-          - os: macos-latest
+          - os: macos-24.04
             shell: bash 3.2
             jobs: 4
-          - os: macos-latest
+          - os: macos-24.04
             shell: bash 3.2 with coreutils
             jobs: 4
-          #- os: ubuntu-latest
+          #- os: ubuntu-24.04
           #  container: centos:7
           #  shell: bash 4.2
           #  jobs: 4
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             container: registry.access.redhat.com/ubi8/ubi-minimal
             shell: bash 4.4
             jobs: 4
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             shell: bash
             jobs: 4
             helm-version: 3.9.4
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             shell: bash
             jobs: 4
             helm-version: 3.16.4
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             container: alpine
             shell: zsh
             jobs: 4
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             container: alpine
             shell: ash
             jobs: 4
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             container: ubuntu:22.04
             shell: posh
             jobs: 4
@@ -143,7 +162,7 @@ jobs:
         run: |-
           git config --global core.autocrlf false
           git config --global core.eol lf
-        if: "contains(matrix.os, 'windows-latest')"
+        if: "contains(matrix.os, 'windows-24.04')"
 
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
@@ -163,7 +182,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ecc82ad5b2b2b3ef36731481675a8bdcd7686d9e # v1.5.0
+        uses: jkroepke/setup-vals@c19de48471d9915c16c1a67dad3c7441232907e2 # v1.5.2
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -188,7 +207,7 @@ jobs:
           echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Setup parallel (mac OS)
-        if: "contains(matrix.os, 'macos-latest')"
+        if: "contains(matrix.os, 'macos-24.04')"
         run: brew install parallel
 
       - name: Setup parallel (WSL)
@@ -239,8 +258,9 @@ jobs:
           retention-days: 1
 
   coverage:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    runs-on: ubuntu-24.04
+    if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
+    needs: detect-changes
     env:
       BATSLIB_TEMP_PRESERVE: "0"
       BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
@@ -266,7 +286,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ecc82ad5b2b2b3ef36731481675a8bdcd7686d9e # v1.5.0
+        uses: jkroepke/setup-vals@c19de48471d9915c16c1a67dad3c7441232907e2 # v1.5.2
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -296,7 +316,7 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # v5.5.0
+      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -312,7 +332,7 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
 
-      - uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # v5.5.0
+      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -320,12 +340,13 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   integration-tests:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    runs-on: ubuntu-24.04
+    if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
+    needs: detect-changes
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-24.04]
         container: [""]
         shell: [dash]
         jobs: [4]
@@ -349,7 +370,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ecc82ad5b2b2b3ef36731481675a8bdcd7686d9e # v1.5.0
+        uses: jkroepke/setup-vals@c19de48471d9915c16c1a67dad3c7441232907e2 # v1.5.2
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -379,7 +400,7 @@ jobs:
           if-no-files-found: error
 
   report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: always()
     needs:
       - unit-tests
@@ -394,3 +415,16 @@ jobs:
         with:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true
+
+  fail:
+    if: "${{ cancelled() || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'failure') }}"
+    needs:
+      - "lint"
+      - "report"
+      - "coverage"
+    runs-on: "ubuntu-24.04"
+    steps:
+      - name: "verify checks passed"
+        run: |
+          echo "Some checks have failed!"
+          exit 1
