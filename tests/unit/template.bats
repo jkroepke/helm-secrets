@@ -417,10 +417,11 @@ key2: value" 2>&1
     if helm_version_less_than 3.13.0; then
         skip
     fi
+
     if on_windows; then
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\space dir${BATS_ROOT_PID}\\"
+        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\dir ${BATS_ROOT_PID}\\"
     else
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/space dir${BATS_ROOT_PID}/"
+        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/dir ${BATS_ROOT_PID}/"
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
@@ -442,13 +443,15 @@ key2: value" 2>&1
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
-@test "template: helm template w/ chart + secrets.yaml + space path2" {
-    skip
+@test "template: helm template w/ chart + secrets.yaml + bracket in path" {
+    if helm_version_less_than 3.13.0; then
+        skip
+    fi
 
     if on_windows; then
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\space dir2\\"
+        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\dir(${BATS_ROOT_PID})\\"
     else
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/space dir2/"
+        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/dir(${BATS_ROOT_PID})/"
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
@@ -458,34 +461,10 @@ key2: value" 2>&1
 
     env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
     env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
-    #env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
+    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
     #env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
 
     run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
-    assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
-    assert_success
-    assert_file_not_exists "${VALUES_PATH}.dec"
-}
-
-@test "template: helm template w/ chart + secrets.yaml + space path3" {
-    skip
-
-    SPACE_DIR="${TEST_TEMP_DIR}/plugin dir"
-    mkdir "${SPACE_DIR}"
-
-    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
-    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
-
-    create_chart "${TEST_TEMP_DIR}"
-
-    run env HELM_PLUGINS="${SPACE_DIR}" WSLENV="HELM_PLUGINS/p:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")"
-
-    assert_success
-
-    run env HELM_PLUGINS="${SPACE_DIR}" WSLENV="HELM_PLUGINS/p:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
