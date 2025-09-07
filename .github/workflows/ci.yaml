@@ -80,25 +80,21 @@ jobs:
         jobs: [4]
         helm-version: [""]
         include:
-          - os: windows-24.04
+          - os: windows-2025
             shell: bash
             jobs: 1
-          - os: windows-24.04
+          - os: windows-2025
             shell: cygwin
             jobs: 1
-          - os: windows-24.04
+          - os: windows-2025
             shell: wsl
             jobs: 4
-          - os: macos-24.04
+          - os: macos-15
             shell: bash 3.2
             jobs: 4
-          - os: macos-24.04
+          - os: macos-15
             shell: bash 3.2 with coreutils
             jobs: 4
-          #- os: ubuntu-24.04
-          #  container: centos:7
-          #  shell: bash 4.2
-          #  jobs: 4
           - os: ubuntu-24.04
             container: registry.access.redhat.com/ubi8/ubi-minimal
             shell: bash 4.4
@@ -162,7 +158,7 @@ jobs:
         run: |-
           git config --global core.autocrlf false
           git config --global core.eol lf
-        if: "contains(matrix.os, 'windows-24.04')"
+        if: "contains(matrix.os, 'windows')"
 
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
@@ -207,7 +203,7 @@ jobs:
           echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Setup parallel (mac OS)
-        if: "contains(matrix.os, 'macos-24.04')"
+        if: "contains(matrix.os, 'macos')"
         run: brew install parallel
 
       - name: Setup parallel (WSL)
