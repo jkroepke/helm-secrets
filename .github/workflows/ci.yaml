@@ -158,7 +158,7 @@ jobs:
         run: |-
           git config --global core.autocrlf false
           git config --global core.eol lf
-        if: "contains(matrix.os, 'windows-2025')"
+        if: "contains(matrix.os, 'windows')"
 
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
@@ -203,7 +203,7 @@ jobs:
           echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Setup parallel (mac OS)
-        if: "contains(matrix.os, 'macos-24.04')"
+        if: "contains(matrix.os, 'macos')"
         run: brew install parallel
 
       - name: Setup parallel (WSL)
