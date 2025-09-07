@@ -76,7 +76,7 @@ jobs:
       matrix:
         os: [ubuntu-24.04]
         container: [""]
-        shell: [dash]
+        shell: [bash]
         jobs: [4]
         helm-version: [""]
         include:
@@ -94,16 +94,16 @@ jobs:
             shell: bash 3.2 with coreutils
           - container: registry.access.redhat.com/ubi8/ubi-minimal
             shell: bash 4.4
-          - shell: bash
-            helm-version: 3.9.4
-          - shell: bash
-            helm-version: 3.16.4
+          - helm-version: 3.9.4
+          - helm-version: 3.16.4
           - container: alpine
             shell: zsh
           - container: alpine
             shell: ash
           - container: ubuntu:22.04
             shell: posh
+          - os: ubuntu-24.04
+            shell: dash
     steps:
       - name: Install dependencies
         if: "matrix.container"
