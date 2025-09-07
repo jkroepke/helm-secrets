@@ -88,37 +88,22 @@ jobs:
             jobs: 1
           - os: windows-2025
             shell: wsl
-            jobs: 4
           - os: macos-15
             shell: bash 3.2
-            jobs: 4
           - os: macos-15
             shell: bash 3.2 with coreutils
-            jobs: 4
-          - os: ubuntu-24.04
-            container: registry.access.redhat.com/ubi8/ubi-minimal
+          - container: registry.access.redhat.com/ubi8/ubi-minimal
             shell: bash 4.4
-            jobs: 4
-          - os: ubuntu-24.04
-            shell: bash
-            jobs: 4
+          - shell: bash
             helm-version: 3.9.4
-          - os: ubuntu-24.04
-            shell: bash
-            jobs: 4
+          - shell: bash
             helm-version: 3.16.4
-          - os: ubuntu-24.04
-            container: alpine
+          - container: alpine
             shell: zsh
-            jobs: 4
-          - os: ubuntu-24.04
-            container: alpine
+          - container: alpine
             shell: ash
-            jobs: 4
-          - os: ubuntu-24.04
-            container: ubuntu:22.04
+          - container: ubuntu:22.04
             shell: posh
-            jobs: 4
     steps:
       - name: Install dependencies
         if: "matrix.container"
