@@ -6,7 +6,8 @@ description: |-
 useTunnel: false
 platformCommand:
   - os: windows
-    command: "$HELM_PLUGIN_DIR/scripts/wrapper/run.cmd"
+    command: >-
+      cmd.exe /D /E:ON /V:ON /C !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
   - os: linux
     command: "$HELM_PLUGIN_DIR/scripts/run.sh"
   - os: darwin
