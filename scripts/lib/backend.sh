@@ -2,6 +2,8 @@
 
 set -euf
 
+DEFAULT_IFS="$(printf ' \t\n')"
+
 # Define the allowed secret backends
 ALLOWED_BACKENDS="${HELM_SECRETS_ALLOWED_BACKENDS:-}"
 
@@ -78,8 +80,9 @@ load_secret_backend() {
     processed_backends=""
 
     # Handle comma-separated backends
-    old_IFS="${IFS:-$' \t\n'}"
+    old_IFS="${IFS:-$DEFAULT_IFS}"
     IFS=','
+    # shellcheck disable=SC2086
     set -- $backends
     IFS="${old_IFS}"
     for backend; do
@@ -131,8 +134,9 @@ load_secret_backend() {
     # Set SECRET_BACKEND for backward compatibility (first backend)
     # shellcheck disable=SC2034
     if [ -n "${SECRET_BACKENDS}" ]; then
-        old_IFS="${IFS:-$' \t\n'}"
+        old_IFS="${IFS:-$DEFAULT_IFS}"
         IFS=','
+        # shellcheck disable=SC2086
         set -- $SECRET_BACKENDS
         IFS="${old_IFS}"
         SECRET_BACKEND="${1}"
