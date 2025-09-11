@@ -3,8 +3,9 @@
 _SOPS="${HELM_SECRETS_SOPS_PATH:-${HELM_SECRETS_SOPS_BIN:-sops}}"
 
 _sops() {
+    backend_args="${SECRET_BACKEND_SOPS_ARGS:-${SECRET_BACKEND_ARGS:-}}"
     # shellcheck disable=SC2086
-    set -- ${SECRET_BACKEND_ARGS} "$@"
+    set -- ${backend_args} "$@"
     $_SOPS "$@"
 }
 

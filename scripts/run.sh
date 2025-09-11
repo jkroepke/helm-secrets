@@ -47,6 +47,8 @@ fi
 SECRET_BACKEND="${HELM_SECRETS_BACKEND:-sops}"
 # Define the secret backend custom args
 SECRET_BACKEND_ARGS="${HELM_SECRETS_BACKEND_ARGS:-}"
+# Initialize SECRET_BACKENDS for multiple backend support
+SECRET_BACKENDS=""
 
 # The suffix to use for decrypted files. The default can be overridden using
 # the HELM_SECRETS_DEC_SUFFIX environment variable.
