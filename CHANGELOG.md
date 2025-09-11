@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- fix: preserve semantically relevant trailing newlines in decrypted data
+
 ## [4.6.10] - 2025-09-07
 
 ### Fixes

@@ -91,9 +91,14 @@ decrypt() {
         fatal 'File does not exist: %s' "${filepath}"
     fi
 
-    if ! content=$(decrypt_helper "${encrypted_filepath}" "auto" "${output}"); then
+    # Append an underscore to the end of the content to prevent the stripping of trailing newlines
+    # occurring during command substitution.
+    if ! content=$(decrypt_helper "${encrypted_filepath}" "auto" "${output}" && printf '_'); then
         fatal 'File is not encrypted: %s' "${encrypted_filepath}"
     fi
+
+    # Remove the underscore again.
+    content="${content%_}"
 
     if [ "${terraform}" = "true" ]; then
         printf '{"content_base64":"%s"}' "$(printf '%s' "${content}" | base64 | tr -d \\n)"

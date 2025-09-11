@@ -32,6 +32,23 @@ load '../bats/extensions/bats-file/load'
     assert_success
 }
 
+@test "decrypt: Decrypt secrets.trailing-newline.raw" {
+    if ! is_backend "sops"; then
+        skip
+    fi
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.trailing-newline.raw"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    COMPARE="assets/values/${HELM_SECRETS_BACKEND}/secrets.trailing-newline.dec.raw"
+    COMPARE_PATH="${TEST_TEMP_DIR}/${COMPARE}"
+    COMPARE_VALUE=$(cat "${COMPARE_PATH}" && printf _)
+    COMPARE_VALUE=${COMPARE_VALUE%_}
+
+    OUTPUT=$("${HELM_BIN}" secrets decrypt "${VALUES_PATH}" && printf _)
+    OUTPUT=${OUTPUT%_}
+    assert_equal "$OUTPUT" "$COMPARE_VALUE"
+}
+
 @test "decrypt: Decrypt inline secrets.yaml" {
     if ! is_backend "sops"; then
         skip
