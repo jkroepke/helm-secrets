@@ -5,9 +5,12 @@ set -euf
 _VALS="${HELM_SECRETS_VALS_PATH:-vals}"
 
 _vals() {
-    backend_args="${SECRET_BACKEND_VALS_ARGS:-${SECRET_BACKEND_ARGS:-}}"
-    # shellcheck disable=SC2086
-    set -- "$@" ${backend_args}
+    backend_args_unquoted="${SECRET_BACKEND_VALS_ARGS:-${SECRET_BACKEND_ARGS:-}}"
+
+    if [ -n "${backend_args_unquoted}" ]; then
+        # shellcheck disable=SC2086
+        eval "set -- \"\$@\" ${backend_args_unquoted}"
+    fi
 
     # In case of an error, give us stderr
     # https://github.com/variantdev/vals/issues/60
