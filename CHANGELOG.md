@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Support for multiple, sequential secret backends (e.g., `HELM_SECRETS_BACKEND=vals,sops`). Backends are tried in the specified order.
+- Support for backend-specific arguments via `SECRET_BACKEND_<BACKEND_NAME>_ARGS` (e.g., `SECRET_BACKEND_SOPS_ARGS`), which override global arguments.
+
 ### Fixes
 - fix: preserve semantically relevant trailing newlines in decrypted data
 
