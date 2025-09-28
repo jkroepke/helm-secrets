@@ -174,6 +174,7 @@ Thanks to all sponsors!
 
 * [@hegawa](https://github.com/hegawa) (25$) onetime
 * [@Zero-Down-Time](https://github.com/Zero-Down-Time) (25$) onetime
+* [@k0ste](https://github.com/k0ste) (25$) onetime
 
 ## Acknowledgements
 
