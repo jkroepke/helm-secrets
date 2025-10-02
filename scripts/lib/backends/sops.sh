@@ -3,9 +3,15 @@
 _SOPS="${HELM_SECRETS_SOPS_PATH:-${HELM_SECRETS_SOPS_BIN:-sops}}"
 
 _sops() {
+    backend_args_unquoted="${SECRET_BACKEND_SOPS_ARGS:-${SECRET_BACKEND_ARGS:-}}"
+
+    if [ -n "${backend_args_unquoted}" ]; then
+        # shellcheck disable=SC2086
+        eval "set -- ${backend_args_unquoted} \"\$@\""
+    fi
+
     # shellcheck disable=SC2086
-    set -- ${SECRET_BACKEND_ARGS} "$@"
-    $_SOPS "$@"
+    $_SOPS "$@" 2>&1
 }
 
 _sops_backend_is_file_encrypted() {
