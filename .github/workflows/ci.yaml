@@ -6,9 +6,9 @@ env:
   # renovate: github=helm/helm
   VERSION_HELM: 3.19.0
   # renovate: github=getsops/sops
-  VERSION_SOPS: 3.10.2
+  VERSION_SOPS: 3.11.0
   # renovate: github=helmfile/vals
-  VERSION_VALS: 0.42.1
+  VERSION_VALS: 0.42.2
 
 on:
   pull_request:
