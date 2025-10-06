@@ -269,7 +269,7 @@ repoServer:
     - name: download-tools
       image: alpine:latest
       imagePullPolicy: IfNotPresent
-      command: [sh, -ec]
+      command: [sh, -euc]
       env:
         - name: HELM_SECRETS_VERSION
           value: "4.6.10"
@@ -281,6 +281,18 @@ repoServer:
           value: "3.11.0"
         - name: AGE_VERSION
           value: "1.2.1"
+        - name: HELM_PLUGINS
+          value: /gitops-tools/helm-plugins/
+        - name: HELM_SECRETS_CURL_PATH
+          value: /gitops-tools/curl
+        - name: HELM_SECRETS_SOPS_PATH
+          value: /gitops-tools/sops
+        - name: HELM_SECRETS_VALS_PATH
+          value: /gitops-tools/vals
+        - name: HELM_SECRETS_AGE_PATH
+          value: /gitops-tools/age
+        - name: HELM_SECRETS_KUBECTL_PATH
+          value: /gitops-tools/kubectl
       args:
         - |
           mkdir -p "${HELM_PLUGINS}"
@@ -292,7 +304,7 @@ repoServer:
           wget -qO "${HELM_SECRETS_KUBECTL_PATH}" https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl
           wget -qO "${HELM_SECRETS_SOPS_PATH}" https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}
           wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz | tar zxv -C "${HELM_SECRETS_VALS_PATH%/*}" vals
-          wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /gitops-tools/helm-plugins -xzf-
+          wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C "${HELM_PLUGINS}" -xzf-
           wget -qO- "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz" | tar -xzf- --strip-components=1 -C "${HELM_SECRETS_AGE_PATH%/*}" age/age
           
           chmod +x \
