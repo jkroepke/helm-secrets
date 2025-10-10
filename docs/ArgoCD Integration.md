@@ -149,7 +149,7 @@ ARG ARGOCD_VERSION="v3.1.8"
 FROM quay.io/argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION=3.11.0
 ARG KUBECTL_VERSION=1.34.1
-ARG VALS_VERSION=0.42.2
+ARG VALS_VERSION=0.42.3
 ARG AGE_VERSION=1.2.1
 ARG HELM_SECRETS_VERSION=4.6.10
 
@@ -276,7 +276,7 @@ repoServer:
         - name: KUBECTL_VERSION
           value: "1.34.1"
         - name: VALS_VERSION
-          value: "0.42.2"
+          value: "0.42.3"
         - name: SOPS_VERSION
           value: "3.11.0"
         - name: AGE_VERSION
