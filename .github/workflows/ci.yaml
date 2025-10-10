@@ -173,12 +173,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@aa7be2e7e315938a8a59bab81ef1be52ba182b30 # v1.3.3
+        uses: jkroepke/setup-sops@c80ee8a663db21fa25f213f70dd59de5be9897dd # v1.3.4
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@18b2aa0523ca439e64ef467a17345647e084a6a1 # v1.5.5
+        uses: jkroepke/setup-vals@6e7b586c71f7f424ccadd8f5b0fcb019247c1483 # v1.5.7
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -267,9 +267,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a # v1.263.0
+        uses: ruby/setup-ruby@6797dcbb9a1889fd411d07e8aba7eded53fb8b48 # v1.264.0
         with:
-          ruby-version: "3.0"
+          ruby-version: "3.4.7"
 
       - name: Setup Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
@@ -277,12 +277,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@aa7be2e7e315938a8a59bab81ef1be52ba182b30 # v1.3.3
+        uses: jkroepke/setup-sops@c80ee8a663db21fa25f213f70dd59de5be9897dd # v1.3.4
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@18b2aa0523ca439e64ef467a17345647e084a6a1 # v1.5.5
+        uses: jkroepke/setup-vals@6e7b586c71f7f424ccadd8f5b0fcb019247c1483 # v1.5.7
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -361,12 +361,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@aa7be2e7e315938a8a59bab81ef1be52ba182b30 # v1.3.3
+        uses: jkroepke/setup-sops@c80ee8a663db21fa25f213f70dd59de5be9897dd # v1.3.4
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@18b2aa0523ca439e64ef467a17345647e084a6a1 # v1.5.5
+        uses: jkroepke/setup-vals@6e7b586c71f7f424ccadd8f5b0fcb019247c1483 # v1.5.7
         with:
           version: v${{ env.VERSION_VALS }}
 
