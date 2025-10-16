@@ -51,7 +51,7 @@ spec:
         # Example Method 2: (Assumptions: namespace=argocd, secret-name=helm-secrets-private-keys, key-name=app, secret.yaml is in the root folder)
         - secrets+gpg-import-kubernetes://argocd/helm-secrets-private-keys#key.asc?secrets.yaml
 
-        # ### Method 3: Use HELM_SECRETS_LOAD_GPG_KEYS
+        # ### Method 3: Use HELM_SECRETS_LOAD_GPG_KEYS (for GPG) or SOPS_AGE_KEY_FILE (for age)
         # Example Method 3: (Assumptions: Pre-seeded gpg agent is running or kube service account has permission to decrypt using kms key, secrets.yaml is in the root folder)
         - secrets://secrets.yaml
 
