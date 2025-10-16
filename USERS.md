@@ -11,3 +11,4 @@ information to this file.
 | adorsys      | production | Using helm-secrets for production deployments since 2017                                                  | Germany  | Dec 2022 |  
 | Würth IT GmbH| production | Using helm-secrets to deploy our helm charts to our on premise open shift container platform              | Germany  | June 2024|  
 | Sopra Steria | production | Using helm-secrets to deploy helm charts using ArgoCD on several platform                                 | Europe   | Jan 2025 |  
+| Fast Forest  | production | Using helm-secrets together with ArgoCD to manage the k3s cluster the team infrastructure runs on         | Germany  | Jun 2022 |
