@@ -156,7 +156,6 @@ ARG HELM_SECRETS_VERSION=4.6.11
 # vals or sops
 ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
-    HELM_PLUGINS="/home/argocd/.local/share/helm/plugins/" \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
     HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
