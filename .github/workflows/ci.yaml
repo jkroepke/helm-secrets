@@ -173,7 +173,7 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@c022dce66805cc22cdac7f54d628789239debbd1 # v1.3.6
+        uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -277,7 +277,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@c022dce66805cc22cdac7f54d628789239debbd1 # v1.3.6
+        uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -321,7 +321,7 @@ jobs:
 
       - run: rm -rf ./coverage/
 
-      - uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3 # v1.12.0
+      - uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
 
       - name: bashcov bats --tap -r tests/it
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
@@ -347,7 +347,7 @@ jobs:
         shell: [dash]
         jobs: [4]
     steps:
-      - uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3 # v1.12.0
+      - uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
 
       - run: kubectl cluster-info
 
@@ -361,7 +361,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@c022dce66805cc22cdac7f54d628789239debbd1 # v1.3.6
+        uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -407,7 +407,7 @@ jobs:
           path: .
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@5b7ee5a21e8674b695313d769f3cbdfd5d4d53a4 # v6.0.0
+        uses: mikepenz/action-junit-report@e08919a3b1fb83a78393dfb775a9c37f17d8eea6 # v6.0.1
         with:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true
