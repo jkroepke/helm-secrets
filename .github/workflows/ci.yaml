@@ -231,7 +231,7 @@ jobs:
           }}" --version "${{ github.event_name == 'pull_request'
             && github.head_ref
             || github.ref
-          }}"
+          }}" ${{ matrix.helm-version == '4.0.0' && '--verify=false' || '' }}
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
