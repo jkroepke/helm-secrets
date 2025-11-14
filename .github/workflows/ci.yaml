@@ -416,6 +416,21 @@ jobs:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true
 
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: true
+
+      - name: Setup Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        with:
+          version: v${{ env.VERSION_HELM }}
+
+      - name: Package helm-secrets
+        run: helm package .
+
   fail:
     if: "${{ cancelled() || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'failure') }}"
     needs:

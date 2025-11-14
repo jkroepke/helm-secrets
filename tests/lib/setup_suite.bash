@@ -118,6 +118,12 @@ helm_plugin_install() {
             ;;
         esac
 
-        "${HELM_BIN}" plugin install "${URL}" "${@:2}" ${VERSION:+--version "${VERSION}"}
+        VERIFY=""
+
+        if helm_version_greater_or_equal_than 4.0.0; then
+            VERIFY="--verify=false"
+        fi
+
+        "${HELM_BIN}" plugin install "${URL}" "${@:2}" ${VERSION:+--version "${VERSION}"} ${VERIFY}
     } >&2
 }

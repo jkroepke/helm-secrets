@@ -15,7 +15,29 @@ jobs:
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
+      - name: Setup Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        with:
+          version: v4.0.0
+
       - name: Package helm-secrets
+        run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
+
+      - name: Package helm-secrets-cli
+        run: |
+          rm -rf scripts
+          cp -a ../../scripts .
+          helm plugin package .
+        working-directory: plugins/cli
+
+      - name: Package helm-secrets-getter
+        run: |
+          rm -rf scripts
+          cp -a ../../scripts .
+          helm plugin package .
+        working-directory: plugins/getter
+
+      - name: Package helm-secrets-getter
         run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
 
       - name: Create Release
@@ -26,7 +48,7 @@ jobs:
 
           * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md" \
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
-            helm-secrets.tar.gz
+            helm-secrets.tar.gz plugins/cli/*tgz plugins/getter/*tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
