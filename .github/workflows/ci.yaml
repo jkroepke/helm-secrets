@@ -224,6 +224,7 @@ jobs:
           vals version
 
       - name: Run helm-secrets w/o bats
+        if: !startsWith(matrix.helm-version, '4')
         run: |-
           helm plugin install "${{ github.event_name == 'pull_request'
             && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
@@ -231,7 +232,16 @@ jobs:
           }}" --version "${{ github.event_name == 'pull_request'
             && github.head_ref
             || github.ref
-          }}" ${{ matrix.helm-version == '4.0.0' && '--verify=false' || '' }}
+          }}"
+          helm plugin list
+          helm secrets -v
+
+      - name: Run helm-secrets w/o bats
+        if: startsWith(matrix.helm-version, '4')
+        run: |-
+          helm plugin install plugins/cli
+          helm plugin install plugins/getter
+          helm plugin list
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
