@@ -108,6 +108,10 @@ jobs:
             jobs: 4
             helm-version: 3.16.4
           - os: ubuntu-24.04
+            shell: bash
+            jobs: 4
+            helm-version: 4.0.0
+          - os: ubuntu-24.04
             container: alpine
             shell: zsh
             jobs: 4
