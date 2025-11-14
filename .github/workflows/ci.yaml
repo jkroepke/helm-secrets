@@ -4,7 +4,7 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github=helm/helm
-  VERSION_HELM: 3.19.0
+  VERSION_HELM: 3.19.2
   # renovate: github=getsops/sops
   VERSION_SOPS: 3.11.0
   # renovate: github=helmfile/vals
@@ -173,12 +173,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
+        uses: jkroepke/setup-sops@d18c5b2c6f7c5384431a8fdb377e3bc4ffcb9a79 # v1.3.8
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4e24592deb478899991ac5f844934849a146de9f # v1.5.10
+        uses: jkroepke/setup-vals@37c4e5705d289b9d42f159d17c48f21b4533df6e # v1.5.11
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -277,12 +277,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
+        uses: jkroepke/setup-sops@d18c5b2c6f7c5384431a8fdb377e3bc4ffcb9a79 # v1.3.8
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4e24592deb478899991ac5f844934849a146de9f # v1.5.10
+        uses: jkroepke/setup-vals@37c4e5705d289b9d42f159d17c48f21b4533df6e # v1.5.11
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -361,12 +361,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
+        uses: jkroepke/setup-sops@d18c5b2c6f7c5384431a8fdb377e3bc4ffcb9a79 # v1.3.8
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4e24592deb478899991ac5f844934849a146de9f # v1.5.10
+        uses: jkroepke/setup-vals@37c4e5705d289b9d42f159d17c48f21b4533df6e # v1.5.11
         with:
           version: v${{ env.VERSION_VALS }}
 
