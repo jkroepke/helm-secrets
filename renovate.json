@@ -32,6 +32,10 @@
       "addLabels": [
         "chore"
       ]
+    },
+    {
+      "matchPackageNames": ["helm/helm", "helm"],
+      "allowedVersions": "<4"
     }
   ],
   "customManagers": [
