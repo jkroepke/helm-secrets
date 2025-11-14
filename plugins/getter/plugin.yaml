@@ -23,7 +23,8 @@ runtimeConfig:
       os: windows
       command: >-
         cmd.exe /D /E:ON /V:ON /C !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
-      args: "downloader"
+      args:
+        - "downloader"
 
     - protocols:
         - "secrets"
@@ -34,7 +35,8 @@ runtimeConfig:
         - "secrets+literal"
       os: linux
       command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-      args: "downloader"
+      args:
+        - "downloader"
 
     - protocols:
         - "secrets"
@@ -45,7 +47,8 @@ runtimeConfig:
         - "secrets+literal"
       os: darwin
       command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-      args: "downloader"
+      args:
+        - "downloader"
 
     - protocols:
         - "secrets"
@@ -55,4 +58,5 @@ runtimeConfig:
         - "secrets+age-import-kubernetes"
         - "secrets+literal"
       command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-      args: "downloader"
+      args:
+        - "downloader"

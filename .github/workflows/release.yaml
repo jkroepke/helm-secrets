@@ -10,6 +10,7 @@ jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       contents: write
     steps:
@@ -19,6 +20,26 @@ jobs:
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
         with:
           version: v4.0.0
+
+      - name: GPG configuration
+        run: |-
+          echo "$GPG_KEY" > "$GPG_KEY_PATH"
+          mkdir -p "$HOME/.gnupg"
+          chmod 0700 "$HOME/.gnupg"
+          echo "use-agent" > "$HOME/.gnupg/gpg.conf"
+          echo "pinentry-mode loopback" >> "$HOME/.gnupg/gpg.conf"
+          echo "allow-loopback-pinentry" > "$HOME/.gnupg/gpg-agent.conf"
+          echo "max-cache-ttl 86400" >> "$HOME/.gnupg/gpg-agent.conf"
+          echo "default-cache-ttl 86400" >> "$HOME/.gnupg/gpg-agent.conf"
+          gpgconf --kill gpg-agent
+          gpgconf --launch gpg-agent
+          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --import "$GPG_KEY_PATH"
+          echo "1F34F95B4F30BC5B06E0D7CC3F619F17002790D8:6:" | gpg --import-ownertrust
+        env:
+          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_KEY_PATH: "${{ runner.temp }}/private.key"
 
       - name: Package helm-secrets
         run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
@@ -38,17 +59,18 @@ jobs:
         working-directory: plugins/getter
 
       - name: Package helm-secrets-getter
-        run: tar --transform 's,^,helm-secrets/,' --exclude=contrib --exclude=examples --exclude=tests --exclude=helm-secrets.tar.gz -zcvf helm-secrets.tar.gz *
+        run: helm plugin package . --sign
 
       - name: Create Release
         run: |
+          find .
           gh release create ${{ github.ref_name }} \
             -t "Release ${{ github.ref_name }}" \
             -n "# CHANGELOG
 
           * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md" \
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
-            helm-secrets.tar.gz plugins/cli/*tgz plugins/getter/*tgz
+            helm-secrets.tar.gz plugins/cli/secrets-*.tgz plugins/getter/secrets-*.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
