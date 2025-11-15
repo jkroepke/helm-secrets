@@ -142,7 +142,6 @@ Darwin)
     ;;
 esac
 
-
 case $("${HELM_BIN}" version --short) in
 v2*)
     _helm_version() { echo 2; }
