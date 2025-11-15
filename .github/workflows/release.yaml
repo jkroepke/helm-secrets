@@ -49,14 +49,14 @@ jobs:
           rm -rf scripts
           cp -a ../../scripts .
           helm plugin package .
-        working-directory: plugins/cli
+        working-directory: plugins/helm-secrets-cli
 
       - name: Package helm-secrets-getter
         run: |
           rm -rf scripts
           cp -a ../../scripts .
           helm plugin package .
-        working-directory: plugins/getter
+        working-directory: plugins/helm-secrets-getter
 
       - name: Package helm-secrets-getter
         run: helm plugin package . --sign
@@ -70,7 +70,7 @@ jobs:
 
           * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md" \
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
-            helm-secrets.tar.gz plugins/cli/secrets-*.tgz plugins/getter/secrets-*.tgz
+            helm-secrets.tar.gz plugins/helm-secrets-cli/secrets-*.tgz plugins/helm-secrets-getter/secrets-*.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:

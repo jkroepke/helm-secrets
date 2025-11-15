@@ -44,5 +44,10 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_WRAPPER_ENABLED=true "${GIT_ROOT}/scripts/wrapper/helm.sh" version
     assert_success
-    assert_output --partial "v3"
+
+    if helm_version_greater_or_equal_than 4.0.0; then
+        assert_output --partial "v4"
+    else
+        assert_output --partial "v3"
+    fi
 }

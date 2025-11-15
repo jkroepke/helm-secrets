@@ -234,8 +234,8 @@ jobs:
               || github.ref
             }}"
           else
-            helm plugin install plugins/cli
-            helm plugin install plugins/getter
+            helm plugin install plugins/helm-secrets-cli
+            helm plugin install plugins/helm-secrets-getter
           fi
           helm plugin list
           helm secrets -v
