@@ -142,7 +142,7 @@ Darwin)
     ;;
 esac
 
-case $("$(_winpath "${HELM_BIN}")" version --short) in
+case $("${HELM_BIN}" version --short) in
 v2*)
     _helm_version() { echo 2; }
     ;;
