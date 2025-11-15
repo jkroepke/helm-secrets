@@ -116,6 +116,12 @@ helm_plugin_install() {
         secrets)
             URL="$(_winpath "${GIT_ROOT}")"
             if helm_version_greater_or_equal_than 4.0.0; then
+                rm -rf "${URL}/plugins/helm-secrets-cli/scripts"
+                cp -a "${URL}/scripts" "${URL}/plugins/helm-secrets-cli/scripts"
+
+                rm -rf "${URL}/plugins/helm-secrets-getter/scripts"
+                cp -a "${URL}/scripts" "${URL}/plugins/helm-secrets-getter/scripts"
+
                 "${HELM_BIN}" plugin install "${URL}/plugins/helm-secrets-getter"
                 URL="${URL}/plugins/helm-secrets-cli"
             fi
