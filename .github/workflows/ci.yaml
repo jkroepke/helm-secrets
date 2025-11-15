@@ -224,23 +224,25 @@ jobs:
           vals version
 
       - name: Run helm-secrets w/o bats
+        if: ${{ !startsWith(matrix.helm-version, '4') }}
         run: |-
-          if [[ "$VERSION_HELM" == '3'* ]]; then
-            helm plugin install "${{ github.event_name == 'pull_request'
-              && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
-              || format('{0}/{1}', github.server_url, github.repository)
-            }}" --version "${{ github.event_name == 'pull_request'
-              && github.head_ref
-              || github.ref
-            }}"
-          else
-            helm plugin install plugins/helm-secrets-cli
-            helm plugin install plugins/helm-secrets-getter
-          fi
+          helm plugin install "${{ github.event_name == 'pull_request'
+            && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
+            || format('{0}/{1}', github.server_url, github.repository)
+          }}" --version "${{ github.event_name == 'pull_request'
+            && github.head_ref
+            || github.ref
+          }}"
           helm plugin list
           helm secrets -v
-        env:
-          VERSION_HELM: ${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
+
+      - name: Run helm-secrets w/o bats
+        if: ${{ startsWith(matrix.helm-version, '4') }}
+        run: |-
+          helm plugin install plugins/cli
+          helm plugin install plugins/getter
+          helm plugin list
+          helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
