@@ -157,6 +157,6 @@ v4*)
     _helm_version() { echo 4; }
     ;;
 *)
-    fatal "Unsupported helm version: $(${HELM_BIN} version --short)"
+    fatal "Unsupported helm version: $("${HELM_BIN}" version --short)"
     ;;
 esac
