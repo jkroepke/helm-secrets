@@ -6,13 +6,6 @@ if [ "${HELM_DEBUG:-}" = "1" ] || [ "${HELM_DEBUG:-}" = "true" ] || [ -n "${HELM
     set -x
 fi
 
-# Make sure HELM_BIN is set (normally by the helm command)
-HELM_BIN="${HELM_SECRETS_HELM_PATH:-"${HELM_BIN:-helm}"}"
-
-if on_cygwin; then
-    HELM_BIN="$(cygpath -u "${HELM_BIN}")"
-fi
-
 # Path to current directory
 SCRIPT_DIR="${HELM_PLUGIN_DIR}/scripts"
 
@@ -30,6 +23,13 @@ SCRIPT_DIR="${HELM_PLUGIN_DIR}/scripts"
 
 # shellcheck source=scripts/lib/http.sh
 . "${SCRIPT_DIR}/lib/http.sh"
+
+# Make sure HELM_BIN is set (normally by the helm command)
+HELM_BIN="${HELM_SECRETS_HELM_PATH:-"${HELM_BIN:-helm}"}"
+
+if on_cygwin; then
+    HELM_BIN="$(cygpath -u "${HELM_BIN}")"
+fi
 
 # Create a base temporary directory
 TMPDIR="${HELM_SECRETS_DEC_TMP_DIR:-"$(mktemp -d)"}"

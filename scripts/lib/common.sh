@@ -144,6 +144,10 @@ Darwin)
     ;;
 esac
 
+if on_cygwin; then
+    HELM_BIN="$(cygpath -u "${HELM_BIN}")"
+fi
+
 case $("${HELM_BIN}" version --short) in
 v2*)
     _helm_version() { echo 2; }
