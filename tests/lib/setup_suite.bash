@@ -115,6 +115,10 @@ helm_plugin_install() {
             ;;
         secrets)
             URL="$(_winpath "${GIT_ROOT}")"
+            if helm_version_greater_or_equal_than 4.0.0; then
+                "${HELM_BIN}" plugin install "${URL}/plugins/getter"
+                URL="${URL}/plugins/cli"
+            fi
             ;;
         esac
 
