@@ -100,6 +100,14 @@ jobs:
             shell: bash 4.4
             jobs: 4
           - os: ubuntu-24.04
+            container: registry.access.redhat.com/ubi9/ubi-minimal
+            shell: bash 4.4
+            jobs: 4
+          - os: ubuntu-24.04
+            container: registry.access.redhat.com/ubi10/ubi-minimal
+            shell: bash 4.4
+            jobs: 4
+          - os: ubuntu-24.04
             shell: bash
             jobs: 4
             helm-version: 3.9.4
