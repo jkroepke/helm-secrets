@@ -12,7 +12,7 @@ config:
     - "secrets+age-import-kubernetes"
     - "secrets+literal"
 runtimeConfig:
-  platformCommand:
+  protocolCommands:
     - protocols:
         - "secrets"
         - "secrets+gpg-import"
