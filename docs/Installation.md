@@ -2,7 +2,23 @@
 
 # Using Helm plugin manager
 
-Install a specific version (recommend). Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for latest version.
+## Helm 4
+
+Install a specific version (recommend). 
+Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for the latest version.
+```bash
+helm plugin install https://github.com/jkroepke/helm-secrets --version v4.6.11 --verify=false
+```
+
+Install latest unstable version from main branch
+```bash
+helm plugin install https://github.com/jkroepke/helm-secrets --verify=false
+```
+
+## Helm 3
+
+Install a specific version (recommend). 
+Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for the latest version.
 ```bash
 helm plugin install https://github.com/jkroepke/helm-secrets --version v4.6.11
 ```
