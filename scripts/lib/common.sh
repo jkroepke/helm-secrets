@@ -99,6 +99,8 @@ _helm_bin() { printf '%s' "${HELM_BIN}"; }
 
 case "$(uname -s)" in
 CYGWIN* | MINGW64_NT*)
+    HELM_BIN="$(cygpath -u "${HELM_BIN}")"
+
     on_cygwin() { true; }
     _winpath() {
         if [ "${2:-0}" = "1" ]; then
@@ -143,10 +145,6 @@ Darwin)
     fi
     ;;
 esac
-
-if on_cygwin; then
-    HELM_BIN="$(cygpath -u "${HELM_BIN}")"
-fi
 
 case $("${HELM_BIN}" version --short) in
 v2*)
