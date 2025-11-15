@@ -21,15 +21,15 @@ runtimeConfig:
         - "secrets+age-import-kubernetes"
         - "secrets+literal"
       platformCommand:
-#        - os: windows
-#          command: >-
-#            cmd.exe /D /E:ON /V:ON /C !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
-#          args: ["downloader"]
-#        - os: linux
-#          command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-#          args: ["downloader"]
-#        - os: darwin
-#          command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-#          args: ["downloader"]
-        - command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+        - os: windows
+          command: >-
+            cmd.exe /D /E:ON /V:ON /C !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
+          args: ["downloader"]
+        - os: linux
+          command: "scripts/run.sh"
+          args: ["downloader"]
+        - os: darwin
+          command: "scripts/run.sh"
+          args: ["downloader"]
+        - command: "scripts/run.sh"
           args: ["downloader"]
