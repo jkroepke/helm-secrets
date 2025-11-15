@@ -14,49 +14,22 @@ config:
 runtimeConfig:
   platformCommand:
     - protocols:
-      - "secrets"
-      - "secrets+gpg-import"
-      - "secrets+gpg-import-kubernetes"
-      - "secrets+age-import"
-      - "secrets+age-import-kubernetes"
-      - "secrets+literal"
-      os: windows
-      command: >-
-        cmd.exe /D /E:ON /V:ON /C !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
-      args:
-        - "downloader"
-
-    - protocols:
         - "secrets"
         - "secrets+gpg-import"
         - "secrets+gpg-import-kubernetes"
         - "secrets+age-import"
         - "secrets+age-import-kubernetes"
         - "secrets+literal"
-      os: linux
-      command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-      args:
-        - "downloader"
-
-    - protocols:
-        - "secrets"
-        - "secrets+gpg-import"
-        - "secrets+gpg-import-kubernetes"
-        - "secrets+age-import"
-        - "secrets+age-import-kubernetes"
-        - "secrets+literal"
-      os: darwin
-      command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-      args:
-        - "downloader"
-
-    - protocols:
-        - "secrets"
-        - "secrets+gpg-import"
-        - "secrets+gpg-import-kubernetes"
-        - "secrets+age-import"
-        - "secrets+age-import-kubernetes"
-        - "secrets+literal"
-      command: "$HELM_PLUGIN_DIR/scripts/run.sh"
-      args:
-        - "downloader"
+      platformCommand:
+        - os: windows
+          command: >-
+            cmd.exe /D /E:ON /V:ON /C !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
+          args: ["downloader"]
+        - os: linux
+          command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+          args: ["downloader"]
+        - os: darwin
+          command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+          args: ["downloader"]
+        - command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+          args: ["downloader"]
