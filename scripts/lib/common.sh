@@ -141,3 +141,19 @@ Darwin)
     fi
     ;;
 esac
+
+
+case $("${HELM_BIN}" version --short) in
+v2*)
+    _helm_version() { echo 2; }
+    ;;
+v3*)
+    _helm_version() { echo 3; }
+    ;;
+v4*)
+    _helm_version() { echo 4; }
+    ;;
+*)
+    fatal "Unsupported helm version: $(${HELM_BIN} version --short)"
+    ;;
+esac

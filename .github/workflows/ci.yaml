@@ -241,6 +241,7 @@ jobs:
         run: |-
           helm plugin install plugins/helm-secrets-cli
           helm plugin install plugins/helm-secrets-getter
+          helm plugin install plugins/helm-secrets-post-renderer
           helm plugin list
           helm secrets -v
 

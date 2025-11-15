@@ -58,6 +58,13 @@ jobs:
           helm plugin package .
         working-directory: plugins/helm-secrets-getter
 
+      - name: Package helm-secrets-post-renderer
+        run: |
+          rm -rf scripts
+          cp -a ../../scripts .
+          helm plugin package .
+        working-directory: plugins/helm-secrets-post-renderer
+
       - name: Package helm-secrets-getter
         run: helm plugin package . --sign
 
@@ -70,7 +77,10 @@ jobs:
 
           * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md" \
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
-            helm-secrets.tar.gz plugins/helm-secrets-cli/secrets-*.tgz plugins/helm-secrets-getter/secrets-*.tgz
+          helm-secrets.tar.gz
+          plugins/helm-secrets-cli/secrets-*.tgz
+          plugins/helm-secrets-getter/secrets-*.tgz
+          plugins/helm-secrets-post-renderer/secrets-*.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:

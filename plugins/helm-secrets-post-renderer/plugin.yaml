@@ -1,0 +1,15 @@
+apiVersion: v1
+type: post-renderer/v1
+name: "secrets-post-renderer"
+version: "4.7.0-dev"
+runtime: subprocess
+runtimeConfig:
+  platformCommand:
+    - os: windows
+      command: >-
+        cmd.exe /D /E:ON /V:ON /C !HELM_PLUGIN_DIR!\scripts\wrapper\run.cmd
+    - os: linux
+      command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+    - os: darwin
+      command: "$HELM_PLUGIN_DIR/scripts/run.sh"
+    - command: "$HELM_PLUGIN_DIR/scripts/run.sh"

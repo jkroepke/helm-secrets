@@ -249,13 +249,18 @@ helm_wrapper() {
     done
 
     if [ "${EVALUATE_TEMPLATES}" = "true" ]; then
-        set -- "$@" "--post-renderer" "${HELM_BIN}"
+        if [ "$(_helm_version)" == "3" ]; then
+            set -- "$@" "--post-renderer" "${HELM_BIN}"
 
-        if [ "${HELM_DEBUG:-}" = "1" ] || [ "${HELM_DEBUG:-}" = "true" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
-            set -- "$@" "--post-renderer-args" "--debug"
+            if [ "${HELM_DEBUG:-}" = "1" ] || [ "${HELM_DEBUG:-}" = "true" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
+                set -- "$@" "--post-renderer-args" "--debug"
+            fi
+
+            set -- "$@" "--post-renderer-args" "secrets"
+        else
+            set -- "$@" "--post-renderer" "secrets-post-renderer"
         fi
 
-        set -- "$@" "--post-renderer-args" "secrets"
         set -- "$@" "--post-renderer-args" "--backend" "--post-renderer-args" "${SECRET_BACKEND}"
         if [ "${SECRET_BACKEND_ARGS}" != "" ]; then
             set -- "$@" "--post-renderer-args" "--backend-args" "--post-renderer-args" "${SECRET_BACKEND_ARGS}"
