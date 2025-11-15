@@ -117,7 +117,7 @@ helm_plugin_install() {
             URL="$(_winpath "${GIT_ROOT}")"
             if helm_version_greater_or_equal_than 4.0.0; then
                 "${HELM_BIN}" plugin install "${URL}/plugins/helm-secrets-getter"
-                "${HELM_BIN}" plugin install "${URL}/plugins/helm-secrets-poster-renderer"
+                "${HELM_BIN}" plugin install "${URL}/plugins/helm-secrets-post-renderer"
                 URL="${URL}/plugins/helm-secrets-cli"
             fi
             ;;
