@@ -714,7 +714,7 @@ key2: value" 2>&1
 @test "template: helm template w/ chart + --set-file=service.port=secrets+literal://vals!" {
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" --debug template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
         --set-file=service.port=secrets+literal://vals!ref+echo://87 2>&1
 
     assert_output --partial "port: 87"
@@ -1663,7 +1663,7 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" --kube-insecure-skip-tls-verify -f "${VALUES_PATH}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --kube-insecure-skip-tls-verify -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
