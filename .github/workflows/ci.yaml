@@ -239,8 +239,8 @@ jobs:
       - name: Run helm-secrets w/o bats
         if: ${{ startsWith(matrix.helm-version, '4') }}
         run: |-
-          helm plugin install plugins/cli
-          helm plugin install plugins/getter
+          helm plugin install plugins/helm-secrets-cli
+          helm plugin install plugins/helm-secrets-getter
           helm plugin list
           helm secrets -v
 
