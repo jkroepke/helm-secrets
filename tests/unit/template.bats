@@ -2019,7 +2019,11 @@ key2: value" 2>&1
     refute_output --partial 'config.env: "44"'
     refute_output --partial 'secret: "42"'
     refute_output --partial 'secret.env: "44"'
-    assert_output --partial 'vals error:'
+    if helm_version_greater_or_equal_than 4.0.0; then
+        assert_output --partial 'plugin "secrets-post-renderer" exited with error'
+    else
+        assert_output --partial 'vals error:'
+    fi
     assert_failure
 }
 
