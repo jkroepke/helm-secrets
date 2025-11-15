@@ -70,6 +70,7 @@ jobs:
     container: ${{ matrix.container }}
     env:
       HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
+      HELM_VERSION: ${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -174,7 +175,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
         with:
-          version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
+          version: v${{ env.HELM_VERSION }}
 
       - name: Setup Sops
         uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
@@ -224,23 +225,19 @@ jobs:
           vals version
 
       - name: Run helm-secrets w/o bats
-        if: ${{ !startsWith(matrix.helm-version, '4') }}
         run: |-
-          helm plugin install "${{ github.event_name == 'pull_request'
-            && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
-            || format('{0}/{1}', github.server_url, github.repository)
-          }}" --version "${{ github.event_name == 'pull_request'
-            && github.head_ref
-            || github.ref
-          }}"
-          helm plugin list
-          helm secrets -v
-
-      - name: Run helm-secrets w/o bats
-        if: ${{ startsWith(matrix.helm-version, '4') }}
-        run: |-
-          helm plugin install plugins/cli
-          helm plugin install plugins/getter
+          if [[ "$VERSION_HELM" == '3'* ]]; then
+            helm plugin install "${{ github.event_name == 'pull_request'
+              && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
+              || format('{0}/{1}', github.server_url, github.repository)
+            }}" --version "${{ github.event_name == 'pull_request'
+              && github.head_ref
+              || github.ref
+            }}"
+          else
+            helm plugin install plugins/cli
+            helm plugin install plugins/getter
+          fi
           helm plugin list
           helm secrets -v
 
@@ -425,21 +422,6 @@ jobs:
         with:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true
-
-  package:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          submodules: true
-
-      - name: Setup Helm
-        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
-        with:
-          version: v${{ env.VERSION_HELM }}
-
-      - name: Package helm-secrets
-        run: helm package .
 
   fail:
     if: "${{ cancelled() || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'failure') }}"
