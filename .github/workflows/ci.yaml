@@ -224,7 +224,7 @@ jobs:
           vals version
 
       - name: Run helm-secrets w/o bats
-        if: !startsWith(matrix.helm-version, '4')
+        if: ${{ !startsWith(matrix.helm-version, '4') }}
         run: |-
           helm plugin install "${{ github.event_name == 'pull_request'
             && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
@@ -237,7 +237,7 @@ jobs:
           helm secrets -v
 
       - name: Run helm-secrets w/o bats
-        if: startsWith(matrix.helm-version, '4')
+        if: ${{ startsWith(matrix.helm-version, '4') }}
         run: |-
           helm plugin install plugins/cli
           helm plugin install plugins/getter
