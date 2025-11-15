@@ -95,6 +95,7 @@ on_cygwin() { false; }
 _sed_i() { sed -i "$@"; }
 _winpath() { printf '%s' "${1}"; }
 _helm_winpath() { printf '%s' "${1}"; }
+_helm_bin() { printf '%s' "${HELM_BIN}"; }
 
 case "$(uname -s)" in
 CYGWIN* | MINGW64_NT*)
@@ -108,6 +109,7 @@ CYGWIN* | MINGW64_NT*)
     }
 
     _helm_winpath() { _winpath "$@"; }
+    _helm_bin() { _winpath "${HELM_BIN}"; }
 
     _sed_i 's!  - command: .*!  - command: "scripts/wrapper/run.cmd downloader"!' "${HELM_PLUGIN_DIR}/plugin.yaml"
     ;;
