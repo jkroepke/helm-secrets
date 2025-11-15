@@ -234,7 +234,7 @@ jobs:
             || github.ref
           }}"
           helm plugin list
-          helm --debug secrets -v
+          helm secrets -v
 
       - name: Run helm-secrets w/o bats
         if: ${{ startsWith(matrix.helm-version, '4') }}
