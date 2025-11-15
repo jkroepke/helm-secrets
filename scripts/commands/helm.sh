@@ -249,7 +249,7 @@ helm_wrapper() {
     done
 
     if [ "${EVALUATE_TEMPLATES}" = "true" ]; then
-        if [ "$(_helm_version)" == "3" ]; then
+        if [ "$(_helm_version)" = "3" ]; then
             set -- "$@" "--post-renderer" "${HELM_BIN}"
 
             if [ "${HELM_DEBUG:-}" = "1" ] || [ "${HELM_DEBUG:-}" = "true" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
