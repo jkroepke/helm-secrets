@@ -70,7 +70,6 @@ jobs:
     container: ${{ matrix.container }}
     env:
       HELM_SECRETS_WINDOWS_SHELL: ${{ matrix.shell == 'wsl' && 'wsl' || 'bash' }}
-      HELM_VERSION: ${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -175,7 +174,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
         with:
-          version: v${{ env.HELM_VERSION }}
+          version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
         uses: jkroepke/setup-sops@eb0cf255cd974c503d8d66ac01dd7de48de4b948 # v1.3.7
@@ -240,6 +239,8 @@ jobs:
           fi
           helm plugin list
           helm secrets -v
+        env:
+          HELM_VERSION: ${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
