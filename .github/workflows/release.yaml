@@ -52,6 +52,8 @@ jobs:
           rm -rf scripts
           cp -a ../../scripts .
           helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" --keyring ~/.gnupg/secring.gpg <<< "$GPG_PASSPHRASE"
+          mv secrets-*.tgz helm-secrets.tgz
+          mv secrets-*.tgz.prov helm-secrets.tgz.prov
         working-directory: plugins/helm-secrets-cli
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -61,6 +63,8 @@ jobs:
           rm -rf scripts
           cp -a ../../scripts .
           helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" --keyring ~/.gnupg/secring.gpg <<< "$GPG_PASSPHRASE"
+          mv secrets-getter-*.tgz helm-secrets-getter.tgz
+          mv secrets-getter-*.tgz.prov helm-secrets-getter.tgz.prov
         working-directory: plugins/helm-secrets-getter
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -70,6 +74,8 @@ jobs:
           rm -rf scripts
           cp -a ../../scripts .
           helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" --keyring ~/.gnupg/secring.gpg <<< "$GPG_PASSPHRASE"
+          mv secrets-post-renderer-*.tgz helm-secrets-post-renderer.tgz
+          mv secrets-post-renderer-*.tgz.prov helm-secrets-post-renderer.tgz.prov
         working-directory: plugins/helm-secrets-post-renderer
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -83,12 +89,12 @@ jobs:
           * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md" \
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
           helm-secrets.tar.gz \
-          plugins/helm-secrets-cli/secrets-*.tgz \
-          plugins/helm-secrets-cli/secrets-*.tgz.prov \
-          plugins/helm-secrets-getter/secrets-*.tgz \
-          plugins/helm-secrets-getter/secrets-*.tgz.prov \
-          plugins/helm-secrets-post-renderer/secrets-*.tgz \
-          plugins/helm-secrets-post-renderer/secrets-*.tgz.prov
+          plugins/helm-secrets-cli/helm-secrets.tgz \
+          plugins/helm-secrets-cli/helm-secrets.tgz.prov \
+          plugins/helm-secrets-getter/helm-secrets-getter.tgz \
+          plugins/helm-secrets-getter/helm-secrets-getter.tgz.prov \
+          plugins/helm-secrets-post-renderer/helm-secrets-post-renderer.tgz \
+          plugins/helm-secrets-post-renderer/helm-secrets-post-renderer.tgz.prov
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
