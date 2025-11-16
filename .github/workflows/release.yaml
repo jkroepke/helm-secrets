@@ -51,7 +51,7 @@ jobs:
         run: |
           rm -rf scripts
           cp -a ../../scripts .
-          helm plugin package . --sign --passphrase-file - --key "$GPG_KEY_ID" <<< "$GPG_PASSPHRASE"
+          helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" <<< "$GPG_PASSPHRASE"
         working-directory: plugins/helm-secrets-cli
         env:
           GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
