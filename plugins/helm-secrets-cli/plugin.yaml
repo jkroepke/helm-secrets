@@ -1,7 +1,7 @@
 apiVersion: v1
 type: cli/v1
 name: "secrets"
-version: "4.7.0-dev"
+version: "4.7.0-rc.12"
 runtime: subprocess
 config:
   usage: secrets
