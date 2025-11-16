@@ -1,5 +1,5 @@
 name: "secrets"
-version: "4.7.0-dev"
+version: "4.7.0-rc.10"
 usage: "Secrets encryption in Helm for Git storing"
 description: |-
   This plugin provides secrets values encryption for Helm charts secure storing
