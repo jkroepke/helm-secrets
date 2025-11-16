@@ -4,15 +4,36 @@
 
 ## Helm 4
 
-Install a specific version (recommend). 
+Helm 4 introduced a new plugin system that requires splitting plugins into multiple packages when they have multiple capabilities. Therefore, `helm-secrets` is now distributed as three separate plugins:
+- `helm-secrets`: The core plugin that provides the main functionality.
+- `helm-secrets-getter`: A plugin that adds support for secret getters, e.g. `secrets://`.
+- `helm-secrets-post-renderer`: A plugin that adds support for post-rendering.
+
+### Verification
+
+Verification of plugins is supported in Helm 4 and **enabled by default**. You can choose 
+to verify the plugins during installation by omitting the `--verify=false` flag.
+
+Public Key for verification can be found here: https://github.com/jkroepke.gpg
+
+### Install a specific version (recommend).
+
+The `--version` flag is not supported in Helm 4, so you need to specify the exact download URL for the desired version.
+
 Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for the latest version.
+
 ```bash
-helm plugin install https://github.com/jkroepke/helm-secrets --version v4.6.11 --verify=false
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/helm-secrets.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/helm-secrets-getter.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/helm-secrets-post-renderer.tgz
 ```
 
-Install latest unstable version from main branch
+### Install latest version
+
 ```bash
-helm plugin install https://github.com/jkroepke/helm-secrets --verify=false
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets-getter.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets-post-renderer.tgz
 ```
 
 ## Helm 3
@@ -33,6 +54,8 @@ Find the latest version here: https://github.com/jkroepke/helm-secrets/releases/
 See [Secret Backend manual](https://github.com/jkroepke/helm-secrets/wiki/Secret-Backends#list-of-implemented-secret-backends) for additional installation tasks.
 
 # Manual installation
+
+Works for Helm 2 and Helm 3.
 
 ## Latest version
 
