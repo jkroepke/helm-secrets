@@ -24,8 +24,23 @@ jobs:
       - name: GPG configuration
         run: |-
           echo "$GPG_KEY" > "$GPG_KEY_PATH"
+          mkdir -p "$HOME/.gnupg"
+          chmod 0700 "$HOME/.gnupg"
+          echo "use-agent" > "$HOME/.gnupg/gpg.conf"
+          echo "pinentry-mode loopback" >> "$HOME/.gnupg/gpg.conf"
+          echo "allow-loopback-pinentry" > "$HOME/.gnupg/gpg-agent.conf"
+          echo "max-cache-ttl 86400" >> "$HOME/.gnupg/gpg-agent.conf"
+          echo "default-cache-ttl 86400" >> "$HOME/.gnupg/gpg-agent.conf"
+          gpgconf --kill gpg-agent
+          gpgconf --launch gpg-agent
+          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --import "$GPG_KEY_PATH"
+          echo "1F34F95B4F30BC5B06E0D7CC3F619F17002790D8:6:" | gpg --import-ownertrust
+          
+          gpg --batch --yes --passphrase-fd 0 --pinentry-mode=loopback --passphrase $GPG_PASSPHRASE --export-secret-keys >~/.gnupg/secring.gpg
         env:
+          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_KEY_PATH: "${{ runner.temp }}/private.key"
 
       - name: Package helm-secrets
@@ -35,29 +50,31 @@ jobs:
         run: |
           rm -rf scripts
           cp -a ../../scripts .
-          helm plugin package . --sign --passphrase-file - --key "$GPG_KEY_ID" --keyring $GPG_KEY_PATH <<< "$GPG_PASSPHRASE"
+          helm plugin package . --sign --passphrase-file - --key "$GPG_KEY_ID" <<< "$GPG_PASSPHRASE"
         working-directory: plugins/helm-secrets-cli
         env:
           GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_KEY_PATH: "${{ runner.temp }}/private.key"
 
       - name: Package helm-secrets-getter
         run: |
           rm -rf scripts
           cp -a ../../scripts .
-          helm plugin package .
+          helm plugin package . --sign --passphrase-file - --key "$GPG_KEY_ID" <<< "$GPG_PASSPHRASE"
         working-directory: plugins/helm-secrets-getter
+        env:
+          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Package helm-secrets-post-renderer
         run: |
           rm -rf scripts
           cp -a ../../scripts .
-          helm plugin package .
+          helm plugin package . --sign --passphrase-file - --key "$GPG_KEY_ID" <<< "$GPG_PASSPHRASE"
         working-directory: plugins/helm-secrets-post-renderer
-
-      - name: Package helm-secrets-getter
-        run: helm plugin package . --sign
+        env:
+          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Create Release
         run: |
