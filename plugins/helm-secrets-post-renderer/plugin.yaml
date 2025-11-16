@@ -1,7 +1,7 @@
 apiVersion: v1
 type: postrenderer/v1
 name: "secrets-post-renderer"
-version: "4.7.0-dev"
+version: "4.7.0-rc.9"
 runtime: subprocess
 runtimeConfig:
   platformCommand:
