@@ -36,7 +36,7 @@ jobs:
           echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --import "$GPG_KEY_PATH"
           echo "1F34F95B4F30BC5B06E0D7CC3F619F17002790D8:6:" | gpg --import-ownertrust
           
-          gpg --batch --yes --passphrase-fd 0 --pinentry-mode=loopback --passphrase $GPG_PASSPHRASE --export-secret-keys $GPG_KEY_ID >~/.gnupg/secring.gpg
+          gpg --batch --yes --passphrase-fd 0 --export-secret-keys $GPG_KEY_ID >~/.gnupg/secring.gpg
         env:
           GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
