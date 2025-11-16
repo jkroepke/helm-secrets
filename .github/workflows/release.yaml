@@ -83,12 +83,12 @@ jobs:
 
           * https://github.com/jkroepke/helm-secrets/blob/${{ github.ref_name }}/CHANGELOG.md" \
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
-          helm-secrets.tar.gz
-          plugins/helm-secrets-cli/secrets-*.tgz
-          plugins/helm-secrets-cli/secrets-*.tgz.prov
-          plugins/helm-secrets-getter/secrets-*.tgz
-          plugins/helm-secrets-getter/secrets-*.tgz.prov
-          plugins/helm-secrets-post-renderer/secrets-*.tgz
+          helm-secrets.tar.gz \
+          plugins/helm-secrets-cli/secrets-*.tgz \
+          plugins/helm-secrets-cli/secrets-*.tgz.prov \
+          plugins/helm-secrets-getter/secrets-*.tgz \
+          plugins/helm-secrets-getter/secrets-*.tgz.prov \
+          plugins/helm-secrets-post-renderer/secrets-*.tgz \
           plugins/helm-secrets-post-renderer/secrets-*.tgz.prov
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
