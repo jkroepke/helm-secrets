@@ -35,6 +35,8 @@ jobs:
           gpgconf --launch gpg-agent
           echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --import "$GPG_KEY_PATH"
           echo "1F34F95B4F30BC5B06E0D7CC3F619F17002790D8:6:" | gpg --import-ownertrust
+          
+          gpg --export-secret-keys >~/.gnupg/secring.gpg
         env:
           GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
@@ -79,8 +81,11 @@ jobs:
             ${{ contains(github.ref_name, 'rc') && '--prerelease' || '--latest' }} \
           helm-secrets.tar.gz
           plugins/helm-secrets-cli/secrets-*.tgz
+          plugins/helm-secrets-cli/secrets-*.tgz.prov
           plugins/helm-secrets-getter/secrets-*.tgz
+          plugins/helm-secrets-getter/secrets-*.tgz.prov
           plugins/helm-secrets-post-renderer/secrets-*.tgz
+          plugins/helm-secrets-post-renderer/secrets-*.tgz.prov
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
