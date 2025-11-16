@@ -95,9 +95,12 @@ on_cygwin() { false; }
 _sed_i() { sed -i "$@"; }
 _winpath() { printf '%s' "${1}"; }
 _helm_winpath() { printf '%s' "${1}"; }
+_helm_bin() { printf '%s' "${HELM_BIN}"; }
 
 case "$(uname -s)" in
 CYGWIN* | MINGW64_NT*)
+    HELM_BIN="$(cygpath -u "${HELM_BIN}")"
+
     on_cygwin() { true; }
     _winpath() {
         if [ "${2:-0}" = "1" ]; then
@@ -108,6 +111,7 @@ CYGWIN* | MINGW64_NT*)
     }
 
     _helm_winpath() { _winpath "$@"; }
+    _helm_bin() { _winpath "${HELM_BIN}"; }
 
     _sed_i 's!  - command: .*!  - command: "scripts/wrapper/run.cmd downloader"!' "${HELM_PLUGIN_DIR}/plugin.yaml"
     ;;
@@ -139,5 +143,20 @@ Darwin)
             ;;
         esac
     fi
+    ;;
+esac
+
+case $("${HELM_BIN}" version --short) in
+v2*)
+    _helm_version() { echo 2; }
+    ;;
+v3*)
+    _helm_version() { echo 3; }
+    ;;
+v4*)
+    _helm_version() { echo 4; }
+    ;;
+*)
+    fatal "Unsupported helm version: $("${HELM_BIN}" version --short)"
     ;;
 esac

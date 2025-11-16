@@ -108,6 +108,10 @@ jobs:
             jobs: 4
             helm-version: 3.16.4
           - os: ubuntu-24.04
+            shell: bash
+            jobs: 4
+            helm-version: 4.0.0
+          - os: ubuntu-24.04
             container: alpine
             shell: zsh
             jobs: 4
@@ -220,6 +224,7 @@ jobs:
           vals version
 
       - name: Run helm-secrets w/o bats
+        if: ${{ !startsWith(matrix.helm-version, '4') }}
         run: |-
           helm plugin install "${{ github.event_name == 'pull_request'
             && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
@@ -228,6 +233,16 @@ jobs:
             && github.head_ref
             || github.ref
           }}"
+          helm plugin list
+          helm secrets -v
+
+      - name: Run helm-secrets w/o bats
+        if: ${{ startsWith(matrix.helm-version, '4') }}
+        run: |-
+          helm plugin install plugins/helm-secrets-cli
+          helm plugin install plugins/helm-secrets-getter
+          helm plugin install plugins/helm-secrets-post-renderer
+          helm plugin list
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit

@@ -11,3 +11,5 @@ coverage
 
 test*.sh
 /vendor
+/helm
+*.tgz

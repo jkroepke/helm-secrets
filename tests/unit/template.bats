@@ -419,9 +419,9 @@ key2: value" 2>&1
     fi
 
     if on_windows; then
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\dir ${BATS_ROOT_PID}\\"
+        HELM_DATA_HOME="$("${HELM_BIN}" env HELM_DATA_HOME)\\dir ${BATS_ROOT_PID}\\"
     else
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/dir ${BATS_ROOT_PID}/"
+        HELM_DATA_HOME="$("${HELM_BIN}" env HELM_DATA_HOME)/dir ${BATS_ROOT_PID}/"
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
@@ -429,12 +429,16 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
-    #env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
+    env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" env >&2
+    env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin list >&2
+    if helm_version_greater_or_equal_than 4.0.0; then
+        env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")/plugins/helm-secrets-cli/" >&2
+    else
+        env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
+    fi
+    #env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin list >&2
 
-    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    run env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
@@ -449,9 +453,9 @@ key2: value" 2>&1
     fi
 
     if on_windows; then
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)\\dir(${BATS_ROOT_PID})\\"
+        HELM_DATA_HOME="$("${HELM_BIN}" env HELM_DATA_HOME)\\dir(${BATS_ROOT_PID})\\"
     else
-        HELM_PLUGINS="$("${HELM_BIN}" env HELM_PLUGINS)/dir(${BATS_ROOT_PID})/"
+        HELM_DATA_HOME="$("${HELM_BIN}" env HELM_DATA_HOME)/dir(${BATS_ROOT_PID})/"
     fi
 
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
@@ -459,12 +463,18 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" env >&2
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
-    env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
-    #env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" plugin list >&2
+    env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" env >&2
+    env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin list >&2
 
-    run env HELM_PLUGINS="${HELM_PLUGINS}" WSLENV="HELM_PLUGINS:${WSLENV}" "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    if helm_version_greater_or_equal_than 4.0.0; then
+        env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")/plugins/helm-secrets-cli/" >&2
+    else
+        env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin install "$(_winpath "${GIT_ROOT}")" >&2
+    fi
+
+    #env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin list >&2
+
+    run env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
@@ -1653,7 +1663,7 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" --kube-insecure-skip-tls-verify -f "${VALUES_PATH}" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --kube-insecure-skip-tls-verify -f "${VALUES_PATH}" 2>&1
 
     assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
@@ -2009,7 +2019,11 @@ key2: value" 2>&1
     refute_output --partial 'config.env: "44"'
     refute_output --partial 'secret: "42"'
     refute_output --partial 'secret.env: "44"'
-    assert_output --partial 'vals error:'
+    if helm_version_greater_or_equal_than 4.0.0; then
+        assert_output --partial 'plugin "secrets-post-renderer" exited with error'
+    else
+        assert_output --partial 'vals error:'
+    fi
     assert_failure
 }
 
