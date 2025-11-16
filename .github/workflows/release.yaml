@@ -36,8 +36,8 @@ jobs:
           echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --import "$GPG_KEY_PATH"
           echo "1F34F95B4F30BC5B06E0D7CC3F619F17002790D8:6:" | gpg --import-ownertrust
           
+          gpg --batch --yes >~/.gnupg/pubring.gpg
           echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --export-secret-keys $GPG_KEY_ID >~/.gnupg/secring.gpg
-          gpg --batch --yes --export $GPG_KEY_ID >~/.gnupg/pubring.gpg
         env:
           GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
@@ -51,30 +51,27 @@ jobs:
         run: |
           rm -rf scripts
           cp -a ../../scripts .
-          helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" <<< "$GPG_PASSPHRASE"
+          helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" --keyring ~/.gnupg/secring.gpg <<< "$GPG_PASSPHRASE"
         working-directory: plugins/helm-secrets-cli
         env:
-          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Package helm-secrets-getter
         run: |
           rm -rf scripts
           cp -a ../../scripts .
-          helm plugin package . --sign --passphrase-file - --key "$GPG_KEY_ID" <<< "$GPG_PASSPHRASE"
+          helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" --keyring ~/.gnupg/secring.gpg <<< "$GPG_PASSPHRASE"
         working-directory: plugins/helm-secrets-getter
         env:
-          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Package helm-secrets-post-renderer
         run: |
           rm -rf scripts
           cp -a ../../scripts .
-          helm plugin package . --sign --passphrase-file - --key "$GPG_KEY_ID" <<< "$GPG_PASSPHRASE"
+          helm plugin package . --sign --passphrase-file - --key "mail@jkroepke.de" --keyring ~/.gnupg/secring.gpg <<< "$GPG_PASSPHRASE"
         working-directory: plugins/helm-secrets-post-renderer
         env:
-          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Create Release
