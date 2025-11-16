@@ -76,7 +76,6 @@ jobs:
 
       - name: Create Release
         run: |
-          find .
           gh release create ${{ github.ref_name }} \
             -t "Release ${{ github.ref_name }}" \
             -n "# CHANGELOG
