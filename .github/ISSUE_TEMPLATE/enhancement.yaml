@@ -2,6 +2,11 @@ name: ✨ Enhancement / Feature / Task
 description: Some feature is missing or incomplete.
 labels: [enhancement]
 body:
+  - type: markdown
+    attributes:
+      value: |-
+        I would appreciate it if you could add yourself to the 
+        [USERS.md](https://github.com/jkroepke/helm-secrets/blob/main/USERS.md) file.
   - type: textarea
     attributes:
       label: Problem Statement

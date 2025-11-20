@@ -9,6 +9,9 @@ body:
         > If you get the warning `WARNING: both 'platformCommand' and 'command' are set`, please update helm-secrets first!
 
         Thanks for taking the time to fill out this bug report!
+        
+        I would appreciate it if you could add yourself to the 
+        [USERS.md](https://github.com/jkroepke/helm-secrets/blob/main/USERS.md) file.
   - type: textarea
     attributes:
       label: Current Behavior
