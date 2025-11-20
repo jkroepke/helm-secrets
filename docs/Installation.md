@@ -23,18 +23,16 @@ The `--version` flag is not supported in Helm 4, so you need to specify the exac
 Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for the latest version.
 
 ```bash
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/helm-secrets.tgz
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/helm-secrets-getter.tgz
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/helm-secrets-post-renderer.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/secrets.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/secrets-getter.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.0/secrets-post-renderer.tgz
 ```
 
 ### Install latest version
 
-```bash
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets.tgz
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets-getter.tgz
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/latest/download/helm-secrets-post-renderer.tgz
-```
+Helm forces `<plugin-name>-<version>.tgz` naming convention for plugin packages. 
+Therefore, to install the latest version,
+you need to fetch the latest version number first and then construct the download URLs accordingly.
 
 ## Helm 3
 
