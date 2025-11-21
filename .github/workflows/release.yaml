@@ -105,20 +105,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push to OCI registry
+      - name: Push secrets to OCI registry
         run: |
           oras push ghcr.io/${{ github.repository }}/secrets:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
-              plugins/helm-secrets-cli/secrets-*.tgz \
-              plugins/helm-secrets-cli/secrets-*.tgz.prov
+              secrets-*.tgz secrets-*.tgz.prov
+        working-directory: plugins/helm-secrets-cli/
+        env:
+          TAG: ${{ github.ref_name }}
+
+      - name: Push secrets-getter to OCI registry
+        run: |
           oras push ghcr.io/${{ github.repository }}/secrets-getter:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
-              plugins/helm-secrets-getter/secrets-getter-*.tgz \
-              plugins/helm-secrets-getter/secrets-getter-*.tgz.prov
+              secrets-getter-*.tgz secrets-getter-*.tgz.prov
+        working-directory: plugins/helm-secrets-getter/
+        env:
+          TAG: ${{ github.ref_name }}
+
+      - name: Push secrets-post-renderer to OCI registry
+        run: |
           oras push ghcr.io/${{ github.repository }}/secrets-post-renderer:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
-              plugins/helm-secrets-post-renderer/secrets-post-renderer-*.tgz \
-              plugins/helm-secrets-post-renderer/secrets-post-renderer-*.tgz.prov
+              secrets-post-renderer-*.tgz secrets-post-renderer-*.tgz.prov
+        working-directory: plugins/helm-secrets-post-renderer/
         env:
           TAG: ${{ github.ref_name }}
   docs:
