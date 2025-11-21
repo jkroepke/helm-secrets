@@ -21,6 +21,16 @@ jobs:
         with:
           version: v4.0.0
 
+      - name: Set up ORAS
+        uses: oras-project/setup-oras@v1
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: GPG configuration
         run: |-
           echo "$GPG_KEY" > "$GPG_KEY_PATH"
@@ -91,6 +101,21 @@ jobs:
           plugins/helm-secrets-post-renderer/secrets-post-renderer-*.tgz.prov
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to OCI registry
+        run: |
+          oras push ghcr.io/${{ github.repository }}/secrets:${{ github.ref_name }} \
+              --artifact-type application/vnd.helm.plugin.v1+json \
+              plugins/helm-secrets-cli/secrets-*.tgz \
+              plugins/helm-secrets-cli/secrets-*.tgz.prov
+          oras push ghcr.io/${{ github.repository }}/secrets-getter:${{ github.ref_name }} \
+              --artifact-type application/vnd.helm.plugin.v1+json \
+              plugins/helm-secrets-cli/secrets-getter-*.tgz \
+              plugins/helm-secrets-cli/secrets-getter-*.tgz.prov
+          oras push ghcr.io/${{ github.repository }}/secrets-post-renderer:${{ github.ref_name }} \
+              --artifact-type application/vnd.helm.plugin.v1+json \
+              plugins/helm-secrets-cli/secrets-post-renderer-*.tgz \
+              plugins/helm-secrets-cli/secrets-post-renderer-*.tgz.prov
   docs:
     name: Set latest version
     runs-on: ubuntu-latest
