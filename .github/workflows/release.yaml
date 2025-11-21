@@ -175,6 +175,8 @@ jobs:
     - run: >-
         sed -i -e '/- name: HELM_SECRETS_VERSION/a\'$'\n''          value: "'${GITHUB_REF_NAME/v}'"' docs/ArgoCD\ Integration.md
     - run: >-
+        sed -i "s/--version .*/--version ${GITHUB_REF_NAME}/g" docs/Installation.md
+    - run: >-
         sed -i "s!/v.+[.].+[.].+[.]/!/${GITHUB_REF_NAME}!g" docs/Installation.md
 
     - name: Create Pull Request
