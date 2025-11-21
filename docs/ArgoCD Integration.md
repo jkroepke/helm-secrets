@@ -151,7 +151,7 @@ ARG SOPS_VERSION=3.11.0
 ARG KUBECTL_VERSION=1.34.2
 ARG VALS_VERSION=0.42.5
 ARG AGE_VERSION=1.2.1
-ARG HELM_SECRETS_VERSION=4.7.0
+ARG HELM_SECRETS_VERSION=4.7.1
 
 # vals or sops
 ENV HELM_SECRETS_BACKEND="vals" \
@@ -271,7 +271,7 @@ repoServer:
       command: [sh, -euc]
       env:
         - name: HELM_SECRETS_VERSION
-          value: "4.7.0"
+          value: "4.7.1"
         - name: KUBECTL_VERSION
           value: "1.34.2"
         - name: VALS_VERSION
