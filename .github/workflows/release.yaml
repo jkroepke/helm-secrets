@@ -113,12 +113,12 @@ jobs:
               plugins/helm-secrets-cli/secrets-*.tgz.prov
           oras push ghcr.io/${{ github.repository }}/secrets-getter:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
-              plugins/helm-secrets-cli/secrets-getter-*.tgz \
-              plugins/helm-secrets-cli/secrets-getter-*.tgz.prov
+              plugins/helm-secrets-getter/secrets-getter-*.tgz \
+              plugins/helm-secrets-getter/secrets-getter-*.tgz.prov
           oras push ghcr.io/${{ github.repository }}/secrets-post-renderer:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
-              plugins/helm-secrets-cli/secrets-post-renderer-*.tgz \
-              plugins/helm-secrets-cli/secrets-post-renderer-*.tgz.prov
+              plugins/helm-secrets-post-renderer/secrets-post-renderer-*.tgz \
+              plugins/helm-secrets-post-renderer/secrets-post-renderer-*.tgz.prov
         env:
           TAG: ${{ github.ref_name }}
   docs:
