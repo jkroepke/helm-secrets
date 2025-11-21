@@ -165,6 +165,8 @@ jobs:
       pull-requests: write
     steps:
     - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      with:
+        persist-credentials: 'false'
 
     - run: >-
         sed -i 's/HELM_SECRETS_VERSION=".*"/HELM_SECRETS_VERSION="'${GITHUB_REF_NAME/v}'"/g' docs/ArgoCD\ Integration.md

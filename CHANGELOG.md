@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.3] - 2025-11-21
+
+### Fixes
+- Release CI workflow
+
 ## [4.7.2] - 2025-11-21
 
 ### Added
@@ -391,7 +396,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.2...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.3...HEAD
+[4.7.2]: https://github.com/kroepke/helm-secrets/compare/v4.7.2...v4.7.3
 [4.7.2]: https://github.com/kroepke/helm-secrets/compare/v4.7.1...v4.7.2
 [4.7.1]: https://github.com/kroepke/helm-secrets/compare/v4.7.0...v4.7.1
 [4.7.0]: https://github.com/kroepke/helm-secrets/compare/v4.6.11...v4.7.0
