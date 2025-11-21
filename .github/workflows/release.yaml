@@ -131,6 +131,31 @@ jobs:
         working-directory: plugins/helm-secrets-post-renderer/
         env:
           TAG: ${{ github.ref_name }}
+
+      - name: Push secrets to OCI registry latest
+        if: "!contains(github.ref_name, 'rc')"
+        run: |
+          oras push ghcr.io/${{ github.repository }}/secrets:latest \
+              --artifact-type application/vnd.helm.plugin.v1+json \
+              secrets-*.tgz secrets-*.tgz.prov
+        working-directory: plugins/helm-secrets-cli/
+
+      - name: Push secrets-getter to OCI registry latest
+        if: "!contains(github.ref_name, 'rc')"
+        run: |
+          oras push ghcr.io/${{ github.repository }}/secrets-getter:latest \
+              --artifact-type application/vnd.helm.plugin.v1+json \
+              secrets-getter-*.tgz secrets-getter-*.tgz.prov
+        working-directory: plugins/helm-secrets-getter/
+
+      - name: Push secrets-post-renderer to OCI registry latest
+        if: "!contains(github.ref_name, 'rc')"
+        run: |
+          oras push ghcr.io/${{ github.repository }}/secrets-post-renderer:latest \
+              --artifact-type application/vnd.helm.plugin.v1+json \
+              secrets-post-renderer-*.tgz secrets-post-renderer-*.tgz.prov
+        working-directory: plugins/helm-secrets-post-renderer/
+
   docs:
     name: Set latest version
     runs-on: ubuntu-latest
