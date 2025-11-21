@@ -39,7 +39,7 @@ you need to fetch the latest version number first and then construct the downloa
 Install a specific version (recommend). 
 Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for the latest version.
 ```bash
-helm plugin install https://github.com/jkroepke/helm-secrets --version v4.7.0
+helm plugin install https://github.com/jkroepke/helm-secrets --version v4.7.3
 ```
 
 Install latest unstable version from main branch
