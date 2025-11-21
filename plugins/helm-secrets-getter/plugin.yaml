@@ -1,7 +1,7 @@
 apiVersion: v1
 type: getter/v1
 name: "secrets-getter"
-version: "4.8.0-dev"
+version: "4.7.2-rc.1"
 runtime: subprocess
 config:
   protocols:
