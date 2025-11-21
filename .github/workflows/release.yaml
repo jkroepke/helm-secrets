@@ -104,18 +104,20 @@ jobs:
 
       - name: Push to OCI registry
         run: |
-          oras push ghcr.io/${{ github.repository }}/secrets:${{ github.ref_name }} \
+          oras push ghcr.io/${{ github.repository }}/secrets:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
               plugins/helm-secrets-cli/secrets-*.tgz \
               plugins/helm-secrets-cli/secrets-*.tgz.prov
-          oras push ghcr.io/${{ github.repository }}/secrets-getter:${{ github.ref_name }} \
+          oras push ghcr.io/${{ github.repository }}/secrets-getter:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
               plugins/helm-secrets-cli/secrets-getter-*.tgz \
               plugins/helm-secrets-cli/secrets-getter-*.tgz.prov
-          oras push ghcr.io/${{ github.repository }}/secrets-post-renderer:${{ github.ref_name }} \
+          oras push ghcr.io/${{ github.repository }}/secrets-post-renderer:${TAG#v} \
               --artifact-type application/vnd.helm.plugin.v1+json \
               plugins/helm-secrets-cli/secrets-post-renderer-*.tgz \
               plugins/helm-secrets-cli/secrets-post-renderer-*.tgz.prov
+        env:
+          TAG: ${{ github.ref_name }}
   docs:
     name: Set latest version
     runs-on: ubuntu-latest
