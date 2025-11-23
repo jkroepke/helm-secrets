@@ -23,9 +23,9 @@ The `--version` flag is not supported in Helm 4, so you need to specify the exac
 Click [here](https://github.com/jkroepke/helm-secrets/releases/latest) for the latest version.
 
 ```bash
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.4/secrets.tgz
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.4/secrets-getter.tgz
-helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.4/secrets-post-renderer.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.4/secrets-4.7.4.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.4/secrets-getter-4.7.4.tgz
+helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.4/secrets-post-renderer-4.7.4.tgz
 ```
 
 ### Install latest version
