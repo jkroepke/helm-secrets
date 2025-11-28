@@ -8,7 +8,7 @@ env:
   # renovate: github=getsops/sops
   VERSION_SOPS: 3.11.0
   # renovate: github=helmfile/vals
-  VERSION_VALS: 0.42.5
+  VERSION_VALS: 0.42.6
 
 on:
   pull_request:
@@ -190,7 +190,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@3f24e9af4fffdc6795d0277099bf8e13d5b11959 # v1.5.12
+        uses: jkroepke/setup-vals@be574dbb5b8695e56ee0eb08e877f28c31a1d3fb # v1.5.13
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -305,7 +305,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@3f24e9af4fffdc6795d0277099bf8e13d5b11959 # v1.5.12
+        uses: jkroepke/setup-vals@be574dbb5b8695e56ee0eb08e877f28c31a1d3fb # v1.5.13
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -389,7 +389,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@3f24e9af4fffdc6795d0277099bf8e13d5b11959 # v1.5.12
+        uses: jkroepke/setup-vals@be574dbb5b8695e56ee0eb08e877f28c31a1d3fb # v1.5.13
         with:
           version: v${{ env.VERSION_VALS }}
 
