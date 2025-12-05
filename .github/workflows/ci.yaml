@@ -26,7 +26,7 @@ jobs:
     outputs:
       changed: ${{ steps.set-output.outputs.changed }}
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
 
@@ -41,7 +41,7 @@ jobs:
     needs: detect-changes
     if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@17bd25a6ee188d2b91f677060038f4ba37ba14b2 # v0.9.0
         env:
@@ -175,7 +175,7 @@ jobs:
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: true
 
@@ -190,7 +190,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@be574dbb5b8695e56ee0eb08e877f28c31a1d3fb # v1.5.13
+        uses: jkroepke/setup-vals@0f986563e154406c5352d0e6603c41a0a7ed4b68 # v1.5.14
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -284,7 +284,7 @@ jobs:
       BATSLIB_TEMP_PRESERVE: "0"
       BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: true
           fetch-depth: 0
@@ -305,7 +305,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@be574dbb5b8695e56ee0eb08e877f28c31a1d3fb # v1.5.13
+        uses: jkroepke/setup-vals@0f986563e154406c5352d0e6603c41a0a7ed4b68 # v1.5.14
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -374,7 +374,7 @@ jobs:
 
       - run: kubectl cluster-info
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: true
 
@@ -389,7 +389,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@be574dbb5b8695e56ee0eb08e877f28c31a1d3fb # v1.5.13
+        uses: jkroepke/setup-vals@0f986563e154406c5352d0e6603c41a0a7ed4b68 # v1.5.14
         with:
           version: v${{ env.VERSION_VALS }}
 
