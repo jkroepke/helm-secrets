@@ -4,7 +4,7 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github=helm/helm
-  VERSION_HELM: 3.19.3
+  VERSION_HELM: 3.19.4
   # renovate: github=getsops/sops
   VERSION_SOPS: 3.11.0
   # renovate: github=helmfile/vals
@@ -185,7 +185,7 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@d18c5b2c6f7c5384431a8fdb377e3bc4ffcb9a79 # v1.3.8
+        uses: jkroepke/setup-sops@dc926d41f5e4e19597c1a7474dccd6bd484b54a0 # v1.3.9
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -269,7 +269,7 @@ jobs:
           BATS_REPORT_FILENAME: TEST-vals.xml
 
       - name: Upload Test Report
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: junit-test-results-${{ strategy.job-index }}
@@ -300,7 +300,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@d18c5b2c6f7c5384431a8fdb377e3bc4ffcb9a79 # v1.3.8
+        uses: jkroepke/setup-sops@dc926d41f5e4e19597c1a7474dccd6bd484b54a0 # v1.3.9
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -384,7 +384,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@d18c5b2c6f7c5384431a8fdb377e3bc4ffcb9a79 # v1.3.8
+        uses: jkroepke/setup-sops@dc926d41f5e4e19597c1a7474dccd6bd484b54a0 # v1.3.9
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -410,7 +410,7 @@ jobs:
           BATS_REPORT_FILENAME: TEST-sops.xml
 
       - name: Upload Test Report
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: junit-test-results-it-${{ strategy.job-index }}
@@ -425,7 +425,7 @@ jobs:
       - unit-tests
       - integration-tests
     steps:
-      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: .
 
