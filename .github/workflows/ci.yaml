@@ -4,7 +4,7 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github=helm/helm
-  VERSION_HELM: 3.19.2
+  VERSION_HELM: 3.19.3
   # renovate: github=getsops/sops
   VERSION_SOPS: 3.11.0
   # renovate: github=helmfile/vals
@@ -335,7 +335,7 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -351,7 +351,7 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
 
-      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
