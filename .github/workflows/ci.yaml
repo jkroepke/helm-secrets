@@ -190,7 +190,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0f986563e154406c5352d0e6603c41a0a7ed4b68 # v1.5.14
+        uses: jkroepke/setup-vals@ffdc09f15acd747f4529c87031f355a4fe59e5fe # v1.5.15
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -290,9 +290,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@d697be2f83c6234b20877c3b5eac7a7f342f0d0c # v1.269.0
+        uses: ruby/setup-ruby@ed55d55e820a01da7d3e4863a8c51a61d73c3228 # v1.274.0
         with:
-          ruby-version: "3.4.7"
+          ruby-version: "3.4.8"
 
       - name: Setup Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
@@ -305,7 +305,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0f986563e154406c5352d0e6603c41a0a7ed4b68 # v1.5.14
+        uses: jkroepke/setup-vals@ffdc09f15acd747f4529c87031f355a4fe59e5fe # v1.5.15
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -389,7 +389,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0f986563e154406c5352d0e6603c41a0a7ed4b68 # v1.5.14
+        uses: jkroepke/setup-vals@ffdc09f15acd747f4529c87031f355a4fe59e5fe # v1.5.15
         with:
           version: v${{ env.VERSION_VALS }}
 
