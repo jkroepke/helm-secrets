@@ -290,9 +290,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@ed55d55e820a01da7d3e4863a8c51a61d73c3228 # v1.274.0
+        uses: ruby/setup-ruby@ae195bbe749a7cef685ac729197124a48305c1cb # v1.276.0
         with:
-          ruby-version: "3.4.8"
+          ruby-version: "4.0.0"
 
       - name: Setup Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
