@@ -13,3 +13,4 @@ information to this file.
 | Sopra Steria | production | Using helm-secrets to deploy helm charts using ArgoCD on several platform                                 | Europe   | Jan 2025 |  
 | Fast Forest  | production | Using helm-secrets together with ArgoCD to manage the k3s cluster the team infrastructure runs on         | Germany  | Jun 2022 |
 | Dutch Public Broadcaster (NPO)  | production | Using helm-secrets and vals to deploy Helm charts with parameters from AWS SSM | Netherlands | Nov 2025 |
+| freee K.K.  | production | Using helm-secrets with helmfile and ArgoCD for production deployments | Japan | Dec 2025 |
