@@ -91,6 +91,23 @@ decrypt() {
         fatal 'File does not exist: %s' "${filepath}"
     fi
 
+    # Skip decryption if SKIP_DECRYPT is set
+    if [ "${SKIP_DECRYPT}" = "true" ]; then
+        if [ "${QUIET}" = "false" ]; then
+            log 'Decrypt skipped (--skip-decrypt): %s' "${filepath}" >&2
+        fi
+        # Output the encrypted file as-is
+        content=$(cat "${encrypted_filepath}" && printf '_')
+        content="${content%_}"
+
+        if [ "${terraform}" = "true" ]; then
+            printf '{"content_base64":"%s"}' "$(printf '%s' "${content}" | base64 | tr -d \\n)"
+        else
+            printf '%s' "${content}"
+        fi
+        return 0
+    fi
+
     # Append an underscore to the end of the content to prevent the stripping of trailing newlines
     # occurring during command substitution.
     if ! content=$(decrypt_helper "${encrypted_filepath}" "auto" "${output}" && printf '_'); then

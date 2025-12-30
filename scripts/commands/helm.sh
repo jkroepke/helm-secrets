@@ -131,7 +131,10 @@ helm_wrapper() {
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
 
-                if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
+                if [ "${SKIP_DECRYPT}" = "true" ]; then
+                    # Skip decryption, pass literal as-is
+                    decrypted_literal="${literal}"
+                elif ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
 
@@ -218,7 +221,14 @@ helm_wrapper() {
                         log 'Decrypt skipped: %s' "${file}"
                     fi
                 else
-                    if decrypt_helper "${real_file}" "${sops_type}"; then
+                    if [ "${SKIP_DECRYPT}" = "true" ]; then
+                        # Skip decryption, pass encrypted file as-is
+                        decrypted_files="${decrypted_files}${opt_prefix}$(_helm_winpath "${real_file}" "${double_escape_need}"),"
+
+                        if [ "${QUIET}" = "false" ]; then
+                            log 'Decrypt skipped (--skip-decrypt): %s' "${file}"
+                        fi
+                    elif decrypt_helper "${real_file}" "${sops_type}"; then
                         printf '%s' "${file_dec}" >"${decrypted_file_list_dir}/${j}.file"
 
                         if [ "${QUIET}" = "false" ]; then

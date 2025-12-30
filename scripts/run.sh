@@ -63,6 +63,8 @@ EVALUATE_TEMPLATES_DECODE_SECRETS="${HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECR
 DECRYPT_SECRETS_IN_TMP_DIR="${HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR:-false}"
 # shellcheck disable=SC2034
 LOAD_GPG_KEYS="${HELM_SECRETS_LOAD_GPG_KEYS:-false}"
+# shellcheck disable=SC2034
+SKIP_DECRYPT="${HELM_SECRETS_SKIP_DECRYPT:-false}"
 
 trap _trap EXIT
 trap 'trap - EXIT; _trap; exit 1' HUP INT QUIT TERM
@@ -242,6 +244,20 @@ while true; do
     --decrypt-secrets-in-tmp-dir=*)
         # shellcheck disable=SC2034
         DECRYPT_SECRETS_IN_TMP_DIR="${1#*=}"
+        ;;
+    --skip-decrypt)
+        if [ "$2" = "true" ] || [ "$2" = "false" ]; then
+            # shellcheck disable=SC2034
+            SKIP_DECRYPT="$2"
+            shift
+        else
+            # shellcheck disable=SC2034
+            SKIP_DECRYPT="true"
+        fi
+        ;;
+    --skip-decrypt=*)
+        # shellcheck disable=SC2034
+        SKIP_DECRYPT="${1#*=}"
         ;;
     "")
         # shellcheck source=scripts/commands/help.sh

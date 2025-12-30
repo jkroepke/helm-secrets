@@ -25,6 +25,7 @@ Available Options:
   --evaluate-templates [true|false]                    Evaluate secret expressions inside helm template (only supported by vals backend) (env: $HELM_SECRETS_EVALUATE_TEMPLATES)
   --evaluate-templates-decode-secrets [true|false]     If --evaluate-templates is set, decode base64 values from secrets to evaluate them (env: $HELM_SECRETS_EVALUATE_TEMPLATES_DECODE_SECRETS)
   --decrypt-secrets-in-tmp-dir [true|false]            Decrypt secrets in a temp directory. May solve concurrency issues. (env: $HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR)
+  --skip-decrypt [true|false]                          Skip decryption, pass encrypted files/values as-is (env: $HELM_SECRETS_SKIP_DECRYPT)
   --help                                           -h  Show help
   --version                                        -v  Display version of helm-secrets
 ```
@@ -362,6 +363,29 @@ stringData:
 **Run**
 ```bash
 helm secrets --evaluate-templates upgrade name .
+```
+
+
+## Skip Decryption (CI/CD Mode)
+
+helm-secrets supports skipping decryption entirely via the `--skip-decrypt` flag or `HELM_SECRETS_SKIP_DECRYPT` environment variable.
+
+This is useful in CI/CD environments or when using Coding Agents where:
+- Secret keys (GPG, KMS, etc.) are not available
+- You want to validate chart templates without actual secrets
+- You want to pass encrypted values as-is for later processing
+
+### Example
+
+```bash
+# Skip decryption via flag
+helm secrets --skip-decrypt upgrade myrelease . -f secrets.yaml
+
+# Skip decryption via environment variable
+HELM_SECRETS_SKIP_DECRYPT=true helm secrets upgrade myrelease . -f secrets.yaml
+
+# Skip decryption for decrypt command (outputs encrypted content as-is)
+HELM_SECRETS_SKIP_DECRYPT=true helm secrets decrypt secrets.yaml
 ```
 
 
