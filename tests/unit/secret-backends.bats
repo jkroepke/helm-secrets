@@ -57,8 +57,8 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets -b noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
-    assert_failure
+    assert_output -e "unencrypted_suffix:"
+    assert_success
 }
 
 @test "secret-backend: helm secrets --backend noop" {
@@ -66,8 +66,8 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --backend noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
-    assert_failure
+    assert_output -e "unencrypted_suffix:"
+    assert_success
 }
 
 @test "secret-backend: helm secrets -b noop + q flag" {
@@ -75,8 +75,8 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets -q -b noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
-    assert_failure
+    assert_output -e "unencrypted_suffix:"
+    assert_success
 }
 
 @test "secret-backend: helm secrets + env HELM_SECRETS_BACKEND=noop" {
@@ -84,8 +84,8 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_BACKEND=noop WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
-    assert_failure
+    assert_output -e "unencrypted_suffix:"
+    assert_success
 }
 
 @test "secret-backend: helm secrets + prefer cli arg -b noop over env" {
@@ -93,8 +93,8 @@ load '../bats/extensions/bats-file/load'
 
     run env HELM_SECRETS_BACKEND=sops WSLENV="HELM_SECRETS_BACKEND:${WSLENV}" "${HELM_BIN}" secrets -b noop decrypt "${FILE}"
 
-    assert_output -e "\[helm-secrets\] File is not encrypted: .*"
-    assert_failure
+    assert_output -e "unencrypted_suffix:"
+    assert_success
 }
 
 @test "secret-backend: helm secrets --backend assets/custom-backend.sh" {
