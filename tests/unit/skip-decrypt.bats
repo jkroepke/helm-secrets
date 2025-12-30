@@ -98,8 +98,12 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --skip-decrypt decrypt "${VALUES_PATH}" 2>&1
 
-    # Should output encrypted content (contains sops metadata or ENC markers)
-    assert_output --partial 'sops'
+    # Should output encrypted content (backend-specific markers)
+    if [ "${HELM_SECRETS_BACKEND}" = "vals" ]; then
+        assert_output --partial 'ref+'
+    else
+        assert_output --partial 'sops'
+    fi
     refute_output --partial 'global_secret: global_bar'
     assert_success
 }
@@ -110,8 +114,12 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --skip-decrypt=true decrypt "${VALUES_PATH}" 2>&1
 
-    # Should output encrypted content
-    assert_output --partial 'sops'
+    # Should output encrypted content (backend-specific markers)
+    if [ "${HELM_SECRETS_BACKEND}" = "vals" ]; then
+        assert_output --partial 'ref+'
+    else
+        assert_output --partial 'sops'
+    fi
     refute_output --partial 'global_secret: global_bar'
     assert_success
 }
@@ -123,8 +131,12 @@ load '../bats/extensions/bats-file/load'
     run env HELM_SECRETS_SKIP_DECRYPT=true WSLENV="HELM_SECRETS_SKIP_DECRYPT:${WSLENV}" \
         "${HELM_BIN}" secrets decrypt "${VALUES_PATH}" 2>&1
 
-    # Should output encrypted content
-    assert_output --partial 'sops'
+    # Should output encrypted content (backend-specific markers)
+    if [ "${HELM_SECRETS_BACKEND}" = "vals" ]; then
+        assert_output --partial 'ref+'
+    else
+        assert_output --partial 'sops'
+    fi
     refute_output --partial 'global_secret: global_bar'
     assert_success
 }
