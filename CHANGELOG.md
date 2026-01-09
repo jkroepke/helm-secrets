@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.5] - 2026-01-09
+
+### Fixes
+- noop backend not support encrypted files #680 (https://github.com/jkroepke/helm-secrets/pull/680)
+
 ## [4.7.4] - 2025-11-22
 
 ### Fixes
@@ -401,7 +406,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.4...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.5...HEAD
+[4.7.5]: https://github.com/kroepke/helm-secrets/compare/v4.7.4...v4.7.5
 [4.7.4]: https://github.com/kroepke/helm-secrets/compare/v4.7.3...v4.7.4
 [4.7.3]: https://github.com/kroepke/helm-secrets/compare/v4.7.2...v4.7.3
 [4.7.2]: https://github.com/kroepke/helm-secrets/compare/v4.7.1...v4.7.2
