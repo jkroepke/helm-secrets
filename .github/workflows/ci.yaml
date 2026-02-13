@@ -8,7 +8,7 @@ env:
   # renovate: github=getsops/sops
   VERSION_SOPS: 3.11.0
   # renovate: github=helmfile/vals
-  VERSION_VALS: 0.43.1
+  VERSION_VALS: 0.43.3
 
 on:
   pull_request:
@@ -185,12 +185,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@31b1e87e01d239209349ad9d040aa8a3a3822c86 # v1.3.16
+        uses: jkroepke/setup-sops@f460fbcf80f9f3a2363e5d89a70e9e15b4d49711 # v1.3.17
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4508f44bb64b8fd9a6a7973a0c9ad161d517cbff # v1.5.24
+        uses: jkroepke/setup-vals@90aa38e767712674788c4f687b442568c59ad4e6 # v1.5.25
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -300,12 +300,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@31b1e87e01d239209349ad9d040aa8a3a3822c86 # v1.3.16
+        uses: jkroepke/setup-sops@f460fbcf80f9f3a2363e5d89a70e9e15b4d49711 # v1.3.17
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4508f44bb64b8fd9a6a7973a0c9ad161d517cbff # v1.5.24
+        uses: jkroepke/setup-vals@90aa38e767712674788c4f687b442568c59ad4e6 # v1.5.25
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -384,12 +384,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@31b1e87e01d239209349ad9d040aa8a3a3822c86 # v1.3.16
+        uses: jkroepke/setup-sops@f460fbcf80f9f3a2363e5d89a70e9e15b4d49711 # v1.3.17
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4508f44bb64b8fd9a6a7973a0c9ad161d517cbff # v1.5.24
+        uses: jkroepke/setup-vals@90aa38e767712674788c4f687b442568c59ad4e6 # v1.5.25
         with:
           version: v${{ env.VERSION_VALS }}
 
