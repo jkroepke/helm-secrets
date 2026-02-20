@@ -2,6 +2,7 @@
 
 SETLOCAL DisableDelayedExpansion
 
+IF "%HELM_SECRETS_CMD_TRACE%"=="0" GOTO :SKIP_ECHO_ON
 IF DEFINED HELM_DEBUG (
     IF "%HELM_DEBUG%"=="1" (
         @echo on
@@ -10,6 +11,7 @@ IF DEFINED HELM_DEBUG (
         @echo on
     )
 )
+:SKIP_ECHO_ON
 
 SET SCRIPT_DIR=%~dp0
 SET SCRIPT_DIR=%SCRIPT_DIR:~0,-1%
