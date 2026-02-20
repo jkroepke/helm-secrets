@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    bashcov (3.2.0)
+    bashcov (3.3.0)
       simplecov (~> 0.21)
     docile (1.4.1)
     rexml (3.4.2)
