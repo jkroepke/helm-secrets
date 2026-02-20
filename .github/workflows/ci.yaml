@@ -8,7 +8,7 @@ env:
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.11.0
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.43.3
+  VERSION_VALS: 0.43.5
 
 on:
   pull_request:
@@ -190,7 +190,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@90aa38e767712674788c4f687b442568c59ad4e6 # v1.5.25
+        uses: jkroepke/setup-vals@2f565fa5757f79624dd6ea63fbf1d547c5971879 # v1.5.26
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -305,7 +305,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@90aa38e767712674788c4f687b442568c59ad4e6 # v1.5.25
+        uses: jkroepke/setup-vals@2f565fa5757f79624dd6ea63fbf1d547c5971879 # v1.5.26
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -344,7 +344,7 @@ jobs:
 
       - run: rm -rf ./coverage/
 
-      - uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
+      - uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
 
       - name: bashcov bats --tap -r tests/it
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
@@ -370,7 +370,7 @@ jobs:
         shell: [dash]
         jobs: [4]
     steps:
-      - uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
+      - uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
 
       - run: kubectl cluster-info
 
@@ -389,7 +389,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@90aa38e767712674788c4f687b442568c59ad4e6 # v1.5.25
+        uses: jkroepke/setup-vals@2f565fa5757f79624dd6ea63fbf1d547c5971879 # v1.5.26
         with:
           version: v${{ env.VERSION_VALS }}
 
