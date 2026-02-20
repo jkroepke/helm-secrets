@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixes
+- fix: add `HELM_SECRETS_CMD_TRACE=0` opt-out to skip `@echo on` in `run.cmd` and prevent stdout corruption on Windows when `HELM_DEBUG=1` (#705)
+
 ## [4.7.5] - 2026-01-09
 
 ### Fixes
