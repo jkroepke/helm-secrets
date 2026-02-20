@@ -145,11 +145,11 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 <p>
 
 ```Dockerfile
-ARG ARGOCD_VERSION="v3.3.0"
+ARG ARGOCD_VERSION="v3.3.1"
 FROM quay.io/argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION=3.11.0
 ARG KUBECTL_VERSION=1.35.1
-ARG VALS_VERSION=0.43.3
+ARG VALS_VERSION=0.43.5
 ARG AGE_VERSION=1.3.1
 ARG HELM_SECRETS_VERSION=4.7.5
 
@@ -275,7 +275,7 @@ repoServer:
         - name: KUBECTL_VERSION
           value: "1.35.1"
         - name: VALS_VERSION
-          value: "0.43.3"
+          value: "0.43.5"
         - name: SOPS_VERSION
           value: "3.11.0"
         - name: AGE_VERSION
