@@ -3,5 +3,5 @@ name: setup
 version: 1.0.0
 dependencies:
   - name: argo-cd
-    version: 4.10.7
+    version: 4.10.9
     repository: https://argoproj.github.io/argo-helm
