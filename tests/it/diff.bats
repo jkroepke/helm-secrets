@@ -27,7 +27,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
     refute_output --partial "[helm-secrets] Decrypt:"
-    assert_output --partial "Release was not present in Helm."
+    assert_output --partial "+ # Source: sops/templates/deployment.yaml"
     refute_output --partial "[helm-secrets] Removed:"
 }
 
