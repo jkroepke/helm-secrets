@@ -180,17 +180,17 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
         with:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@0037ba8a85187fc909b5399f6d8771a90a4ee46c # v1.5.3
+        uses: jkroepke/setup-sops@3ef95e245c7e5d44316f56048c2fa730f0ae8bf9 # v1.5.5
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ecb68cc57dada72b310723fe3d357e82ac7483f4 # v1.5.31
+        uses: jkroepke/setup-vals@ee07a50767a8b4cde28d44fa7f2d57795fc48667 # v1.5.32
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -290,22 +290,22 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1.295.0
+        uses: ruby/setup-ruby@4dc28cf14d77b0afa6832d9765ac422dbf0dfedd # v1.298.0
         with:
           ruby-version: "4.0.2"
 
       - name: Setup Helm
-        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
         with:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@0037ba8a85187fc909b5399f6d8771a90a4ee46c # v1.5.3
+        uses: jkroepke/setup-sops@3ef95e245c7e5d44316f56048c2fa730f0ae8bf9 # v1.5.5
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ecb68cc57dada72b310723fe3d357e82ac7483f4 # v1.5.31
+        uses: jkroepke/setup-vals@ee07a50767a8b4cde28d44fa7f2d57795fc48667 # v1.5.32
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -335,7 +335,7 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
+      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -351,7 +351,7 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
 
-      - uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
+      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -379,17 +379,17 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
         with:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@0037ba8a85187fc909b5399f6d8771a90a4ee46c # v1.5.3
+        uses: jkroepke/setup-sops@3ef95e245c7e5d44316f56048c2fa730f0ae8bf9 # v1.5.5
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ecb68cc57dada72b310723fe3d357e82ac7483f4 # v1.5.31
+        uses: jkroepke/setup-vals@ee07a50767a8b4cde28d44fa7f2d57795fc48667 # v1.5.32
         with:
           version: v${{ env.VERSION_VALS }}
 
