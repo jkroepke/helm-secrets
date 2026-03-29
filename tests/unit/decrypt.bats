@@ -63,6 +63,22 @@ load '../bats/extensions/bats-file/load'
     assert_file_contains "${VALUES_PATH}" 'global_secret: global_bar'
 }
 
+@test "decrypt: Decrypt inline secrets.trailing-newline.raw (appends missing newline)" {
+    if ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.trailing-newline.raw"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    run "${HELM_BIN}" secrets decrypt -i "${VALUES_PATH}"
+    assert_success
+
+    # The inline-decrypted file must end with a newline (exercises the printf '\n' branch)
+    run sh -c "tail -c1 '${VALUES_PATH}' | wc -l | tr -d ' '"
+    assert_output "1"
+}
+
 @test "decrypt: Decrypt secrets.yaml.gotpl" {
     if ! is_backend "sops"; then
         skip
