@@ -52,7 +52,7 @@ decrypt_helper() {
     # 'tail -c1 | wc -l' returns 0 when the last byte is not a newline.
     if [ -n "${encrypted_file_dec}" ] && [ -f "${encrypted_file_dec}" ]; then
         if [ "$(tail -c1 "${encrypted_file_dec}" | wc -l)" -eq 0 ]; then
-            printf '\n' >> "${encrypted_file_dec}"
+            printf '\n' >>"${encrypted_file_dec}"
         fi
     fi
 
@@ -72,15 +72,15 @@ decrypt() {
     j=0
     while [ $j -lt $argc ]; do
         case "$1" in
-            -i)
-                inline=true
-                ;;
-            --terraform)
-                terraform=true
-                ;;
-            *)
-                set -- "$@" "$1"
-                ;;
+        -i)
+            inline=true
+            ;;
+        --terraform)
+            terraform=true
+            ;;
+        *)
+            set -- "$@" "$1"
+            ;;
         esac
         shift
         j=$((j + 1))
