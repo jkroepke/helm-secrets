@@ -3,5 +3,5 @@
 set -euf
 
 version() {
-    grep version "${SCRIPT_DIR}/../plugin.yaml" | cut -d'"' -f2
+    grep version: "${SCRIPT_DIR}/../plugin.yaml" | cut -d'"' -f2
 }

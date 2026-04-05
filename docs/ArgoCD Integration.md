@@ -271,7 +271,7 @@ repoServer:
       command: [sh, -euc]
       env:
         - name: HELM_SECRETS_VERSION
-          value: "4.7.5"
+          value: "4.7.6"
         - name: KUBECTL_VERSION
           value: "1.35.3"
         - name: VALS_VERSION
