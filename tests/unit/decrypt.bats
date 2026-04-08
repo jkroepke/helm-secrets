@@ -88,11 +88,11 @@ load '../bats/extensions/bats-file/load'
     local mock_file="${TEST_TEMP_DIR}/mock-secret.yaml"
 
     # Placeholder "encrypted" file; the mock backend always reports files as encrypted.
-    printf 'mock-encrypted-placeholder\n' > "${mock_file}"
+    printf 'mock-encrypted-placeholder\n' >"${mock_file}"
 
     # Write the mock backend inline.
     # It uses _custom_ prefixed functions as required by helm-secrets custom backend API.
-    cat > "${mock_backend}" << 'MOCKEOF'
+    cat >"${mock_backend}" <<'MOCKEOF'
 #!/usr/bin/env sh
 _custom_backend_is_file_encrypted() { return 0; }
 _custom_backend_is_encrypted()      { return 0; }
@@ -121,7 +121,6 @@ MOCKEOF
 
     assert_file_contains "${mock_file}" "global_secret: value_without_trailing_newline"
 }
-
 
 @test "decrypt: Decrypt secrets.yaml.gotpl" {
     if ! is_backend "sops"; then
