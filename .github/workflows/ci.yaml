@@ -4,11 +4,11 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github-releases=helm/helm
-  VERSION_HELM: 3.20.1
+  VERSION_HELM: 3.20.2
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.12.2
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.43.7
+  VERSION_VALS: 0.43.9
 
 on:
   pull_request:
@@ -185,18 +185,18 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@b097787b340b188709022aa0a0f65eaf54385b46 # v1.5.7
+        uses: jkroepke/setup-sops@3619028aa146698b149b95ca48a55945f0e3ff32 # v1.5.9
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@630437cc4f0c0cc9ab96d683bbfb539a3d269236 # v1.5.35
+        uses: jkroepke/setup-vals@caaed13e9788f6d7456d5d7b0d6f0d4b6eea07ac # v1.5.38
         with:
           version: v${{ env.VERSION_VALS }}
 
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
-        uses: cygwin/cygwin-install-action@v6
+        uses: cygwin/cygwin-install-action@711d29f3da23c9f4a1798e369a6f01198c13b11a # v6.0.1
         with:
           platform: x64
           packages: gnupg2
@@ -290,7 +290,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         with:
           ruby-version: "4.0.2"
 
@@ -300,12 +300,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@b097787b340b188709022aa0a0f65eaf54385b46 # v1.5.7
+        uses: jkroepke/setup-sops@3619028aa146698b149b95ca48a55945f0e3ff32 # v1.5.9
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@630437cc4f0c0cc9ab96d683bbfb539a3d269236 # v1.5.35
+        uses: jkroepke/setup-vals@caaed13e9788f6d7456d5d7b0d6f0d4b6eea07ac # v1.5.38
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -384,12 +384,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@b097787b340b188709022aa0a0f65eaf54385b46 # v1.5.7
+        uses: jkroepke/setup-sops@3619028aa146698b149b95ca48a55945f0e3ff32 # v1.5.9
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@630437cc4f0c0cc9ab96d683bbfb539a3d269236 # v1.5.35
+        uses: jkroepke/setup-vals@caaed13e9788f6d7456d5d7b0d6f0d4b6eea07ac # v1.5.38
         with:
           version: v${{ env.VERSION_VALS }}
 
