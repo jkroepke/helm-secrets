@@ -185,12 +185,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@cc11a52c0d104e01cc00a0815e21a3214d57949f # v1.5.11
+        uses: jkroepke/setup-sops@703dbd9594d67e21fe65d172d03bb62e87a57b2d # v1.5.16
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@542b49f024c7d2aab627a203b2f124e737bab495 # v1.5.40
+        uses: jkroepke/setup-vals@864e7f3d3a8a5e00e64ff10eb84bfcec5bdbfd77 # v1.5.45
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -203,7 +203,7 @@ jobs:
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
-        uses: Vampire/setup-wsl@6a8db447be7ed35f2f499c02c6e60ff77ef11278 # v6.0.0
+        uses: Vampire/setup-wsl@d1da7f2c0322a5ee4f24975344f67fc0f5baf364 # v7.0.0
         with:
           distribution: Ubuntu-24.04
           wsl-version: 1
@@ -290,7 +290,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
         with:
           ruby-version: "4.0.2"
 
@@ -300,12 +300,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@cc11a52c0d104e01cc00a0815e21a3214d57949f # v1.5.11
+        uses: jkroepke/setup-sops@703dbd9594d67e21fe65d172d03bb62e87a57b2d # v1.5.16
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@542b49f024c7d2aab627a203b2f124e737bab495 # v1.5.40
+        uses: jkroepke/setup-vals@864e7f3d3a8a5e00e64ff10eb84bfcec5bdbfd77 # v1.5.45
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -384,12 +384,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@cc11a52c0d104e01cc00a0815e21a3214d57949f # v1.5.11
+        uses: jkroepke/setup-sops@703dbd9594d67e21fe65d172d03bb62e87a57b2d # v1.5.16
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@542b49f024c7d2aab627a203b2f124e737bab495 # v1.5.40
+        uses: jkroepke/setup-vals@864e7f3d3a8a5e00e64ff10eb84bfcec5bdbfd77 # v1.5.45
         with:
           version: v${{ env.VERSION_VALS }}
 
