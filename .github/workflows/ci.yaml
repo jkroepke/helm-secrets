@@ -4,11 +4,11 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github-releases=helm/helm
-  VERSION_HELM: 3.20.1
+  VERSION_HELM: 3.20.2
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.12.2
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.43.7
+  VERSION_VALS: 0.43.9
 
 on:
   pull_request:
@@ -185,25 +185,25 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@3ef95e245c7e5d44316f56048c2fa730f0ae8bf9 # v1.5.5
+        uses: jkroepke/setup-sops@703dbd9594d67e21fe65d172d03bb62e87a57b2d # v1.5.16
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ee07a50767a8b4cde28d44fa7f2d57795fc48667 # v1.5.32
+        uses: jkroepke/setup-vals@864e7f3d3a8a5e00e64ff10eb84bfcec5bdbfd77 # v1.5.45
         with:
           version: v${{ env.VERSION_VALS }}
 
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
-        uses: cygwin/cygwin-install-action@v6
+        uses: cygwin/cygwin-install-action@711d29f3da23c9f4a1798e369a6f01198c13b11a # v6.0.1
         with:
           platform: x64
           packages: gnupg2
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
-        uses: Vampire/setup-wsl@6a8db447be7ed35f2f499c02c6e60ff77ef11278 # v6.0.0
+        uses: Vampire/setup-wsl@d1da7f2c0322a5ee4f24975344f67fc0f5baf364 # v7.0.0
         with:
           distribution: Ubuntu-24.04
           wsl-version: 1
@@ -269,7 +269,7 @@ jobs:
           BATS_REPORT_FILENAME: TEST-vals.xml
 
       - name: Upload Test Report
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: junit-test-results-${{ strategy.job-index }}
@@ -290,7 +290,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
+        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
         with:
           ruby-version: "4.0.2"
 
@@ -300,12 +300,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@3ef95e245c7e5d44316f56048c2fa730f0ae8bf9 # v1.5.5
+        uses: jkroepke/setup-sops@703dbd9594d67e21fe65d172d03bb62e87a57b2d # v1.5.16
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ee07a50767a8b4cde28d44fa7f2d57795fc48667 # v1.5.32
+        uses: jkroepke/setup-vals@864e7f3d3a8a5e00e64ff10eb84bfcec5bdbfd77 # v1.5.45
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -384,12 +384,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@3ef95e245c7e5d44316f56048c2fa730f0ae8bf9 # v1.5.5
+        uses: jkroepke/setup-sops@703dbd9594d67e21fe65d172d03bb62e87a57b2d # v1.5.16
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@ee07a50767a8b4cde28d44fa7f2d57795fc48667 # v1.5.32
+        uses: jkroepke/setup-vals@864e7f3d3a8a5e00e64ff10eb84bfcec5bdbfd77 # v1.5.45
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -410,7 +410,7 @@ jobs:
           BATS_REPORT_FILENAME: TEST-sops.xml
 
       - name: Upload Test Report
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: junit-test-results-it-${{ strategy.job-index }}
@@ -430,7 +430,7 @@ jobs:
           path: .
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@49b2ca06f62aa7ef83ae6769a2179271e160d8e4 # v6.3.1
+        uses: mikepenz/action-junit-report@bccf2e31636835cf0874589931c4116687171386 # v6.4.0
         with:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true

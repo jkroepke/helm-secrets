@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.7.6] - 2026-04-04
+
 ### Fixes
 - fix: add `HELM_SECRETS_CMD_TRACE=0` opt-out to skip `@echo on` in `run.cmd` and prevent stdout corruption on Windows when `HELM_DEBUG=1` (#705)
+- fix: helm secrets -v outputs --version option description in addition to version number (#738)
 
 ## [4.7.5] - 2026-01-09
 
@@ -411,7 +414,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.5...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.6...HEAD
+[4.7.6]: https://github.com/kroepke/helm-secrets/compare/v4.7.5...v4.7.6
 [4.7.5]: https://github.com/kroepke/helm-secrets/compare/v4.7.4...v4.7.5
 [4.7.4]: https://github.com/kroepke/helm-secrets/compare/v4.7.3...v4.7.4
 [4.7.3]: https://github.com/kroepke/helm-secrets/compare/v4.7.2...v4.7.3
