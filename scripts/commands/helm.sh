@@ -138,7 +138,9 @@ helm_wrapper() {
                 # See: https://github.com/jkroepke/helm-secrets/issues/752
                 if ! decrypted_literal=$(
                     backend_decrypt_literal "${literal}"
+                    _hs_ret=$?
                     printf x
+                    exit "${_hs_ret}"
                 ); then
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
