@@ -136,14 +136,20 @@ helm_wrapper() {
                 # Without this, decrypted_literal differs from literal when the
                 # value ends with \n, causing the else branch to double-escape commas.
                 # See: https://github.com/jkroepke/helm-secrets/issues/752
-                if ! decrypted_literal=$(backend_decrypt_literal "${literal}"; printf x); then
+                if ! decrypted_literal=$(
+                    backend_decrypt_literal "${literal}"
+                    printf x
+                ); then
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
                 decrypted_literal="${decrypted_literal%x}"
 
                 # Strip a single trailing newline from literal so the comparison
                 # is symmetric regardless of how the encrypted value was stored.
-                literal_stripped="${literal%$'\n'}"
+                # SC2039/SC3003: $'\n' is not POSIX; use a variable holding a literal newline.
+                _hs_nl='
+'
+                literal_stripped="${literal%"$_hs_nl"}"
 
                 if [ "${decrypted_literal}" = "${literal_stripped}" ]; then
                     decrypted_literals="${decrypted_literals}${opt_prefix}${decrypted_literal},"
