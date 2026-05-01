@@ -139,7 +139,7 @@ Darwin)
         # to use a temp-file + cp approach that avoids the in-place rewrite.
         _sed_i() {
             _si_tmp=$(_mktemp)
-            sed "$1" "$2" > "$_si_tmp" && cp "$_si_tmp" "$2"
+            sed "$1" "$2" >"$_si_tmp" && cp "$_si_tmp" "$2"
             rm -f "$_si_tmp"
         }
 
