@@ -134,6 +134,15 @@ Darwin)
             fi
         }
 
+        # On WSL1, sed -i fails on DrvFs mounts (/mnt/c/...) because the
+        # underlying VFS does not support atomic rename(2). Override _sed_i
+        # to use a temp-file + cp approach that avoids the in-place rewrite.
+        _sed_i() {
+            _si_tmp=$(_mktemp)
+            sed "$1" "$2" > "$_si_tmp" && cp "$_si_tmp" "$2"
+            rm -f "$_si_tmp"
+        }
+
         # We are on a Linux VM, but helm.exe (Win32) is called
         case "${HELM_BIN}" in
         *.exe)
