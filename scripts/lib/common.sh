@@ -137,8 +137,10 @@ Darwin)
         # On WSL1, sed -i fails on DrvFs mounts (/mnt/c/...) because the
         # underlying VFS does not support atomic rename(2). Override _sed_i
         # to use a temp-file + cp approach that avoids the in-place rewrite.
+        # Use mktemp with ${TMPDIR:-/tmp} so this is safe under set -u when
+        # TMPDIR is not exported (as on the GitHub Actions WSL runner).
         _sed_i() {
-            _si_tmp=$(_mktemp)
+            _si_tmp=$(mktemp "${TMPDIR:-/tmp}/helm-secrets-XXXXXX")
             sed "$1" "$2" >"$_si_tmp" && cp "$_si_tmp" "$2"
             rm -f "$_si_tmp"
         }
