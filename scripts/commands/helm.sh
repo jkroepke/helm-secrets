@@ -131,11 +131,29 @@ helm_wrapper() {
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
 
-                if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
+                # Preserve trailing newlines: $(...) strips them, so we append a
+                # sentinel character 'x' and remove only the sentinel afterward.
+                # Without this, decrypted_literal differs from literal when the
+                # value ends with \n, causing the else branch to double-escape commas.
+                # See: https://github.com/jkroepke/helm-secrets/issues/752
+                if ! decrypted_literal=$(
+                    backend_decrypt_literal "${literal}"
+                    _hs_ret=$?
+                    printf x
+                    exit "${_hs_ret}"
+                ); then
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
+                decrypted_literal="${decrypted_literal%x}"
 
-                if [ "${decrypted_literal}" = "${literal}" ]; then
+                # Strip a single trailing newline from literal so the comparison
+                # is symmetric regardless of how the encrypted value was stored.
+                # SC2039/SC3003: $'\n' is not POSIX; use a variable holding a literal newline.
+                _hs_nl='
+'
+                literal_stripped="${literal%"$_hs_nl"}"
+
+                if [ "${decrypted_literal}" = "${literal_stripped}" ]; then
                     decrypted_literals="${decrypted_literals}${opt_prefix}${decrypted_literal},"
                 else
                     decrypted_literals="${decrypted_literals}${opt_prefix}$(printf '%s' "${decrypted_literal}" | sed -e 's/\\/\\\\/g' | sed -e 's/,/\\,/g'),"
