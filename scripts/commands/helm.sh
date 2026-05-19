@@ -135,7 +135,12 @@ helm_wrapper() {
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
 
-                if [ "${decrypted_literal}" = "${literal}" ]; then
+
+                # Command substitution $( ) strips trailing newlines, so a literal ending in a newline
+                # will never equal its decrypted value (both the same plain-text string, but lengths differ).
+                # Comparing length via printf+wc-c distinguishes unchanged values from values that only
+                # lost a trailing newline due to shell expansion.
+                if [ "${decrypted_literal}" = "${literal}" ] && [ "$(printf "%s" "${decrypted_literal}" | wc -c)" -eq "$(printf "%s" "${literal}" | wc -c)" ]; then
                     decrypted_literals="${decrypted_literals}${opt_prefix}${decrypted_literal},"
                 else
                     decrypted_literals="${decrypted_literals}${opt_prefix}$(printf '%s' "${decrypted_literal}" | sed -e 's/\\/\\\\/g' | sed -e 's/,/\\,/g'),"
