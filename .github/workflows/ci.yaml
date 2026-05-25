@@ -4,9 +4,9 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github-releases=helm/helm
-  VERSION_HELM: 3.20.2
+  VERSION_HELM: 3.21.0
   # renovate: github-releases=getsops/sops
-  VERSION_SOPS: 3.12.2
+  VERSION_SOPS: 3.13.1
   # renovate: github-releases=helmfile/vals
   VERSION_VALS: 0.44.0
 
@@ -185,12 +185,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@133e9cea5ca84d436eb7fcb3a043dfc7d7ccef65 # v1.5.21
+        uses: jkroepke/setup-sops@b41792d43b3901a320a4c05984d8ddb7a4f82ad9 # v1.5.32
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@df319a3da808537815192709c88d3e20c5cf2033 # v1.5.51
+        uses: jkroepke/setup-vals@f9c618279b84d1f9f52b3a397952d1d4ab504b6a # v1.5.56
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -290,9 +290,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@c4e5b1316158f92e3d49443a9d58b31d25ac0f8f # v1.306.0
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
-          ruby-version: "4.0.3"
+          ruby-version: "4.0.5"
 
       - name: Setup Helm
         uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
@@ -300,12 +300,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@133e9cea5ca84d436eb7fcb3a043dfc7d7ccef65 # v1.5.21
+        uses: jkroepke/setup-sops@b41792d43b3901a320a4c05984d8ddb7a4f82ad9 # v1.5.32
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@df319a3da808537815192709c88d3e20c5cf2033 # v1.5.51
+        uses: jkroepke/setup-vals@f9c618279b84d1f9f52b3a397952d1d4ab504b6a # v1.5.56
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -335,7 +335,7 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+      - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -351,7 +351,7 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
 
-      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+      - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -384,12 +384,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@133e9cea5ca84d436eb7fcb3a043dfc7d7ccef65 # v1.5.21
+        uses: jkroepke/setup-sops@b41792d43b3901a320a4c05984d8ddb7a4f82ad9 # v1.5.32
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@df319a3da808537815192709c88d3e20c5cf2033 # v1.5.51
+        uses: jkroepke/setup-vals@f9c618279b84d1f9f52b3a397952d1d4ab504b6a # v1.5.56
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -430,7 +430,7 @@ jobs:
           path: .
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@bccf2e31636835cf0874589931c4116687171386 # v6.4.0
+        uses: mikepenz/action-junit-report@3a81627bfac62268172037048872e8ebd4207e6d # v6.4.1
         with:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true
