@@ -80,46 +80,46 @@ load '../bats/extensions/bats-file/load'
 }
 @test "decrypt: inline decrypt appends trailing newline when backend omits it" {
     # Regression test for https://github.com/jkroepke/helm-secrets/issues/714
-    # Uses a mock backend that writes decrypted content WITHOUT a trailing newline
-    # (reproducing what sops --output does for block-scalar YAML in affected versions).
-    # WITHOUT the fix in decrypt_helper (scripts/commands/decrypt.sh), this test FAILS.
+    # Uses a mock backend that writes decrypted content WITHOUT a trailing newline,
+    # reproducing what sops --output does for block-scalar YAML in affected versions.
+    # This test FAILS without the printf '\n' fix in decrypt_helper (decrypt.sh).
 
     local mock_backend="${TEST_TEMP_DIR}/no-newline-backend.sh"
     local mock_file="${TEST_TEMP_DIR}/mock-secret.yaml"
 
-    # Placeholder "encrypted" file; the mock backend always reports files as encrypted.
-    printf 'mock-encrypted-placeholder\n' >"${mock_file}"
+    # Encrypted file: content matches _BACKEND_REGEX so is_file_encrypted returns true.
+    printf 'secret_key: HELM_SECRETS_MOCK_TOKEN\n' >"${mock_file}"
 
-    # Write the mock backend inline.
-    # It uses _custom_ prefixed functions as required by helm-secrets custom backend API.
+    # Write the mock backend. It sources _custom.sh (so _custom_backend_is_file_encrypted
+    # uses _BACKEND_REGEX correctly) then overrides _custom_backend_decrypt_file to write
+    # output WITHOUT a trailing newline — simulating the sops --output stripping bug.
     cat >"${mock_backend}" <<'MOCKEOF'
 #!/usr/bin/env sh
-_custom_backend_is_file_encrypted() { return 0; }
-_custom_backend_is_encrypted()      { return 0; }
-_custom_backend_decrypt_literal()   { printf '%s' "${2}"; }
-_custom_backend_encrypt_file()      { return 0; }
-_custom_backend_edit_file()         { return 0; }
+_BACKEND_REGEX='HELM_SECRETS_MOCK_TOKEN'
+# shellcheck source=scripts/lib/backends/_custom.sh
+. "${HELM_SECRETS_SCRIPT_DIR}/lib/backends/_custom.sh"
+# Override: write WITHOUT trailing newline to reproduce the sops stripping bug.
 _custom_backend_decrypt_file() {
-    # type=$1  input=$2  output=$3
-    # Intentionally omit trailing newline — this is the sops --output stripping bug.
+    # type=$1  input=$2  output=$3 (empty = stdout)
     if [ -n "${3}" ]; then
-        printf 'global_secret: value_without_trailing_newline' > "${3}"
+        printf 'secret_key: decrypted_value' >"${3}"
     else
-        printf 'global_secret: value_without_trailing_newline'
+        printf 'secret_key: decrypted_value'
     fi
 }
 MOCKEOF
     chmod +x "${mock_backend}"
 
-    HELM_SECRETS_BACKEND="${mock_backend}" run "${HELM_BIN}" secrets decrypt -i "${mock_file}"
+    # Use --backend flag so load_secret_backend sets HELM_SECRETS_SCRIPT_DIR before sourcing.
+    run "${HELM_BIN}" secrets --backend "${mock_backend}" decrypt -i "${mock_file}"
     assert_success
 
     # The fix in decrypt_helper must have appended a newline after the backend wrote without one.
-    # Without the fix in decrypt.sh this returns 0 (no newline) and the test FAILS.
+    # Without the fix in decrypt.sh, tail -c1 | wc -l returns 0 and the test FAILS.
     run sh -c "tail -c1 '${mock_file}' | wc -l | tr -d ' '"
     assert_output "1"
 
-    assert_file_contains "${mock_file}" "global_secret: value_without_trailing_newline"
+    assert_file_contains "${mock_file}" "secret_key: decrypted_value"
 }
 
 @test "decrypt: Decrypt secrets.yaml.gotpl" {
