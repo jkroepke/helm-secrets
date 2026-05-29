@@ -328,6 +328,15 @@ jobs:
         env:
           HELM_SECRETS_BACKEND: sops
           BASHCOV_COMMAND_NAME: helm-secrets:sops
+        id: sops
+        continue-on-error: true
+
+      - name: bashcov bats --tap -r tests/unit (retry)
+        if: steps.sops.outcome == 'failure'
+        run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
+        env:
+          HELM_SECRETS_BACKEND: sops
+          BASHCOV_COMMAND_NAME: helm-secrets:sops
 
       - name: bashcov bats --tap -r tests/unit
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/unit
