@@ -683,6 +683,20 @@ key2: value" 2>&1
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "template: helm template w/ chart + wrapper --set preserves trailing newline before equality check" {
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        --set key=dummy \
+        --set "podAnnotations.second=va\\,lue
+" 2>&1
+
+    assert_output --partial "second: |"
+    assert_output --partial "va,lue"
+    refute_output --partial "va\\,lue"
+    assert_success
+}
+
 @test "template: helm template w/ chart + --set-file service.port=secrets+literal://" {
     if ! is_backend "vals"; then
         skip

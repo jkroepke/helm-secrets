@@ -131,9 +131,26 @@ helm_wrapper() {
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
 
-                if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
+                # Command substitution strips trailing newline characters from the captured output.
+                #
+                # Append a sentinel character after the command output and remove it again
+                # after command substitution. Because the captured output no longer ends with
+                # a newline, the shell keeps the original trailing newlines.
+                #
+                # Keep the original exit code from backend_decrypt_literal. Otherwise, the
+                # sentinel printf would be the last command in the substitution and could hide
+                # a decrypt failure.
+                if ! decrypted_literal=$(
+                    backend_decrypt_literal "${literal}"
+                    status=$?
+                    printf '.'
+                    exit "$status"
+                ); then
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
+
+                # Remove only the sentinel character appended above.
+                decrypted_literal=${decrypted_literal%.}
 
                 if [ "${decrypted_literal}" = "${literal}" ]; then
                     decrypted_literals="${decrypted_literals}${opt_prefix}${decrypted_literal},"
