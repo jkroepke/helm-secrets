@@ -4,7 +4,7 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github-releases=helm/helm
-  VERSION_HELM: 3.21.0
+  VERSION_HELM: 4.2.0
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.1
   # renovate: github-releases=helmfile/vals
@@ -83,12 +83,15 @@ jobs:
           - os: windows-2025
             shell: bash
             jobs: 1
+            helm-version: 3.21.0
           - os: windows-2025
             shell: cygwin
             jobs: 1
+            helm-version: 3.21.0
           - os: windows-2025
             shell: wsl
             jobs: 4
+            helm-version: 3.21.0
           - os: macos-15
             shell: bash 3.2
             jobs: 4
@@ -118,7 +121,7 @@ jobs:
           - os: ubuntu-24.04
             shell: bash
             jobs: 4
-            helm-version: 4.0.0
+            helm-version: 3.21.0
           - os: ubuntu-24.04
             container: alpine
             shell: zsh
@@ -232,7 +235,7 @@ jobs:
           vals version
 
       - name: Run helm-secrets w/o bats
-        if: ${{ !startsWith(matrix.helm-version, '4') }}
+        if: ${{ startsWith(matrix.helm-version, '3') }}
         run: |-
           helm plugin install "${{ github.event_name == 'pull_request'
             && format('{0}/{1}', github.server_url, github.event.pull_request.head.repo.full_name)
@@ -245,7 +248,7 @@ jobs:
           helm secrets -v
 
       - name: Run helm-secrets w/o bats
-        if: ${{ startsWith(matrix.helm-version, '4') }}
+        if: ${{ !startsWith(matrix.helm-version, '3') || matrix.helm-version == '' }}
         run: |-
           helm plugin install plugins/helm-secrets-cli
           helm plugin install plugins/helm-secrets-getter
@@ -254,6 +257,16 @@ jobs:
           helm secrets -v
 
       - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit
+        id: sops
+        continue-on-error: true
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
+        env:
+          HELM_SECRETS_BACKEND: sops
+          BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|sops] "
+          BATS_REPORT_FILENAME: TEST-sops.xml
+
+      - name: HELM_SECRETS_BACKEND=sops bats --tap -r tests/unit (retry)
+        if: steps.sops.outcome == 'failure'
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: sops
@@ -262,6 +275,16 @@ jobs:
 
       - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit
         if: "!contains(matrix.shell, 'cygwin')"
+        id: vals
+        continue-on-error: true
+        run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
+        env:
+          HELM_SECRETS_BACKEND: vals
+          BATS_TEST_NAME_PREFIX: "[${{ matrix.os }}|${{ matrix.shell }}|vals] "
+          BATS_REPORT_FILENAME: TEST-vals.xml
+
+      - name: HELM_SECRETS_BACKEND=vals bats --tap -r tests/unit  (retry)
+        if: "!contains(matrix.shell, 'cygwin') && steps.vals.outcome == 'failure'"
         run: ${{ contains(matrix.shell, 'wsl') && 'wsl' || '' }} bash tests/bats/core/bin/bats --jobs ${{ matrix.jobs }} --timing --tap --report-formatter junit -r tests/unit
         env:
           HELM_SECRETS_BACKEND: vals

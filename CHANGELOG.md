@@ -7,16 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- fix: preserve trailing newlines in unchanged --set literals ([#788](https://github.com/jkroepke/helm-secrets/pull/#788))
+
 ## [4.7.6] - 2026-04-04
 
 ### Fixes
-- fix: add `HELM_SECRETS_CMD_TRACE=0` opt-out to skip `@echo on` in `run.cmd` and prevent stdout corruption on Windows when `HELM_DEBUG=1` (#705)
-- fix: helm secrets -v outputs --version option description in addition to version number (#738)
+- fix: add `HELM_SECRETS_CMD_TRACE=0` opt-out to skip `@echo on` in `run.cmd` and prevent stdout corruption on Windows when `HELM_DEBUG=1` ([#705](https://github.com/jkroepke/helm-secrets/pull/#705))
+- fix: helm secrets -v outputs --version option description in addition to version number ([#738](https://github.com/jkroepke/helm-secrets/pull/#738))
 
 ## [4.7.5] - 2026-01-09
 
 ### Fixes
-- noop backend not support encrypted files #680 (https://github.com/jkroepke/helm-secrets/pull/680)
+- noop backend not support encrypted files ([#680](https://github.com/jkroepke/helm-secrets/pull/680))
 
 ## [4.7.4] - 2025-11-22
 
@@ -51,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.6.10] - 2025-09-07
 
 ### Fixes
-- fix: command not found error, if HELM_DATA_HOME contains brackets. #588 (https://github.com/jkroepke/helm-secrets/pull/588)
+- fix: command not found error, if HELM_DATA_HOME contains brackets. ([#588](https://github.com/jkroepke/helm-secrets/pull/588))
 
 ## [4.6.9] - 2025-09-01
 
@@ -66,23 +69,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.6.7] - 2025-08-30
 
 ### Fixes
-- fix: Change WSL CI tests to use Ubuntu distro instead of Debian #569 (https://github.com/jkroepke/helm-secrets/pull/571)
-- fix: Add Linux and Darwin commands to plugin.yaml #574 (https://github.com/jkroepke/helm-secrets/pull/574)
+- fix: Change WSL CI tests to use Ubuntu distro instead of Debian ([#569](https://github.com/jkroepke/helm-secrets/pull/569))
+- fix: Add Linux and Darwin commands to plugin.yaml ([#574](https://github.com/jkroepke/helm-secrets/pull/574))
 
 ## [4.6.6] - 2025-08-28
 
 ### Fixes
-- fix: Add default platformCommand in plugin.yaml when no os value matches #566 (https://github.com/jkroepke/helm-secrets/pull/568)
+- fix: Add default platformCommand in plugin.yaml when no os value matches ([#566](https://github.com/jkroepke/helm-secrets/pull/566))
 
 ## [4.6.5] - 2025-05-20
 
 ### Fixes
-- fix: Unable to install since helm 3.18.0 #530 (https://github.com/jkroepke/helm-secrets/pull/531)
+- fix: Unable to install since helm 3.18.0 ([#530](https://github.com/jkroepke/helm-secrets/pull/530))
 
 ## [4.6.4] - 2025-05-02
 
 ### Fixes
-- fix: gets a unique decrypted filename based on both its directory path and basename (https://github.com/jkroepke/helm-secrets/pull/505)
+- fix: gets a unique decrypted filename based on both its directory path and basename ([#505](https://github.com/jkroepke/helm-secrets/pull/505))
 
 
 ## [4.6.3] - 2025-03-01
@@ -99,12 +102,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.6.1] - 2024-08-09
 
 ### Fixes
-- fix: Helm Secrets does not support spaces in windows user name (https://github.com/jkroepke/helm-secrets/pull/467)
+- fix: Helm Secrets does not support spaces in windows user name ([#467](https://github.com/jkroepke/helm-secrets/pull/467))
 
 ## [4.6.0] - 2024-03-11
 
 ### Added
-- Added a new custom backend for the 1Password CLI, which is located at `examples/backends/onepassword.sh` (#431)
+- Added a new custom backend for the 1Password CLI, which is located at `examples/backends/onepassword.sh` ([#431](https://github.com/jkroepke/helm-secrets/pull/#431))
 
 ### Fixes
 - fix: parsing of array values (https://github.com/jkroepke/helm-secrets/issues/418)
@@ -321,7 +324,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.6.0] - 2021-03-29
 ### Added
-- Detect ArgoCD environment by `ARGOCD_APP_NAME` environment variable and set `HELM_SECRETS_QUIET=true` by default. (https://github.com/jkroepke/helm-secrets/pull/83)
+- Detect ArgoCD environment by `ARGOCD_APP_NAME` environment variable and set `HELM_SECRETS_QUIET=true` by default. ([#83](https://github.com/jkroepke/helm-secrets/pull/83))
 
 ### Removed
 - **The default sops installation is removed, since helm-secrets could be used with hashicorp vault which does not require sops.**
@@ -331,61 +334,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.5.0] - 2021-02-20
 ### Added
-- Added `--driver-args` to pass additional argument to underlying commands (https://github.com/jkroepke/helm-secrets/pull/82)
+- Added `--driver-args` to pass additional argument to underlying commands ([#82](https://github.com/jkroepke/helm-secrets/pull/82))
 
 ### Fixed
-- "grep: Invalid range end" if locale is not C (https://github.com/jkroepke/helm-secrets/pull/81)
+- "grep: Invalid range end" if locale is not C ([#81](https://github.com/jkroepke/helm-secrets/pull/81))
 
 ## [3.4.2] - 2021-02-19
 ### Changed
 - Dev: Rename `master` branch to `main`
 
 ### Fixed
-- "grep: Invalid range end" if locale is not C (https://github.com/jkroepke/helm-secrets/pull/79)
+- "grep: Invalid range end" if locale is not C ([#79](https://github.com/jkroepke/helm-secrets/pull/79))
 
 ## [3.4.1] - 2021-01-23
 ### Fixed
 - Handling `--` inside command line arguments
 - Fix handling errors with remote files
-- Strip yaml doc separator if the vault driver is used (https://github.com/jkroepke/helm-secrets/pull/70)
-- Incompatibilities if sed links to gnu sed on MacOS (https://github.com/jkroepke/helm-secrets/pull/72)
+- Strip yaml doc separator if the vault driver is used ([#70](https://github.com/jkroepke/helm-secrets/pull/70))
+- Incompatibilities if sed links to gnu sed on MacOS ([#72](https://github.com/jkroepke/helm-secrets/pull/72))
 
 ## [3.4.0] - 2020-12-26
 From this version, the installation on Helm 2 requires additional steps.
 Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 
 ### Added
-- Implement alternate syntax (https://github.com/jkroepke/helm-secrets/pull/52)
-- Remote values support (supporting http:// and helm downloader plugins) (https://github.com/jkroepke/helm-secrets/pull/54)
-- Let downloader plugin support remote files and all secrets drivers (https://github.com/jkroepke/helm-secrets/pull/55)
-- Externalize custom vault driver logic. (https://github.com/jkroepke/helm-secrets/pull/63)
+- Implement alternate syntax ([#52](https://github.com/jkroepke/helm-secrets/pull/52))
+- Remote values support (supporting http:// and helm downloader plugins) ([#54](https://github.com/jkroepke/helm-secrets/pull/54))
+- Let downloader plugin support remote files and all secrets drivers ([#55](https://github.com/jkroepke/helm-secrets/pull/55))
+- Externalize custom vault driver logic. ([#63](https://github.com/jkroepke/helm-secrets/pull/63))
 - Dev: Implement code coverage
 - Dev: Test zsh compatibility
 
 ### Fixed
-- Vault driver: If vault command failed, the script execution was not terminated. (https://github.com/jkroepke/helm-secrets/pull/61)
+- Vault driver: If vault command failed, the script execution was not terminated. ([#61](https://github.com/jkroepke/helm-secrets/pull/61))
 
 ## [3.3.5] - 2020-10-16
 ### Added
-- Better lookup for unix shells on Windows (https://github.com/jkroepke/helm-secrets/pull/42)
+- Better lookup for unix shells on Windows ([#42](https://github.com/jkroepke/helm-secrets/pull/42))
 
 ## [3.3.4] - 2020-09-09
 ### Added
-- Allow overriding SOPS version on installation (https://github.com/jkroepke/helm-secrets/pull/40)
+- Allow overriding SOPS version on installation ([#40](https://github.com/jkroepke/helm-secrets/pull/40))
 - Add separat download artefact on GitHub release
 
 ## [3.3.0] - 2020-08-28
 ### Added
-- Don't check if file exists on edit (https://github.com/jkroepke/helm-secrets/pull/31)
-- Better Windows support (https://github.com/jkroepke/helm-secrets/pull/28)
-- Support parameters like --values=secrets.yaml (https://github.com/jkroepke/helm-secrets/pull/34)
-- Added CentOS 7 as supported OS system (https://github.com/jkroepke/helm-secrets/pull/35)
+- Don't check if file exists on edit ([#31](https://github.com/jkroepke/helm-secrets/pull/31))
+- Better Windows support ([#28](https://github.com/jkroepke/helm-secrets/pull/28))
+- Support parameters like --values=secrets.yaml ([#34](https://github.com/jkroepke/helm-secrets/pull/34))
+- Added CentOS 7 as supported OS system ([#35](https://github.com/jkroepke/helm-secrets/pull/35))
 
 ## [3.2.0] - 2020-05-08
 ### Added
-- Add Vault support (https://github.com/jkroepke/helm-secrets/pull/22)
-- Secret driver to gain secrets from other sources then sops. (https://github.com/jkroepke/helm-secrets/pull/16)
-- Remove name restriction (https://github.com/jkroepke/helm-secrets/pull/23)
+- Add Vault support ([#22](https://github.com/jkroepke/helm-secrets/pull/22))
+- Secret driver to gain secrets from other sources then sops. ([#16](https://github.com/jkroepke/helm-secrets/pull/16))
+- Remove name restriction ([#23](https://github.com/jkroepke/helm-secrets/pull/23))
 
 ### Changed
 - Run unit tests on bash, dash and ash (busybox), too.
@@ -394,18 +397,18 @@ Check https://github.com/jkroepke/helm-secrets/wiki/Installation#helm-2
 ### Added
 - completion.yaml for helm shell auto-completion
 - Tests for all `helm secrets` commands
-- Added quiet flag for helm secrets (https://github.com/jkroepke/helm-secrets/pull/8)
+- Added quiet flag for helm secrets ([#8](https://github.com/jkroepke/helm-secrets/pull/8))
 
 ### Changed
-- Escape special chars in paths correctly (https://github.com/jkroepke/helm-secrets/pull/9)
+- Escape special chars in paths correctly ([#9](https://github.com/jkroepke/helm-secrets/pull/9))
 
 ## [3.0.0] - 2020-04-26
 Started a fork of https://github.com/zendesk/helm-secrets
 
 ### Added
-- POSIX compatibility (https://github.com/jkroepke/helm-secrets/pull/1)
-- Optionally decrypt helm secrets in a temporary directory (https://github.com/jkroepke/helm-secrets/pull/5)
-- Added CI tests (https://github.com/jkroepke/helm-secrets/pull/2)
+- POSIX compatibility ([#1](https://github.com/jkroepke/helm-secrets/pull/1))
+- Optionally decrypt helm secrets in a temporary directory ([#5](https://github.com/jkroepke/helm-secrets/pull/5))
+- Added CI tests ([#2](https://github.com/jkroepke/helm-secrets/pull/2))
 
 ### Changed
 - Changed secrets.yaml prefix just to `secrets`. All files like `secrets*` are now decrypted
