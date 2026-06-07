@@ -131,16 +131,28 @@ helm_wrapper() {
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
 
-                if ! decrypted_literal=$(backend_decrypt_literal "${literal}"); then
+                # Command substitution strips trailing newline characters from the captured output.
+                #
+                # Append a sentinel character after the command output and remove it again
+                # after command substitution. Because the captured output no longer ends with
+                # a newline, the shell keeps the original trailing newlines.
+                #
+                # Keep the original exit code from backend_decrypt_literal. Otherwise, the
+                # sentinel printf would be the last command in the substitution and could hide
+                # a decrypt failure.
+                if ! decrypted_literal=$(
+                    backend_decrypt_literal "${literal}"
+                    status=$?
+                    printf '.'
+                    exit "$status"
+                ); then
                     fatal 'Unable to decrypt literal value %s' "${literal}"
                 fi
 
+                # Remove only the sentinel character appended above.
+                decrypted_literal=${decrypted_literal%.}
 
-                # Command substitution $( ) strips trailing newlines, so a literal ending in a newline
-                # will never equal its decrypted value (both the same plain-text string, but lengths differ).
-                # Comparing length via printf+wc-c distinguishes unchanged values from values that only
-                # lost a trailing newline due to shell expansion.
-                if [ "${decrypted_literal}" = "${literal}" ] && [ "$(printf "%s" "${decrypted_literal}" | wc -c)" -eq "$(printf "%s" "${literal}" | wc -c)" ]; then
+                if [ "${decrypted_literal}" = "${literal}" ]; then
                     decrypted_literals="${decrypted_literals}${opt_prefix}${decrypted_literal},"
                 else
                     decrypted_literals="${decrypted_literals}${opt_prefix}$(printf '%s' "${decrypted_literal}" | sed -e 's/\\/\\\\/g' | sed -e 's/,/\\,/g'),"
