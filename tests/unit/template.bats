@@ -684,10 +684,10 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + wrapper --set preserves trailing newline before equality check" {
-
     if on_windows; then
         skip "Multiline does not work on windows"
     fi
+
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
