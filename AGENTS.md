@@ -37,6 +37,7 @@ This repository is `helm-secrets`, a Helm plugin implemented mostly in POSIX she
 5. Direct commands call backend helpers through `backend.sh`. Wrapped Helm commands source `commands/helm.sh`.
 6. `helm_wrapper` rewrites Helm arguments:
    - For `-f`/`--values`, it fetches the source, decrypts encrypted files into `.dec` files or temp files, and passes decrypted paths to Helm.
+   - For `secrets://...` values, prefer passing the protocol URL through to Helm so Helm's downloader plugin handles it directly. Avoid resolving `secrets://` through `_file_get` in the wrapper unless there is a specific compatibility reason and regression coverage for trailing newlines.
    - For `--set-file`, it decrypts file contents and preserves Helm key prefixes.
    - For `--set`, `--set-string`, and `--set-json`, it resolves encrypted literal values and preserves escaped commas, lists, and trailing newlines.
    - It records generated decrypted files and removes them in `_trap_hook`.
@@ -129,6 +130,8 @@ bash tests/bats/core/bin/bats tests/unit/template.bats
 bash tests/bats/core/bin/bats tests/unit/secret-backends.bats
 ```
 
+When changing wrapper handling for `--set`, `--set-string`, `--set-json`, `--set-file`, or downloader protocols, run at least one focused `vals` backend test as well as the default `sops` path. The default backend skips several vals-specific literal/reference tests, so a local green run with only `sops` can miss CI failures.
+
 The test suite installs this repo as a Helm plugin into a temporary Helm home, imports test GPG keys from `tests/assets/gpg`, creates charts under `tests/.tmp/cache`, and copies value assets into each test temp directory. Unit tests do not require Kubernetes; integration tests cover install/upgrade/diff paths and Kubernetes key-import protocols.
 
 Before running Bats, make sure a `gpg-agent` is running for the test GPG operations. Terminate it after the tests, for example with `gpgconf --kill gpg-agent`, so test state does not leak into later runs.
@@ -142,7 +145,7 @@ The current CI version pins are in `.github/workflows/ci.yaml`.
 ## Change Guidelines
 
 - Keep behavior changes tightly scoped and add/adjust Bats tests near the affected behavior.
-- Before committing, run `shfmt` on changed shell files.
+- Before committing, run `shfmt` and `shellcheck` on changed shell files.
 - For new features or bug fixes only, add a line to `CHANGELOG.md`.
 - For CLI behavior, update both Helm 3 and Helm 4 manifests/help text when needed.
 - For backend changes, update `docs/Secret Backends.md` and backend tests.
