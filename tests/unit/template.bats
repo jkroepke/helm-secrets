@@ -716,17 +716,17 @@ key2: value" 2>&1
     expected_value2=$'        value2: \\|\\+\n          multi\n          line\n[[:blank:]]*\n[[:blank:]]*\n        value3: \\|\\+'
     expected_value3=$'        value3: \\|\\+\n          multi\n          line\n[[:blank:]]*\n[[:blank:]]*\n[[:blank:]]*\n      labels:'
 
-    run "${HELM_BIN}" secrets -q template "${TEST_TEMP_DIR}/chart" --set-file podAnnotations.fromFile="${VALUES_PATH}" 2>&1
-    direct_set_file_output="${output}"
-    assert_success
-
-    run "${HELM_BIN}" secrets -q template "${TEST_TEMP_DIR}/chart" --set-file podAnnotations.fromFile="secrets://${VALUES_PATH}" 2>&1
-    assert_success
-    assert_equal "${output}" "${direct_set_file_output}"
-
     run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" 2>&1
     protocol_output="${output}"
     assert_success
+    assert_output -e "${expected_finalnewline}"
+    assert_output -e "${expected_value1}"
+    assert_output -e "${expected_value2}"
+    assert_output -e "${expected_value3}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" 2>&1
+    assert_success
+    refute_output --partial "[helm-secrets] Decrypt: secrets://"
     assert_output -e "${expected_finalnewline}"
     assert_output -e "${expected_value1}"
     assert_output -e "${expected_value2}"

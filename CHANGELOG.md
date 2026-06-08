@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixes
+- fix: newline gets stripped if wrapper + secrets:// is used. ([#791](https://github.com/jkroepke/helm-secrets/pull/#791))
 - fix: preserve trailing newlines in unchanged --set literals ([#788](https://github.com/jkroepke/helm-secrets/pull/#788))
 
 ## [4.7.6] - 2026-04-04
