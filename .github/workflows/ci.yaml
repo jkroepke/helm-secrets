@@ -9,6 +9,7 @@ env:
   VERSION_SOPS: 3.13.1
   # renovate: github-releases=helmfile/vals
   VERSION_VALS: 0.44.0
+  SOPS_DISABLE_VERSION_CHECK: "true"
 
 on:
   pull_request:

@@ -701,6 +701,54 @@ key2: value" 2>&1
     assert_success
 }
 
+@test "template: helm template w/ chart + secrets.trailing-newline.yaml + wrapper matches secrets protocol" {
+    if on_windows || ! is_backend "sops"; then
+        skip "Multiline does not work on windows"
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.trailing-newline.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    expected_finalnewline=$'        finalnewline: \\|\n          hello\n          world\n        value1: \\|\\+'
+    expected_value1=$'        value1: \\|\\+\n          multi\n          line\n[[:blank:]]*\n        value2: \\|\\+'
+    expected_value2=$'        value2: \\|\\+\n          multi\n          line\n[[:blank:]]*\n[[:blank:]]*\n        value3: \\|\\+'
+    expected_value3=$'        value3: \\|\\+\n          multi\n          line\n[[:blank:]]*\n[[:blank:]]*\n[[:blank:]]*\n      labels:'
+
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" 2>&1
+    protocol_output="${output}"
+    assert_success
+    assert_output -e "${expected_finalnewline}"
+    assert_output -e "${expected_value1}"
+    assert_output -e "${expected_value2}"
+    assert_output -e "${expected_value3}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" 2>&1
+    assert_success
+    refute_output --partial "[helm-secrets] Decrypt: secrets://"
+    assert_output -e "${expected_finalnewline}"
+    assert_output -e "${expected_value1}"
+    assert_output -e "${expected_value2}"
+    assert_output -e "${expected_value3}"
+
+    run "${HELM_BIN}" secrets -q template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+    assert_success
+    assert_equal "${output}" "${protocol_output}"
+    assert_output -e "${expected_finalnewline}"
+    assert_output -e "${expected_value1}"
+    assert_output -e "${expected_value2}"
+    assert_output -e "${expected_value3}"
+
+    run "${HELM_BIN}" secrets -q template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}" 2>&1
+    assert_success
+    assert_equal "${output}" "${protocol_output}"
+    assert_output -e "${expected_finalnewline}"
+    assert_output -e "${expected_value1}"
+    assert_output -e "${expected_value2}"
+    assert_output -e "${expected_value3}"
+}
+
 @test "template: helm template w/ chart + --set-file service.port=secrets+literal://" {
     if ! is_backend "vals"; then
         skip

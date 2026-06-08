@@ -219,6 +219,13 @@ helm_wrapper() {
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
 
+                case "${file}" in
+                secrets://*)
+                    decrypted_files="${decrypted_files}${opt_prefix}${file},"
+                    continue
+                    ;;
+                esac
+
                 if ! real_file=$(_file_get "${file}"); then
                     if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
                         real_file="$(_mktemp)"

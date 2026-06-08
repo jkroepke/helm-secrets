@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.7.7] - 2026-06-08
+
 ### Fixes
+- fix: newline gets stripped if wrapper + secrets:// is used. ([#791](https://github.com/jkroepke/helm-secrets/pull/#791))
 - fix: preserve trailing newlines in unchanged --set literals ([#788](https://github.com/jkroepke/helm-secrets/pull/#788))
 
 ## [4.7.6] - 2026-04-04
@@ -417,7 +420,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.6...HEAD
+[Unreleased]: https://github.com/kroepke/helm-secrets/compare/v4.7.7...HEAD
+[4.7.7]: https://github.com/kroepke/helm-secrets/compare/v4.7.6...v4.7.7
 [4.7.6]: https://github.com/kroepke/helm-secrets/compare/v4.7.5...v4.7.6
 [4.7.5]: https://github.com/kroepke/helm-secrets/compare/v4.7.4...v4.7.5
 [4.7.4]: https://github.com/kroepke/helm-secrets/compare/v4.7.3...v4.7.4
