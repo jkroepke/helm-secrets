@@ -4,7 +4,7 @@
 
 ## Helm 4
 
-Helm 4 introduced a new plugin system that requires splitting plugins into multiple packages when they have multiple capabilities. Therefore, `helm-secrets` is now distributed as three separate plugins:
+Helm 4 introduced a plugin system that requires splitting plugins into multiple packages when they have multiple capabilities. Therefore, `helm-secrets` is now distributed as three separate plugins:
 - `helm-secrets`: The core plugin that provides the main functionality.
 - `helm-secrets-getter`: A plugin that adds support for secret getters, e.g. `secrets://`.
 - `helm-secrets-post-renderer`: A plugin that adds support for post-rendering.
@@ -28,11 +28,28 @@ helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v
 helm plugin install https://github.com/jkroepke/helm-secrets/releases/download/v4.7.4/secrets-post-renderer-4.7.4.tgz
 ```
 
+Helm 4 can also install plugins from OCI registries by using a specific version tag:
+
+```bash
+helm plugin install oci://ghcr.io/jkroepke/helm-secrets/secrets:4.7.4
+helm plugin install oci://ghcr.io/jkroepke/helm-secrets/secrets-getter:4.7.4
+helm plugin install oci://ghcr.io/jkroepke/helm-secrets/secrets-post-renderer:4.7.4
+```
+
+
 ### Install latest version
 
 Helm forces `<plugin-name>-<version>.tgz` naming convention for plugin packages. 
 Therefore, to install the latest version,
 you need to fetch the latest version number first and then construct the download URLs accordingly.
+
+Alternatively, install the `latest` tag from the OCI registry:
+
+```bash
+helm plugin install oci://ghcr.io/jkroepke/helm-secrets/secrets:latest
+helm plugin install oci://ghcr.io/jkroepke/helm-secrets/secrets-getter:latest
+helm plugin install oci://ghcr.io/jkroepke/helm-secrets/secrets-post-renderer:latest
+```
 
 ## Helm 3
 
