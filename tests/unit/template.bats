@@ -1628,6 +1628,41 @@ key2: value" 2>&1
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "template: helm wrapper exports effective backend env through WSLENV" {
+    VALUES="assets/values/vals/some-secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    HELM_BIN_MOCK="${TEST_TEMP_DIR}/helm-mock"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    cat >"${HELM_BIN_MOCK}" <<'EOF'
+#!/usr/bin/env sh
+
+if [ "${1:-}" = "version" ] && [ "${2:-}" = "--short" ]; then
+    printf 'v3.14.0\n'
+    exit 0
+fi
+
+printf 'WSLENV=%s\n' "${WSLENV:-}"
+printf 'HELM_SECRETS_BACKEND=%s\n' "${HELM_SECRETS_BACKEND:-}"
+printf 'HELM_SECRETS_BACKEND_ARGS=%s\n' "${HELM_SECRETS_BACKEND_ARGS:-}"
+printf 'HELM_SECRETS_IGNORE_MISSING_VALUES=%s\n' "${HELM_SECRETS_IGNORE_MISSING_VALUES:-}"
+printf 'ARGS=%s\n' "$*"
+EOF
+    chmod +x "${HELM_BIN_MOCK}"
+
+    run env HELM_PLUGIN_DIR="${GIT_ROOT}" HELM_BIN="${HELM_BIN_MOCK}" HELM_SECRET_WSL_INTEROP=1 WSLENV="EXISTING" \
+        "${GIT_ROOT}/scripts/run.sh" --backend vals --backend-args "foo bar" --ignore-missing-values \
+        template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "WSLENV=HELM_SECRETS_BACKEND:HELM_SECRETS_BACKEND_ARGS:HELM_SECRETS_IGNORE_MISSING_VALUES:EXISTING"
+    assert_output --partial "HELM_SECRETS_BACKEND=vals"
+    assert_output --partial "HELM_SECRETS_BACKEND_ARGS=foo bar"
+    assert_output --partial "HELM_SECRETS_IGNORE_MISSING_VALUES=true"
+    assert_output --partial "-f secrets://vals!${VALUES_PATH}"
+    assert_success
+}
+
 @test "template: helm template w/ chart + some-secrets.yaml + -a (complex)" {
     if ! is_backend "sops"; then
         skip
