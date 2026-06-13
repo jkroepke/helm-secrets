@@ -3,6 +3,7 @@ type: postrenderer/v1
 name: "secrets-post-renderer"
 version: "4.8.0-dev"
 runtime: subprocess
+sourceURL: https://github.com/jkroepke/helm-secrets
 runtimeConfig:
   platformCommand:
     - os: windows
