@@ -207,6 +207,35 @@ helm_wrapper() {
                     IGNORE_MISSING_VALUES=true
                 fi
 
+                case "${file}" in
+                secrets://*)
+                    decrypted_files="${decrypted_files}${opt_prefix}${file},"
+                    continue
+                    ;;
+                esac
+
+                case "$_1" in
+                -f | --values | --values=?*)
+                    # Helm does not reliably dispatch downloader plugins when the
+                    # values URL or plugin path contains URL-hostile characters.
+                    case "${file}${SCRIPT_DIR}" in
+                    *" "* | *"["* | *"]"* | *"("* | *")"*) ;;
+                    *)
+                        if [ "${file#*!}" != "${file}" ]; then
+                            if is_secret_backend "${file%%\!*}"; then
+                                decrypted_files="${decrypted_files}secrets://${file},"
+                            else
+                                decrypted_files="${decrypted_files}secrets://${DEFAULT_SECRET_BACKEND}!${file},"
+                            fi
+                        else
+                            decrypted_files="${decrypted_files}secrets://${DEFAULT_SECRET_BACKEND}!${file},"
+                        fi
+                        continue
+                        ;;
+                    esac
+                    ;;
+                esac
+
                 # Force secret backend
                 if [ "${file#*!}" != "${file}" ]; then
                     if is_secret_backend "${file%%\!*}"; then
@@ -218,13 +247,6 @@ helm_wrapper() {
                 else
                     load_secret_backend "${DEFAULT_SECRET_BACKEND}"
                 fi
-
-                case "${file}" in
-                secrets://*)
-                    decrypted_files="${decrypted_files}${opt_prefix}${file},"
-                    continue
-                    ;;
-                esac
 
                 if ! real_file=$(_file_get "${file}"); then
                     if [ "${IGNORE_MISSING_VALUES}" = "true" ]; then
@@ -293,6 +315,16 @@ helm_wrapper() {
             set -- "$@" "--post-renderer-args" "--evaluate-templates-decode-secrets"
         fi
         set -- "$@" "--post-renderer-args" "post-renderer"
+    fi
+
+    HELM_SECRETS_BACKEND="${DEFAULT_SECRET_BACKEND}"
+    HELM_SECRETS_BACKEND_ARGS="${SECRET_BACKEND_ARGS}"
+    HELM_SECRETS_IGNORE_MISSING_VALUES="${IGNORE_MISSING_VALUES}"
+    export HELM_SECRETS_BACKEND HELM_SECRETS_BACKEND_ARGS HELM_SECRETS_IGNORE_MISSING_VALUES
+
+    if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
+        WSLENV="HELM_SECRETS_BACKEND:HELM_SECRETS_BACKEND_ARGS:HELM_SECRETS_IGNORE_MISSING_VALUES:${WSLENV:-}"
+        export WSLENV
     fi
 
     "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"

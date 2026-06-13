@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Delegate `-f`/`--values` files to Helm's `secrets://` getter when possible, avoiding wrapper-created decrypted files.
+
 ## [4.7.7] - 2026-06-08
 
 ### Fixes

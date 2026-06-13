@@ -25,9 +25,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt:"
     assert_output --partial 'STATUS: deployed'
-    refute_output --partial "[helm-secrets] Removed:"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_success
@@ -41,9 +39,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -59,9 +55,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -77,9 +71,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -95,9 +87,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -113,9 +103,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -131,9 +119,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -149,9 +135,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" --set service.type=NodePort 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -169,7 +153,6 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_file_exists "${FILE}.dec"
 
@@ -178,7 +161,7 @@ load '../bats/extensions/bats-file/load'
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
     assert_success
-    assert_output --partial "port: 82"
+    assert_output --partial "port: 81"
 }
 
 @test "upgrade: helm upgrade w/ chart + secrets.yaml + q flag" {
@@ -189,9 +172,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets -q upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -207,9 +188,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --quiet upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -225,9 +204,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -245,9 +222,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_failure
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "YAML parse error on"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -259,9 +234,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -281,9 +254,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets upgrade -i "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_file_not_exists "${FILE}.dec"
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
