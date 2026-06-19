@@ -4,7 +4,7 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github-releases=helm/helm
-  VERSION_HELM: 4.2.1
+  VERSION_HELM: 4.2.2
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.1
   # renovate: github-releases=helmfile/vals
@@ -27,7 +27,7 @@ jobs:
     outputs:
       changed: ${{ steps.set-output.outputs.changed }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
@@ -42,7 +42,7 @@ jobs:
     needs: detect-changes
     if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@883217215b11c1fabbf00eb1a9a041f62d74c744 # v0.10.0
         env:
@@ -179,7 +179,7 @@ jobs:
       # this is to fix https://github.com/actions/checkout/issues/760
       - run: git config --global --add safe.directory /__w/helm-secrets/helm-secrets
 
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: true
 
@@ -189,12 +189,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@5c968651bce11fd17a5b1412baf2199cdffb1e58 # v1.5.39
+        uses: jkroepke/setup-sops@2090f2d00db3548a39edbf43526cce2ca20b580c # v1.5.41
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@9bfc7bc6f76c51d836beb5f6f1f89263cb6d2614 # v1.5.64
+        uses: jkroepke/setup-vals@03c6c409901da52b546eaa27f559c59fdc663213 # v1.5.66
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -308,7 +308,7 @@ jobs:
       BATSLIB_TEMP_PRESERVE: "0"
       BATSLIB_TEMP_PRESERVE_ON_FAILURE: "0"
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: true
           fetch-depth: 0
@@ -324,12 +324,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@5c968651bce11fd17a5b1412baf2199cdffb1e58 # v1.5.39
+        uses: jkroepke/setup-sops@2090f2d00db3548a39edbf43526cce2ca20b580c # v1.5.41
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@9bfc7bc6f76c51d836beb5f6f1f89263cb6d2614 # v1.5.64
+        uses: jkroepke/setup-vals@03c6c409901da52b546eaa27f559c59fdc663213 # v1.5.66
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -407,7 +407,7 @@ jobs:
 
       - run: kubectl cluster-info
 
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: true
 
@@ -417,12 +417,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@5c968651bce11fd17a5b1412baf2199cdffb1e58 # v1.5.39
+        uses: jkroepke/setup-sops@2090f2d00db3548a39edbf43526cce2ca20b580c # v1.5.41
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@9bfc7bc6f76c51d836beb5f6f1f89263cb6d2614 # v1.5.64
+        uses: jkroepke/setup-vals@03c6c409901da52b546eaa27f559c59fdc663213 # v1.5.66
         with:
           version: v${{ env.VERSION_VALS }}
 
