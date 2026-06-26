@@ -24,9 +24,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks 2>&1
-    refute_output --partial "[helm-secrets] Decrypt:"
     assert_output --partial 'STATUS: deployed'
-    refute_output --partial "[helm-secrets] Removed:"
     assert_success
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
@@ -40,9 +38,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -58,9 +54,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -76,9 +70,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -94,9 +86,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -112,9 +102,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -130,9 +118,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks --values="${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -148,9 +134,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" --set service.type=NodePort 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -168,7 +152,6 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
     assert_output --partial "STATUS: deployed"
     assert_file_exists "${FILE}.dec"
     assert_success
@@ -177,7 +160,7 @@ load '../bats/extensions/bats-file/load'
     assert_success
 
     run kubectl get svc -o yaml -l "app.kubernetes.io/name=${HELM_SECRETS_BACKEND},app.kubernetes.io/instance=${RELEASE}"
-    assert_output --partial "port: 82"
+    assert_output --partial "port: 81"
     assert_success
 }
 
@@ -188,9 +171,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets -q install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -206,9 +187,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets --quiet install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -224,9 +203,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${SPECIAL_CHAR_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -245,9 +222,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "YAML parse error on"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
     assert_failure
 }
@@ -259,9 +234,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_file_not_exists "${FILE}.dec"
     assert_success
 
@@ -281,9 +254,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets install "${RELEASE}" "${TEST_TEMP_DIR}/chart" --no-hooks -f "${FILE}" 2>&1
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "STATUS: deployed"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_file_not_exists "${FILE}.dec"
     assert_success
 

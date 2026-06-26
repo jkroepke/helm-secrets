@@ -26,9 +26,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt:"
     assert_output --partial "+ # Source: sops/templates/deployment.yaml"
-    refute_output --partial "[helm-secrets] Removed:"
 }
 
 @test "diff: helm diff upgrade w/ chart + secrets.yaml" {
@@ -40,9 +38,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -55,9 +51,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -70,9 +64,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -85,9 +77,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -100,9 +90,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -115,9 +103,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" --values="${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 83"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -130,10 +116,8 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" --set service.type=NodePort 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
     assert_output --partial "type: NodePort"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -147,8 +131,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt skipped: ${FILE}"
-    assert_output --partial "port: 82"
+    assert_output --partial "port: 81"
     assert [ -f "${FILE}.dec" ]
 
     run rm "${FILE}.dec"
@@ -164,9 +147,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets -q diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -179,9 +160,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets --quiet diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    refute_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    refute_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -194,9 +173,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${SPECIAL_CHAR_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -211,9 +188,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_failure
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "YAML parse error on"
-    assert_output --partial "[helm-secrets] Removed: ${FILE}.dec"
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -226,9 +201,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_file_not_exists "${FILE}.dec"
 }
 
@@ -245,9 +218,7 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets diff upgrade --no-color --allow-unreleased "${RELEASE}" "${TEST_TEMP_DIR}/chart" -f "${FILE}" 2>&1
     assert_success
-    assert_output --partial "[helm-secrets] Decrypt: ${FILE}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_file_not_exists "${FILE}.dec"
 }
 

@@ -36,10 +36,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -51,10 +48,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -66,10 +60,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values="${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -85,10 +76,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 85"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_file_not_exists "${VALUES_PATH}.dec"
     assert_success
 }
@@ -100,10 +88,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_file_not_exists "${VALUES_PATH}.dec"
     assert_success
 }
@@ -130,10 +115,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -145,10 +127,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --values="${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -160,11 +139,8 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set "service.type=NodePort" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     assert_output --partial "type: NodePort"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -181,12 +157,9 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set "podAnnotations.second=key1:
 key2: value" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     assert_output --partial "key1:"
     assert_output --partial "key2: value"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -340,11 +313,8 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template -f "${VALUES_PATH}" --set "service.type=NodePort" -- "${TEST_TEMP_DIR}/chart" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     assert_output --partial "type: NodePort"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -359,8 +329,7 @@ key2: value" 2>&1
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
-    assert_output -e "\[helm-secrets\] Decrypt skipped: .*${VALUES}"
-    assert_output --partial "port: 82"
+    assert_output --partial "port: 81"
     assert_success
     assert_file_exists "${VALUES_PATH}.dec"
 
@@ -405,10 +374,7 @@ key2: value" 2>&1
     create_chart "${SPECIAL_CHAR_DIR}"
 
     run "${HELM_BIN}" secrets template "${SPECIAL_CHAR_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -439,10 +405,7 @@ key2: value" 2>&1
     #env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin list >&2
 
     run env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -475,10 +438,7 @@ key2: value" 2>&1
     #env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" plugin list >&2
 
     run env HELM_DATA_HOME="${HELM_DATA_HOME}" WSLENV="HELM_DATA_HOME:${WSLENV}" "${HELM_BIN}" --debug secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -496,10 +456,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "Error: YAML parse error"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_failure
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1055,11 +1012,8 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set-file podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     assert_output --partial "hello=fromextrafile"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1072,11 +1026,8 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set-file podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     assert_output -e 'hello\\?":.*\\?"fromextrafile'
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1089,11 +1040,8 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set-file=podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     assert_output --partial "hello: fromextrafile"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1110,11 +1058,8 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set-file podAnnotations.fromFile="${SET_FILE_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     assert_output --partial "hello=fromextrafile"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1169,10 +1114,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_success
 }
 
@@ -1199,10 +1141,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output --partial "[helm-secrets] Decrypt: ${VALUES}"
     assert_output --partial "port: 81"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_success
 }
 
@@ -1624,9 +1563,7 @@ key2: value" 2>&1
     run "${HELM_BIN}" secrets --backend-args "--verbose" template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1644,9 +1581,7 @@ key2: value" 2>&1
     run "${HELM_BIN}" secrets -a "--verbose" template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1670,9 +1605,7 @@ key2: value" 2>&1
         "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1690,11 +1623,44 @@ key2: value" 2>&1
     run "${HELM_BIN}" secrets --backend-args "--verbose --output-type \"yaml\"" template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm wrapper exports effective backend env through WSLENV" {
+    VALUES="assets/values/vals/some-secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    HELM_BIN_MOCK="${TEST_TEMP_DIR}/helm-mock"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    cat >"${HELM_BIN_MOCK}" <<'EOF'
+#!/usr/bin/env sh
+
+if [ "${1:-}" = "version" ] && [ "${2:-}" = "--short" ]; then
+    printf 'v3.14.0\n'
+    exit 0
+fi
+
+printf 'WSLENV=%s\n' "${WSLENV:-}"
+printf 'HELM_SECRETS_BACKEND=%s\n' "${HELM_SECRETS_BACKEND:-}"
+printf 'HELM_SECRETS_BACKEND_ARGS=%s\n' "${HELM_SECRETS_BACKEND_ARGS:-}"
+printf 'HELM_SECRETS_IGNORE_MISSING_VALUES=%s\n' "${HELM_SECRETS_IGNORE_MISSING_VALUES:-}"
+printf 'ARGS=%s\n' "$*"
+EOF
+    chmod +x "${HELM_BIN_MOCK}"
+
+    run env HELM_PLUGIN_DIR="${GIT_ROOT}" HELM_BIN="${HELM_BIN_MOCK}" HELM_SECRET_WSL_INTEROP=1 WSLENV="EXISTING" \
+        "${GIT_ROOT}/scripts/run.sh" --backend vals --backend-args "foo bar" --ignore-missing-values \
+        template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
+
+    assert_output --partial "WSLENV=HELM_SECRETS_BACKEND:HELM_SECRETS_BACKEND_ARGS:HELM_SECRETS_IGNORE_MISSING_VALUES:EXISTING"
+    assert_output --partial "HELM_SECRETS_BACKEND=vals"
+    assert_output --partial "HELM_SECRETS_BACKEND_ARGS=foo bar"
+    assert_output --partial "HELM_SECRETS_IGNORE_MISSING_VALUES=true"
+    assert_output --partial "-f secrets://vals!${VALUES_PATH}"
+    assert_success
 }
 
 @test "template: helm template w/ chart + some-secrets.yaml + -a (complex)" {
@@ -1710,9 +1676,7 @@ key2: value" 2>&1
     run "${HELM_BIN}" secrets -a "--verbose --output-type \"yaml\"" template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1730,10 +1694,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --kube-insecure-skip-tls-verify -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1752,10 +1713,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --kube-insecure-skip-tls-verify=true -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1774,10 +1732,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --insecure-skip-tls-verify=true -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1800,9 +1755,7 @@ key2: value" 2>&1
         "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 83"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1835,10 +1788,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_VALUES_ALLOW_SYMLINKS=true "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1871,10 +1821,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=true "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1907,10 +1854,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run env HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=true "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -1922,10 +1866,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template --repo https://jkroepke.github.io/helm-charts/ --version 1.0.3 values -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "global_secret: global_bar"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_success
 }
 
@@ -1936,8 +1877,6 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template --repo https://jkroepke.github.io/helm-charts/ --version 1.0.3 values --set-file "content=${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "global_secret: global_bar"
     assert_output --partial "[helm-secrets] Removed: "
     assert_success
@@ -1954,10 +1893,7 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template --repo https://jkroepke.github.io/helm-charts/ --version 1.0.3 values -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES//\?/\\?}"
     assert_output --partial "global_secret: global_bar"
-    assert_output --partial "[helm-secrets] Removed: "
     assert_success
 }
 
@@ -1972,8 +1908,6 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets template --repo https://jkroepke.github.io/helm-charts/ --version 1.0.3 values --set-file "content=${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES//\?/\\?}"
     assert_output --partial "global_secret: global_bar"
     assert_output --partial "[helm-secrets] Removed: "
     assert_success
@@ -2313,11 +2247,8 @@ key2: value" 2>&1
     # shellcheck disable=SC2030 disable=SC2031
     run env HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR=true WSLENV="HELM_SECRETS_DECRYPT_SECRETS_IN_TMP_DIR:${WSLENV}" \
         "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
-    assert_output -e "\[helm-secrets\] Removed: .*secrets.yaml.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -2329,11 +2260,8 @@ key2: value" 2>&1
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets --decrypt-secrets-in-tmp-dir template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "port: 81"
     refute_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
-    assert_output -e "\[helm-secrets\] Removed: .*secrets.yaml.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }

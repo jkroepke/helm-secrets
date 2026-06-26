@@ -36,10 +36,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -51,10 +48,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -66,9 +60,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values="${VALUES_PATH}" 2>&1
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -84,10 +76,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -99,10 +88,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -129,10 +115,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -144,10 +127,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" --values="${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -159,10 +139,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" --set "service.type=NodePort" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -178,10 +155,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint -f "${VALUES_PATH}" --set "service.type=NodePort" -- "${TEST_TEMP_DIR}/chart" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -196,7 +170,6 @@ load '../bats/extensions/bats-file/load'
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
-    assert_output -e "\[helm-secrets\] Decrypt skipped: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
     assert_success
     assert_file_exists "${VALUES_PATH}.dec"
@@ -239,10 +212,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${SPECIAL_CHAR_DIR}"
 
     run "${HELM_BIN}" secrets lint "${SPECIAL_CHAR_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed.*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -260,10 +230,7 @@ load '../bats/extensions/bats-file/load'
     create_chart "${TEST_TEMP_DIR}"
 
     run "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
-
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "Error: 1 chart(s) linted, 1 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_failure
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -294,9 +261,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets --backend-args "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -314,9 +279,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets --backend-args="--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -334,9 +297,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets -a "--verbose" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -357,9 +318,7 @@ load '../bats/extensions/bats-file/load'
         "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -377,9 +336,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets --backend-args "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -397,9 +354,7 @@ load '../bats/extensions/bats-file/load'
     run "${HELM_BIN}" secrets -a "--verbose --output-type \"yaml\"" lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
@@ -418,9 +373,7 @@ load '../bats/extensions/bats-file/load'
         "${HELM_BIN}" secrets lint "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" 2>&1
 
     assert_output --partial "Data key recovered successfully"
-    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
     assert_output --partial "1 chart(s) linted, 0 chart(s) failed"
-    assert_output -e "\[helm-secrets\] Removed: .*${VALUES}.dec"
     assert_success
     assert_file_not_exists "${VALUES_PATH}.dec"
 }

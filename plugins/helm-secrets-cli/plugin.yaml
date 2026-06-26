@@ -3,6 +3,7 @@ type: cli/v1
 name: "secrets"
 version: "4.8.0-dev"
 runtime: subprocess
+sourceURL: https://github.com/jkroepke/helm-secrets
 config:
   usage: secrets
   shortHelp: helm-secrets is a helm plugin for decrypt encrypted helm value files on the fly.

@@ -13,3 +13,7 @@ repositoryID: bc64e82e-e638-4cb0-8ed0-2428a34a94d5
 owners:
   - name: jkroepke
     email: github@jkroepke.de
+ignore:
+  - name: helm-secrets-cli
+  - name: helm-secrets-getter
+  - name: helm-secrets-post-renderer
