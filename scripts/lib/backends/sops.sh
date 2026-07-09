@@ -13,7 +13,9 @@ _sops_backend_is_file_encrypted() {
 }
 
 _sops_backend_is_encrypted() {
-    grep -q 'mac.*,type:str]' -
+    LC_ALL=C grep -qa \
+        -e 'mac.*,type:str]' \
+        -e 'm.a.c.*,.t.y.p.e.:.s.t.r.]'
 }
 
 _sops_backend_encrypt_file() {
