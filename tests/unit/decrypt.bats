@@ -102,7 +102,7 @@ load '../bats/extensions/bats-file/load'
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.utf16le.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 
-    run "${HELM_BIN}" secrets decrypt "${VALUES_PATH}"
+    run "${HELM_BIN}" --debug secrets decrypt "${VALUES_PATH}"
     assert_output --partial 'global_secret: global_bar'
     assert_success
 }
