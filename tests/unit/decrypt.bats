@@ -99,10 +99,6 @@ load '../bats/extensions/bats-file/load'
 }
 
 @test "decrypt: Decrypt secrets.utf16le.yaml" {
-    if ! is_backend "sops"; then
-        skip
-    fi
-
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.utf16le.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
 

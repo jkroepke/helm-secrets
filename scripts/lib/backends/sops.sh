@@ -88,9 +88,17 @@ _sops_winpath() {
 }
 
 _sops_dec_get_type() {
-    if grep -xq 'sops:\s*' "${1}"; then
+    file=$1
+
+    if LC_ALL=C grep -q \
+        -e '^sops:[[:space:]]*$' \
+        -e 's.o.p.s.:' \
+        "$file"; then
         echo 'yaml'
-    elif grep -q '"data": "ENC' "${1}"; then
+    elif LC_ALL=C grep -q \
+        -e '"data"[[:space:]]*:[[:space:]]*"ENC' \
+        -e '".d.a.t.a.".*".E.N.C' \
+        "$file"; then
         echo 'binary'
     else
         echo 'json'
