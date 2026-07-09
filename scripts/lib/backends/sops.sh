@@ -13,6 +13,10 @@ _sops_backend_is_file_encrypted() {
 }
 
 _sops_backend_is_encrypted() {
+    # The second pattern matches UTF-16 LE encoded files where null bytes
+    # are interleaved between ASCII characters (e.g. 'm\0a\0c\0'). The '.'
+    # metacharacter intentionally matches these null bytes since POSIX grep
+    # does not have a portable way to match literal '\0' in patterns.
     LC_ALL=C grep -qa \
         -e 'mac.*,type:str]' \
         -e 'm.a.c.*,.t.y.p.e.:.s.t.r.]'
