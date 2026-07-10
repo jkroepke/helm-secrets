@@ -4,11 +4,11 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github-releases=helm/helm
-  VERSION_HELM: 4.2.2
+  VERSION_HELM: 4.2.3
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.2
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.44.3
+  VERSION_VALS: 0.44.4
   SOPS_DISABLE_VERSION_CHECK: "true"
 
 on:
@@ -189,12 +189,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@403355a557e5d4527b99344613f2424fb152a761 # v1.5.48
+        uses: jkroepke/setup-sops@9ed42d28060a825b92de71d2640fa3306cf99e9f # v1.5.50
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@97de93d099b447377d1b4fef22278245ab766c76 # v1.5.73
+        uses: jkroepke/setup-vals@d775197501b97287c05888b3fdce5050e052ade7 # v1.5.75
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -324,12 +324,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@403355a557e5d4527b99344613f2424fb152a761 # v1.5.48
+        uses: jkroepke/setup-sops@9ed42d28060a825b92de71d2640fa3306cf99e9f # v1.5.50
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@97de93d099b447377d1b4fef22278245ab766c76 # v1.5.73
+        uses: jkroepke/setup-vals@d775197501b97287c05888b3fdce5050e052ade7 # v1.5.75
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -417,12 +417,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@403355a557e5d4527b99344613f2424fb152a761 # v1.5.48
+        uses: jkroepke/setup-sops@9ed42d28060a825b92de71d2640fa3306cf99e9f # v1.5.50
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@97de93d099b447377d1b4fef22278245ab766c76 # v1.5.73
+        uses: jkroepke/setup-vals@d775197501b97287c05888b3fdce5050e052ade7 # v1.5.75
         with:
           version: v${{ env.VERSION_VALS }}
 
