@@ -86,11 +86,19 @@ _file_get_extension() {
         echo "json"
         ;;
     *)
-        if grep -Fxq -- "---" "${1}"; then
+        if _file_has_yaml_marker "${1}"; then
             echo "yaml"
         else
             echo "other"
         fi
         ;;
     esac
+}
+
+_file_has_yaml_marker() {
+    grep -Fxq -- "---" "$1" && return 0
+    LC_ALL=C grep -q \
+        -e '^-.-.-.' \
+        -e '^..-.-.-.' \
+        -- "$1"
 }

@@ -13,7 +13,13 @@ _sops_backend_is_file_encrypted() {
 }
 
 _sops_backend_is_encrypted() {
-    grep -q 'mac.*,type:str]' -
+    # The second pattern matches UTF-16 LE encoded files where null bytes
+    # are interleaved between ASCII characters (e.g. 'm\0a\0c\0'). The '.'
+    # metacharacter intentionally matches these null bytes since POSIX grep
+    # does not have a portable way to match literal '\0' in patterns.
+    LC_ALL=C grep -qa \
+        -e 'mac.*,type:str]' \
+        -e 'm.a.c.*,.t.y.p.e.:.s.t.r.]'
 }
 
 _sops_backend_encrypt_file() {
@@ -82,9 +88,17 @@ _sops_winpath() {
 }
 
 _sops_dec_get_type() {
-    if grep -xq 'sops:\s*' "${1}"; then
+    file=$1
+
+    if LC_ALL=C grep -q \
+        -e '^sops:[[:space:]]*$' \
+        -e 's.o.p.s.:' \
+        "$file"; then
         echo 'yaml'
-    elif grep -q '"data": "ENC' "${1}"; then
+    elif LC_ALL=C grep -q \
+        -e '"data"[[:space:]]*:[[:space:]]*"ENC' \
+        -e '".d.a.t.a.".*".E.N.C' \
+        "$file"; then
         echo 'binary'
     else
         echo 'json'

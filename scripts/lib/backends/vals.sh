@@ -21,7 +21,7 @@ _vals_backend_is_file_encrypted() {
 }
 
 _vals_backend_is_encrypted() {
-    grep -q 'ref+' -
+    grep -q '\(^\|[^[:alnum:]_]\)ref+' -
 }
 
 _vals_backend_encrypt_file() {
