@@ -184,7 +184,7 @@ SHELL ["bash", "-c"]
 RUN set -exuo pipefail \ 
     && export CURL_ARCH=$(uname -m | sed -e 's/x86_64/amd64/') \
     && wget -qO "${HELM_SECRETS_CURL_PATH}" "https://github.com/moparisthebest/static-curl/releases/latest/download/curl-${CURL_ARCH}" \
-    && export GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')
+    && export GO_ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') \
     && wget -qO "${HELM_SECRETS_KUBECTL_PATH}" "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl" \
     && wget -qO "${HELM_SECRETS_SOPS_PATH}" "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}" \
     && wget -qO- "https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz" | tar zxv -C "${HELM_SECRETS_VALS_PATH%/*}" vals \
@@ -198,7 +198,7 @@ RUN set -exuo pipefail \
         "${HELM_SECRETS_AGE_PATH}" \
     && ln -sf "${HELM_PLUGINS}/helm-secrets/scripts/wrapper/helm.sh" /usr/local/sbin/helm
 
-USER argocd
+USER $ARGOCD_USER_ID
 ```
 
 </details>
