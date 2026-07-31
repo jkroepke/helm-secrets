@@ -194,7 +194,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0b6e51c47dd6b578a8cb52b4f2d1628dd070babf # v1.5.85
+        uses: jkroepke/setup-vals@1383e89f3669ac6a390bff3744a138f6af314328 # v1.5.86
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -329,7 +329,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0b6e51c47dd6b578a8cb52b4f2d1628dd070babf # v1.5.85
+        uses: jkroepke/setup-vals@1383e89f3669ac6a390bff3744a138f6af314328 # v1.5.86
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -422,7 +422,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0b6e51c47dd6b578a8cb52b4f2d1628dd070babf # v1.5.85
+        uses: jkroepke/setup-vals@1383e89f3669ac6a390bff3744a138f6af314328 # v1.5.86
         with:
           version: v${{ env.VERSION_VALS }}
 
