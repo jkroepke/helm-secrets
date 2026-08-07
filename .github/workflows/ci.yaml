@@ -189,7 +189,7 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@6160346e225732a84d9837b66b8d872465813ddc # v1.5.59
+        uses: jkroepke/setup-sops@2c485b819455e6aed3d9d20fbf50a7d7f6fc2168 # v1.5.60
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -324,7 +324,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@6160346e225732a84d9837b66b8d872465813ddc # v1.5.59
+        uses: jkroepke/setup-sops@2c485b819455e6aed3d9d20fbf50a7d7f6fc2168 # v1.5.60
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -417,7 +417,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@6160346e225732a84d9837b66b8d872465813ddc # v1.5.59
+        uses: jkroepke/setup-sops@2c485b819455e6aed3d9d20fbf50a7d7f6fc2168 # v1.5.60
         with:
           version: ${{ env.VERSION_SOPS }}
 
