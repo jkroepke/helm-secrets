@@ -188,7 +188,8 @@ RUN set -exuo pipefail \
     && wget -qO "${HELM_SECRETS_KUBECTL_PATH}" "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl" \
     && wget -qO "${HELM_SECRETS_SOPS_PATH}" "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}" \
     && wget -qO- "https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz" | tar zxv -C "${HELM_SECRETS_VALS_PATH%/*}" vals \
-    && wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz" | tar -C "${HELM_PLUGINS}" -xzf- \
+    && wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/secrets-${HELM_SECRETS_VERSION}.tgz" | tar -C "${HELM_PLUGINS}" -xzf- \
+    && wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/secrets-getter-${HELM_SECRETS_VERSION}.tgz" | tar -C "${HELM_PLUGINS}" -xzf- \
     && wget -qO- "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz" | tar -xzf- --strip-components=1 -C "${HELM_SECRETS_AGE_PATH%/*}" age/age \
     && chmod +x \
         "${HELM_SECRETS_CURL_PATH}" \
@@ -196,7 +197,7 @@ RUN set -exuo pipefail \
         "${HELM_SECRETS_KUBECTL_PATH}" \
         "${HELM_SECRETS_VALS_PATH}" \
         "${HELM_SECRETS_AGE_PATH}" \
-    && ln -sf "${HELM_PLUGINS}/helm-secrets/scripts/wrapper/helm.sh" /usr/local/sbin/helm
+    && ln -sf "${HELM_PLUGINS}/secrets/scripts/wrapper/helm.sh" /usr/local/sbin/helm
 
 USER $ARGOCD_USER_ID
 ```
@@ -303,7 +304,8 @@ repoServer:
           wget -qO "${HELM_SECRETS_KUBECTL_PATH}" https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${GO_ARCH}/kubectl
           wget -qO "${HELM_SECRETS_SOPS_PATH}" https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GO_ARCH}
           wget -qO- https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_${GO_ARCH}.tar.gz | tar zxv -C "${HELM_SECRETS_VALS_PATH%/*}" vals
-          wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C "${HELM_PLUGINS}" -xzf-
+          wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/secrets-${HELM_SECRETS_VERSION}.tgz" | tar -C "${HELM_PLUGINS}" -xzf-
+          wget -qO- "https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/secrets-getter-${HELM_SECRETS_VERSION}.tgz" | tar -C "${HELM_PLUGINS}" -xzf-
           wget -qO- "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz" | tar -xzf- --strip-components=1 -C "${HELM_SECRETS_AGE_PATH%/*}" age/age
           
           chmod +x \
@@ -313,7 +315,7 @@ repoServer:
             "${HELM_SECRETS_VALS_PATH}" \
             "${HELM_SECRETS_AGE_PATH}"
 
-          cp "${HELM_PLUGINS}/helm-secrets/scripts/wrapper/helm.sh" /gitops-tools/helm
+          cp "${HELM_PLUGINS}/secrets/scripts/wrapper/helm.sh" /gitops-tools/helm
       volumeMounts:
         - mountPath: /gitops-tools
           name: gitops-tools
