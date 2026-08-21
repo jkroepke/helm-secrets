@@ -148,8 +148,8 @@ Below is an example `Dockerfile` which incorporates `sops` and `helm-secrets` in
 ARG ARGOCD_VERSION="v3.5.1"
 FROM quay.io/argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION=3.13.3
-ARG KUBECTL_VERSION=1.36.3
-ARG VALS_VERSION=0.45.0
+ARG KUBECTL_VERSION=1.36.4
+ARG VALS_VERSION=0.46.0
 ARG AGE_VERSION=1.3.1
 ARG HELM_SECRETS_VERSION=4.7.7
 
@@ -275,9 +275,9 @@ repoServer:
         - name: HELM_SECRETS_VERSION
           value: "4.7.7"
         - name: KUBECTL_VERSION
-          value: "1.36.3"
+          value: "1.36.4"
         - name: VALS_VERSION
-          value: "0.45.0"
+          value: "0.46.0"
         - name: SOPS_VERSION
           value: "3.13.3"
         - name: AGE_VERSION
