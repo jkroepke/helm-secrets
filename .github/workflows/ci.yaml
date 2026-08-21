@@ -8,7 +8,7 @@ env:
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.3
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.45.0
+  VERSION_VALS: 0.46.0
   SOPS_DISABLE_VERSION_CHECK: "true"
 
 on:
@@ -189,12 +189,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@3afa04cc52f28bc979387efd7d57516b3f5267f5 # v1.5.66
+        uses: jkroepke/setup-sops@9af2a0cb154bfa365c70c561f73b90e64f960de8 # v1.5.67
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@b679c5211847bb23e057b6a9cffb6ae7589e888e # v1.5.95
+        uses: jkroepke/setup-vals@2c44bea4162459a7aaa223d5d1b4ed7cc1110c52 # v1.5.97
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -324,12 +324,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@3afa04cc52f28bc979387efd7d57516b3f5267f5 # v1.5.66
+        uses: jkroepke/setup-sops@9af2a0cb154bfa365c70c561f73b90e64f960de8 # v1.5.67
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@b679c5211847bb23e057b6a9cffb6ae7589e888e # v1.5.95
+        uses: jkroepke/setup-vals@2c44bea4162459a7aaa223d5d1b4ed7cc1110c52 # v1.5.97
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -417,12 +417,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@3afa04cc52f28bc979387efd7d57516b3f5267f5 # v1.5.66
+        uses: jkroepke/setup-sops@9af2a0cb154bfa365c70c561f73b90e64f960de8 # v1.5.67
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@b679c5211847bb23e057b6a9cffb6ae7589e888e # v1.5.95
+        uses: jkroepke/setup-vals@2c44bea4162459a7aaa223d5d1b4ed7cc1110c52 # v1.5.97
         with:
           version: v${{ env.VERSION_VALS }}
 
