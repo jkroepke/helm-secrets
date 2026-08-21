@@ -189,12 +189,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@9af2a0cb154bfa365c70c561f73b90e64f960de8 # v1.5.67
+        uses: jkroepke/setup-sops@2f03af6a1ff434193faba9397baff4acbe995296 # v1.5.68
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@5e5423321b760a4f98de5643feb676b528a1bdaf # v1.5.98
+        uses: jkroepke/setup-vals@b2182b1776ae7059a631f5c38ae8406f10942201 # v1.5.99
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -324,12 +324,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@9af2a0cb154bfa365c70c561f73b90e64f960de8 # v1.5.67
+        uses: jkroepke/setup-sops@2f03af6a1ff434193faba9397baff4acbe995296 # v1.5.68
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@5e5423321b760a4f98de5643feb676b528a1bdaf # v1.5.98
+        uses: jkroepke/setup-vals@b2182b1776ae7059a631f5c38ae8406f10942201 # v1.5.99
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -417,12 +417,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@9af2a0cb154bfa365c70c561f73b90e64f960de8 # v1.5.67
+        uses: jkroepke/setup-sops@2f03af6a1ff434193faba9397baff4acbe995296 # v1.5.68
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@5e5423321b760a4f98de5643feb676b528a1bdaf # v1.5.98
+        uses: jkroepke/setup-vals@b2182b1776ae7059a631f5c38ae8406f10942201 # v1.5.99
         with:
           version: v${{ env.VERSION_VALS }}
 
