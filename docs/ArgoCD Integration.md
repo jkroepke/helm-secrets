@@ -150,7 +150,7 @@ FROM quay.io/argoproj/argocd:$ARGOCD_VERSION
 ARG SOPS_VERSION=3.13.3
 ARG KUBECTL_VERSION=1.37.0
 ARG VALS_VERSION=0.46.0
-ARG AGE_VERSION=1.3.1
+ARG AGE_VERSION=1.3.2
 ARG HELM_SECRETS_VERSION=4.7.7
 
 # vals or sops
@@ -281,7 +281,7 @@ repoServer:
         - name: SOPS_VERSION
           value: "3.13.3"
         - name: AGE_VERSION
-          value: "1.3.1"
+          value: "1.3.2"
         - name: HELM_PLUGINS
           value: /gitops-tools/helm-plugins/
         - name: HELM_SECRETS_CURL_PATH
