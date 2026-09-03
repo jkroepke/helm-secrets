@@ -106,7 +106,7 @@ helm_plugin_install() {
         diff)
             URL="https://github.com/databus23/helm-diff"
             # renovate: github=databus23/helm-diff
-            VERSION=v3.15.11
+            VERSION=v3.15.12
             ;;
         git)
             URL="https://github.com/aslafy-z/helm-git"
