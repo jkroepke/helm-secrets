@@ -8,7 +8,7 @@ env:
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.3
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.46.0
+  VERSION_VALS: 0.46.1
   SOPS_DISABLE_VERSION_CHECK: "true"
 
 on:
@@ -189,12 +189,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@58a36b685e80157beeb58feb75d69e1a51d52982 # v1.5.78
+        uses: jkroepke/setup-sops@915933e64694b98e91a45a43e07a08358b89a10b # v1.5.79
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@1ef4e0f83717bf6bb4436d6a079326c49324862c # v1.5.107
+        uses: jkroepke/setup-vals@fbdccd679c946bef074a7403e6bb0fa68f333a27 # v1.5.109
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -324,12 +324,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@58a36b685e80157beeb58feb75d69e1a51d52982 # v1.5.78
+        uses: jkroepke/setup-sops@915933e64694b98e91a45a43e07a08358b89a10b # v1.5.79
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@1ef4e0f83717bf6bb4436d6a079326c49324862c # v1.5.107
+        uses: jkroepke/setup-vals@fbdccd679c946bef074a7403e6bb0fa68f333a27 # v1.5.109
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -417,12 +417,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@58a36b685e80157beeb58feb75d69e1a51d52982 # v1.5.78
+        uses: jkroepke/setup-sops@915933e64694b98e91a45a43e07a08358b89a10b # v1.5.79
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@1ef4e0f83717bf6bb4436d6a079326c49324862c # v1.5.107
+        uses: jkroepke/setup-vals@fbdccd679c946bef074a7403e6bb0fa68f333a27 # v1.5.109
         with:
           version: v${{ env.VERSION_VALS }}
 
