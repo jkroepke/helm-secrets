@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- fix: detect Helm versions without a `v` prefix ([#890](https://github.com/jkroepke/helm-secrets/issues/890))
+
 ## [4.7.7] - 2026-06-08
 
 ### Fixes

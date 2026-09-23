@@ -146,17 +146,21 @@ Darwin)
     ;;
 esac
 
-case $("${HELM_BIN}" version --short) in
-v2*)
+_helm_version_raw="$("${HELM_BIN}" version --short)"
+
+case "${_helm_version_raw#[vV]}" in
+2.*)
     _helm_version() { echo 2; }
     ;;
-v3*)
+3.*)
     _helm_version() { echo 3; }
     ;;
-v4*)
+4.*)
     _helm_version() { echo 4; }
     ;;
 *)
-    fatal "Unsupported helm version: $("${HELM_BIN}" version --short)"
+    fatal "Unsupported helm version: ${_helm_version_raw:-<empty output>}"
     ;;
 esac
+
+unset _helm_version_raw

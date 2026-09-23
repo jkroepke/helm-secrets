@@ -51,3 +51,23 @@ load '../bats/extensions/bats-file/load'
         assert_output --partial "v3"
     fi
 }
+
+@test "helm-plugin: helm version without v prefix" {
+    mkdir -p "${TEST_TEMP_DIR}/plugin/scripts/lib"
+    cp "${GIT_ROOT}/scripts/lib/common.sh" "${TEST_TEMP_DIR}/plugin/scripts/lib/common.sh"
+    cp "${GIT_ROOT}/plugin.yaml" "${TEST_TEMP_DIR}/plugin/plugin.yaml"
+
+    cat >"${TEST_TEMP_DIR}/helm-no-v" <<'EOF'
+#!/usr/bin/env sh
+if [ "$1" = "version" ] && [ "$2" = "--short" ]; then
+    printf '%s\n' '4.3.0+gbec5b06'
+    exit 0
+fi
+exit 1
+EOF
+    chmod +x "${TEST_TEMP_DIR}/helm-no-v"
+
+    run env HELM_BIN="${TEST_TEMP_DIR}/helm-no-v" HELM_PLUGIN_DIR="${TEST_TEMP_DIR}/plugin" sh -c ". \"\$HELM_PLUGIN_DIR/scripts/lib/common.sh\"; _helm_version"
+    assert_success
+    assert_output '4'
+}
