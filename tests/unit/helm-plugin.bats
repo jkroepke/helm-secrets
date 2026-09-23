@@ -67,7 +67,7 @@ exit 1
 EOF
     chmod +x "${TEST_TEMP_DIR}/helm-no-v"
 
-    run env HELM_BIN="${TEST_TEMP_DIR}/helm-no-v" HELM_PLUGIN_DIR="${TEST_TEMP_DIR}/plugin" sh -c '. "$HELM_PLUGIN_DIR/scripts/lib/common.sh"; _helm_version'
+    run env HELM_BIN="${TEST_TEMP_DIR}/helm-no-v" HELM_PLUGIN_DIR="${TEST_TEMP_DIR}/plugin" sh -c ". \"\$HELM_PLUGIN_DIR/scripts/lib/common.sh\"; _helm_version"
     assert_success
     assert_output '4'
 }
