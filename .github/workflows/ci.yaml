@@ -8,7 +8,7 @@ env:
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.3
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.46.1
+  VERSION_VALS: 0.47.0
   SOPS_DISABLE_VERSION_CHECK: "true"
 
 on:
@@ -21,7 +21,7 @@ on:
 
 jobs:
   detect-changes:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     outputs:
@@ -38,7 +38,7 @@ jobs:
           echo "changed=$(git diff --name-only origin/${{ github.base_ref }} ${{ github.sha }} -- scripts/ tests/ .github/workflows/ci.yaml | wc -l)" >> $GITHUB_OUTPUT
 
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: detect-changes
     if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
     steps:
@@ -189,12 +189,12 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@7f2605d136e999fdb4c37e295ef3021783caaf8a # v1.5.80
+        uses: jkroepke/setup-sops@41518d00cf06cfbd181adf8dee4a9410e2e12a96 # v1.5.81
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4bfc5ba8fae8e5b2d2ca6b345f525f51fc74c774 # v1.5.110
+        uses: jkroepke/setup-vals@e6687acb787d499c22029c8f16c04d6ace95c15c # v1.5.111
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -301,7 +301,7 @@ jobs:
           retention-days: 1
 
   coverage:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
     needs: detect-changes
     env:
@@ -314,9 +314,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
         with:
-          ruby-version: "4.0.6"
+          ruby-version: "4.0.7"
 
       - name: Setup Helm
         uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
@@ -324,12 +324,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@7f2605d136e999fdb4c37e295ef3021783caaf8a # v1.5.80
+        uses: jkroepke/setup-sops@41518d00cf06cfbd181adf8dee4a9410e2e12a96 # v1.5.81
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4bfc5ba8fae8e5b2d2ca6b345f525f51fc74c774 # v1.5.110
+        uses: jkroepke/setup-vals@e6687acb787d499c22029c8f16c04d6ace95c15c # v1.5.111
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -368,7 +368,7 @@ jobs:
           HELM_SECRETS_BACKEND: vals
           BASHCOV_COMMAND_NAME: helm-secrets:vals
 
-      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -384,7 +384,7 @@ jobs:
         env:
           BASHCOV_COMMAND_NAME: helm-secrets:it
 
-      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           files: ./coverage/coverage.xml
           fail_ci_if_error: true
@@ -392,7 +392,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   integration-tests:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: "(needs.detect-changes.outputs.changed != '0' || github.event_name == 'push')"
     needs: detect-changes
     strategy:
@@ -417,12 +417,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@7f2605d136e999fdb4c37e295ef3021783caaf8a # v1.5.80
+        uses: jkroepke/setup-sops@41518d00cf06cfbd181adf8dee4a9410e2e12a96 # v1.5.81
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@4bfc5ba8fae8e5b2d2ca6b345f525f51fc74c774 # v1.5.110
+        uses: jkroepke/setup-vals@e6687acb787d499c22029c8f16c04d6ace95c15c # v1.5.111
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -452,7 +452,7 @@ jobs:
           if-no-files-found: error
 
   report:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: always()
     needs:
       - unit-tests
@@ -474,7 +474,7 @@ jobs:
       - "lint"
       - "report"
       - "coverage"
-    runs-on: "ubuntu-24.04"
+    runs-on: "ubuntu-26.04"
     steps:
       - name: "verify checks passed"
         run: |
