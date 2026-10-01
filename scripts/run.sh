@@ -70,8 +70,10 @@ trap 'trap - EXIT; _trap; exit 1' HUP INT QUIT TERM
 load_secret_backend "${SECRET_BACKEND}"
 DEFAULT_SECRET_BACKEND="${SECRET_BACKEND}"
 
-if [ "${LOAD_GPG_KEYS}" != "false" ]; then
+# Child downloader plugins inherit GNUPGHOME and must not import the same keys again.
+if [ "${LOAD_GPG_KEYS}" != "false" ] && [ "${HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED:-false}" != "true" ]; then
     _gpg_load_keys
+    export HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED=true
 fi
 
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then

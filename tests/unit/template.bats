@@ -1411,6 +1411,48 @@ key2: value" 2>&1
     assert_success
 }
 
+@test "template: helm template + secrets:// + HELM_SECRETS_LOAD_GPG_KEYS=/dev/stdin" {
+    if on_windows || on_wsl || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES_PATH="${TEST_TEMP_DIR}/assets/values/sops/secrets.gpg_key.yaml"
+    KEY_PATH="${TEST_TEMP_DIR}/assets/gpg/private2.gpg"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # The direct getter has no parent to import the key for it.
+    run bash -c '
+        cat "$1" | env -u TMPDIR -u HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED \
+            HELM_SECRETS_LOAD_GPG_KEYS=/dev/stdin \
+            "$2" template "$3" -f "secrets://$4"
+    ' _ "${KEY_PATH}" "${HELM_BIN}" "${TEST_TEMP_DIR}/chart" "${VALUES_PATH}"
+
+    assert_success
+    assert_output --partial "port: 91"
+}
+
+@test "template: helm secrets template + secrets:// + HELM_SECRETS_LOAD_GPG_KEYS=/dev/stdin" {
+    if on_windows || on_wsl || ! is_backend "sops"; then
+        skip
+    fi
+
+    VALUES_PATH="${TEST_TEMP_DIR}/assets/values/sops/secrets.gpg_key.yaml"
+    KEY_PATH="${TEST_TEMP_DIR}/assets/gpg/private2.gpg"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # The parent consumes the piped key; both child getters must reuse GNUPGHOME.
+    run bash -c '
+        cat "$1" | env -u TMPDIR -u HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED \
+            HELM_SECRETS_LOAD_GPG_KEYS=/dev/stdin \
+            "$2" secrets template "$3" -f "secrets://$4" -f "secrets://$4"
+    ' _ "${KEY_PATH}" "${HELM_BIN}" "${TEST_TEMP_DIR}/chart" "${VALUES_PATH}"
+
+    assert_success
+    assert_output --partial "port: 91"
+}
+
 @test "template: helm template w/ chart + secrets.gpg_key.yaml + wrapper + HELM_SECRETS_LOAD_GPG_KEYS=/private2.gpg" {
     if on_windows || on_wsl || ! is_backend "sops"; then
         skip

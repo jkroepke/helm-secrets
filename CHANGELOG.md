@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- fix: reuse imported GPG keys in nested secrets getters ([#898](https://github.com/jkroepke/helm-secrets/issues/898))
+
 
 ## [4.7.8] - 2026-09-23
 
