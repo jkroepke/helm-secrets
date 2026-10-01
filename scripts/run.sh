@@ -76,6 +76,19 @@ if [ "${LOAD_GPG_KEYS}" != "false" ] && [ "${HELM_SECRETS_INTERNAL_GPG_KEYS_LOAD
     export HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED=true
 fi
 
+# When calling Windows Helm from WSL, forward the marker and GPG home
+# through Windows so that the getter can reuse them when it re-enters WSL.
+if on_wsl; then
+    case "${HELM_BIN}" in
+    *.exe)
+        if [ "${HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED:-false}" = "true" ] && [ -n "${GNUPGHOME:-}" ]; then
+            WSLENV="HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED:GNUPGHOME/p:${WSLENV:-}"
+            export WSLENV
+        fi
+        ;;
+    esac
+fi
+
 if [ -n "${HELM_SECRET_WSL_INTEROP+x}" ]; then
     argc=$#
     j=0
