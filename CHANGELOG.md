@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.7.9] - 2026-10-01
+
+### Fixes
+- fix: reuse imported GPG keys in nested Helm secrets getters, including `/dev/stdin` and WSL interoperability ([#899](https://github.com/jkroepke/helm-secrets/pull/899), [#898](https://github.com/jkroepke/helm-secrets/issues/898))
 
 ## [4.7.8] - 2026-09-23
 
@@ -426,7 +430,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v4.7.8...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v4.7.9...HEAD
+[4.7.9]: https://github.com/jkroepke/helm-secrets/compare/v4.7.8...v4.7.9
 [4.7.8]: https://github.com/jkroepke/helm-secrets/compare/v4.7.7...v4.7.8
 [4.7.7]: https://github.com/jkroepke/helm-secrets/compare/v4.7.6...v4.7.7
 [4.7.6]: https://github.com/jkroepke/helm-secrets/compare/v4.7.5...v4.7.6
