@@ -1411,7 +1411,7 @@ key2: value" 2>&1
     assert_success
 }
 
-@test "template: helm template + secrets:// + HELM_SECRETS_LOAD_GPG_KEYS=/dev/stdin" {
+@test "template: helm template + secrets:// + HELM_SECRETS_LOAD_GPG_KEYS key file" {
     if on_windows || on_wsl || ! is_backend "sops"; then
         skip
     fi
@@ -1421,12 +1421,10 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    # The direct getter has no parent to import the key for it.
-    run bash -c '
-        cat "$1" | env -u TMPDIR -u HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED \
-            HELM_SECRETS_LOAD_GPG_KEYS=/dev/stdin \
-            "$2" template "$3" -f "secrets://$4"
-    ' _ "${KEY_PATH}" "${HELM_BIN}" "${TEST_TEMP_DIR}/chart" "${VALUES_PATH}"
+    # Helm's direct getter must load its own key; Helm does not forward stdin.
+    run env -u TMPDIR -u HELM_SECRETS_INTERNAL_GPG_KEYS_LOADED \
+        HELM_SECRETS_LOAD_GPG_KEYS="${KEY_PATH}" \
+        "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets://${VALUES_PATH}"
 
     assert_success
     assert_output --partial "port: 91"
