@@ -135,6 +135,10 @@ jobs:
             container: ubuntu:22.04
             shell: posh
             jobs: 4
+          - os: ubuntu-24.04
+            container: ubuntu:26.04
+            shell: bash
+            jobs: 4
     steps:
       - name: Install dependencies
         if: "matrix.container"
