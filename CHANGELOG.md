@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.7.9] - 2026-10-01
+## [4.7.9] - 2026-10-07
 
 ### Fixes
 - fix: reuse imported GPG keys in nested Helm secrets getters, including `/dev/stdin` and WSL interoperability ([#899](https://github.com/jkroepke/helm-secrets/pull/899), [#898](https://github.com/jkroepke/helm-secrets/issues/898))
