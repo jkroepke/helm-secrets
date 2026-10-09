@@ -172,9 +172,11 @@ Licensed under the [Apache License, Version 2.0](LICENSE)
 
 Thanks to all sponsors!
 
+* [@numberly](https://github.com/numberly) (15$) **monthly**
 * [@hegawa](https://github.com/hegawa) (25$) onetime
 * [@Zero-Down-Time](https://github.com/Zero-Down-Time) (25$) onetime
 * [@k0ste](https://github.com/k0ste) (25$) onetime
+* [@konstantin-kelemen](https://github.com/konstantin-kelemen) (25$) onetime
 
 ## Acknowledgements
 
