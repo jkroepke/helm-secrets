@@ -4,7 +4,7 @@ name: CI
 env:
   WSLENV: "HELM_SECRETS_BACKEND:BATS_REPORT_FILENAME:BATS_TEST_NAME_PREFIX"
   # renovate: github-releases=helm/helm
-  VERSION_HELM: 4.3.0
+  VERSION_HELM: 4.3.1
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.3
   # renovate: github-releases=helmfile/vals
@@ -193,7 +193,7 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@41518d00cf06cfbd181adf8dee4a9410e2e12a96 # v1.5.81
+        uses: jkroepke/setup-sops@05b4e87e648fc37497bfe9e01aaf29c5773bcb08 # v1.5.82
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -211,7 +211,7 @@ jobs:
 
       - name: Setup WSL
         if: "contains(matrix.shell, 'wsl')"
-        uses: Vampire/setup-wsl@d1da7f2c0322a5ee4f24975344f67fc0f5baf364 # v7.0.0
+        uses: Vampire/setup-wsl@4c48163d9f981914dd8caa0fc335fe19cca5bff4 # v7.2.0
         with:
           distribution: Ubuntu-24.04
           wsl-version: 1
@@ -318,7 +318,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a # v1.329.0
         with:
           ruby-version: "4.0.7"
 
@@ -328,7 +328,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@41518d00cf06cfbd181adf8dee4a9410e2e12a96 # v1.5.81
+        uses: jkroepke/setup-sops@05b4e87e648fc37497bfe9e01aaf29c5773bcb08 # v1.5.82
         with:
           version: ${{ env.VERSION_SOPS }}
 
@@ -421,7 +421,7 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@41518d00cf06cfbd181adf8dee4a9410e2e12a96 # v1.5.81
+        uses: jkroepke/setup-sops@05b4e87e648fc37497bfe9e01aaf29c5773bcb08 # v1.5.82
         with:
           version: ${{ env.VERSION_SOPS }}
 
