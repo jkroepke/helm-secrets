@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- fix: comma-separated `-f`, `--values` and `--set-file` lists were not split on macOS (BSD sed) ([#915](https://github.com/jkroepke/helm-secrets/pull/915))
+
 ## [4.7.9] - 2026-10-07
 
 ### Fixes

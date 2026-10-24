@@ -44,6 +44,38 @@ load '../bats/extensions/bats-file/load'
     assert_file_not_exists "${VALUES_PATH}.dec"
 }
 
+@test "template: helm template w/ chart + secrets.yaml,some-secrets.yaml" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SOME_VALUES="assets/values/${HELM_SECRETS_BACKEND}/some-secrets.yaml"
+    SOME_VALUES_PATH="${TEST_TEMP_DIR}/${SOME_VALUES}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH},${SOME_VALUES_PATH}" 2>&1
+
+    assert_output -e "\[helm-secrets\] Decrypt: .*${VALUES}"
+    assert_output -e "\[helm-secrets\] Decrypt: .*${SOME_VALUES}"
+    assert_output --partial "port: 83"
+    assert_success
+}
+
+@test "template: helm template w/ chart + secrets.yaml + --set-file file.txt,file.txt" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    SET_FILE_PATH="$(dirname "${VALUES_PATH}")/files/file.txt"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${VALUES_PATH}" \
+        --set-file "podAnnotations.fromFile=${SET_FILE_PATH},podAnnotations.fromFile2=${SET_FILE_PATH}" 2>&1
+
+    assert_output --partial "port: 81"
+    assert_output -e "fromFile: .*hello=fromextrafile"
+    assert_output -e "fromFile2: .*hello=fromextrafile"
+    assert_success
+}
+
 @test "template: helm template w/ chart + secrets.yaml + --values" {
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
