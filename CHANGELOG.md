@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- fix: a `?` prefix on one value file no longer ignores missing files for all following `-f`, `--values` and `--set-file` arguments ([#914](https://github.com/jkroepke/helm-secrets/pull/914))
+
 ## [4.7.9] - 2026-10-07
 
 ### Fixes

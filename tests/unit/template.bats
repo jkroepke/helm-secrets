@@ -261,6 +261,27 @@ key2: value" 2>&1
     assert_success
 }
 
+@test "template: helm template w/ chart + ?not-exists.yaml + not-exists2.yaml" {
+    create_chart "${TEST_TEMP_DIR}"
+
+    # The '?' prefix must only apply to its own file, not to the following ones.
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "?not-exists.yaml" -f "not-exists2.yaml" 2>&1
+
+    assert_output --partial "[helm-secrets] File does not exist: not-exists2.yaml"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + ?not-exists.yaml + --set-file not-exists2.yaml" {
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" \
+        -f "?not-exists.yaml" --set-file "podAnnotations.fromFile=not-exists2.yaml" 2>&1
+
+    assert_output --partial "[helm-secrets] File does not exist: not-exists2.yaml"
+    assert_failure
+}
+
 @test "template: helm template w/ chart + not-exists.yaml + --ignore-missing-values" {
     VALUES="not-exists.yaml"
     VALUES_PATH="${VALUES}"
