@@ -2122,7 +2122,7 @@ key2: value" 2>&1
 
     run "${HELM_BIN}" secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
 
-    assert_output --partial "${TEST_TEMP_DIR}/non-exists.txt: no such file or directory"
+    assert_output --partial "[helm-secrets] vals error: expand file://${TEST_TEMP_DIR}/non-exists.txt"
     assert_failure
 }
 
@@ -2142,7 +2142,7 @@ key2: value" 2>&1
     run env HELM_SECRETS_DEC_TMP_DIR="${TEST_TEMP_DIR}/tmp" WSLENV="HELM_SECRETS_DEC_TMP_DIR/p:${WSLENV:-}" \
         "${HELM_BIN}" secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
 
-    assert_output --partial "${TEST_TEMP_DIR}/non-exists.txt: no such file or directory"
+    assert_output --partial "[helm-secrets] vals error: expand file://${TEST_TEMP_DIR}/non-exists.txt"
     assert_failure
 }
 
