@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- fix: show backend errors from `--evaluate-templates` on Helm 4, which discards the stderr of post-renderer plugins ([#901](https://github.com/jkroepke/helm-secrets/issues/901))
+
 ## [4.7.9] - 2026-10-07
 
 ### Fixes
