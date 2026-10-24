@@ -2282,6 +2282,11 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + wrapper + out-of-tree-backend.sh!secrets.yaml is not sourced" {
+    if on_windows; then
+        # MSYS converts the leading /path of the argument to C:/..., which breaks the allow-list and assertions.
+        skip
+    fi
+
     VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     BACKEND_PATH="${TEST_TEMP_DIR}/out-of-tree-backend.sh"
@@ -2297,6 +2302,11 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + wrapper --set out-of-tree-backend.sh!value is not sourced" {
+    if on_windows; then
+        # MSYS converts the leading /path of the argument to C:/..., which breaks the allow-list and assertions.
+        skip
+    fi
+
     BACKEND_PATH="${TEST_TEMP_DIR}/out-of-tree-backend.sh"
     printf 'echo BACKEND_SOURCED >&2\n' >"${BACKEND_PATH}"
 
@@ -2355,6 +2365,11 @@ key2: value" 2>&1
 }
 
 @test "template: helm template w/ chart + wrapper + custom-backend.sh!secrets.yaml + HELM_SECRETS_ALLOWED_BACKENDS" {
+    if on_windows; then
+        # MSYS converts the leading /path of the argument to C:/..., which breaks the allow-list and assertions.
+        skip
+    fi
+
     VALUES="assets/values/custom-backend/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
     BACKEND_PATH="${TEST_TEMP_DIR}/assets/custom-backend.sh"
