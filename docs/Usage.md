@@ -379,7 +379,7 @@ You can configure the allowed backend by the environment variable `HELM_SECRETS_
 
 Out-of-tree backends (paths to a backend script) are only accepted in the `backend!` prefix when the path is listed in
 `HELM_SECRETS_ALLOWED_BACKENDS`, e.g. `HELM_SECRETS_ALLOWED_BACKENDS=sops,/opt/helm-secrets/backend.sh`.
-The `--backend` option and `HELM_SECRETS_BACKEND` are not affected by this restriction.
+The `--backend` option and `HELM_SECRETS_BACKEND` are not affected by this additional restriction.
 
 ## Limitations
 

@@ -2289,11 +2289,23 @@ key2: value" 2>&1
 
     create_chart "${TEST_TEMP_DIR}"
 
-    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${BACKEND_PATH}!${VALUES_PATH}" \
-        --set "service.port=${BACKEND_PATH}!87" 2>&1
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${BACKEND_PATH}!${VALUES_PATH}" 2>&1
 
     refute_output --partial "BACKEND_SOURCED"
-    assert_output --partial "[helm-secrets] File does not exist: ${BACKEND_PATH}!${VALUES_PATH}"
+    assert_output --partial "out-of-tree secret backend '${BACKEND_PATH}' is not allowed via the 'backend!' prefix"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + wrapper --set out-of-tree-backend.sh!value is not sourced" {
+    BACKEND_PATH="${TEST_TEMP_DIR}/out-of-tree-backend.sh"
+    printf 'echo BACKEND_SOURCED >&2\n' >"${BACKEND_PATH}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --set "service.port=${BACKEND_PATH}!87" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    assert_output --partial "out-of-tree secret backend '${BACKEND_PATH}' is not allowed via the 'backend!' prefix"
     assert_failure
 }
 
