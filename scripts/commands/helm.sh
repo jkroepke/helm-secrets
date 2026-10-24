@@ -55,6 +55,10 @@ helm_wrapper() {
     argc=$#
     j=0
 
+    # Remember the configured value, so a '?' prefix on one value file does not
+    # leak into the handling of the following files.
+    _ignore_missing_values_default="${IGNORE_MISSING_VALUES}"
+
     while [ $j -lt $argc ]; do
         case "$1" in
         --set | --set=?* | --set-string | --set-string=?* | --set-json | --set-json=?*)
@@ -194,6 +198,8 @@ helm_wrapper() {
             for file in $(printf '%s' "${files}" | sed -E 's/([^\\]),/\1\
 /g'); do
                 unset IFS
+
+                IGNORE_MISSING_VALUES="${_ignore_missing_values_default}"
 
                 case "$_1" in
                 -f | --values | --values=?*)
