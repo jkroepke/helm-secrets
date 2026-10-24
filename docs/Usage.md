@@ -377,6 +377,10 @@ helm template -f 'secrets://secrets.yaml' --set-file 'secrets+literal://vals!ref
 
 You can configure the allowed backend by the environment variable `HELM_SECRETS_ALLOWED_BACKENDS`, e.g. `HELM_SECRETS_ALLOWED_BACKENDS=sops,vals`
 
+Out-of-tree backends (paths to a backend script) are only accepted in the `backend!` prefix when the path is listed in
+`HELM_SECRETS_ALLOWED_BACKENDS`, e.g. `HELM_SECRETS_ALLOWED_BACKENDS=sops,/opt/helm-secrets/backend.sh`.
+The `--backend` option and `HELM_SECRETS_BACKEND` are not affected by this additional restriction.
+
 ## Limitations
 
 If a file path contains `!` and you do not want to override a secret backend, you have to define a `!` as prefix.

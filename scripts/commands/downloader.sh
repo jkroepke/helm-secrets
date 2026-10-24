@@ -33,7 +33,7 @@ downloader() {
 
         # Force secret backend
         if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
-            load_secret_backend "${_key_and_file%%\!*}"
+            load_secret_backend_override "${_key_and_file%%\!*}"
             _key_and_file="${_key_and_file#*!}"
         fi
 
@@ -66,7 +66,7 @@ downloader() {
 
         # Force secret backend
         if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
-            load_secret_backend "${_key_and_file%%\!*}"
+            load_secret_backend_override "${_key_and_file%%\!*}"
             _key_and_file="${_key_and_file#*!}"
         fi
 
@@ -95,7 +95,7 @@ downloader() {
 
         # Force secret backend
         if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
-            load_secret_backend "${_key_and_file%%\!*}"
+            load_secret_backend_override "${_key_and_file%%\!*}"
             _key_and_file="${_key_and_file#*!}"
         fi
 
@@ -128,7 +128,7 @@ downloader() {
 
         # Force secret backend
         if [ "${_key_and_file#*!}" != "${_key_and_file}" ]; then
-            load_secret_backend "${_key_and_file%%\!*}"
+            load_secret_backend_override "${_key_and_file%%\!*}"
             _key_and_file="${_key_and_file#*!}"
         fi
 
@@ -147,7 +147,7 @@ downloader() {
 
         # Force secret backend
         if [ "${literal#*!}" != "${literal}" ]; then
-            load_secret_backend "${literal%%\!*}"
+            load_secret_backend_override "${literal%%\!*}"
             literal="${literal#*!}"
         fi
 
@@ -168,7 +168,7 @@ downloader() {
 
         # Force secret backend
         if [ "${file#*!}" != "${file}" ]; then
-            load_secret_backend "${file%%\!*}"
+            load_secret_backend_override "${file%%\!*}"
             file="${file#*!}"
         fi
         ;;

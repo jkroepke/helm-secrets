@@ -29,6 +29,8 @@ argo-cd:
       - name: HELM_SECRETS_CURL_PATH
         value: /custom-tools/curl
       # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
+      - name: HELM_SECRETS_ALLOWED_BACKENDS
+        value: sops,vals
       - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
         value: "false"
       - name: HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH

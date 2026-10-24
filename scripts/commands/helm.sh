@@ -130,8 +130,8 @@ helm_wrapper() {
 
                 # Force secret backend
                 if [ "${literal#*!}" != "${literal}" ]; then
-                    if is_secret_backend "${literal%%\!*}"; then
-                        load_secret_backend "${literal%%\!*}"
+                    if is_secret_backend "${literal%%\!*}" || [ -f "${literal%%\!*}" ]; then
+                        load_secret_backend_override "${literal%%\!*}"
                         literal="${literal#*!}"
                     else
                         load_secret_backend "${DEFAULT_SECRET_BACKEND}"
@@ -223,8 +223,8 @@ helm_wrapper() {
 
                 # Force secret backend
                 if [ "${file#*!}" != "${file}" ]; then
-                    if is_secret_backend "${file%%\!*}"; then
-                        load_secret_backend "${file%%\!*}"
+                    if is_secret_backend "${file%%\!*}" || [ -f "${file%%\!*}" ]; then
+                        load_secret_backend_override "${file%%\!*}"
                         file="${file#*!}"
                     else
                         load_secret_backend "${DEFAULT_SECRET_BACKEND}"

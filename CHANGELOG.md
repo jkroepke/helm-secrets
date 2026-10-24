@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- Out-of-tree secret backends (file paths) are no longer loaded via the `backend!` prefix of value files, URLs or literals unless they are listed in `HELM_SECRETS_ALLOWED_BACKENDS`. `--backend` and `HELM_SECRETS_BACKEND` are not affected. ([#916](https://github.com/jkroepke/helm-secrets/pull/916))
+
 ### Fixes
 - fix: comma-separated `-f`, `--values` and `--set-file` lists were not split on macOS (BSD sed) ([#915](https://github.com/jkroepke/helm-secrets/pull/915))
 - fix: a `?` prefix on one value file no longer ignores missing files for all following `-f`, `--values` and `--set-file` arguments ([#914](https://github.com/jkroepke/helm-secrets/pull/914))

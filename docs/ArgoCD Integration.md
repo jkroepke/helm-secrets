@@ -156,6 +156,7 @@ ARG HELM_SECRETS_VERSION=4.7.9
 # vals or sops
 ENV HELM_SECRETS_BACKEND="vals" \
     HELM_SECRETS_HELM_PATH=/usr/local/bin/helm \
+    HELM_SECRETS_ALLOWED_BACKENDS=sops,vals \
     HELM_SECRETS_VALUES_ALLOW_SYMLINKS=false \
     HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH=false \
     HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL=false \
@@ -235,6 +236,8 @@ repoServer:
     - name: HELM_SECRETS_BACKEND
       value: sops
     # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
+    - name: HELM_SECRETS_ALLOWED_BACKENDS
+      value: sops,vals
     - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
       value: "false"
     - name: HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH

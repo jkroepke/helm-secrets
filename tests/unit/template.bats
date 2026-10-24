@@ -2372,6 +2372,110 @@ key2: value" 2>&1
     assert_failure
 }
 
+@test "template: helm template w/ chart + wrapper + out-of-tree-backend.sh!secrets.yaml is not sourced" {
+    if on_windows; then
+        # MSYS converts the leading /path of the argument to C:/..., which breaks the allow-list and assertions.
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    BACKEND_PATH="${TEST_TEMP_DIR}/out-of-tree-backend.sh"
+    printf 'echo BACKEND_SOURCED >&2\n' >"${BACKEND_PATH}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${BACKEND_PATH}!${VALUES_PATH}" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    assert_output --partial "out-of-tree secret backend '${BACKEND_PATH}' is not allowed via the 'backend!' prefix"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + wrapper --set out-of-tree-backend.sh!value is not sourced" {
+    if on_windows; then
+        # MSYS converts the leading /path of the argument to C:/..., which breaks the allow-list and assertions.
+        skip
+    fi
+
+    BACKEND_PATH="${TEST_TEMP_DIR}/out-of-tree-backend.sh"
+    printf 'echo BACKEND_SOURCED >&2\n' >"${BACKEND_PATH}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" --set "service.port=${BACKEND_PATH}!87" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    assert_output --partial "out-of-tree secret backend '${BACKEND_PATH}' is not allowed via the 'backend!' prefix"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + secrets://out-of-tree-backend.sh!secrets.yaml is not sourced" {
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    BACKEND_PATH="${TEST_TEMP_DIR}/out-of-tree-backend.sh"
+    printf 'echo BACKEND_SOURCED >&2\n' >"${BACKEND_PATH}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${BACKEND_PATH}!${VALUES_PATH}" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    assert_output --partial "out-of-tree secret backend '${BACKEND_PATH}' is not allowed via the 'backend!' prefix"
+    assert_failure
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
+@test "template: helm template w/ chart + --set-file secrets+literal://out-of-tree-backend.sh! is not sourced" {
+    BACKEND_PATH="${TEST_TEMP_DIR}/out-of-tree-backend.sh"
+    printf 'echo BACKEND_SOURCED >&2\n' >"${BACKEND_PATH}"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    run "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" \
+        --set-file "service.port=secrets+literal://${BACKEND_PATH}!ref+echo://87" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    assert_output --partial "out-of-tree secret backend '${BACKEND_PATH}' is not allowed via the 'backend!' prefix"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + secrets://custom-backend.sh!secrets.yaml + HELM_SECRETS_ALLOWED_BACKENDS" {
+    VALUES="assets/values/custom-backend/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    BACKEND_PATH="${TEST_TEMP_DIR}/assets/custom-backend.sh"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # shellcheck disable=SC2030 disable=SC2031
+    run env HELM_SECRETS_ALLOWED_BACKENDS="sops,vals,noop,${BACKEND_PATH}" WSLENV="HELM_SECRETS_ALLOWED_BACKENDS:${WSLENV}" \
+        "${HELM_BIN}" template "$(_winpath "${TEST_TEMP_DIR}/chart")" -f "secrets://${BACKEND_PATH}!${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: secret/production#port"
+    assert_success
+}
+
+@test "template: helm template w/ chart + wrapper + custom-backend.sh!secrets.yaml + HELM_SECRETS_ALLOWED_BACKENDS" {
+    if on_windows; then
+        # MSYS converts the leading /path of the argument to C:/..., which breaks the allow-list and assertions.
+        skip
+    fi
+
+    VALUES="assets/values/custom-backend/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+    BACKEND_PATH="${TEST_TEMP_DIR}/assets/custom-backend.sh"
+
+    create_chart "${TEST_TEMP_DIR}"
+
+    # shellcheck disable=SC2030 disable=SC2031
+    run env HELM_SECRETS_ALLOWED_BACKENDS="sops,vals,noop,${BACKEND_PATH}" WSLENV="HELM_SECRETS_ALLOWED_BACKENDS:${WSLENV}" \
+        "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${BACKEND_PATH}!${VALUES_PATH}" 2>&1
+
+    assert_output --partial "port: secret/production#port"
+    assert_success
+    assert_file_not_exists "${VALUES_PATH}.dec"
+}
+
 @test "template: helm template w/ chart + secrets://sops!secrets.yaml + --set-file secrets://sops!file.txt" {
     VALUES="assets/values/sops/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
