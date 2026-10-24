@@ -2,6 +2,17 @@
 
 set -euf
 
+# Helm 4 discards the stderr of post-renderer plugins.
+# helm_wrapper forwards this file after helm exits.
+if [ -n "${HELM_SECRETS_POST_RENDERER_STDERR:-}" ]; then
+    for arg in "$@"; do
+        if [ "${arg}" = "post-renderer" ]; then
+            exec 2>>"${HELM_SECRETS_POST_RENDERER_STDERR}"
+            break
+        fi
+    done
+fi
+
 if [ "${HELM_DEBUG:-}" = "1" ] || [ "${HELM_DEBUG:-}" = "true" ] || [ -n "${HELM_SECRETS_DEBUG+x}" ]; then
     set -x
 fi
