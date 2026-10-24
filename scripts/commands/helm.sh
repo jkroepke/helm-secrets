@@ -193,7 +193,10 @@ helm_wrapper() {
             IFS='
 '
 
-            for file in $(printf '%s' "${files}" | sed -E 's/([^\\]),/\1\n/g'); do
+            # Split on unescaped commas. The replacement uses a literal newline,
+            # because BSD sed (macOS) does not understand '\n' in the replacement.
+            for file in $(printf '%s' "${files}" | sed -E 's/([^\\]),/\1\
+/g'); do
                 unset IFS
 
                 IGNORE_MISSING_VALUES="${_ignore_missing_values_default}"

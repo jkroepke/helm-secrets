@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixes
+- fix: comma-separated `-f`, `--values` and `--set-file` lists were not split on macOS (BSD sed) ([#915](https://github.com/jkroepke/helm-secrets/pull/915))
 - fix: a `?` prefix on one value file no longer ignores missing files for all following `-f`, `--values` and `--set-file` arguments ([#914](https://github.com/jkroepke/helm-secrets/pull/914))
 - fix: show backend errors from `--evaluate-templates` on Helm 4, which discards the stderr of post-renderer plugins ([#901](https://github.com/jkroepke/helm-secrets/issues/901))
 
