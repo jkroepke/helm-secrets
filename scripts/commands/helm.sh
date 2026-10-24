@@ -25,6 +25,7 @@ EOF
 }
 
 decrypted_file_list_dir=$(_mktemp -d)
+post_renderer_stderr=""
 
 _trap_hook() {
     if [ -d "${decrypted_file_list_dir}" ]; then
@@ -44,11 +45,19 @@ _trap_hook() {
 
         rm -rf "${decrypted_file_list_dir}"
     fi
+
+    if [ -n "${post_renderer_stderr}" ]; then
+        rm -f "${post_renderer_stderr}"
+    fi
 }
 
 helm_wrapper() {
     argc=$#
     j=0
+
+    # Remember the configured value, so a '?' prefix on one value file does not
+    # leak into the handling of the following files.
+    _ignore_missing_values_default="${IGNORE_MISSING_VALUES}"
 
     while [ $j -lt $argc ]; do
         case "$1" in
@@ -187,6 +196,8 @@ helm_wrapper() {
             for file in $(printf '%s' "${files}" | sed -E 's/([^\\]),/\1\n/g'); do
                 unset IFS
 
+                IGNORE_MISSING_VALUES="${_ignore_missing_values_default}"
+
                 case "$_1" in
                 -f | --values | --values=?*)
                     double_escape_need=0
@@ -272,6 +283,8 @@ helm_wrapper() {
         j=$((j + 1))
     done
 
+    unset HELM_SECRETS_POST_RENDERER_STDERR
+
     if [ "${EVALUATE_TEMPLATES}" = "true" ]; then
         if [ "$(_helm_version)" = "3" ]; then
             set -- "$@" "--post-renderer" "${HELM_BIN}"
@@ -293,9 +306,32 @@ helm_wrapper() {
             set -- "$@" "--post-renderer-args" "--evaluate-templates-decode-secrets"
         fi
         set -- "$@" "--post-renderer-args" "post-renderer"
+
+        # Helm 4 discards the stderr of post-renderer plugins and only reports
+        # 'plugin "secrets-post-renderer" exited with error'. Let the post-renderer
+        # write its stderr to a file and forward it after helm exits.
+        # The file is created next to TMPDIR, since the post-renderer removes
+        # TMPDIR on exit if it is shared through HELM_SECRETS_DEC_TMP_DIR.
+        if [ "$(_helm_version)" != "3" ]; then
+            post_renderer_stderr="$(mktemp "${TMPDIR%/}.post-renderer.XXXXXX")"
+            HELM_SECRETS_POST_RENDERER_STDERR="${post_renderer_stderr}"
+            WSLENV="HELM_SECRETS_POST_RENDERER_STDERR/p:${WSLENV:-}"
+            export HELM_SECRETS_POST_RENDERER_STDERR WSLENV
+        fi
     fi
 
-    "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
+    exit_code=0
+    "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@" || exit_code=$?
+
+    if [ -n "${post_renderer_stderr}" ]; then
+        if [ -s "${post_renderer_stderr}" ]; then
+            cat "${post_renderer_stderr}" >&2
+        fi
+
+        rm -f "${post_renderer_stderr}"
+    fi
+
+    return "${exit_code}"
 }
 
 helm_command() {

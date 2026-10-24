@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Out-of-tree secret backends (file paths) are no longer loaded via the `backend!` prefix of value files, URLs or literals unless they are listed in `HELM_SECRETS_ALLOWED_BACKENDS`. `--backend` and `HELM_SECRETS_BACKEND` are not affected. ([#916](https://github.com/jkroepke/helm-secrets/pull/916))
 
+### Fixes
+- fix: a `?` prefix on one value file no longer ignores missing files for all following `-f`, `--values` and `--set-file` arguments ([#914](https://github.com/jkroepke/helm-secrets/pull/914))
+- fix: show backend errors from `--evaluate-templates` on Helm 4, which discards the stderr of post-renderer plugins ([#901](https://github.com/jkroepke/helm-secrets/issues/901))
+
 ## [4.7.9] - 2026-10-07
 
 ### Fixes
