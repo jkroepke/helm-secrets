@@ -47,3 +47,20 @@ HELM_SECRETS_KEY_LOCATION_PREFIX=/secrets/
 ```
 
 To allow only gpg/age keys from the path `/secrets/`. 
+
+## Restrict secret backends
+
+A secret backend can be selected per value file with the `backend!` prefix, for example `secrets://vals!secrets.yaml`.
+In shared environments that prefix is controlled by whoever writes the Application manifest or the value file reference.
+
+Out-of-tree backends are shell scripts that get sourced by helm-secrets. For that reason, a file path is only accepted
+in the `backend!` prefix when it is listed explicitly in `HELM_SECRETS_ALLOWED_BACKENDS`. The `--backend` option and the
+`HELM_SECRETS_BACKEND` environment variable still accept any path, because they are set by the operator.
+
+To additionally restrict which in-tree backends can be selected, set the environment variable
+
+```bash
+HELM_SECRETS_ALLOWED_BACKENDS=sops,vals
+```
+
+Backends that are not listed are rejected, regardless of how they are selected.

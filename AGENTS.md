@@ -55,7 +55,7 @@ Backends are dispatched by name through functions in `scripts/lib/backend.sh`. A
 - `_foo_backend_decrypt_literal VALUE`
 - `_foo_backend_edit_file TYPE INPUT`
 
-In-tree backend selection accepts `sops`, `vals`, and `noop`. Out-of-tree backends can be loaded by file path through `--backend` or `HELM_SECRETS_BACKEND`; they normally source `scripts/lib/backends/_custom.sh`. `HELM_SECRETS_ALLOWED_BACKENDS` restricts allowed backend names and is tested by the suite.
+In-tree backend selection accepts `sops`, `vals`, and `noop`. Out-of-tree backends can be loaded by file path through `--backend` or `HELM_SECRETS_BACKEND`; they normally source `scripts/lib/backends/_custom.sh`. The per-file `backend!` prefix only accepts in-tree names or paths listed in `HELM_SECRETS_ALLOWED_BACKENDS`, because the prefix comes from untrusted input; use `load_secret_backend_override` for that path. `HELM_SECRETS_ALLOWED_BACKENDS` restricts allowed backend names and is tested by the suite.
 
 Backend-specific binary overrides:
 
