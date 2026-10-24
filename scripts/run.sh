@@ -150,6 +150,12 @@ while true; do
         # shellcheck source=scripts/commands/downloader.sh
         . "${SCRIPT_DIR}/commands/post-renderer.sh"
 
+        # Helm 4 discards the stderr of post-renderer plugins.
+        # helm_wrapper forwards this file after helm exits.
+        if [ -n "${HELM_SECRETS_POST_RENDERER_STDERR:-}" ]; then
+            exec 2>>"${HELM_SECRETS_POST_RENDERER_STDERR}"
+        fi
+
         post_renderer
         break
         ;;

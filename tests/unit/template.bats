@@ -2108,6 +2108,24 @@ key2: value" 2>&1
     assert_success
 }
 
+@test "template: helm template w/ chart + --evaluate-templates + invalid reference shows backend error" {
+    if on_wsl || ! is_backend "vals"; then
+        skip
+    fi
+
+    create_chart "${TEST_TEMP_DIR}" false
+
+    {
+        printf 'apiVersion: v1\nkind: ConfigMap\ndata:\n'
+        printf '  invalid: ref+file://%s/non-exists.txt\n' "${TEST_TEMP_DIR}"
+    } >"${TEST_TEMP_DIR}/chart/templates/invalid.yaml"
+
+    run "${HELM_BIN}" secrets --evaluate-templates template "${TEST_TEMP_DIR}/chart" 2>&1
+
+    assert_output --partial "${TEST_TEMP_DIR}/non-exists.txt: no such file or directory"
+    assert_failure
+}
+
 @test "template: helm template w/ chart + --evaluate-templates true + invalid syntax" {
     if on_wsl || ! is_backend "vals"; then
         skip

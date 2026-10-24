@@ -293,9 +293,25 @@ helm_wrapper() {
             set -- "$@" "--post-renderer-args" "--evaluate-templates-decode-secrets"
         fi
         set -- "$@" "--post-renderer-args" "post-renderer"
+
+        # Helm 4 discards the stderr of post-renderer plugins and only reports
+        # 'plugin "secrets-post-renderer" exited with error'. Let the post-renderer
+        # write its stderr to a file and forward it after helm exits.
+        if [ "$(_helm_version)" != "3" ]; then
+            post_renderer_stderr="$(_mktemp)"
+            HELM_SECRETS_POST_RENDERER_STDERR="${post_renderer_stderr}"
+            export HELM_SECRETS_POST_RENDERER_STDERR
+        fi
     fi
 
-    "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@"
+    exit_code=0
+    "${HELM_BIN}" ${TILLER_HOST:+--host "$TILLER_HOST"} "$@" || exit_code=$?
+
+    if [ -s "${post_renderer_stderr:-}" ]; then
+        cat "${post_renderer_stderr}" >&2
+    fi
+
+    return "${exit_code}"
 }
 
 helm_command() {
