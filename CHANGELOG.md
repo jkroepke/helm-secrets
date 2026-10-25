@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.7.10] - 2026-10-25
+
 ### Security
 - Out-of-tree secret backends (file paths) are no longer loaded via the `backend!` prefix of value files, URLs or literals unless they are listed in `HELM_SECRETS_ALLOWED_BACKENDS`. `--backend` and `HELM_SECRETS_BACKEND` are not affected. ([#916](https://github.com/jkroepke/helm-secrets/pull/916))
 
@@ -438,7 +440,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v4.7.9...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v4.7.10...HEAD
+[4.7.10]: https://github.com/jkroepke/helm-secrets/compare/v4.7.9...v4.7.10
 [4.7.9]: https://github.com/jkroepke/helm-secrets/compare/v4.7.8...v4.7.9
 [4.7.8]: https://github.com/jkroepke/helm-secrets/compare/v4.7.7...v4.7.8
 [4.7.7]: https://github.com/jkroepke/helm-secrets/compare/v4.7.6...v4.7.7
