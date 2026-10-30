@@ -19,7 +19,7 @@ helm template -f secrets://https://user:password@raw.githubusercontent.com/jkroe
 ```
 
 Additionally, the authentication details can be provided by environment variables or from a file system using the
-[.netrc](https://everything.curl.dev/usingcurl/netrc) standard this is useful inside CD systems.
+[.netrc](https://everything.curl.dev/usingcurl/netrc.html) standard this is useful inside CD systems.
 
 
 ### Via environment variables
