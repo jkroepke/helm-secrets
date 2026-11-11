@@ -64,3 +64,32 @@ HELM_SECRETS_ALLOWED_BACKENDS=sops,vals
 ```
 
 Backends that are not listed are rejected, regardless of how they are selected.
+
+## vals backend
+
+vals resolves every `ref+<provider>://` expression it finds. Some of its providers are always built in and work on
+the machine that runs helm, not on an external secret store:
+
+* `ref+exec://` runs an arbitrary command, for example `ref+exec://sh?args=-c,id` (recent vals versions)
+* `ref+file://` reads an arbitrary file
+* `ref+envsubst://` reads environment variables
+
+Whoever controls content that vals processes can therefore run commands and read files and credentials with the
+privileges of the process running helm, for example the Argo CD repo-server. That content includes:
+
+* value files, if vals is the default backend
+* value references that select vals through the `backend!` prefix, for example `secrets://vals!values.yaml` or
+  `secrets+literal://vals!ref+exec://...`
+* rendered chart templates, if `--evaluate-templates` or `HELM_SECRETS_EVALUATE_TEMPLATES=true` is used. This always
+  runs vals, regardless of the selected backend.
+
+If the authors of value files, value references or Git repositories are not fully trusted, do not allow vals:
+
+```bash
+HELM_SECRETS_BACKEND=sops
+HELM_SECRETS_ALLOWED_BACKENDS=sops
+HELM_SECRETS_EVALUATE_TEMPLATES=false
+```
+
+Not installing the vals binary has the same effect. If vals is required, only render content from trusted authors,
+or run it in an isolated environment that holds no credentials beyond the ones needed for that content.
