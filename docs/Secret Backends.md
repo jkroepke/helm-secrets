@@ -82,6 +82,10 @@ The sops secret store is enabled by default.
 
 To use vals with helm-secrets, the vals CLI binary is needed. vals 0.22.0 or higher is required.
 
+> [!WARNING]
+> vals can run commands and read local files through providers like `ref+exec://` and `ref+file://`. Only use it on
+> value files from trusted authors, see [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments#vals-backend).
+
 It supports various backends:
 
 * [Vault](https://github.com/variantdev/vals#vault)
