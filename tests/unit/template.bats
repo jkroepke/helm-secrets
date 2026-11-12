@@ -2440,6 +2440,78 @@ key2: value" 2>&1
     assert_failure
 }
 
+# Builds a backend name that escapes lib/backends via '../' and points at
+# ${TEST_TEMP_DIR}/traversal-backend. Both the in-tree check
+# (lib/backends/<name>.sh) and the dispatch (_<name>_backend_*, resolved from
+# the working directory through the '_..' directory) would hit files we control.
+_create_traversal_backend() {
+    printf 'echo BACKEND_SOURCED >&2\n' >"${TEST_TEMP_DIR}/traversal-backend.sh"
+    for func in is_file_encrypted decrypt_file decrypt_literal; do
+        printf '#!/usr/bin/env sh\necho BACKEND_EXECUTED >&2\nexit 1\n' >"${TEST_TEMP_DIR}/traversal-backend_backend_${func}"
+        chmod +x "${TEST_TEMP_DIR}/traversal-backend_backend_${func}"
+    done
+    mkdir -p "${TEST_TEMP_DIR}/_.."
+
+    TRAVERSAL_BACKEND="$(printf '../%.0s' $(seq 32))${TEST_TEMP_DIR#/}/traversal-backend"
+}
+
+@test "template: helm template w/ chart + secrets://../traversal-backend!secrets.yaml is not loaded" {
+    if on_windows; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    _create_traversal_backend
+    create_chart "${TEST_TEMP_DIR}"
+
+    cd "${TEST_TEMP_DIR}"
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" -f "secrets://${TRAVERSAL_BACKEND}!${VALUES_PATH}" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    refute_output --partial "BACKEND_EXECUTED"
+    assert_output --partial "Can't find secret backend: ${TRAVERSAL_BACKEND}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + --set-file secrets+literal://../traversal-backend! is not loaded" {
+    if on_windows; then
+        skip
+    fi
+
+    _create_traversal_backend
+    create_chart "${TEST_TEMP_DIR}"
+
+    cd "${TEST_TEMP_DIR}"
+    run "${HELM_BIN}" template "${TEST_TEMP_DIR}/chart" \
+        --set-file "service.port=secrets+literal://${TRAVERSAL_BACKEND}!ref+echo://87" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    refute_output --partial "BACKEND_EXECUTED"
+    assert_output --partial "Can't find secret backend: ${TRAVERSAL_BACKEND}"
+    assert_failure
+}
+
+@test "template: helm template w/ chart + wrapper + ../traversal-backend!secrets.yaml is not loaded" {
+    if on_windows; then
+        skip
+    fi
+
+    VALUES="assets/values/${HELM_SECRETS_BACKEND}/secrets.yaml"
+    VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"
+
+    _create_traversal_backend
+    create_chart "${TEST_TEMP_DIR}"
+
+    cd "${TEST_TEMP_DIR}"
+    run "${HELM_BIN}" secrets template "${TEST_TEMP_DIR}/chart" -f "${TRAVERSAL_BACKEND}!${VALUES_PATH}" 2>&1
+
+    refute_output --partial "BACKEND_SOURCED"
+    refute_output --partial "BACKEND_EXECUTED"
+    assert_failure
+}
+
 @test "template: helm template w/ chart + secrets://custom-backend.sh!secrets.yaml + HELM_SECRETS_ALLOWED_BACKENDS" {
     VALUES="assets/values/custom-backend/secrets.yaml"
     VALUES_PATH="${TEST_TEMP_DIR}/${VALUES}"

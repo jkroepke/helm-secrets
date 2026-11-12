@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- Secret backend names given via the `backend!` prefix of value files, URLs or literals could escape the built-in backend directory with `../` and run files from the rendered repository, bypassing the 4.7.10 restriction. Only `noop`, `sops` and `vals` are now treated as built-in backends. ([GHSA-8r99-ccp5-4hrf](https://github.com/jkroepke/helm-secrets/security/advisories/GHSA-8r99-ccp5-4hrf))
+
 ## [4.7.10] - 2026-10-25
 
 ### Security

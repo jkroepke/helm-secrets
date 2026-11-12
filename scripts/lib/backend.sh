@@ -14,8 +14,13 @@ ALLOWED_BACKENDS="${HELM_SECRETS_ALLOWED_BACKENDS:-}"
 # shellcheck source=scripts/lib/backends/vals.sh
 . "${SCRIPT_DIR}/lib/backends/vals.sh"
 
+# In-tree backends are referenced by a plain name. Reject anything else, so a
+# name like '../../x' can't resolve to a file outside lib/backends.
 _is_in_tree_secret_backend() {
-    [ -f "${SCRIPT_DIR}/lib/backends/${1}.sh" ]
+    case "${1}" in
+    noop | sops | vals) [ -f "${SCRIPT_DIR}/lib/backends/${1}.sh" ] ;;
+    *) false ;;
+    esac
 }
 
 _is_allowed_secret_backend() {
@@ -60,7 +65,7 @@ load_secret_backend() {
         fatal "secret backend '%s' not allowed" "${1}"
     fi
 
-    if [ -f "${SCRIPT_DIR}/lib/backends/${backend}.sh" ]; then
+    if _is_in_tree_secret_backend "${backend}"; then
         # shellcheck disable=SC2034
         SECRET_BACKEND="${backend}"
         return
