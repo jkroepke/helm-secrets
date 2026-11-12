@@ -131,7 +131,8 @@ Depends on the secret backend, `sops` or `vals` is required on the `argocd-repo-
 There are two methods to do this.
 Either create your custom ArgoCD Docker Image or install them via an init container.
 
-> **Warning:** If vals is installed, anyone who controls a value file or value reference processed by vals can run
+> [!WARNING]
+> If vals is installed, anyone who controls a value file or value reference processed by vals can run
 > commands on the `argocd-repo-server` (for example via `ref+exec://`). If repository authors are not fully trusted,
 > install only `sops`, set `HELM_SECRETS_ALLOWED_BACKENDS=sops` and don't use `--evaluate-templates`. See [Security in shared environments](https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments#vals-backend).
 

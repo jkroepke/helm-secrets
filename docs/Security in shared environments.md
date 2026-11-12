@@ -74,8 +74,11 @@ the machine that runs helm, not on an external secret store:
 * `ref+file://` reads an arbitrary file
 * `ref+envsubst://` reads environment variables
 
-Whoever controls content that vals processes can therefore run commands and read files and credentials with the
-privileges of the process running helm, for example the Argo CD repo-server. That content includes:
+> [!WARNING]
+> Whoever controls content that vals processes can run commands and read files and credentials with the
+> privileges of the process running helm, for example the Argo CD repo-server.
+
+That content includes:
 
 * value files, if vals is the default backend
 * value references that select vals through the `backend!` prefix, for example `secrets://vals!values.yaml` or
