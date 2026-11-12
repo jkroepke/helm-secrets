@@ -1,6 +1,6 @@
 name: ✨ Enhancement / Feature / Task
 description: Some feature is missing or incomplete.
-labels: [enhancement]
+type: Feature
 body:
   - type: markdown
     attributes:
