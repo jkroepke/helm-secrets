@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.7.11] - 2026-11-12
+
 ### Security
 - Secret backend names given via the `backend!` prefix of value files, URLs or literals could escape the built-in backend directory with `../` and run files from the rendered repository, bypassing the 4.7.10 restriction. Only `noop`, `sops` and `vals` are now treated as built-in backends. ([GHSA-8r99-ccp5-4hrf](https://github.com/jkroepke/helm-secrets/security/advisories/GHSA-8r99-ccp5-4hrf))
 
@@ -443,7 +445,8 @@ Started a fork of https://github.com/zendesk/helm-secrets
 - Verbose output is now on stderr
 - Support all helm sub commands and plugins
 
-[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v4.7.10...HEAD
+[Unreleased]: https://github.com/jkroepke/helm-secrets/compare/v4.7.11...HEAD
+[4.7.11]: https://github.com/jkroepke/helm-secrets/compare/v4.7.10...v4.7.11
 [4.7.10]: https://github.com/jkroepke/helm-secrets/compare/v4.7.9...v4.7.10
 [4.7.9]: https://github.com/jkroepke/helm-secrets/compare/v4.7.8...v4.7.9
 [4.7.8]: https://github.com/jkroepke/helm-secrets/compare/v4.7.7...v4.7.8
