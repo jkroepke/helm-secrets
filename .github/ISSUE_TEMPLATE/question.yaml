@@ -1,0 +1,41 @@
+name: ❓ Question
+description: Something is not clear.
+type: Question
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        Please check the [documentation](https://github.com/jkroepke/helm-secrets/wiki) first.
+
+        I would appreciate it if you could add yourself to the 
+        [USERS.md](https://github.com/jkroepke/helm-secrets/blob/main/USERS.md) file.
+  - type: textarea
+    attributes:
+      label: Question
+      description: What would you like to know?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Environment
+      description: |
+        examples:
+        - **Helm Version**: 3.10.1
+        - **Helm Secrets Version**: 4.2.0
+        - **ArgoCD Version (if used):**: 2.5.1
+        - **OS**: Alpine
+        - **Shell**: busybox
+      value: |
+        - Helm Version:
+        - Helm Secrets Version:
+        - ArgoCD Version
+        - OS:
+        - Shell:
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: Links, config snippets or anything else that gives more context.
+    validations:
+      required: false
