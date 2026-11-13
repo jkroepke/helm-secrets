@@ -193,18 +193,18 @@ jobs:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@d7c8049a41660f6d744f3e1f520145ced869cae8 # v1.5.83
+        uses: jkroepke/setup-sops@6481dca02f134015e3373d4347d1ed47912fccb2 # v1.5.84
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@e161e238245a4c38151a2fbc108de46600c33d39 # v1.5.113
+        uses: jkroepke/setup-vals@6d1cf6791deb4964f274e6d4ba5a6c508955ac2b # v1.5.116
         with:
           version: v${{ env.VERSION_VALS }}
 
       - name: Setup Cygwin
         if: "contains(matrix.shell, 'cygwin')"
-        uses: cygwin/cygwin-install-action@3f0a3f9f988f7e96b8c18098ae05eaec175f5b52 # v6.0.2
+        uses: cygwin/cygwin-install-action@5a1b0cd107181fa6bb6bf3f90d500f4fb3132f18 # v7.0.0
         with:
           platform: x64
           packages: gnupg2
@@ -318,7 +318,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@26e5b7d197ebf60545ee9667bcbace0be11ccaec # v1.334.0
+        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
         with:
           ruby-version: "4.0.9"
 
@@ -328,12 +328,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@d7c8049a41660f6d744f3e1f520145ced869cae8 # v1.5.83
+        uses: jkroepke/setup-sops@6481dca02f134015e3373d4347d1ed47912fccb2 # v1.5.84
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@e161e238245a4c38151a2fbc108de46600c33d39 # v1.5.113
+        uses: jkroepke/setup-vals@6d1cf6791deb4964f274e6d4ba5a6c508955ac2b # v1.5.116
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -381,7 +381,7 @@ jobs:
 
       - run: rm -rf ./coverage/
 
-      - uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
+      - uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
 
       - name: bashcov bats --tap -r tests/it
         run: bashcov -- tests/bats/core/bin/bats --tap -r tests/it
@@ -407,7 +407,7 @@ jobs:
         shell: [dash]
         jobs: [4]
     steps:
-      - uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
+      - uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
 
       - run: kubectl cluster-info
 
@@ -421,12 +421,12 @@ jobs:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@d7c8049a41660f6d744f3e1f520145ced869cae8 # v1.5.83
+        uses: jkroepke/setup-sops@6481dca02f134015e3373d4347d1ed47912fccb2 # v1.5.84
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@e161e238245a4c38151a2fbc108de46600c33d39 # v1.5.113
+        uses: jkroepke/setup-vals@6d1cf6791deb4964f274e6d4ba5a6c508955ac2b # v1.5.116
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -467,7 +467,7 @@ jobs:
           path: .
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
+        uses: mikepenz/action-junit-report@4a26df3e2ae132254ba12a53f65a388d0961e786 # v6.7.0
         with:
           report_paths: '**/TEST-*.xml'
           detailed_summary: true
