@@ -8,7 +8,7 @@ env:
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.3
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.50.0
+  VERSION_VALS: 0.51.0
   SOPS_DISABLE_VERSION_CHECK: "true"
 
 on:
@@ -188,17 +188,17 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
         with:
           version: v${{ matrix.helm-version != '' && matrix.helm-version || env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@6481dca02f134015e3373d4347d1ed47912fccb2 # v1.5.84
+        uses: jkroepke/setup-sops@a1538f95cdc842b4ed75ab85c8831db7ee662237 # v1.5.86
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@877f699fbcfed8ac29fbad04f88b58b3d6216e13 # v1.5.117
+        uses: jkroepke/setup-vals@c7e6a9223c3173619a08501ca808fcaa609f0b56 # v1.5.118
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -318,22 +318,22 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
+        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
         with:
           ruby-version: "4.0.9"
 
       - name: Setup Helm
-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
         with:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@6481dca02f134015e3373d4347d1ed47912fccb2 # v1.5.84
+        uses: jkroepke/setup-sops@a1538f95cdc842b4ed75ab85c8831db7ee662237 # v1.5.86
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@877f699fbcfed8ac29fbad04f88b58b3d6216e13 # v1.5.117
+        uses: jkroepke/setup-vals@c7e6a9223c3173619a08501ca808fcaa609f0b56 # v1.5.118
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -416,17 +416,17 @@ jobs:
           submodules: true
 
       - name: Setup Helm
-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
         with:
           version: v${{ env.VERSION_HELM }}
 
       - name: Setup Sops
-        uses: jkroepke/setup-sops@6481dca02f134015e3373d4347d1ed47912fccb2 # v1.5.84
+        uses: jkroepke/setup-sops@a1538f95cdc842b4ed75ab85c8831db7ee662237 # v1.5.86
         with:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@877f699fbcfed8ac29fbad04f88b58b3d6216e13 # v1.5.117
+        uses: jkroepke/setup-vals@c7e6a9223c3173619a08501ca808fcaa609f0b56 # v1.5.118
         with:
           version: v${{ env.VERSION_VALS }}
 
