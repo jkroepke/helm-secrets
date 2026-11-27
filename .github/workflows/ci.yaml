@@ -8,7 +8,7 @@ env:
   # renovate: github-releases=getsops/sops
   VERSION_SOPS: 3.13.3
   # renovate: github-releases=helmfile/vals
-  VERSION_VALS: 0.51.0
+  VERSION_VALS: 0.51.1
   SOPS_DISABLE_VERSION_CHECK: "true"
 
 on:
@@ -318,9 +318,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+        uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
         with:
-          ruby-version: "4.0.9"
+          ruby-version: "4.0.10"
 
       - name: Setup Helm
         uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
