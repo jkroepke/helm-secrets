@@ -198,7 +198,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0fd5dd043a5b6e67b60773d74bd855db594f5bff # v1.5.119
+        uses: jkroepke/setup-vals@b350ea4ed5e251394bb7c67b4ba994ec6788a0fa # v1.5.120
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -318,7 +318,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Ruby 3.0
-        uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
+        uses: ruby/setup-ruby@be3c7df29b3349ec6bcfc6b4792f1cf9f5237d18 # v1.343.0
         with:
           ruby-version: "4.0.10"
 
@@ -333,7 +333,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0fd5dd043a5b6e67b60773d74bd855db594f5bff # v1.5.119
+        uses: jkroepke/setup-vals@b350ea4ed5e251394bb7c67b4ba994ec6788a0fa # v1.5.120
         with:
           version: v${{ env.VERSION_VALS }}
 
@@ -426,7 +426,7 @@ jobs:
           version: ${{ env.VERSION_SOPS }}
 
       - name: Setup vals
-        uses: jkroepke/setup-vals@0fd5dd043a5b6e67b60773d74bd855db594f5bff # v1.5.119
+        uses: jkroepke/setup-vals@b350ea4ed5e251394bb7c67b4ba994ec6788a0fa # v1.5.120
         with:
           version: v${{ env.VERSION_VALS }}
 
